@@ -1,0 +1,70 @@
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.4//EN"
+        "http://google-web-toolkit.googlecode.com/svn/releases/2.4/distro-source/core/src/gwt-module.dtd">
+
+<!-- GWT module definition: the rename-to attribute is used to have a shorter 
+	module name that doesn't reflect the actual package structure. -->
+
+<module rename-to="Olhie">
+	<!-- Bootstrap -->
+	<inherits name='com.github.gwtbootstrap.Bootstrap' />
+	<inherits name='com.github.gwtbootstrap.datepicker.Datepicker' />
+	<set-property name="bootstrap.responsiveDesign" value="true" />
+
+	<!-- script src="js/jquery-1.7.2.min.js/ -->
+	<!-- script src="js/bootstrap.min.js/ -->
+	<!-- script src="js/bootstrap-datepicker.js/ -->
+
+	<!-- Errai -->
+	<inherits name="org.jboss.errai.common.ErraiCommon" />
+	<inherits name="org.jboss.errai.bus.ErraiBus" />
+	<inherits name="org.jboss.errai.ioc.Container" />
+	<inherits name="org.jboss.errai.enterprise.CDI" />
+	<inherits name="org.jboss.errai.ui.UI" />
+	<inherits name="org.jboss.errai.ui.nav.Navigation" />
+	<!-- inherits name="org.jboss.errai.validation.Validation"/ -->
+	<inherits name="org.jboss.errai.databinding.DataBinding" />
+	<inherits name="org.jboss.errai.enterprise.Jaxrs" />
+	<inherits name="org.jboss.errai.uibinder.UIBinderForIOC" />
+
+	<!-- GWT Themes -->
+	<inherits name='com.google.gwt.user.theme.standard.Standard' />
+	<inherits name="com.google.gwt.uibinder.UiBinder" />
+
+	<!-- Validation -->
+	<inherits name="org.hibernate.validator.HibernateValidator" />
+
+	<!-- Use JQuery in java code -->
+	<!-- inherits name='com.xedge.jquery.GWTJQuery' / -->
+	
+	<!-- GWTQuery -->
+	<inherits name='com.google.gwt.query.Query'/>
+	<inherits name='gwtquery.plugins.ratings.Ratings'/>
+	<inherits name='gwtquery.plugins.draggable.Draggable'/>
+	<inherits name='gwtquery.plugins.droppable.Droppable'/>
+	<inherits name='com.watopi.chosen.Chosen'/>
+	
+	<!-- Inherit the gwt-recaptcha module -->
+	<inherits name="com.claudiushauptmann.gwt.recaptcha.gwt-recaptcha" />
+
+	<!-- Specify the paths for translatable code -->
+	<source path='client' />
+	<source path='shared' />
+	<public path='public' />
+
+	<!--pay attention in this part -->
+	<source path='resources' />
+	<replace-with
+		class="com.pronoiahealth.olhie.resources.OlhieBootstrapConfigurator">
+		<when-type-is class="com.github.gwtbootstrap.client.ui.config.Configurator" />
+	</replace-with>
+
+	<!-- Resources path -->
+	<public path="resources">
+		<exclude name="** /*.java" />
+		<exclude name="** /*.class" />
+	</public>
+
+	<!-- replace-with class="com.pronoiahealth.olhie.client.local.KitchenSinkValidatorFactory"> 
+		<when-type-is class="javax.validation.ValidatorFactory" /> </replace-with -->
+
+</module>

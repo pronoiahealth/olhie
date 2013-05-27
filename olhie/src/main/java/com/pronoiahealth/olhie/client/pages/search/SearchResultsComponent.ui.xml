@@ -1,0 +1,27 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
+	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base'
+	xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'
+	xmlns:chzn='urn:import:com.watopi.chosen.client.gwt'>
+	<g:HTMLPanel width="100%">
+		<g:HTMLPanel></g:HTMLPanel>
+		<b:FluidContainer>
+			<b:FluidRow ui:field="searchResultsHeader">
+				<b:Label styleName="ph-SearchResults-Header-Text">Search Results</b:Label>
+				<chzn:ChosenListBox ui:field="resultListCnt" maxSelectedOptions="1"
+					placeholderText="how many to return ...">
+					<g:item>20</g:item>
+					<g:item>40</g:item>
+					<g:item>60</g:item>
+					<g:item>All</g:item>
+				</chzn:ChosenListBox>
+			</b:FluidRow>
+		</b:FluidContainer>
+
+		<g:HTMLPanel ui:field="searchResultsContainerList"
+			styleName="ph-SearchResults-ResultList-Container">
+		</g:HTMLPanel>
+	</g:HTMLPanel>
+
+</ui:UiBinder>

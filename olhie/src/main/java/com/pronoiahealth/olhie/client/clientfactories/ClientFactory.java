@@ -1,0 +1,45 @@
+/*******************************************************************************
+ * Copyright (c) 2013 Pronoia Health LLC.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Pronoia Health LLC - initial API and implementation
+ *******************************************************************************/
+package com.pronoiahealth.olhie.client.clientfactories;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+
+import com.pronoiahealth.olhie.client.shared.constants.AppConstants;
+
+/**
+ * Contains producer methods for client side injection<br/>
+ * Responsibilities:<br/>
+ * 1. Produces a screen timer
+ *
+ * @author John DeStefano
+ * @version 1.0
+ * @since 5/25/2013
+ *
+ */
+@ApplicationScoped
+public class ClientFactory {
+
+	public ClientFactory() {
+	}
+	
+	/**
+	 * Return the screen timeout value
+	 * 
+	 * @return
+	 */
+	@Produces
+	@ScreenTimeout()
+	public Integer getScreenTimeout() {
+		return AppConstants.SCREEN_TIMEOUT;
+	}
+
+}

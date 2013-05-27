@@ -1,0 +1,10 @@
+/* bookcase screen */
+.ph-Bookcase-Container {
+	overflow: auto;
+	width: 100%;
+	height: 100%;
+}
+
+.ph-Bookcase-Background {
+	background: #93643a url(Olhie/images/dark_wood.jpg) repeat;
+}

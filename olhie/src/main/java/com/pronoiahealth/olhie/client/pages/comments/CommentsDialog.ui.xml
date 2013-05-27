@@ -1,0 +1,35 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
+	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base' xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'>
+
+	<b:Modal ui:field="commentModal" title="Comments" backdrop="STATIC"
+		keyboard="true" animation="true">
+		<b:Form ui:field="commentForm" type="HORIZONTAL">
+			<b:Fieldset ui:field="controlFieldset">
+				<b:Legend>Please provide a comment for the Administrator</b:Legend>
+				<b:ControlGroup ui:field="commentGroup">
+					<b:ControlLabel for="comment">Comment: </b:ControlLabel>
+					<b:Controls>
+						<b:TextArea ui:field="comment" placeholder="Comment"
+							controlGroup="{commentGroup}" errorLabel="{commentErrors}" />
+						<b:HelpInline ui:field="commentErrors"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup ui:field="emailGroup">
+					<b:ControlLabel for="email">Your eMail (optional): </b:ControlLabel>
+					<b:Controls>
+						<b:TextBox ui:field="email" placeholder="eMail Address"
+							controlGroup="{emailGroup}" errorLabel="{emailErrors}" />
+						<b:HelpInline ui:field="emailErrors"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+			</b:Fieldset>
+		</b:Form>
+
+		<b:ModalFooter>
+			<b:Button ui:field="sendButton" icon="ENVELOPE" type="PRIMARY">Send</b:Button>
+		</b:ModalFooter>
+	</b:Modal>
+
+</ui:UiBinder>

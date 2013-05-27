@@ -1,0 +1,8 @@
+.ph-LoginDialog-Error {
+	color: red;
+}
+
+.ph-Login-Modal {
+	background-image: url("Olhie/images/login_paper.png");
+	background-repeat: repeat;
+}

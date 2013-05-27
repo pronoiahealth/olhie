@@ -1,0 +1,89 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
+	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base' xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'>
+
+	<b:Modal ui:field="registerModal" title="Register" backdrop="STATIC"
+		keyboard="true" animation="true">
+		<b:Form ui:field="registerForm" type="HORIZONTAL">
+			<b:Fieldset ui:field="controlFieldset">
+				<b:Legend>Register for an Account</b:Legend>
+				<b:FluidContainer>
+					<b:Column size="9">
+						<b:FluidRow>
+							<b:Column size="5">
+								<b:ControlGroup ui:field="firstNameGroup">
+									<b:ControlLabel for="firstName">First Name: </b:ControlLabel>
+									<b:Controls>
+										<b:TextBox ui:field="firstName" placeholder="First Name"
+											controlGroup="{firstNameGroup}" errorLabel="{firstNameErrors}" />
+										<b:HelpInline ui:field="firstNameErrors"></b:HelpInline>
+									</b:Controls>
+								</b:ControlGroup>
+							</b:Column>
+							<b:Column size="4">
+								<b:ControlGroup ui:field="lastNameGroup">
+									<b:ControlLabel for="lastName">Last Name: </b:ControlLabel>
+									<b:Controls>
+										<b:TextBox ui:field="lastName" placeholder="Last Name"
+											controlGroup="{lastNameGroup}" errorLabel="{lastNameErrors}" />
+										<b:HelpInline ui:field="lastNameErrors"></b:HelpInline>
+									</b:Controls>
+								</b:ControlGroup>
+							</b:Column>
+						</b:FluidRow>
+						<b:FluidRow>
+							<b:Column size="5">
+								<b:ControlGroup ui:field="emailGroup">
+									<b:ControlLabel for="email">Your eMail: </b:ControlLabel>
+									<b:Controls>
+										<b:TextBox ui:field="email" placeholder="eMail Address"
+											controlGroup="{emailGroup}" errorLabel="{emailErrors}" />
+										<b:HelpInline ui:field="emailErrors"></b:HelpInline>
+									</b:Controls>
+								</b:ControlGroup>
+							</b:Column>
+							<b:Column size="4">
+								<b:ControlGroup ui:field="userNameGroup">
+									<b:ControlLabel for="userName">User Name: </b:ControlLabel>
+									<b:Controls>
+										<b:TextBox ui:field="userName" placeholder="User Name"
+											controlGroup="{userNameGroup}" errorLabel="{userNameErrors}" />
+										<b:HelpInline ui:field="userNameErrors"></b:HelpInline>
+									</b:Controls>
+								</b:ControlGroup>
+							</b:Column>
+						</b:FluidRow>
+						<b:FluidRow>
+							<b:Column size="5">
+								<b:ControlGroup ui:field="passwordGroup">
+									<b:ControlLabel for="password">Password: </b:ControlLabel>
+									<b:Controls>
+										<b:TextBox ui:field="password" placeholder="Password"
+											controlGroup="{passwordGroup}" errorLabel="{passwordErrors}" />
+										<b:HelpInline ui:field="passwordErrors"></b:HelpInline>
+									</b:Controls>
+								</b:ControlGroup>
+							</b:Column>
+							<b:Column size="4">
+								<b:ControlGroup ui:field="repeatPasswordGroup">
+									<b:ControlLabel for="repeatPassword">Repeat Password: </b:ControlLabel>
+									<b:Controls>
+										<b:TextBox ui:field="repeatPassword" placeholder="Retype Password"
+											controlGroup="{repeatPasswordGroup}" errorLabel="{repeatPasswordErrors}" />
+										<b:HelpInline ui:field="repeatPasswordErrors"></b:HelpInline>
+									</b:Controls>
+								</b:ControlGroup>
+							</b:Column>
+						</b:FluidRow>
+					</b:Column>
+				</b:FluidContainer>
+			</b:Fieldset>
+		</b:Form>
+
+		<b:ModalFooter>
+			<b:Button ui:field="submitButton" icon="PENCIL" type="PRIMARY">Submit</b:Button>
+		</b:ModalFooter>
+	</b:Modal>
+
+</ui:UiBinder>

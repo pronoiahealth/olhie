@@ -1,0 +1,25 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
+	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base' xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'>
+
+	<g:HTMLPanel>
+		<b:ResponsiveNavbar>
+			<b:Brand>Open Library of Health Information Exchange</b:Brand>
+			<b:Nav alignment="RIGHT">
+				<b:NavPills>
+					<b:NavLink ui:field="commentsLink">Comments</b:NavLink>
+					<b:VerticalDivider></b:VerticalDivider>
+					<b:NavLink ui:field="registerLink">Register</b:NavLink>
+					<b:VerticalDivider ui:field="regLogDivider"></b:VerticalDivider>
+					<b:NavLink ui:field="loginLink">Log-In</b:NavLink>
+					<b:Dropdown ui:field="personDropDown" text="Dropdown example">
+						<b:NavLink ui:field="logoutMenuItemLink" icon="CIRCLE_ARROW_RIGHT">Logout</b:NavLink>
+						<b:NavLink ui:field="editProfileMenuLink" icon="EDIT">Edit Profile</b:NavLink>
+					</b:Dropdown>
+				</b:NavPills>
+			</b:Nav>
+		</b:ResponsiveNavbar>
+	</g:HTMLPanel>
+	
+</ui:UiBinder>

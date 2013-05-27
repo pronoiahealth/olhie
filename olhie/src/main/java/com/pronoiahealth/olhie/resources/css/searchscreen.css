@@ -1,0 +1,166 @@
+/* CSS for search screen components */
+.ph-SearchPage-Background {
+	background-image: url("Olhie/images/wood.jpg");
+	background-repeat: repeat;
+}
+
+
+.ph-SeachComponnet-Container {
+	float: right;
+	margin-right: 20px;
+	margin-top: 2px;
+}
+
+.ph-SearchComponent-Form {
+	-moz-border-radius: 20px;
+	-webkit-border-radius: 20px;
+	-khtml-border-radius: 20px;
+	border-radius: 20px;
+	box-shadow: 5px 5px 5px #888888;
+	padding: 12px;
+	background-image: url("Olhie/images/half-paper.png");
+	background-repeat: repeat;
+	background-color: transparent;
+	/*
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+	filter: alpha(opacity = 80);
+	opacity: .8;
+	*/
+}
+
+.ph-SearchComponent-Input {
+	height: 25px !important;
+}
+
+.ph-SearchResults {
+	padding-left: 20px;
+	padding-right: 20px;
+	padding-bottom: 20px;
+}
+
+.ph-SearchResults-Header {
+	margin-bottom: 10px;
+}
+
+.ph-SearchResults-Header-Text {
+	font-family: 'Swanky and Moo Moo', cursive;
+	font-size: 28px;
+	font-weight: bolder;
+	text-decoration: underline;
+	padding-bottom: 15px;
+	padding-top: 15px;
+	padding-right: 15px;
+	vertical-align: top;
+}
+
+.ph-SearchResults-Header-CntList {
+	margin-bottom: 10px;
+}
+
+.ph-SearchResults-ResultList-Container {
+	overflow: auto;
+}
+
+.ph-SearchResults-BookListResult {
+	box-shadow: 5px 5px 5px #888888;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-khtml-border-radius: 10px;
+	border-radius: 10px;
+	background-image: url("Olhie/images/half-paper.png");
+	background-repeat: repeat;
+	background-color: transparent;
+	padding: 5px;
+	margin-bottom: 10px;
+	margin-right: 10px;
+	overflow-x: auto;
+}
+
+.ph-SearchResults-BookListResult-BookImagePanel {
+	/*background-image: url("Olhie/images/Book1.png");
+	width: 200px;
+	height: 100px; */
+	/*background-color: blue;*/
+	width: 40px;
+	height: 50px;
+	/*
+	border-left-width: thick;
+	border-left-color: green;
+	border-left-style: solid; */
+	margin-right: 10px;
+	/* border-width: 0px; */
+}
+
+.ph-SearchResults-BookListResult-BookImagePanel-Lock {
+	width: 15px;
+	height: 21px;
+	float: right;
+	background: white;
+	background-image: url("Olhie/images/lock-small.png");
+	background-repeat: no-repeat;
+	margin-right: 3px;
+    margin-top: 3px;
+    border: 1px solid black;
+}
+
+.ph-SearchResults-BookListResult-BookImagePanel-NoLock {
+	float: right;
+}
+
+.ph-SearchResults-BookListResult-BookImagePanel-Binder {
+	float: left;
+	width: 5px;
+	height: 50px;
+}
+
+.ph-SearchResults-BookListResult-AddToCollection {
+	width: 100px;
+	margin-right: 10px;
+	border-width: 0px;
+	line-height: 15px;
+}
+
+.ph-SearchResults-BookListResult-AddToCollection-HoverOver {
+	width: 100px;
+	margin-right: 10px;
+	border-width: 0px;
+	line-height: 15px;
+	background: lime;
+}
+
+.ph-SearchResults-BookListResult-AddToCollection-Text {
+	line-height: 15px;
+	margin-bottom: 5px;
+}
+
+.ph-SearchResults-BookListResult-BookLabel {
+	width: 200px;
+	height: 50px;
+	/*padding-left: 50px;
+	padding-top: 5px;
+	padding-bottom: 5px; */
+	font-family: 'Swanky and Moo Moo', cursive;
+	font-size: 16px;
+	font-weight: bold;
+	line-height: 1EM;
+}
+
+.ph-SearchResults-Results-List-Details-DataPanel {
+	border-bottom: 1px black;
+	width: 100%;
+}
+
+.ph-SearchResults-Book {
+	width: 100%;
+	height: 50px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	background: #f4f9f7;
+	background-image: url("Olhie/images/paper.png");
+	background-repeat: repeat;
+	box-shadow: 5px 5px 5px #888888;
+	-moz-border-radius: 20px;
+	-webkit-border-radius: 20px;
+	-khtml-border-radius: 20px;
+	border-radius: 30px;
+}

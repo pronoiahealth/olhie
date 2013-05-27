@@ -1,0 +1,40 @@
+# ignore all bin directories
+# matches "bin" in any subfolder
+bin/
+
+# ignore all target directories
+target/
+
+# ignore all files ending with ~
+*~ 
+
+.classpath
+
+.errai
+
+.project
+
+olhie.iml
+
+.project
+
+Users/
+
+save/
+
+extra_libs/
+
+.settings/
+
+.idea/
+
+.externalToolBuilders/
+
+META-INF/
+
+src/main/gwt-unitCache/
+
+src/test/
+
+src/main/webapp/Olhie/
+

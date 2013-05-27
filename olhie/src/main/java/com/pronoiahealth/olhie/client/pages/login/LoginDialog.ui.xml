@@ -1,0 +1,35 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
+	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base' xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'>
+
+	<b:Modal ui:field="loginModal" title="Log-In" backdrop="STATIC"
+		keyboard="true" animation="true">
+		<b:Form ui:field="loginForm" type="HORIZONTAL">
+			<b:Fieldset ui:field="controlFieldset">
+				<b:Legend>Enter User name and password</b:Legend>
+				<b:ControlGroup ui:field="usernameGroup">
+					<b:ControlLabel for="username">Username: </b:ControlLabel>
+					<b:Controls>
+						<b:TextBox ui:field="username" placeholder="Username"
+							controlGroup="{usernameGroup}" errorLabel="{usernameErrors}" />
+						<b:HelpInline ui:field="usernameErrors"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup ui:field="passwordGroup">
+					<b:ControlLabel for="password">Password: </b:ControlLabel>
+					<b:Controls>
+						<b:PasswordTextBox ui:field="password"
+							placeholder="Password" controlGroup="{passwordGroup}" errorLabel="{passwordErrors}" />
+						<b:HelpInline ui:field="passwordErrors"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+			</b:Fieldset>
+		</b:Form>
+		<g:HTML ui:field="errorMsg" styleName="ph-LoginDialog-Error"></g:HTML>
+		<b:ModalFooter>
+			<b:Button ui:field="loginButton" type="PRIMARY" text="Sign-In" />
+		</b:ModalFooter>
+	</b:Modal>
+
+</ui:UiBinder>
