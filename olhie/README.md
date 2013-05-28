@@ -47,7 +47,9 @@ Download and deploy the JBoss application server, version 7.1.1. You will need t
 </module>
 ```
 
-Next you need to modify the org.javassit module. This is because OrientDB requires a newer version of javassist than JBoss 7.1.1 uses. Newer versions of JBoss don't have this issue. Navigate to the directory <JBoss Server Directory>/modules/org/javassist/main. In that directory place the javassist-3.16.1-GA.jar. This jar can be found via the Maven default repository. Change the module.xml file to pick-up this new jar (from ```<resource-root path="javassist-3.15.0-GA.jar"/>``` to: ```<resource-root path="javassist-3.16.1-GA.jar"/>```). You have globally changed the version of javassist for the server. This is probably not optimal, although for this application I have not encountered any issues. 
+Next you need to modify the org.javassit module. This is because OrientDB requires a newer version of javassist than JBoss 7.1.1 uses. Newer versions of JBoss don't have this issue. Navigate to the directory <JBoss Server Directory>/modules/org/javassist/main. In that directory place the javassist-3.16.1-GA.jar. This jar can be found via the Maven default repository. Change the module.xml file to pick-up this new jar (from ```<resource-root path="javassist-3.15.0-GA.jar"/>``` to: ```<resource-root path="javassist-3.16.1-GA.jar"/>```). You have globally changed the version of javassist for the server. This is probably not optimal, although for this application I have not encountered any issues.
+
+This link maybe useful as an alternative set-up: https://groups.google.com/forum/#!topic/orient-database/bw8HFdXOcC8.
 
 
 Building
