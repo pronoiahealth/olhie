@@ -23,8 +23,8 @@ Download OrientDB version 1.3.0. Unpack as directed in the Orient documentation.
 
 Download and deploy the JBoss application server, version 7.1.1. You will need to add additional modules to the JBoss modules directory. Consult the JBoss documentation for a more detailed overview. Basically, you need to add a module for the OrientDB and modify the org.javassit module. First, create a directory under modules in the Jboss server directory call <JBoss Server Directory>/modules/com/orienttechnologies/orient/main. In that directory place the OrientDB jars: orient-commons-1.3.0.jar, orientdb-client-1.3.0.jar, orientdb-core-1.3.0.jar, orientdb-distributed-1.3.0.jar, orientdb-enterprise-1.3.0.jar, orientdb-nativeos-1.3.0.jar, orientdb-object-1.3.0.jar, orientdb-server-1.3.0.jar. Add a file called module.xml to the directory. The contents of the file should be:
 
+```
 <?xml version="1.0" encoding="UTF-8"?>
-
 <module xmlns="urn:jboss:module:1.1" name="com.orienttechnologies.orient">
 
     <resources>
@@ -45,8 +45,9 @@ Download and deploy the JBoss application server, version 7.1.1. You will need t
         <module name="org.javassist"/>
     </dependencies>
 </module>
+```
 
-Next you need to modify the org.javassit module. This is because OrientDB requires a newer version of javassist than JBoss 7.1.1 uses. Newer versions of JBoss don't have this issue. Navigate to the directory <JBoss Server Directory>/modules/org/javassist/main. In that directory place the javassist-3.16.1-GA.jar. This jar can be found via the Maven default repository. Change the module.xml file to pick-up this new jar (from <resource-root path="javassist-3.15.0-GA.jar"/> to: <resource-root path="javassist-3.16.1-GA.jar"/>). You have globally changed the version of javassist for the server. This is probably not optimal, although for this application I have not encountered any issues. 
+Next you need to modify the org.javassit module. This is because OrientDB requires a newer version of javassist than JBoss 7.1.1 uses. Newer versions of JBoss don't have this issue. Navigate to the directory <JBoss Server Directory>/modules/org/javassist/main. In that directory place the javassist-3.16.1-GA.jar. This jar can be found via the Maven default repository. Change the module.xml file to pick-up this new jar (from ```<resource-root path="javassist-3.15.0-GA.jar"/>``` to: ```<resource-root path="javassist-3.16.1-GA.jar"/>```). You have globally changed the version of javassist for the server. This is probably not optimal, although for this application I have not encountered any issues. 
 
 
 Building
