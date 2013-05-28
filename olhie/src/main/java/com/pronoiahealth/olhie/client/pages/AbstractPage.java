@@ -90,7 +90,7 @@ public abstract class AbstractPage extends AbstractComposite {
 				public void execute() {
 					navigationErrorEvent
 							.fire(new NavigationErrorEvent(
-									"You tries to access a page your don't have access to."));
+									"You tried to access a page your don't have access to."));
 				}
 			});
 		}

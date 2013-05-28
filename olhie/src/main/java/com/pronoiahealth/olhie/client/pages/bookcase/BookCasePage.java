@@ -27,6 +27,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.Navigator;
+import com.pronoiahealth.olhie.client.navigation.RegisteredRole;
 import com.pronoiahealth.olhie.client.pages.AbstractPage;
 import com.pronoiahealth.olhie.client.pages.AppSelectors;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
@@ -48,7 +49,7 @@ import com.pronoiahealth.olhie.client.widgets.bookcase.BookcaseWidget;
  * @since May 26, 2013
  *
  */
-@Page
+@Page(role = {RegisteredRole.class})
 public class BookCasePage extends AbstractPage {
 
 	@Inject

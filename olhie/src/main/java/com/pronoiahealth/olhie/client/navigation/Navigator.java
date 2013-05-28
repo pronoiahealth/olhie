@@ -82,6 +82,8 @@ public class Navigator {
 	@Inject
 	private Event<ShowCommentsModalEvent> showCommentsEvent;
 
+	private String defPageName;
+
 	public Navigator() {
 		pageRolesMap = new HashMap<String, Set<String>>();
 	}
@@ -102,13 +104,15 @@ public class Navigator {
 		Set<String> anonPageNames = collectPageNames(nav
 				.getPagesByRole(AnonymousRole.class));
 		Set<String> registeredPageNames = collectPageNames(nav
-				.getPagesByRole(AnonymousRole.class));
+				.getPagesByRole(RegisteredRole.class));
 		Set<String> authorPageNames = collectPageNames(nav
-				.getPagesByRole(AnonymousRole.class));
+				.getPagesByRole(AuthorRole.class));
 		Set<String> adminPageNames = collectPageNames(nav
-				.getPagesByRole(AnonymousRole.class));
+				.getPagesByRole(AdminRole.class));
 		Set<String> defPages = collectPageNames(nav
 				.getPagesByRole(DefaultPage.class));
+		// We know there is only one
+		this.defPageName = defPages.iterator().next();
 
 		// Put in map based on role hierarchy default -> anonymous -> registered
 		// -> author -> admin
@@ -191,7 +195,7 @@ public class Navigator {
 	 * Shows the page with the role DefaultPage.class
 	 */
 	public void showDefaultPage() {
-		nav.goToWithRole(DefaultPage.class);
+		nav.goTo(getDefaultPageName());
 	}
 
 	public void showLoginModalEvent() {
@@ -220,18 +224,36 @@ public class Navigator {
 	 */
 	public boolean allowPageFromShownMethod() {
 		String currentPageName = nav.getCurrentPage().name();
-
+		
+		// If trying to show the default page go for it
+		if (currentPageName.equalsIgnoreCase(getDefaultPageName())) {
+			return true;
+		}
+		
 		if (clientUserToken.isLoggedIn()) {
 			return pageRolesMap.get(
 					SecurityRoleEnum.valueOf(clientUserToken.getRole())
 							.getName()).contains(currentPageName);
 		} else if (pageRolesMap == null || pageRolesMap.size() == 0) {
 			// By pass check when the map is null or has not roles it it
-			return true;
+			return false;
 		} else {
 			// Only show anonymous pages
 			return pageRolesMap.get(SecurityRoleEnum.ANONYMOUS.getName())
 					.contains(currentPageName);
 		}
+	}
+	
+	/**
+	 * Get the default page name
+	 * 
+	 * @return
+	 */
+	public String getDefaultPageName() {
+		if (defPageName == null || defPageName.length() == 0) {
+			defPageName = nav.getPagesByRole(DefaultPage.class).iterator()
+					.next().name();
+		}
+		return defPageName;
 	}
 }
