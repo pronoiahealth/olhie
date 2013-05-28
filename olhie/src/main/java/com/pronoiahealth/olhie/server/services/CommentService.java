@@ -73,7 +73,6 @@ public class CommentService {
 			comment.setSubmittedDate(new Date());
 			ooDbTx.save(comment);
 			ooDbTx.commit();
-			serviceErrorEvent.fire(new ServiceErrorEvent("Test error"));
 		} catch (Exception e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 			ooDbTx.rollback();
