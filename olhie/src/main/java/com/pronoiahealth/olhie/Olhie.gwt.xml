@@ -35,28 +35,22 @@
 
 	<!-- Use JQuery in java code -->
 	<!-- inherits name='com.xedge.jquery.GWTJQuery' / -->
-	
+
 	<!-- GWTQuery -->
-	<inherits name='com.google.gwt.query.Query'/>
-	<inherits name='gwtquery.plugins.ratings.Ratings'/>
-	<inherits name='gwtquery.plugins.draggable.Draggable'/>
-	<inherits name='gwtquery.plugins.droppable.Droppable'/>
-	<inherits name='com.watopi.chosen.Chosen'/>
-	
+	<inherits name='com.google.gwt.query.Query' />
+	<inherits name='gwtquery.plugins.ratings.Ratings' />
+	<inherits name='gwtquery.plugins.draggable.Draggable' />
+	<inherits name='gwtquery.plugins.droppable.Droppable' />
+	<inherits name='com.watopi.chosen.Chosen' />
+
 	<!-- Inherit the gwt-recaptcha module -->
 	<inherits name="com.claudiushauptmann.gwt.recaptcha.gwt-recaptcha" />
 
 	<!-- Specify the paths for translatable code -->
 	<source path='client' />
-	<source path='shared' />
 	<public path='public' />
-
-	<!--pay attention in this part -->
+	<source path='shared' />
 	<source path='resources' />
-	<replace-with
-		class="com.pronoiahealth.olhie.resources.OlhieBootstrapConfigurator">
-		<when-type-is class="com.github.gwtbootstrap.client.ui.config.Configurator" />
-	</replace-with>
 
 	<!-- Resources path -->
 	<public path="resources">
@@ -64,7 +58,16 @@
 		<exclude name="** /*.class" />
 	</public>
 
-	<!-- replace-with class="com.pronoiahealth.olhie.client.local.KitchenSinkValidatorFactory"> 
-		<when-type-is class="javax.validation.ValidatorFactory" /> </replace-with -->
+	<!--pay attention in this part -->
+	<replace-with
+		class="com.pronoiahealth.olhie.resources.OlhieBootstrapConfigurator">
+		<when-type-is class="com.github.gwtbootstrap.client.ui.config.Configurator" />
+	</replace-with>
+
+	<!-- Support for client side validation -->
+	<replace-with
+		class="com.pronoiahealth.olhie.client.clientfactories.OlhieValidatorFactory">
+		<when-type-is class="javax.validation.ValidatorFactory" />
+	</replace-with>
 
 </module>

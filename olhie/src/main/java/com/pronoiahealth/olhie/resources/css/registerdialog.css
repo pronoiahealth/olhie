@@ -5,8 +5,13 @@
 
 /*Used in Register Modal */
 .ph-Register-Modal-Size {
-	width: 900px; /* SET THE WIDTH OF THE MODAL */
-	margin: -250px 0 0 -450px;
+	width: 800px; /* SET THE WIDTH OF THE MODAL */
+	margin: -250px 0 0 -350px;
 	/* CHANGE MARGINS TO ACCOMODATE THE NEW WIDTH (original = margin: -250px 0 0 -280px;) */
 	max-height: 800px;
+}
+
+.ph-Register-Error-Msg {
+    color: red;
+    font-size: smaller;
 }
