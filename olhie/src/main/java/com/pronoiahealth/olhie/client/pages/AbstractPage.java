@@ -13,12 +13,10 @@ package com.pronoiahealth.olhie.client.pages;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.Scheduler;
+import org.jboss.errai.ui.nav.client.local.PageShown;
+
 import com.google.gwt.query.client.GQuery;
-import com.google.gwt.user.client.Command;
 import com.pronoiahealth.olhie.client.navigation.Navigator;
-import com.pronoiahealth.olhie.client.shared.events.local.MenuPageVisibleEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.NavigationErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.PageVisibleEvent;
 import com.pronoiahealth.olhie.client.utils.Utils;
 
@@ -34,38 +32,14 @@ import com.pronoiahealth.olhie.client.utils.Utils;
  * 
  */
 public abstract class AbstractPage extends AbstractComposite {
-
-	@Inject
-	protected Navigator nav;
-
-	@Inject
-	protected Event<MenuPageVisibleEvent> menuPageVisibleEvent;
-
+	
 	@Inject
 	protected Event<PageVisibleEvent> pageVisibleEvent;
 
 	@Inject
-	protected Event<NavigationErrorEvent> navigationErrorEvent;
+	protected Navigator nav;
 
 	public AbstractPage() {
-	}
-
-	/**
-	 * Fire a MenuPageVisibleEvent if required when the @PageShown method is
-	 * called. This event will be picked up by the AppNavMenu and the menu item
-	 * selection will be updated.
-	 */
-	protected void menuPageVisibleEvent() {
-		menuPageVisibleEvent.fire(new MenuPageVisibleEvent(Utils
-				.parseClassSimpleName(this.getClass())));
-	}
-
-	/**
-	 * Fire a PageVisibleEvent if required when the @PageShown method is called.
-	 */
-	protected void pageVisibleEvent() {
-		pageVisibleEvent.fire(new PageVisibleEvent(Utils
-				.parseClassSimpleName(this.getClass())));
 	}
 
 	/**
@@ -82,17 +56,28 @@ public abstract class AbstractPage extends AbstractComposite {
 		}
 	}
 
-	protected void defaultSecurityCheck() {
-		if (nav.allowPageFromShownMethod() == false) {
-			nav.showDefaultPage();
+	/**
+	 * What to do when the @PageShown method is called. Subclasses can do
+	 * security checks and menu synchronization, for example by implementing
+	 * this method.
+	 */
+	protected abstract boolean whenPageShownCalled();
 
-			Scheduler.get().scheduleDeferred(new Command() {
-				public void execute() {
-					navigationErrorEvent
-							.fire(new NavigationErrorEvent(
-									"You tried to access a page your don't have access to."));
-				}
-			});
-		}
+	/**
+	 * Called by classes that are annotated with the @Page annotation when the
+	 * page is shown. Subclasses can add logic to do security checks and menu
+	 * synchronizations.
+	 */
+	@PageShown
+	private void pageShown() {
+		whenPageShownCalled();
+	}
+	
+	/**
+	 * Fire a PageVisibleEvent if required when the @PageShown method is called.
+	 */
+	protected void pageVisibleEvent() {
+		pageVisibleEvent.fire(new PageVisibleEvent(Utils
+				.parseClassSimpleName(this.getClass())));
 	}
 }

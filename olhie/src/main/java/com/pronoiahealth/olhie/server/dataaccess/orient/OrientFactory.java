@@ -74,6 +74,7 @@ public class OrientFactory {
 	private void postConstruct() {
 		if (dbMode.equals("embedded") == true) {
 			startEmbeddedServer();
+			registerClasses();
 		}
 
 		if (dbValObjs != null && dbValObjs.length > 0) {

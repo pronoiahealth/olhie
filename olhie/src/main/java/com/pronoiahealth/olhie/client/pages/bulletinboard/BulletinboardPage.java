@@ -15,11 +15,10 @@ import javax.inject.Inject;
 
 import org.jboss.errai.ui.nav.client.local.DefaultPage;
 import org.jboss.errai.ui.nav.client.local.Page;
-import org.jboss.errai.ui.nav.client.local.PageShown;
 
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;
-import com.pronoiahealth.olhie.client.pages.AbstractPage;
+import com.pronoiahealth.olhie.client.pages.MenuSyncSecureAbstractPage;
 
 /**
  * BulletinboardPage.java<br/>
@@ -32,7 +31,7 @@ import com.pronoiahealth.olhie.client.pages.AbstractPage;
  *
  */
 @Page(role = {DefaultPage.class})
-public class BulletinboardPage extends AbstractPage {
+public class BulletinboardPage extends MenuSyncSecureAbstractPage {
 
 	@Inject
 	UiBinder<Widget, BulletinboardPage> binder;
@@ -46,12 +45,6 @@ public class BulletinboardPage extends AbstractPage {
 	@PostConstruct
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
-	}
-
-	@PageShown
-	protected void pageShown() {
-		menuPageVisibleEvent();
-		defaultSecurityCheck();
 	}
 	
 	@Override

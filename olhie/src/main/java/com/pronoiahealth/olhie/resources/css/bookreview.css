@@ -2,3 +2,7 @@
 .ph-BookReview-Container {
 	overflow: auto;
 }
+
+.ph-BookReview-Background {
+	background: #93643a url(Olhie/images/dark_wood.jpg) repeat;
+}

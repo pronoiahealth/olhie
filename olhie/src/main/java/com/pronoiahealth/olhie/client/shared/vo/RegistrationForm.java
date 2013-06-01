@@ -39,7 +39,7 @@ public class RegistrationForm {
 
 	@NotNull
 	@Size(min = 1, max = 50)
-	@Pattern(regexp = "[A-Za-z ]*", message = "Lat name must contain only letters and spaces")
+	@Pattern(regexp = "[A-Za-z ]*", message = "Last name must contain only letters and spaces")
 	private String lastName;
 
 	@NotNull

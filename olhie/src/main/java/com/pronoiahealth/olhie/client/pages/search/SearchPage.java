@@ -15,14 +15,13 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.nav.client.local.Page;
-import org.jboss.errai.ui.nav.client.local.PageShown;
 
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.AnonymousRole;
-import com.pronoiahealth.olhie.client.pages.AbstractPage;
+import com.pronoiahealth.olhie.client.pages.MenuSyncSecureAbstractPage;
 import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 
 /**
@@ -37,7 +36,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
  *
  */
 @Page(role={AnonymousRole.class})
-public class SearchPage extends AbstractPage {
+public class SearchPage extends MenuSyncSecureAbstractPage {
 
 	@Inject
 	UiBinder<Widget, SearchPage> binder;
@@ -72,12 +71,6 @@ public class SearchPage extends AbstractPage {
 		initWidget(binder.createAndBindUi(this));
 		searchPlaceHolder.add(searchComponent);
 		searchResultsPlaceHolder.add(searchResultsComponent);
-	}
-	
-	@PageShown
-	protected void pageShown() {
-		menuPageVisibleEvent();
-		defaultSecurityCheck();
 	}
 
 	@Override

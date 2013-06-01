@@ -14,7 +14,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.nav.client.local.Page;
-import org.jboss.errai.ui.nav.client.local.PageShown;
 import org.jboss.errai.ui.nav.client.local.PageState;
 
 import com.google.gwt.uibinder.client.UiBinder;
@@ -22,7 +21,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.AnonymousRole;
-import com.pronoiahealth.olhie.client.pages.AbstractPage;
+import com.pronoiahealth.olhie.client.pages.PageShownAbstractPage;
 
 /**
  * BookReviewPage.java<br/>
@@ -35,7 +34,7 @@ import com.pronoiahealth.olhie.client.pages.AbstractPage;
  *
  */
 @Page(role = {AnonymousRole.class})
-public class BookReviewPage extends AbstractPage {
+public class BookReviewPage extends PageShownAbstractPage {
 
 	@Inject
 	UiBinder<Widget, BookReviewPage> binder;
@@ -56,9 +55,10 @@ public class BookReviewPage extends AbstractPage {
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
 	}
-
-	@PageShown
-	private void pageShown() {
-		super.pageVisibleEvent();
+	
+	@Override
+	protected void onLoad() {
+		super.onLoad();
+		setPageBackgroundClass("ph-BookReview-Background");
 	}
 }

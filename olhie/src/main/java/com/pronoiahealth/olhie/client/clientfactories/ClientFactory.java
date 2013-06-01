@@ -59,7 +59,9 @@ public class ClientFactory {
 
 	/**
 	 * Produces a map with the security role as the key and the pages that
-	 * correspond to that role. This will be used in securing pages.
+	 * correspond to that role. This will be used in securing pages. The Page
+	 * roles are hierarchical (Anonymous -> Registered -> Author -> Admin).
+	 * Pages should be secured with the minimum role required to access them.
 	 * 
 	 * @param nav
 	 * @return
@@ -135,7 +137,7 @@ public class ClientFactory {
 	}
 
 	/**
-	 * Get the name of the page 
+	 * Get the name of the page
 	 * 
 	 * @param nav
 	 * @return

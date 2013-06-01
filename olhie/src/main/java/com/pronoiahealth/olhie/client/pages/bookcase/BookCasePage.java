@@ -26,10 +26,9 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.pronoiahealth.olhie.client.navigation.Navigator;
 import com.pronoiahealth.olhie.client.navigation.RegisteredRole;
-import com.pronoiahealth.olhie.client.pages.AbstractPage;
 import com.pronoiahealth.olhie.client.pages.AppSelectors;
+import com.pronoiahealth.olhie.client.pages.MenuSyncSecureAbstractPage;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookBackgroundPattern;
@@ -50,7 +49,7 @@ import com.pronoiahealth.olhie.client.widgets.bookcase.BookcaseWidget;
  *
  */
 @Page(role = {RegisteredRole.class})
-public class BookCasePage extends AbstractPage {
+public class BookCasePage extends MenuSyncSecureAbstractPage {
 
 	@Inject
 	UiBinder<Widget, BookCasePage> binder;
@@ -92,12 +91,6 @@ public class BookCasePage extends AbstractPage {
 				nav.performTransition(NavEnum.BookReviewPage.toString(), map);
 			}
 		});
-	}
-	
-	@PageShown
-	private void pageShown() {
-		menuPageVisibleEvent();
-		defaultSecurityCheck();
 	}
 
 	@Override

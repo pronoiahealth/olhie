@@ -22,7 +22,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.AuthorRole;
-import com.pronoiahealth.olhie.client.pages.AbstractPage;
+import com.pronoiahealth.olhie.client.pages.PageShownSecureAbstractPage;
 
 /**
  * NewBookPage.java<br/>
@@ -36,7 +36,7 @@ import com.pronoiahealth.olhie.client.pages.AbstractPage;
  *
  */
 @Page(role = {AuthorRole.class})
-public class NewBookPage extends AbstractPage {
+public class NewBookPage extends PageShownSecureAbstractPage {
 
 	@Inject
 	UiBinder<Widget, NewBookPage> binder;
@@ -60,11 +60,5 @@ public class NewBookPage extends AbstractPage {
 	@PostConstruct
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
-	}
-
-	@PageShown
-	private void pageShown() {
-		pageVisibleEvent();
-		defaultSecurityCheck();
 	}
 }

@@ -86,10 +86,10 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 
 	@Inject
 	public Footer footer;
-	
+
 	@Inject
 	Header navBar;
-	
+
 	@Inject
 	LoginDialog loginDialog;
 
@@ -98,7 +98,7 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 
 	@Inject
 	CommentsDialog commentsDialog;
-	
+
 	@Inject
 	ErrorDisplayDialog errorDisplayDialog;
 
@@ -110,7 +110,7 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 
 	@Inject
 	private Event<ClientUserUpdatedEvent> clientUserUpdatedEvent;
-	
+
 	/*
 	 * Used to time things on screen such as when a key is pressed.
 	 */
@@ -140,16 +140,16 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 
 	@UiField
 	public HTMLPanel loginModalPlaceHolder;
-	
+
 	@UiField
 	public HTMLPanel errorModalPlaceHolder;
 
 	@UiField
 	public HTMLPanel registerModalPlaceHolder;
-	
+
 	@UiField
 	public HTMLPanel commentsModalPlaceHolder;
-	
+
 	@UiField
 	public DockLayoutPanel dockLayoutPanel;
 
@@ -231,6 +231,8 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 					}
 				});
 
+		// Not all GWT panel will resize when the window resizes
+		// Observing this event gives panel a chance to resize if necessary
 		Window.addResizeHandler(new ResizeHandler() {
 			@Override
 			public void onResize(ResizeEvent event) {
@@ -326,6 +328,7 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 			@Observes LogoutResponseEvent logoutResponseEvent) {
 		clientUserToken.clear();
 		clientUserUpdatedEvent.fire(new ClientUserUpdatedEvent());
+		navigator.showDefaultPage();
 	}
 
 	/**
