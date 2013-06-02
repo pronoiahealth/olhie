@@ -56,6 +56,17 @@ public class ClientFactory {
 	public Integer getScreenTimeout() {
 		return AppConstants.SCREEN_TIMEOUT;
 	}
+	
+	/**
+	 * Return the ping fire interval
+	 * 
+	 * @return
+	 */
+	@Produces
+	@PingFireTime
+	public Integer getPingFireTime() {
+		return AppConstants.PING_FIRE_INTERVAL;
+	}
 
 	/**
 	 * Produces a map with the security role as the key and the pages that

@@ -17,6 +17,11 @@ import org.jboss.errai.enterprise.client.cdi.api.Conversational;
  * ServiceError.java<br/>
  * Responsibilities:<br/>
  * 1. Returned by a service when an error is encountered<br/>
+ * 
+ * <p>
+ * Fired From : LoginService, RegistrationDialog class<br/>
+ * Observed By: ErrorDialogDisplay class<br/>
+ * </p>
  *
  * @author John DeStefano
  * @version 1.0

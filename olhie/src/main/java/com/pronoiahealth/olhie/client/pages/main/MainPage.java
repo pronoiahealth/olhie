@@ -40,6 +40,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.pronoiahealth.olhie.client.clientfactories.PingFireTime;
 import com.pronoiahealth.olhie.client.clientfactories.ScreenTimeout;
 import com.pronoiahealth.olhie.client.navigation.Navigator;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
@@ -47,6 +48,7 @@ import com.pronoiahealth.olhie.client.pages.comments.CommentsDialog;
 import com.pronoiahealth.olhie.client.pages.error.ErrorDisplayDialog;
 import com.pronoiahealth.olhie.client.pages.login.LoginDialog;
 import com.pronoiahealth.olhie.client.pages.register.RegisterDialog;
+import com.pronoiahealth.olhie.client.shared.events.LoggedInPingEvent;
 import com.pronoiahealth.olhie.client.shared.events.LoginResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.LogoutResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientUserUpdatedEvent;
@@ -111,6 +113,9 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 	@Inject
 	private Event<ClientUserUpdatedEvent> clientUserUpdatedEvent;
 
+	@Inject
+	private Event<LoggedInPingEvent> loggedInPingEvent;
+
 	/*
 	 * Used to time things on screen such as when a key is pressed.
 	 */
@@ -119,6 +124,12 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 	@Inject
 	@ScreenTimeout
 	private Integer screenTimeout;
+
+	private Timer pingTimer;
+
+	@Inject
+	@PingFireTime
+	private Integer pingFireTime;
 
 	@Inject
 	private ErrorDialog errDlg;
@@ -319,21 +330,22 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 	}
 
 	/**
-	 * When the user logs out the ClientUserToken is updated and the
-	 * ClientUserUpdatedEvent is fired.
+	 * When the user logs out the ClientUserToken is updated, the pind service
+	 * is stopped, and the ClientUserUpdatedEvent is fired.
 	 * 
 	 * @param logoutResponseEvent
 	 */
 	public void observesLogoutResponseEvent(
 			@Observes LogoutResponseEvent logoutResponseEvent) {
 		clientUserToken.clear();
+		cancelPing();
 		clientUserUpdatedEvent.fire(new ClientUserUpdatedEvent());
 		navigator.showDefaultPage();
 	}
 
 	/**
-	 * When a login event is observed the clientUserToken is updated and the
-	 * ClientUserUpdatedEvent is fired.
+	 * When a login event is observed the clientUserToken is updated, the ping
+	 * service starts, and the ClientUserUpdatedEvent is fired.
 	 * 
 	 * @param loginResponseEvent
 	 */
@@ -345,6 +357,7 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 		clientUserToken.setLoggedIn(true);
 		clientUserToken.setUserId(user.getUserId());
 		clientUserToken.setRole(user.getRole());
+		startPinging();
 		clientUserUpdatedEvent.fire(new ClientUserUpdatedEvent());
 	}
 
@@ -419,5 +432,33 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 		} else {
 			return null;
 		}
+	}
+
+	/**
+	 * After a user logs in the start pinging the server.
+	 */
+	private void startPinging() {
+		ping();
+		pingTimer = new Timer() {
+			@Override
+			public void run() {
+				ping();
+			}
+		};
+		pingTimer.scheduleRepeating(pingFireTime);
+	}
+
+	/**
+	 * After a user logs out the stop pinging
+	 */
+	private void cancelPing() {
+		pingTimer.cancel();
+	}
+
+	/**
+	 * Fire the LoggedInPingEvent
+	 */
+	private void ping() {
+		loggedInPingEvent.fire(new LoggedInPingEvent());
 	}
 }

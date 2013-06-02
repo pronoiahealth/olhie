@@ -20,6 +20,8 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.jboss.errai.cdi.server.events.EventConversationContext;
+
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.events.LoginErrorEvent;
@@ -52,6 +54,9 @@ public class LoginService {
 
 	@Inject
 	private ServerUserToken userToken;
+
+	@Inject
+	private SessionTracker sessionTracker;
 
 	@Inject
 	private Event<LoginErrorEvent> loginErrorEvent;
@@ -99,9 +104,9 @@ public class LoginService {
 			// Password check
 			// 1. Look up pwd
 			OSQLSynchQuery<Password> query = new OSQLSynchQuery<Password>(
-					"select from Password"); // where userId = :uId");
+					"select from Password where userId = :uId");
 			HashMap<String, String> params = new HashMap<String, String>();
-			// params.put("uId", loginRequestEvent.getUserID());
+			params.put("uId", loginRequestEvent.getUserID());
 			List<Password> pResult = ooDbTx.command(query).execute(params);
 			if (pResult != null && pResult.size() == 1) {
 				// 2. Check password validity
@@ -117,10 +122,16 @@ public class LoginService {
 					userToken.setLoggedIn(true);
 					userToken.setUserId(user.getUserId());
 					userToken.setRole(user.getRole());
+
+					// Update the sessionTracker
+					String sessionId = EventConversationContext.get().getSessionId();
+					sessionTracker.trackUserSession(user.getUserId(), sessionId);
 					
+					// Fire a positive response
 					loginResponseEvent.fire(new LoginResponseEvent(user));
 				}
 			} else {
+				// Fire an error response
 				loginErrorEvent
 						.fire(new LoginErrorEvent(
 								"Could not find a password for you. Please contact the administrator."));
@@ -128,6 +139,8 @@ public class LoginService {
 
 		} catch (Exception e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
+			
+			// Tell the user what the exception was
 			loginErrorEvent.fire(new LoginErrorEvent(e.getMessage()));
 		}
 	}

@@ -14,9 +14,9 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
 /**
- * RegistrationResponseEvent.java<br/>
+ * RegistrationErrorEvent.java<br/>
  * Responsibilities:<br/>
- * 1. Response from a registration event<br/>
+ * 1. Fire during the registration process.<br/>
  * 
  * <p>
  * Fired From : RegistrationService class<br/>
@@ -25,24 +25,44 @@ import org.jboss.errai.enterprise.client.cdi.api.Conversational;
  * 
  * @author John DeStefano
  * @version 1.0
- * @since May 29, 2013
- * 
+ * @since Jun 2, 2013
+ *
  */
 @Portable
 @Conversational
-public class RegistrationResponseEvent {
+public class RegistrationErrorEvent {
+	public enum ErrorTypeEnum {
+		USER_ID_ALREADY_EXISTS, PASSWORDS_DONT_MATCH, OTHER
+	};
+
+	private ErrorTypeEnum errorType;
 	private String msg;
 
-	public RegistrationResponseEvent() {
+	/**
+	 * Constructor
+	 *
+	 */
+	public RegistrationErrorEvent() {
 	}
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param msg
+	 * @param errorType
 	 */
-	public RegistrationResponseEvent(String msg) {
+	public RegistrationErrorEvent(String msg, ErrorTypeEnum errorType) {
+		super();
 		this.msg = msg;
+		this.errorType = errorType;
+	}
+
+	public ErrorTypeEnum getErrorType() {
+		return errorType;
+	}
+
+	public void setErrorType(ErrorTypeEnum errorType) {
+		this.errorType = errorType;
 	}
 
 	public String getMsg() {
@@ -52,4 +72,5 @@ public class RegistrationResponseEvent {
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}
+
 }

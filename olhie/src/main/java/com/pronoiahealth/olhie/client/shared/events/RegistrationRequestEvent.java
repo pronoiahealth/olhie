@@ -19,6 +19,11 @@ import com.pronoiahealth.olhie.client.shared.vo.RegistrationForm;
  * RegistrationRequestEvent.java<br/>
  * Responsibilities:<br/>
  * 1. Request to register a new user<br/>
+ * 
+ * <p>
+ * Fired From : RgisterDialog class<br/>
+ * Observed By: RegistrationService class<br/>
+ * </p>
  *
  * @author John DeStefano
  * @version 1.0

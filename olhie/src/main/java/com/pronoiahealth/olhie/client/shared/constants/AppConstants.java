@@ -21,11 +21,12 @@ package com.pronoiahealth.olhie.client.shared.constants;
  * 
  */
 // TODO: Investigate putting contants in DeltaSpike config file and getting
-// through producer method?
+// through producer method on server?
 public class AppConstants {
 	private static final String HOSTED = "?gwt.codesvr=127.0.0.1:9997";
 	public static String APP_URL = "http://localhost:8080/olhie/index.html"
 			+ HOSTED;
 	public static String FRONT_PAGE = "http://localhost:8080/olhie/";
 	public static int SCREEN_TIMEOUT = 900000;
+	public static int PING_FIRE_INTERVAL = 10000;
 }

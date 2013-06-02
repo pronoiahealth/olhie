@@ -12,6 +12,7 @@ package com.pronoiahealth.olhie.client.pages.register;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -23,7 +24,11 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.pronoiahealth.olhie.client.shared.events.RegistrationErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.RegistrationRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.RegistrationResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
+import com.pronoiahealth.olhie.client.shared.exceptions.DataValidationException;
 import com.pronoiahealth.olhie.client.shared.vo.RegistrationForm;
 
 /**
@@ -57,6 +62,9 @@ public class RegisterDialog extends Composite {
 	@Inject
 	private Event<RegistrationRequestEvent> registrationRequestEvent;
 
+	@Inject
+	private Event<ServiceErrorEvent> serviceErrorEvent;
+
 	/**
 	 * Constructor
 	 * 
@@ -85,12 +93,61 @@ public class RegisterDialog extends Composite {
 		registerModal.show();
 	}
 
+	/**
+	 * Validates the form and fires a RegistrationRequestEvent with the
+	 * validated data.
+	 * 
+	 * @param clickEvt
+	 */
 	@UiHandler("submitButton")
 	public void handleSubmitButtonClick(ClickEvent clickEvt) {
-		if (regForm.validateForm() == true) {
-			RegistrationForm populatedForm = regForm.getModelData();
+		try {
+			RegistrationForm populatedForm = regForm.validateForm();
 			registrationRequestEvent.fire(new RegistrationRequestEvent(
 					populatedForm));
+		} catch (DataValidationException e) {
+			// Intentionally blank. The RegistrationForm will post error
+			// messages to the form during the validation process
+		}
+	}
+
+	/**
+	 * Signifies a good registration process resulting in the dialog closing and
+	 * a message to the user to login.
+	 * 
+	 * @param registrationResponseEvent
+	 */
+	// TODO: Pop up window saying you can log in or something like that
+	protected void observesRegistrationResponseEvent(
+			@Observes RegistrationResponseEvent registrationResponseEvent) {
+		registerModal.hide();
+	}
+
+	/**
+	 * Something went wrong and we need to tell the user.
+	 * 
+	 * @param registrationErrorEvent
+	 */
+	protected void observesRegistrationErrorEvent(
+			@Observes RegistrationErrorEvent registrationErrorEvent) {
+		// Get the error type
+		RegistrationErrorEvent.ErrorTypeEnum errorType = registrationErrorEvent
+				.getErrorType();
+
+		switch (errorType) {
+		case OTHER:
+			registerModal.hide();
+			serviceErrorEvent.fire(new ServiceErrorEvent(registrationErrorEvent
+					.getMsg()));
+			break;
+
+		case PASSWORDS_DONT_MATCH:
+			regForm.setPasswordsDontMatchError();
+			break;
+
+		case USER_ID_ALREADY_EXISTS:
+			regForm.setUserIdAlreadyInUse();
+			break;
 		}
 	}
 

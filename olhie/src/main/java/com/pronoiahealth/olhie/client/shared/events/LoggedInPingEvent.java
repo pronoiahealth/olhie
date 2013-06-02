@@ -14,42 +14,20 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
 /**
- * RegistrationResponseEvent.java<br/>
+ * LoggedInPingEvent.java<br/>
  * Responsibilities:<br/>
- * 1. Response from a registration event<br/>
- * 
- * <p>
- * Fired From : RegistrationService class<br/>
- * Observed By: RegisterDialog class<br/>
- * </p>
+ * 1. Once a user logs in the Ping event is continuously fired until loggout.<br/>
  * 
  * @author John DeStefano
  * @version 1.0
- * @since May 29, 2013
+ * @since Jun 1, 2013
  * 
  */
 @Portable
 @Conversational
-public class RegistrationResponseEvent {
-	private String msg;
+public class LoggedInPingEvent {
 
-	public RegistrationResponseEvent() {
+	public LoggedInPingEvent() {
 	}
 
-	/**
-	 * Constructor
-	 * 
-	 * @param msg
-	 */
-	public RegistrationResponseEvent(String msg) {
-		this.msg = msg;
-	}
-
-	public String getMsg() {
-		return msg;
-	}
-
-	public void setMsg(String msg) {
-		this.msg = msg;
-	}
 }

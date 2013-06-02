@@ -18,6 +18,8 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.jboss.errai.cdi.server.events.EventConversationContext;
+
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.LogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.LogoutResponseEvent;
@@ -46,6 +48,9 @@ public class LogoutService {
 	private ServerUserToken userToken;
 
 	@Inject
+	private SessionTracker sessionTracker;
+
+	@Inject
 	private Event<LogoutResponseEvent> logoutResponseEvent;
 
 	@Inject
@@ -59,18 +64,20 @@ public class LogoutService {
 	}
 
 	/**
-	 * Sets the ServerUserToken to loggedin = false and then fires a
-	 * LogoutResponseEvent
+	 * Sets the ServerUserToken to loggedin = false, stops the SessionTracker
+	 * from tracking the session, and then fires a LogoutResponseEvent
 	 * 
 	 * @param logoutRequestEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN,
-			SecurityRoleEnum.AUTHOR,
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
 			SecurityRoleEnum.REGISTERED })
 	public void observesLogoutRequestEvent(
 			@Observes LogoutRequestEvent logoutRequestEvent) {
 		try {
 			userToken.setLoggedIn(false);
+			String erraiSessionId = EventConversationContext.get()
+					.getSessionId();
+			sessionTracker.stopTrackingUserSession(erraiSessionId);
 			logoutResponseEvent.fire(new LogoutResponseEvent());
 		} catch (Exception e) {
 			serviceErrorEvent.fire(new ServiceErrorEvent(e.getMessage()));

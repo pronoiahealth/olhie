@@ -27,6 +27,7 @@ import com.github.gwtbootstrap.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.validation.client.impl.Validation;
+import com.pronoiahealth.olhie.client.shared.exceptions.DataValidationException;
 import com.pronoiahealth.olhie.client.shared.vo.RegistrationForm;
 
 @Templated("#form")
@@ -132,12 +133,15 @@ public class RegisterForm extends Composite {
 	}
 
 	/**
-	 * Get the current data in the form
+	 * Get the current data in the form. This requires "unwrapping" the data
+	 * model from the formBinder.
 	 * 
 	 * @return
 	 */
-	public RegistrationForm getModelData() {
-		return formBinder.getModel();
+	@SuppressWarnings("unchecked")
+	public RegistrationForm getUnwrappedModelData() {
+		return (RegistrationForm) ((BindableProxy<RegistrationForm>) formBinder
+				.getModel()).unwrap();
 	}
 
 	/**
@@ -145,13 +149,12 @@ public class RegisterForm extends Composite {
 	 * 
 	 * @return
 	 */
-	public boolean validateForm() {
+	public RegistrationForm validateForm() throws DataValidationException {
 		clearErrors();
 		Validator validator = Validation.buildDefaultValidatorFactory()
 				.getValidator();
 		// proxy needs to be unwrapped to work with the validator
-		RegistrationForm rf = (RegistrationForm) ((BindableProxy<RegistrationForm>) getModelData())
-				.unwrap();
+		RegistrationForm rf = getUnwrappedModelData();
 		Set<ConstraintViolation<RegistrationForm>> violations = validator
 				.validate(rf);
 
@@ -172,13 +175,29 @@ public class RegisterForm extends Composite {
 
 		if (!pwd.getValue().equals(pwdRepeat.getValue())) {
 			pwdRepeatErr.setText("Passwords must match. Please retype.");
-			return false;
+			throw new DataValidationException("Passwords did not match");
 		}
 
-		if (!violations.isEmpty()) {
-			return true;
+		if (violations.isEmpty()) {
+			return rf;
 		} else {
-			return false;
+			throw new DataValidationException();
 		}
+	}
+
+	/**
+	 * Set the error message for passwords not matching. This might be returned
+	 * from server side validation.
+	 */
+	public void setPasswordsDontMatchError() {
+		pwdRepeatErr.setText("Passwords must match. Please retype.");
+	}
+
+	/**
+	 * Set the error message for userId already in use. This will be returned
+	 * from server side validation.
+	 */
+	public void setUserIdAlreadyInUse() {
+		userIdErr.setText("This userid is already in use.");
 	}
 }
