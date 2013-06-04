@@ -59,6 +59,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.client.widgets.dialogs.ErrorDialog;
+import com.pronoiahealth.olhie.client.widgets.newsdisplay.NewsDisplay;
 
 /**
  * MainPage.java<br/>
@@ -85,6 +86,12 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 
 	@UiField
 	public HTMLPanel sideBarMenuPlaceHolder;
+
+	@UiField
+	public HTMLPanel newsDisplayPlaceHolder;
+	
+	@Inject
+	private NewsDisplay newsDisplay;
 
 	@Inject
 	public Footer footer;
@@ -257,6 +264,9 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 		// SidebarMenu
 		buildSidebarMenu();
 
+		// Where the news widget goes
+		buildRightSideBar();
+
 		// Header
 		buildNavBar();
 
@@ -288,6 +298,13 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 	 */
 	private void buildNavBar() {
 		navBarPanel.add(navBar);
+	}
+
+	/**
+	 * Where the new widget goes
+	 */
+	private void buildRightSideBar() {
+		newsDisplayPlaceHolder.add(newsDisplay);
 	}
 
 	/**

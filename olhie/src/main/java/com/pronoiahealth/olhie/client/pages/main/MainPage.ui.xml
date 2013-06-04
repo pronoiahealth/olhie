@@ -13,28 +13,30 @@
 			</g:HTMLPanel>
 		</g:south>
 		<g:east size="180">
-			<g:HTMLPanel styleName="east-background">
-				<div class="section sidebar">
+			<g:HTMLPanel ui:field="newsDisplayPlaceHolder" styleName="east-background">
+				<!-- div class="section sidebar">
 					<div class="widget">
 						<div class="widget-title">
 							<h3>Latest News</h3>
 						</div>
-						<ul class="listing clearfix">
-							<li class="clearfix">
-								<h4 class="title">
-									<a href="#">OLHIE has arrived</a>
-								</h4>
-								<p>Take a look</p>
-							</li>
-							<li class="clearfix">
-								<h4 class="title">
-									<a href="#">OLHIE will be beamed to astronauts on board the ISS</a>
-								</h4>
-								<p>Story at 6</p>
-							</li>
-						</ul>
+						<div>
+							<ul class="listing clearfix">
+								<li class="clearfix">
+									<h4 class="title">
+										<a href="#">OLHIE has arrived</a>
+									</h4>
+									<p>Take a look</p>
+								</li>
+								<li class="clearfix">
+									<h4 class="title">
+										<a href="#">OLHIE will be beamed to astronauts on board the ISS</a>
+									</h4>
+									<p>Story at 6</p>
+								</li>
+							</ul>
+						</div>
 					</div>
-				</div>
+				</div -->
 			</g:HTMLPanel>
 		</g:east>
 		<g:west size="90">

@@ -60,6 +60,7 @@ public class OlhieResourceInjector {
 		OlhieResources.INSTANCE.errordialogcss().ensureInjected();
 		OlhieResources.INSTANCE.registerdialogcss().ensureInjected();
 		OlhieResources.INSTANCE.commentdialogcss().ensureInjected();
+		OlhieResources.INSTANCE.newsdisplaycss().ensureInjected();
 		/*
 		 * injectResourceCssAsFile("bookshelf_skin01.css");
 		 */

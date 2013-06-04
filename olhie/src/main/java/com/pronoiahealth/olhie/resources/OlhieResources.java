@@ -84,6 +84,10 @@ public interface OlhieResources extends ClientBundle {
 	@Source("com/pronoiahealth/olhie/resources/css/commentdialog.css")
 	@CssResource.NotStrict
 	CssResource commentdialogcss();
+	
+	@Source("com/pronoiahealth/olhie/resources/css/newsdisplay.css")
+	@CssResource.NotStrict
+	CssResource newsdisplaycss();
 
 	@Source("com/pronoiahealth/olhie/resources/js/jquery.bookshelfslider.js")
 	TextResource jquerybookshelfsliderjs();

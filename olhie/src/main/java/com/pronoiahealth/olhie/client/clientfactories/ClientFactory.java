@@ -58,6 +58,17 @@ public class ClientFactory {
 	}
 	
 	/**
+	 * Return the news fade interval
+	 * 
+	 * @return
+	 */
+	@Produces
+	@NewsFadeInterval
+	public Integer getNewsFadeInterval() {
+		return AppConstants.NEWS_FADE_INTERVAL;
+	}
+	
+	/**
 	 * Return the ping fire interval
 	 * 
 	 * @return
