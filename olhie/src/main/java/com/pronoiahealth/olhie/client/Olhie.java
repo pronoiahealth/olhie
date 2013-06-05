@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.jboss.errai.enterprise.client.jaxrs.api.RestClient;
@@ -18,6 +19,7 @@ import org.jboss.errai.ioc.client.api.EntryPoint;
 
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.pronoiahealth.olhie.client.pages.main.MainPage;
+import com.pronoiahealth.olhie.client.shared.events.NewsItemsRequestEvent;
 import com.pronoiahealth.olhie.resources.OlhieResourceInjector;
 
 /**
@@ -35,10 +37,21 @@ public class Olhie {
 	@Inject
 	private MainPage mainPage;
 
+	@Inject
+	private Event<NewsItemsRequestEvent> newsItemsRequestEvent;
+
+	/**
+	 * Constructor
+	 * 
+	 */
 	public Olhie() {
 		RestClient.setApplicationRoot("/olhie/rest");
 	}
 
+	/**
+	 * Inject all css and js resources and attach the main page to the root
+	 * panel
+	 */
 	@PostConstruct
 	public void postConstruct() {
 		// Inject required resources

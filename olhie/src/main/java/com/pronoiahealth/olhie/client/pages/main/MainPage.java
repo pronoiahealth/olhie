@@ -51,6 +51,7 @@ import com.pronoiahealth.olhie.client.pages.register.RegisterDialog;
 import com.pronoiahealth.olhie.client.shared.events.LoggedInPingEvent;
 import com.pronoiahealth.olhie.client.shared.events.LoginResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.LogoutResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.NewsItemsRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientUserUpdatedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowCommentsModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowLoginModalEvent;
@@ -89,7 +90,7 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 
 	@UiField
 	public HTMLPanel newsDisplayPlaceHolder;
-	
+
 	@Inject
 	private NewsDisplay newsDisplay;
 
@@ -122,6 +123,9 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 
 	@Inject
 	private Event<LoggedInPingEvent> loggedInPingEvent;
+
+	@Inject
+	private Event<NewsItemsRequestEvent> newsItemsRequestEvent;
 
 	/*
 	 * Used to time things on screen such as when a key is pressed.
@@ -276,6 +280,9 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 
 		// Add navigation panel
 		navContent.add(navigator.getNavContentPanel());
+
+		// Fire get news event
+		newsItemsRequestEvent.fire(new NewsItemsRequestEvent());
 	}
 
 	/**

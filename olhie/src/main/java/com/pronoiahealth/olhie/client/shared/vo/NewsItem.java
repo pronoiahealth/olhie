@@ -10,46 +10,82 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.shared.vo;
 
+import java.util.Date;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.jboss.errai.common.client.api.annotations.Portable;
+import org.jboss.errai.databinding.client.api.Bindable;
+
+import com.orientechnologies.orient.core.annotation.OId;
+import com.orientechnologies.orient.core.annotation.OVersion;
 
 /**
  * NewsItem.java<br/>
  * Responsibilities:<br/>
  * 1. This is a new item for display on the main screen.<br/>
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since Jun 3, 2013
- *
+ * 
  */
 @Portable
+@Bindable
 public class NewsItem {
+	@OId
 	private String id;
+
+	@OVersion
+	private Long version;
+
+	@NotNull
+	@Size(min = 1, max = 250, message = "Between 1 and 250 characters.")
 	private String title;
+
+	@NotNull
+	@Size(min = 1, max = 250, message = "Between 1 and 250 characters.")
 	private String href;
+
+	@NotNull
+	@Size(min = 1, max = 500, message = "Between 1 and 500 characters.")
 	private String story;
+
+	@NotNull
+	private Boolean active;
+
+	@NotNull
+	private Date datePublished;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 */
 	public NewsItem() {
 	}
 
-	public NewsItem(String id, String title, String href, String story) {
+	/**
+	 * Constructor
+	 *
+	 * @param title
+	 * @param href
+	 * @param story
+	 * @param active
+	 * @param datePublished
+	 */
+	public NewsItem(String title, String href, String story, boolean active,
+			Date datePublished) {
 		super();
-		this.id = id;
 		this.title = title;
 		this.href = href;
 		this.story = story;
+		this.active = Boolean.valueOf(active);
+		this.datePublished = datePublished;
 	}
 
 	public String getId() {
 		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public String getTitle() {
@@ -74,5 +110,21 @@ public class NewsItem {
 
 	public void setStory(String story) {
 		this.story = story;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	public Date getDatePublished() {
+		return datePublished;
+	}
+
+	public void setDatePublished(Date datePublished) {
+		this.datePublished = datePublished;
 	}
 }

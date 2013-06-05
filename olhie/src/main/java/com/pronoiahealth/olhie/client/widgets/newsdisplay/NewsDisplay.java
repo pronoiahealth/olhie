@@ -12,10 +12,10 @@ package com.pronoiahealth.olhie.client.widgets.newsdisplay;
 
 import static com.google.gwt.query.client.GQuery.$;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -23,6 +23,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 import com.github.gwtbootstrap.client.ui.Paragraph;
+import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.LIElement;
@@ -35,6 +36,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.pronoiahealth.olhie.client.clientfactories.NewsFadeInterval;
+import com.pronoiahealth.olhie.client.shared.events.NewsItemsResponseEvent;
 import com.pronoiahealth.olhie.client.shared.vo.NewsItem;
 
 /**
@@ -61,6 +63,10 @@ public class NewsDisplay extends Composite {
 	@DataField
 	private LIElement fadeNewsItem = Document.get().createLIElement().cast();
 
+	@DataField
+	private DivElement fadeNewsDisplay = Document.get().createDivElement()
+			.cast();
+
 	@Inject
 	@NewsFadeInterval
 	private Integer newsFadeInterval;
@@ -76,11 +82,6 @@ public class NewsDisplay extends Composite {
 	 * 
 	 */
 	public NewsDisplay() {
-		newsItems = new ArrayList<NewsItem>();
-		newsItems.add(new NewsItem("1", "Test 1", "#", "This is test 1"));
-		newsItems.add(new NewsItem("2", "Test 2", "#", "This is test 2"));
-		newsItems.add(new NewsItem("3", "Test 3", "#", "This is test 3"));
-		newsItems.add(new NewsItem("4", "Test 4", "#", "This is test 4"));
 	}
 
 	/**
@@ -95,7 +96,7 @@ public class NewsDisplay extends Composite {
 			@Override
 			public void run() {
 				if (newsItems != null && newsItems.size() > 0) {
-					GQuery obj = $("#fadeDisplay");
+					GQuery obj = $("#fadeNewsDisplay");
 					obj.show();
 					$("#fadeNewsDisplay").as(Effects.Effects).fadeOut(
 							newsFadeInterval, new Function() {
@@ -145,6 +146,10 @@ public class NewsDisplay extends Composite {
 	 */
 	@EventHandler("fadeNewsItem")
 	public void handleMouseOverEvents(MouseOverEvent event) {
+		stopFadeAnimation();
+	}
+
+	private void stopFadeAnimation() {
 		fadeTimer.cancel();
 		GQuery elem = $("#fadeNewsDisplay").stop();
 		elem.show();
@@ -158,6 +163,31 @@ public class NewsDisplay extends Composite {
 	@EventHandler("fadeNewsItem")
 	public void handleMouseOutEvents(MouseOutEvent event) {
 		fadeTimer.scheduleRepeating(newsFadeInterval + 1000);
+	}
+
+	/**
+	 * Load the news items
+	 * 
+	 * @param newsItemsResponseEvent
+	 */
+	protected void observersNewsItemsResponseEvent(
+			@Observes NewsItemsResponseEvent newsItemsResponseEvent) {
+		loadNewNewsItems(newsItemsResponseEvent.getNewsItems());
+	}
+
+	/**
+	 * Stop teh fade animation, load the new list, start the fade animation
+	 * 
+	 * @param newsItems
+	 */
+	private void loadNewNewsItems(List<NewsItem> newsItems) {
+		if (newsItems != null) {
+			stopFadeAnimation();
+			currentNewsItem = 0;
+			this.newsItems = newsItems;
+			setCurrentNewsItem(false);
+			fadeTimer.scheduleRepeating(newsFadeInterval + 1000);
+		}
 	}
 
 	public List<NewsItem> getNewsItems() {

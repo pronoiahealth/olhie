@@ -16,7 +16,7 @@
 					placeholder="John" /></td>
 				<td align="right"><label for="lastName">Last Name:</label></td>
 				<td><input data-field="lastName" id="lastName" type="text"
-					placeholder="Smith" /></td>
+					placeholder="Smith" title="Must be between 1 and 60 characters."/></td>
 			</tr>
 			<tr>
 				<td></td>
@@ -32,7 +32,7 @@
 					placeholder="smith@olhie.org" /></td>
 				<td align="right"><label for="userId">User ID:</label></td>
 				<td><input data-field="userId" id="userId" type="text"
-					placeholder="smith1234" /></td>
+					placeholder="smith1234" title="Must be between 6 and 20 characters long."/></td>
 			</tr>
 			<tr>
 				<td></td>
@@ -45,11 +45,11 @@
 			<tr>
 				<td align="right"><label for="pwd">Password:</label></td>
 				<td><input data-field="pwd" id="pwd" type="password"
-					placeholder="******" /></td>
+					placeholder="******" title="Password must contain one upercase, one lowercase, and one non-alpha, and be at least 8 characters long."/></td>
 				<td align="right"><label for="pwdRepeat">Retype
 						Password:</label></td>
 				<td><input data-field="pwdRepeat" id="pwdRepeat"
-					type="password" placeholder="******" /></td>
+					type="password" placeholder="******" title="Must match password."/></td>
 			</tr>
 		</table>
 	</form>
