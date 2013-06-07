@@ -24,7 +24,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookBackgroundPattern;
-import com.pronoiahealth.olhie.client.shared.vo.BookCatagory;
+import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
 import com.pronoiahealth.olhie.client.shared.vo.BookState;
 import com.pronoiahealth.olhie.client.widgets.booklist.BookListResultWidget;
 import com.watopi.chosen.client.gwt.ChosenListBox;
@@ -81,7 +81,7 @@ public class SearchResultsComponent extends AbstractComposite {
 		BookListResultWidget widget = new BookListResultWidget(new Book("1",
 				"Book 1 Test Test Test Test Test Test Test", "John DeStefano", 4, "Test introduction",
 				"Need some help here", "06/26/2011", "400", "Book 3, Book 4",
-				BookBackgroundPattern.PAPER, BookState.BOOK_STATE_INVISIBLE, BookCatagory.INTERFACE, "green"));
+				BookBackgroundPattern.PAPER, BookState.BOOK_STATE_INVISIBLE, new BookCategory("black", "Interface"), "green"));
 		if (widget.getBook().getBookState() == BookState.BOOK_STATE_INVISIBLE) {
 			widget.getBookImagePanelWidget().setVisible(false);
 			searchResultsContainerList.add(widget);
@@ -90,7 +90,7 @@ public class SearchResultsComponent extends AbstractComposite {
 		widget = new BookListResultWidget(new Book("2", "Book 2",
 				"John DeStefano", 4, "Test introduction",
 				"Need some help here", "06/26/2011", "400", "Book 3, Book 4",
-				BookBackgroundPattern.PAPER, BookState.BOOK_STATE_VISIBLE, BookCatagory.LEGAL,"orange"));
+				BookBackgroundPattern.PAPER, BookState.BOOK_STATE_VISIBLE, new BookCategory("yellow", "Legal"),"orange"));
 		if (widget.getBook().getBookState() == BookState.BOOK_STATE_VISIBLE) {
 			searchResultsContainerList.add(widget);
 		}
@@ -98,7 +98,7 @@ public class SearchResultsComponent extends AbstractComposite {
 		widget = new BookListResultWidget(new Book("3", "Book 3",
 				"John DeStefano", 4, "Test introduction",
 				"Need some help here", "06/26/2011", "400", "Book 3, Book 4",
-				BookBackgroundPattern.PAPER, BookState.BOOK_STATE_VISIBLE, BookCatagory.LEGAL, "black"));
+				BookBackgroundPattern.PAPER, BookState.BOOK_STATE_VISIBLE, new BookCategory("yellow", "Legal"), "black"));
 		if (widget.getBook().getBookState() == BookState.BOOK_STATE_VISIBLE) {
 			searchResultsContainerList.add(widget);
 		}
@@ -106,7 +106,7 @@ public class SearchResultsComponent extends AbstractComposite {
 		widget = new BookListResultWidget(new Book("4", "Book 2",
 				"John DeStefano", 4, "Test introduction",
 				"Need some help here", "06/26/2011", "400", "Book 3, Book 4",
-				BookBackgroundPattern.PAPER, BookState.BOOK_STATE_VISIBLE, BookCatagory.LEGAL, "lime"));
+				BookBackgroundPattern.PAPER, BookState.BOOK_STATE_VISIBLE, new BookCategory("yellow", "Legal"), "lime"));
 		if (widget.getBook().getBookState() == BookState.BOOK_STATE_VISIBLE) {
 			searchResultsContainerList.add(widget);
 		}
@@ -114,7 +114,7 @@ public class SearchResultsComponent extends AbstractComposite {
 		widget = new BookListResultWidget(new Book("5", "Book 3",
 				"John DeStefano", 4, "Test introduction",
 				"Need some help here", "06/26/2011", "400", "Book 3, Book 4",
-				BookBackgroundPattern.PAPER, BookState.BOOK_STATE_VISIBLE, BookCatagory.LEGAL, "green"));
+				BookBackgroundPattern.PAPER, BookState.BOOK_STATE_VISIBLE, new BookCategory("yellow", "Legal"), "green"));
 		if (widget.getBook().getBookState() == BookState.BOOK_STATE_VISIBLE) {
 			searchResultsContainerList.add(widget);
 		}

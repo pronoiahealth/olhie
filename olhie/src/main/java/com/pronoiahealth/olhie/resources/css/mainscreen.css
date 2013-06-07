@@ -100,11 +100,29 @@ body {
 	visibility: visible;
 }
 
-.header-North-RegLogDivider-Hide {
+.header-North-RegBookAddDivider-Hide {
 	width: 0px;
 	visibility: hidden;
 }
 
-.header-North-RegLogDivider-Show {
+.header-North-RegBookAddDivider-Show {
+	visibility: visible;
+}
+
+.header-North-AddBookPersonDivider-Hide {
+	width: 0px;
+	visibility: hidden;
+}
+
+.header-North-AddBookPersonDivider-Show {
+	visibility: visible;
+}
+
+.header-North-AddBookLink-Hide {
+	width: 0px;
+	visibility: hidden;
+}
+
+.header-North-AddBookLink-Show {
 	visibility: visible;
 }

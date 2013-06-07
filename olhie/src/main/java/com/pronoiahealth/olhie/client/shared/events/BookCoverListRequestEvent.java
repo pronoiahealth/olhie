@@ -8,34 +8,35 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.shared.vo;
+package com.pronoiahealth.olhie.client.shared.events;
+
+import org.jboss.errai.common.client.api.annotations.Portable;
+import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
 /**
- * BookCatagory.java<br/>
+ * BookCoverListRequestEvent.java<br/>
  * Responsibilities:<br/>
- * 1. The categories correspond to the color of a books binder<br/>
+ * 1.
  *
+ * <p>
+ * Fired form: BookCCoverService class<br/>
+ * Observed by: NewDialog class<br/>
+ * </p>
+ * 
  * @author John DeStefano
  * @version 1.0
- * @since May 26, 2013
+ * @since Jun 6, 2013
  *
  */
-public enum BookCatagory {
+@Portable
+@Conversational
+public class BookCoverListRequestEvent {
 
-	INTERFACE("black"), LEGAL("yellow");
-	
-	private String color;
-	
 	/**
 	 * Constructor
 	 *
-	 * @param color
 	 */
-	BookCatagory(String color) {
-		this.color = color;
+	public BookCoverListRequestEvent() {
 	}
 
-	public String getColor() {
-		return color;
-	}
 }

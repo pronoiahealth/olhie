@@ -17,6 +17,11 @@ import org.jboss.errai.bus.client.api.Local;
  * Responsibilities:<br/>
  * 1. Fired to tell the Comment modal dialog box to show itself<br/>
  * 
+ * <p>
+ * Fired From: Header class<br/>
+ * Observed By: CommentsDialog class.<br/>
+ * </p>
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since May 26, 2013

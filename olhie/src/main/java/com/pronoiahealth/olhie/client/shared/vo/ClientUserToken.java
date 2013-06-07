@@ -14,15 +14,17 @@ import javax.inject.Singleton;
 
 import org.jboss.errai.bus.client.api.Local;
 
+import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
+
 /**
  * ClientUserToken.java<br/>
  * Responsibilities:<br/>
  * 1. Singleton class which holds user information on client side<br>
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since May 26, 2013
- *
+ * 
  */
 @Local
 @Singleton
@@ -34,7 +36,7 @@ public class ClientUserToken {
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 */
 	public ClientUserToken() {
 	}
@@ -76,5 +78,23 @@ public class ClientUserToken {
 		userId = null;
 		loggedIn = false;
 		role = null;
+	}
+
+	/**
+	 * Check the current users role to see if he/she has at least author rights
+	 * 
+	 * @return
+	 */
+	public boolean isRoleAtLeastAuthor() {
+		if (role != null) {
+			int prec = SecurityRoleEnum.valueOf(role).getPrecedence();
+			if (prec >= 3) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 }

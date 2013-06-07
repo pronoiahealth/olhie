@@ -1,0 +1,50 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
+	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base' xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'
+	xmlns:chzn='urn:import:com.watopi.chosen.client.gwt'>
+
+	<b:Modal ui:field="newBookModal" title="Create a New Book"
+		backdrop="STATIC" keyboard="true" animation="true">
+
+		<b:FluidContainer>
+			<b:Column size="6">
+				<b:FluidRow>
+					<b:WellForm>
+						<b:ControlLabel>Book Title:</b:ControlLabel>
+						<b:TextBox placeholder="Keep titles short but descriptive"
+							maxLength="250" width="400px"></b:TextBox>
+						<b:ControlLabel>Introduction:</b:ControlLabel>
+						<b:TextArea placeholder="What's in this Book?" width="400px"></b:TextArea>
+						<b:ControlLabel>List some key words separated by commas:</b:ControlLabel>
+						<b:TextBox placeholder="Legal, DURSA, CT" width="400px"
+							maxLength="250"></b:TextBox>
+						<b:FluidRow>
+							<b:Column size="6">
+								<b:ControlLabel>Catagory:</b:ControlLabel>
+								<b:SplitDropdownButton ui:field="catagoryDropDown"
+									dropup="true" text="Select a catagory">
+								</b:SplitDropdownButton>
+							</b:Column>
+							<b:Column size="6">
+								<b:ControlLabel>Cover Design:</b:ControlLabel>
+								<b:SplitDropdownButton ui:field="bookCoverDropDown"
+									dropup="true" text="Select a cover design">
+								</b:SplitDropdownButton>
+							</b:Column>
+						</b:FluidRow>
+					</b:WellForm>
+				</b:FluidRow>
+			</b:Column>
+			<b:Column size="2">
+			</b:Column>
+		</b:FluidContainer>
+		<g:HTMLPanel ui:field="newBookFormHolder">
+		</g:HTMLPanel>
+
+		<b:ModalFooter>
+			<b:Button ui:field="submitButton" icon="SAVE" type="PRIMARY">Save</b:Button>
+		</b:ModalFooter>
+	</b:Modal>
+
+</ui:UiBinder>

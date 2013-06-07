@@ -8,29 +8,35 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.shared.events.local;
+package com.pronoiahealth.olhie.client.shared.events;
 
-import org.jboss.errai.bus.client.api.Local;
+import org.jboss.errai.common.client.api.annotations.Portable;
+import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
 /**
- * ShowLoginModalEvent.java<br/>
+ * BookCatagoryListRequestEvent.java<br/>
  * Responsibilities:<br/>
- * 1. Fired to show the Login modal dialog.<br/>
+ * 1. Used to call the BookCategoryService<br/>
  * 
  * <p>
- * Fired from: Header class<br/>
- * Observered By: LoginDialog <br/>
+ * Fired form: NewBookDialog class<br/>
+ * Observed by: BookCategoryService class<br/>
  * </p>
  *
  * @author John DeStefano
  * @version 1.0
- * @since May 26, 2013
+ * @since Jun 6, 2013
  *
  */
-@Local
-public class ShowLoginModalEvent {
+@Portable
+@Conversational
+public class BookCategoryListRequestEvent {
 
-	public ShowLoginModalEvent() {
+	/**
+	 * Constructor
+	 *
+	 */
+	public BookCategoryListRequestEvent() {
 	}
 
 }

@@ -47,7 +47,7 @@ public class Book {
 
 	private BookBackgroundPattern bookBackgroundPattern;
 
-	private BookCatagory catagory;
+	private BookCategory catagory;
 
 	private String bookBackgroundColor;
 
@@ -77,7 +77,7 @@ public class Book {
 			String introduction, String toc, String publishedDate,
 			String numberDownloads, String otherPubsByAuthor,
 			BookBackgroundPattern bookBackgroundPattern, BookState bookState,
-			BookCatagory catagory, String bookBackgroundColor) {
+			BookCategory catagory, String bookBackgroundColor) {
 		super();
 		this.bookId = bookId;
 		this.title = title;
@@ -174,11 +174,11 @@ public class Book {
 		this.bookState = bookState;
 	}
 
-	public BookCatagory getCatagory() {
+	public BookCategory getCatagory() {
 		return catagory;
 	}
 
-	public void setCatagory(BookCatagory catagory) {
+	public void setCatagory(BookCategory catagory) {
 		this.catagory = catagory;
 	}
 

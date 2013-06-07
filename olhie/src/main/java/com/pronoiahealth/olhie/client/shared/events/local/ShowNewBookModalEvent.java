@@ -13,24 +13,24 @@ package com.pronoiahealth.olhie.client.shared.events.local;
 import org.jboss.errai.bus.client.api.Local;
 
 /**
- * ShowLoginModalEvent.java<br/>
+ * ShowNewBookModalEvent.java<br/>
  * Responsibilities:<br/>
- * 1. Fired to show the Login modal dialog.<br/>
+ * 1. Fired to show the New Book Dialog.<br/>
  * 
  * <p>
- * Fired from: Header class<br/>
- * Observered By: LoginDialog <br/>
+ * Fired Form: Header class<br/>
+ * Observed By: NewBookDialog class<br/>
  * </p>
  *
  * @author John DeStefano
  * @version 1.0
- * @since May 26, 2013
+ * @since Jun 5, 2013
  *
  */
 @Local
-public class ShowLoginModalEvent {
+public class ShowNewBookModalEvent {
 
-	public ShowLoginModalEvent() {
+	public ShowNewBookModalEvent() {
 	}
 
 }

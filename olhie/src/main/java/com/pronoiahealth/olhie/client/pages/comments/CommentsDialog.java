@@ -12,6 +12,7 @@ package com.pronoiahealth.olhie.client.pages.comments;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.jboss.errai.databinding.client.api.DataBinder;
@@ -33,6 +34,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.shared.annotations.New;
 import com.pronoiahealth.olhie.client.shared.constants.MiscConstants;
 import com.pronoiahealth.olhie.client.shared.events.CommentEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowCommentsModalEvent;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.shared.vo.Comment;
 
@@ -178,6 +180,16 @@ public class CommentsDialog extends Composite {
 		commentErrors.setText("");
 		emailGroup.setType(ControlGroupType.NONE);
 		emailErrors.setText("");
+	}
+
+	/**
+	 * Show the modal dialog
+	 * 
+	 * @param showCommentsModalEvent
+	 */
+	protected void observesShowCommentsModalEvent(
+			@Observes ShowCommentsModalEvent showCommentsModalEvent) {
+		show();
 	}
 
 }

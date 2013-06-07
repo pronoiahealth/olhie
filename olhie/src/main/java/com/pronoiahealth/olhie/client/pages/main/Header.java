@@ -17,6 +17,7 @@ import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.Dropdown;
 import com.github.gwtbootstrap.client.ui.NavLink;
+import com.github.gwtbootstrap.client.ui.NavWidget;
 import com.github.gwtbootstrap.client.ui.VerticalDivider;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -27,6 +28,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.Navigator;
 import com.pronoiahealth.olhie.client.shared.events.LogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientUserUpdatedEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowCommentsModalEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowLoginModalEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowNewBookModalEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowRegisterModalEvent;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 
 /**
@@ -61,22 +66,40 @@ public class Header extends Composite {
 	public NavLink loginLink;
 
 	@UiField
+	public NavWidget addBookLink;
+
+	@UiField
 	public Dropdown personDropDown;
-	
+
 	@UiField
 	public NavLink logoutMenuItemLink;
-	
+
 	@UiField
 	public NavLink editProfileMenuLink;
 
 	@UiField
-	public VerticalDivider regLogDivider;
+	public VerticalDivider regBookAddDivider;
+
+	@UiField
+	public VerticalDivider addBookPersonDivider;
 
 	@Inject
 	private ClientUserToken clientUserToken;
-	
+
 	@Inject
 	private Event<LogoutRequestEvent> logoutRequestEvent;
+
+	@Inject
+	private Event<ShowNewBookModalEvent> showNewBookModalEvent;
+
+	@Inject
+	private Event<ShowLoginModalEvent> showLoginEvent;
+
+	@Inject
+	private Event<ShowRegisterModalEvent> showRegisterEvent;
+
+	@Inject
+	private Event<ShowCommentsModalEvent> showCommentsEvent;
 
 	/**
 	 * Default Constructor
@@ -92,8 +115,12 @@ public class Header extends Composite {
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
 
+		// Add formatting to Add link
+		addBookLink.getAnchor().getElement()
+				.setAttribute("style", "padding: 0px");
+
 		// When built hide the dropdown
-		hidePersonDropDown();
+		setNotLoggedIn();
 	}
 
 	/**
@@ -103,7 +130,7 @@ public class Header extends Composite {
 	 */
 	@UiHandler("loginLink")
 	public void loginLinkClicked(ClickEvent event) {
-		nav.showLoginModalEvent();
+		showLoginEvent.fire(new ShowLoginModalEvent());
 	}
 
 	/**
@@ -113,7 +140,7 @@ public class Header extends Composite {
 	 */
 	@UiHandler("commentsLink")
 	public void commentsLinkClicked(ClickEvent event) {
-		nav.showCommentsModalEvent();
+		showCommentsEvent.fire(new ShowCommentsModalEvent());
 	}
 
 	/**
@@ -123,10 +150,20 @@ public class Header extends Composite {
 	 */
 	@UiHandler("registerLink")
 	public void registerLinkClicked(ClickEvent event) {
-		nav.showRegisterModalEvent();
+		showRegisterEvent.fire(new ShowRegisterModalEvent());
 	}
-	
-	@UiHandler("logoutMenuItemLink") 
+
+	/**
+	 * Show the Add Book dialog
+	 * 
+	 * @param event
+	 */
+	@UiHandler("addBookLink")
+	public void addBookLinkClicked(ClickEvent event) {
+		showNewBookModalEvent.fire(new ShowNewBookModalEvent());
+	}
+
+	@UiHandler("logoutMenuItemLink")
 	public void logoutMenuItemLinkClicked(ClickEvent event) {
 		logoutRequestEvent.fire(new LogoutRequestEvent());
 	}
@@ -140,16 +177,52 @@ public class Header extends Composite {
 	protected void observesClientUserUpdatedEvent(
 			@Observes ClientUserUpdatedEvent clientUserUpdatedEvent) {
 		if (clientUserToken.isLoggedIn() == true) {
-			hideRegisterLink();
-			hideRegLogDivider();
-			hideLoginLink();
-			ShowPersonDropDown(clientUserToken.getFullName());
+			setLoggedIn();
 		} else {
-			hidePersonDropDown();
-			showRegisterLink();
-			showRegLogDivider();
-			showLoginLink();
+			setNotLoggedIn();
 		}
+	}
+
+	/**
+	 * Set the options up for a user not being logged in
+	 */
+	private void setNotLoggedIn() {
+		hidePersonDropDown();
+		showRegisterLink();
+		showRegBookAddDivider();
+		hideAddBookPersonDivider();
+		showLoginLink();
+		hideAddBook();
+	}
+
+	/**
+	 * When a user is logged in set up their menu
+	 */
+	private void setLoggedIn() {
+		hideRegisterLink();
+		hideRegBookAddDivider();
+		showAddBookPersonDivider();
+		hideLoginLink();
+		showAddBook();
+		showPersonDropDown(clientUserToken.getFullName());
+	}
+
+	/**
+	 * Shows the add book selection only if the user is at least an author
+	 */
+	private void showAddBook() {
+		if (clientUserToken.isRoleAtLeastAuthor() == true) {
+			addBookLink.removeStyleName("header-North-AddBookLink-Hide");
+			addBookLink.setStyleName("header-North-AddBookLink-Show", true);
+		}
+	}
+
+	/**
+	 * Hides the add book selection
+	 */
+	private void hideAddBook() {
+		addBookLink.removeStyleName("header-North-AddBookLink-Show");
+		addBookLink.setStyleName("header-North-AddBookLink-Hide", true);
 	}
 
 	/**
@@ -165,7 +238,7 @@ public class Header extends Composite {
 	 * 
 	 * @param userName
 	 */
-	private void ShowPersonDropDown(String userName) {
+	private void showPersonDropDown(String userName) {
 		personDropDown.removeStyleName("header-North-PersonDropDown-Hide");
 		personDropDown.setStyleName("header-North-PersonDropDown-Show", true);
 		personDropDown.setText(userName);
@@ -200,23 +273,47 @@ public class Header extends Composite {
 	 */
 	private void showRegisterLink() {
 		registerLink.removeStyleName("header-North-RegisterLink-Hide");
-		registerLink.setStyleName("header-North-registerLink-Show", true);
-	}
-	
-	/**
-	 * Hide the Register Link
-	 */
-	private void hideRegLogDivider() {
-		regLogDivider.removeStyleName("header-North-RegLogDivider-Show");
-		regLogDivider.setStyleName("header-North-RegLogDivider-Hide", true);
+		registerLink.setStyleName("header-North-RegisterLink-Show", true);
 	}
 
 	/**
-	 * Shows the Register Link
+	 * Hide the divider between the Book Add and Log in link
 	 */
-	private void showRegLogDivider() {
-		regLogDivider.removeStyleName("header-North-RegLogDivider-Hide");
-		regLogDivider.setStyleName("header-North-RegLogDivider-Show", true);
+	private void hideRegBookAddDivider() {
+		regBookAddDivider
+				.removeStyleName("header-North-RegBookAddDivider-Show");
+		regBookAddDivider.setStyleName("header-North-RegBookAddDivider-Hide",
+				true);
+	}
+
+	/**
+	 * Shows the divider between the Book Add and Log in link
+	 */
+	private void showRegBookAddDivider() {
+		regBookAddDivider
+				.removeStyleName("header-North-RegBookAddDivider-Hide");
+		regBookAddDivider.setStyleName("header-North-RegBookAddDivider-Show",
+				true);
+	}
+
+	/**
+	 * Hide the divider between the Book Add and person link
+	 */
+	private void hideAddBookPersonDivider() {
+		addBookPersonDivider
+				.removeStyleName("header-North-AddBookPersonDivider-Show");
+		addBookPersonDivider.setStyleName(
+				"header-North-AddBookPersonDivider-Hide", true);
+	}
+
+	/**
+	 * Shows the divider between the Book Add and person link
+	 */
+	private void showAddBookPersonDivider() {
+		addBookPersonDivider
+				.removeStyleName("header-North-AddBookPersonDivider-Hide");
+		addBookPersonDivider.setStyleName(
+				"header-North-AddBookPersonDivider-Show", true);
 	}
 
 }

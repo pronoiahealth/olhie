@@ -47,19 +47,17 @@ import com.pronoiahealth.olhie.client.pages.AbstractComposite;
 import com.pronoiahealth.olhie.client.pages.comments.CommentsDialog;
 import com.pronoiahealth.olhie.client.pages.error.ErrorDisplayDialog;
 import com.pronoiahealth.olhie.client.pages.login.LoginDialog;
+import com.pronoiahealth.olhie.client.pages.newbook.NewBookDialog;
 import com.pronoiahealth.olhie.client.pages.register.RegisterDialog;
+import com.pronoiahealth.olhie.client.shared.events.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.LoggedInPingEvent;
 import com.pronoiahealth.olhie.client.shared.events.LoginResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.LogoutResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.NewsItemsRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientUserUpdatedEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.ShowCommentsModalEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.ShowLoginModalEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.ShowRegisterModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.shared.vo.User;
-import com.pronoiahealth.olhie.client.widgets.dialogs.ErrorDialog;
 import com.pronoiahealth.olhie.client.widgets.newsdisplay.NewsDisplay;
 
 /**
@@ -72,6 +70,7 @@ import com.pronoiahealth.olhie.client.widgets.newsdisplay.NewsDisplay;
  * 5. Fire the ClientUserUpdatedEvent<br/>
  * 6. Observes for the LoginResponseEvent (this means a successful login)<br/>
  * 7. Observes for the LogoutResponseEvent (this means the user has logged out)<br/>
+ * 8. Fire the NewsItemsRequestEvent after initialization.<br/>
  * 
  * @author johndestefano
  * @Version 1.0
@@ -113,19 +112,22 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 	ErrorDisplayDialog errorDisplayDialog;
 
 	@Inject
-	protected MessageBus bus;
+	NewBookDialog newBookDialog;
 
-	@Inject
-	private Event<WindowResizeEvent> windowResizeEvent;
+	@UiField
+	public HTMLPanel loginModalPlaceHolder;
 
-	@Inject
-	private Event<ClientUserUpdatedEvent> clientUserUpdatedEvent;
+	@UiField
+	public HTMLPanel errorModalPlaceHolder;
 
-	@Inject
-	private Event<LoggedInPingEvent> loggedInPingEvent;
+	@UiField
+	public HTMLPanel registerModalPlaceHolder;
 
-	@Inject
-	private Event<NewsItemsRequestEvent> newsItemsRequestEvent;
+	@UiField
+	public HTMLPanel commentsModalPlaceHolder;
+
+	@UiField
+	public HTMLPanel newBookModalPlaceHolder;
 
 	/*
 	 * Used to time things on screen such as when a key is pressed.
@@ -143,9 +145,6 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 	private Integer pingFireTime;
 
 	@Inject
-	private ErrorDialog errDlg;
-
-	@Inject
 	private Navigator navigator;
 
 	@Inject
@@ -161,19 +160,25 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 	public HTMLPanel navContent;
 
 	@UiField
-	public HTMLPanel loginModalPlaceHolder;
-
-	@UiField
-	public HTMLPanel errorModalPlaceHolder;
-
-	@UiField
-	public HTMLPanel registerModalPlaceHolder;
-
-	@UiField
-	public HTMLPanel commentsModalPlaceHolder;
-
-	@UiField
 	public DockLayoutPanel dockLayoutPanel;
+
+	@Inject
+	protected MessageBus bus;
+
+	@Inject
+	private Event<WindowResizeEvent> windowResizeEvent;
+
+	@Inject
+	private Event<ClientUserUpdatedEvent> clientUserUpdatedEvent;
+
+	@Inject
+	private Event<LoggedInPingEvent> loggedInPingEvent;
+
+	@Inject
+	private Event<NewsItemsRequestEvent> newsItemsRequestEvent;
+
+	@Inject
+	private Event<ClientErrorEvent> clientErrorEvent;
 
 	/**
 	 * Default Constructor
@@ -322,35 +327,7 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 		registerModalPlaceHolder.add(registerDialog);
 		commentsModalPlaceHolder.add(commentsDialog);
 		errorModalPlaceHolder.add(errorDisplayDialog);
-	}
-
-	/**
-	 * The Header component fires this event
-	 * 
-	 * @param event
-	 */
-	public void observesShowLoginModalEvent(@Observes ShowLoginModalEvent event) {
-		loginDialog.show();
-	}
-
-	/**
-	 * The Header component fires this event
-	 * 
-	 * @param event
-	 */
-	public void observesShowRegisterModalEvent(
-			@Observes ShowRegisterModalEvent event) {
-		registerDialog.show();
-	}
-
-	/**
-	 * The Header component fires this event
-	 * 
-	 * @param event
-	 */
-	public void observesShowCommentsModalEvent(
-			@Observes ShowCommentsModalEvent event) {
-		commentsDialog.show();
+		newBookModalPlaceHolder.add(newBookDialog);
 	}
 
 	/**
@@ -398,7 +375,8 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 	 */
 	@Override
 	public void busAssociating(BusLifecycleEvent e) {
-		displayErrDlg(e);
+		clientErrorEvent.fire(new ClientErrorEvent(e.getReason()
+				.getErrorMessage()));
 	}
 
 	/**
@@ -408,7 +386,8 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 	 */
 	@Override
 	public void busDisassociating(BusLifecycleEvent e) {
-		displayErrDlg(e);
+		clientErrorEvent.fire(new ClientErrorEvent(e.getReason()
+				.getErrorMessage()));
 	}
 
 	/**
@@ -418,7 +397,8 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 	 */
 	@Override
 	public void busOnline(BusLifecycleEvent e) {
-		displayErrDlg(e);
+		clientErrorEvent.fire(new ClientErrorEvent(e.getReason()
+				.getErrorMessage()));
 	}
 
 	/**
@@ -428,19 +408,8 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 	 */
 	@Override
 	public void busOffline(BusLifecycleEvent e) {
-		displayErrDlg(e);
-	}
-
-	/**
-	 * Shows the error dialog after an ErraiBus error
-	 * 
-	 * @param e
-	 */
-	private void displayErrDlg(BusLifecycleEvent e) {
-		String errMsg = getErrMsg(e);
-		if (errMsg != null) {
-			errDlg.setMsgText(errMsg);
-		}
+		clientErrorEvent.fire(new ClientErrorEvent(e.getReason()
+				.getErrorMessage()));
 	}
 
 	/**

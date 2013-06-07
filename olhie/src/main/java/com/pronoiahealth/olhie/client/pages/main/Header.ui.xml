@@ -8,18 +8,30 @@
 			<b:Brand>Open Library of Health Information Exchange</b:Brand>
 			<b:Nav alignment="RIGHT">
 				<b:NavPills>
-					<b:NavLink ui:field="commentsLink">Comments</b:NavLink>
+					<b:Tooltip text="Leave Comments for the Administrator"
+						placement="BOTTOM">
+						<b:NavLink ui:field="commentsLink">Comments</b:NavLink>
+					</b:Tooltip>
 					<b:VerticalDivider></b:VerticalDivider>
-					<b:NavLink ui:field="registerLink">Register</b:NavLink>
-					<b:VerticalDivider ui:field="regLogDivider"></b:VerticalDivider>
+					<b:Tooltip text="Register for an Account" placement="BOTTOM">
+						<b:NavLink ui:field="registerLink">Register</b:NavLink>
+					</b:Tooltip>
+					<b:VerticalDivider ui:field="regBookAddDivider"></b:VerticalDivider>
+					<b:Tooltip text="Author a new Book." placement="BOTTOM">
+						<b:NavWidget ui:field="addBookLink">
+							<b:Image url="Olhie/images/plus_sign.png" />
+						</b:NavWidget>
+					</b:Tooltip>
+					<b:VerticalDivider ui:field="addBookPersonDivider"></b:VerticalDivider>
 					<b:NavLink ui:field="loginLink">Log-In</b:NavLink>
 					<b:Dropdown ui:field="personDropDown" text="Dropdown example">
 						<b:NavLink ui:field="logoutMenuItemLink" icon="CIRCLE_ARROW_RIGHT">Logout</b:NavLink>
-						<b:NavLink ui:field="editProfileMenuLink" icon="EDIT">Edit Profile</b:NavLink>
+						<b:NavLink ui:field="editProfileMenuLink" icon="EDIT">Edit
+							Profile</b:NavLink>
 					</b:Dropdown>
 				</b:NavPills>
 			</b:Nav>
 		</b:ResponsiveNavbar>
 	</g:HTMLPanel>
-	
+
 </ui:UiBinder>

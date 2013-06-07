@@ -28,6 +28,7 @@ import com.pronoiahealth.olhie.client.shared.events.RegistrationErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.RegistrationRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.RegistrationResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowRegisterModalEvent;
 import com.pronoiahealth.olhie.client.shared.exceptions.DataValidationException;
 import com.pronoiahealth.olhie.client.shared.vo.RegistrationForm;
 
@@ -149,6 +150,16 @@ public class RegisterDialog extends Composite {
 			regForm.setUserIdAlreadyInUse();
 			break;
 		}
+	}
+
+	/**
+	 * Shows the dialog
+	 * 
+	 * @param showRegisterModalEvent
+	 */
+	protected void observesShowRegisterModalEvent(
+			@Observes ShowRegisterModalEvent showRegisterModalEvent) {
+		show();
 	}
 
 }

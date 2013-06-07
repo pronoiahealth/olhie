@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.shared.events.LoginErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.LoginRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.LoginResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowLoginModalEvent;
 
 /**
  * Modal Login Dialog<br/>
@@ -178,5 +179,15 @@ public class LoginDialog extends Composite {
 	protected void observesLoginErrorEvent(
 			@Observes LoginErrorEvent loginErrorEvent) {
 		errorMsg.setText(loginErrorEvent.getErrorString());
+	}
+
+	/**
+	 * Shows the dialog
+	 * 
+	 * @param showLoginModalEvent
+	 */
+	protected void observesShowLoginModalEvent(
+			@Observes ShowLoginModalEvent showLoginModalEvent) {
+		show();
 	}
 }

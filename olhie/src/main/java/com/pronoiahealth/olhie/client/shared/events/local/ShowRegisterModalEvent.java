@@ -16,6 +16,11 @@ import org.jboss.errai.bus.client.api.Local;
  * ShowRegisterModalEvent.java<br/>
  * Responsibilities:<br/>
  * 1. Fired to show the Register modal dialog<br/>
+ * 
+ * <p>
+ * Fired From: Header class <br/>
+ * Observed By: RegisterDialog class <br/> 
+ * </p>
  *
  * @author John DeStefano
  * @version 1.0

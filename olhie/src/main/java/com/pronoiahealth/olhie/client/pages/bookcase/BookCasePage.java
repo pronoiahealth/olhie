@@ -32,7 +32,7 @@ import com.pronoiahealth.olhie.client.pages.MenuSyncSecureAbstractPage;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookBackgroundPattern;
-import com.pronoiahealth.olhie.client.shared.vo.BookCatagory;
+import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
 import com.pronoiahealth.olhie.client.shared.vo.BookCollection;
 import com.pronoiahealth.olhie.client.shared.vo.BookState;
 import com.pronoiahealth.olhie.client.shared.vo.Bookcase;
@@ -117,7 +117,7 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 			Book book1 = new Book("" + i, "Book 1", "John DeStefano", 4,
 					"Test introduction", "Need some help here", "06/26/2011",
 					"400", "Book 3, Book 4", BookBackgroundPattern.PAPER,
-					BookState.BOOK_STATE_INVISIBLE, BookCatagory.INTERFACE, "green");
+					BookState.BOOK_STATE_INVISIBLE, new BookCategory("black", "Interface"), "green");
 			bk1.addBook(book1);
 		}
 		bookcase.addCollection(bk1);
@@ -125,12 +125,12 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 		Book book2 = new Book("2", "Book 2", "John DeStefano", 4,
 				"Test introduction", "Need some help here", "06/26/2011",
 				"400", "Book 3, Book 4", BookBackgroundPattern.PAPER,
-				BookState.BOOK_STATE_VISIBLE, BookCatagory.LEGAL, "blue");
+				BookState.BOOK_STATE_VISIBLE, new BookCategory("yellow", "Legal"), "blue");
 
 		Book book3 = new Book("3", "Book 3", "John DeStefano", 4,
 				"Test introduction", "Need some help here", "06/26/2011",
 				"400", "Book 3, Book 4", BookBackgroundPattern.PAPER,
-				BookState.BOOK_STATE_VISIBLE, BookCatagory.LEGAL, "blue");
+				BookState.BOOK_STATE_VISIBLE, new BookCategory("yellow", "Legal"), "blue");
 
 		BookCollection bk2 = new BookCollection();
 		bk2.setCollectionName("My Favorites");

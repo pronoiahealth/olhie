@@ -33,6 +33,7 @@ import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowCommentsModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowLoginModalEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowNewBookModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowRegisterModalEvent;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 
@@ -76,16 +77,6 @@ public class Navigator {
 	@Inject
 	private TransitionTo<BookReviewPage> showBookReviewPage;
 
-	@Inject
-	private Event<ShowLoginModalEvent> showLoginEvent;
-
-	@Inject
-	private Event<ShowRegisterModalEvent> showRegisterEvent;
-
-	@Inject
-	private Event<ShowCommentsModalEvent> showCommentsEvent;
-
-	// private String defPageName;
 
 	@Inject
 	public Navigator() {
@@ -153,18 +144,6 @@ public class Navigator {
 		nav.goTo(defAppPageName);
 	}
 
-	public void showLoginModalEvent() {
-		showLoginEvent.fire(new ShowLoginModalEvent());
-	}
-
-	public void showCommentsModalEvent() {
-		showCommentsEvent.fire(new ShowCommentsModalEvent());
-	}
-
-	public void showRegisterModalEvent() {
-		showRegisterEvent.fire(new ShowRegisterModalEvent());
-	}
-
 	/**
 	 * Based on the current users role and the role of the page return a boolean
 	 * value. If the role is valid for the page return true other wise false.
@@ -180,35 +159,14 @@ public class Navigator {
 	public boolean allowPageFromShownMethod() {
 		String currentPageName = nav.getCurrentPage().name();
 
-		// If trying to show the default page go for it
-		//if (currentPageName.equalsIgnoreCase(defAppPageName)) {
-		//	return true;
-		//}
-
 		if (clientUserToken.isLoggedIn()) {
 			return pageRolesMap.get(
 					SecurityRoleEnum.valueOf(clientUserToken.getRole())
 							.getName()).contains(currentPageName);
-		} //else if (pageRolesMap == null || pageRolesMap.size() == 0) {
-			// By pass check when the map is null or has not roles it it
-			//return false;
-		 else {
+		} else {
 			// Only show anonymous pages
 			return pageRolesMap.get(SecurityRoleEnum.ANONYMOUS.getName())
 					.contains(currentPageName);
 		}
 	}
-
-	/**
-	 * Get the default page name
-	 * 
-	 * @return
-	 */
-	// public String getDefaultPageName() {
-	// if (defPageName == null || defPageName.length() == 0) {
-	// defPageName = nav.getPagesByRole(DefaultPage.class).iterator()
-	// .next().name();
-	// }
-	// return defPageName;
-	// }
 }

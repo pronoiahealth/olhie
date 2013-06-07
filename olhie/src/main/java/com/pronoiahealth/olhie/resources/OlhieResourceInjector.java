@@ -32,6 +32,9 @@ public class OlhieResourceInjector {
 
 	private static HeadElement head;
 
+	/**
+	 * Called to configure resources
+	 */
 	public static void configure() {
 		configureWithCssFile();
 		configureJs();
@@ -61,6 +64,7 @@ public class OlhieResourceInjector {
 		OlhieResources.INSTANCE.registerdialogcss().ensureInjected();
 		OlhieResources.INSTANCE.commentdialogcss().ensureInjected();
 		OlhieResources.INSTANCE.newsdisplaycss().ensureInjected();
+		OlhieResources.INSTANCE.newbookcss().ensureInjected();
 		/*
 		 * injectResourceCssAsFile("bookshelf_skin01.css");
 		 */

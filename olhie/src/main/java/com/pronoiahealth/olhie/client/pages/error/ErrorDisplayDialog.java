@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.pronoiahealth.olhie.client.shared.events.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
 
 /**
@@ -44,7 +45,7 @@ public class ErrorDisplayDialog extends Composite {
 
 	@UiField
 	public Modal errorDisplayModal;
-	
+
 	@UiField
 	public ScrollPanel errorMsgPanel;
 
@@ -78,10 +79,29 @@ public class ErrorDisplayDialog extends Composite {
 	protected void observesServiceErrorEvent(
 			@Observes ServiceErrorEvent serviceErrorEvent) {
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
-		errorMsg.setHTML(builder.appendEscaped(serviceErrorEvent.getErrorMsg()).toSafeHtml());
+		errorMsg.setHTML(builder.appendEscaped(serviceErrorEvent.getErrorMsg())
+				.toSafeHtml());
 		errorDisplayModal.show();
 	}
 
+	/**
+	 * Observes ClientErrorEvent
+	 * 
+	 * @param clientErrorEvent
+	 */
+	protected void observesClientErrorEvent(
+			@Observes ClientErrorEvent clientErrorEvent) {
+		SafeHtmlBuilder builder = new SafeHtmlBuilder();
+		errorMsg.setHTML(builder.appendEscaped(clientErrorEvent.getMessage())
+				.toSafeHtml());
+		errorDisplayModal.show();
+	}
+
+	/**
+	 * Close the error dialog.
+	 * 
+	 * @param event
+	 */
 	@UiHandler("closeButton")
 	public void closeButtonClicked(ClickEvent event) {
 		errorDisplayModal.hide();

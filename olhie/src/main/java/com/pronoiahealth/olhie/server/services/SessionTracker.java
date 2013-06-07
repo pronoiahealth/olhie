@@ -58,15 +58,16 @@ public class SessionTracker {
 		service.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
-				Iterator<UserSessionToken> entryIterator = activeSessions
-						.values().iterator();
-				while (entryIterator.hasNext()) {
-					UserSessionToken user = entryIterator.next();
-					if (user.isTimedout()) {
-						entryIterator.remove();
+				if (activeSessions.size() > 0) {
+					Iterator<UserSessionToken> entryIterator = activeSessions
+							.values().iterator();
+					while (entryIterator.hasNext()) {
+						UserSessionToken user = entryIterator.next();
+						if (user.isTimedout()) {
+							entryIterator.remove();
+						}
 					}
 				}
-
 			}
 		}, 0, 10, TimeUnit.SECONDS);
 	}
