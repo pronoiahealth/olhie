@@ -28,7 +28,7 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.query.client.Function;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Widget;
-import com.pronoiahealth.olhie.client.shared.vo.Book;
+import com.pronoiahealth.olhie.client.shared.vo.BookForDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.BookCollection;
 import com.pronoiahealth.olhie.client.shared.vo.BookState;
 import com.pronoiahealth.olhie.client.shared.vo.Bookcase;
@@ -170,19 +170,18 @@ public class BookcaseWidget extends Widget {
 
 			// Add books to products box
 			BookCollection currColl = bookCase.getBookCollections().get(i);
-			for (Book book : currColl.getBooks()) {
+			for (BookForDisplay book : currColl.getBooks()) {
 				DivElement productElem = doc.createDivElement();
 				productElem.addClassName("product");
 				productElem.setAttribute("data-type", "");
 				productElem.setAttribute("data-popup", "");
-				productElem.setAttribute("data-url", book.getBookId());
+				productElem.setAttribute("data-url", book.getId());
 				productElem.setAttribute("title", book.getTitle());
 				productElem.setAttribute("background-color",
-						book.getBookBackgroundColor());
+						"white");
 				productElem.setAttribute("binder-color", book.getCatagory()
 						.getColor());
-				productElem.setAttribute("background-pattern", book
-						.getBookBackgroundPattern().getPattern());
+				productElem.setAttribute("background-pattern", book.getBookCover().getImgUrl());
 				productElem.setAttribute("title", book.getTitle());
 				productElem
 						.setAttribute("private",

@@ -10,120 +10,85 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.shared.vo;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.jboss.errai.common.client.api.annotations.Portable;
+import org.jboss.errai.databinding.client.api.Bindable;
+
+import com.orientechnologies.orient.core.annotation.OId;
+import com.orientechnologies.orient.core.annotation.OVersion;
 
 /**
  * Book.java<br/>
  * Responsibilities:<br/>
- * 1. Represents the Book<br/>
- *
+ * 1. Book<br/>
+ * 
  * @author John DeStefano
  * @version 1.0
- * @since May 26, 2013
- *
+ * @since Jun 7, 2013
+ * 
  */
 @Portable
+@Bindable
 public class Book {
+	@OId
+	private String id;
 
-	private String bookId;
+	@OVersion
+	private Long version;
 
-	private String title;
+	@NotNull
+	@Size(min = 1, max = 250, message = "Must be between 1 and 250 characters long.")
+	private String bookTitle;
 
-	private BookState bookState;
-
-	private String authorName;
-
-	private Integer rating;
-
+	@NotNull
+	@Size(min = 10, message = "Must be at least 10 characters long.")
 	private String introduction;
 
-	private String toc;
+	@Size(max = 250)
+	private String keywords;
 
-	private String publishedDate;
+	@NotNull
+	@Size(min = 1, max = 50)
+	private String category;
 
-	private String numberDownloads;
-
-	private String otherPubsByAuthor;
-
-	private BookBackgroundPattern bookBackgroundPattern;
-
-	private BookCategory catagory;
-
-	private String bookBackgroundColor;
+	@NotNull
+	@Size(min = 1, max = 50)
+	private String coverName;
 
 	/**
 	 * Constructor
+	 * 
 	 */
 	public Book() {
 	}
 
 	/**
 	 * Constructor
-	 * 
-	 * @param bookId
-	 * @param title
-	 * @param authorName
-	 * @param rating
+	 *
+	 * @param bookTitle
 	 * @param introduction
-	 * @param toc
-	 * @param publishedDate
-	 * @param numberDownloads
-	 * @param otherPubsByAuthor
-	 * @param bookImg
-	 * @param bookImgHeight
-	 * @param bookWidthHeight
+	 * @param keywords
+	 * @param category
+	 * @param coverName
 	 */
-	public Book(String bookId, String title, String authorName, int rating,
-			String introduction, String toc, String publishedDate,
-			String numberDownloads, String otherPubsByAuthor,
-			BookBackgroundPattern bookBackgroundPattern, BookState bookState,
-			BookCategory catagory, String bookBackgroundColor) {
+	public Book(String bookTitle, String introduction, String keywords,
+			String category, String coverName) {
 		super();
-		this.bookId = bookId;
-		this.title = title;
-		this.authorName = authorName;
-		this.rating = rating;
+		this.bookTitle = bookTitle;
 		this.introduction = introduction;
-		this.toc = toc;
-		this.publishedDate = publishedDate;
-		this.numberDownloads = numberDownloads;
-		this.otherPubsByAuthor = otherPubsByAuthor;
-		this.bookState = bookState;
-		this.catagory = catagory;
-		this.bookBackgroundPattern = bookBackgroundPattern;
-		this.bookBackgroundColor = bookBackgroundColor;
+		this.keywords = keywords;
+		this.category = category;
+		this.coverName = coverName;
 	}
 
-	public String getBookId() {
-		return bookId;
+	public String getBookTitle() {
+		return bookTitle;
 	}
 
-	public void setBookId(String bookId) {
-		this.bookId = bookId;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getAuthorName() {
-		return authorName;
-	}
-
-	public void setAuthorName(String authorName) {
-		this.authorName = authorName;
-	}
-
-	public Integer getRating() {
-		return rating;
-	}
-
-	public void setRating(Integer rating) {
-		this.rating = rating;
+	public void setBookTitle(String bookTitle) {
+		this.bookTitle = bookTitle;
 	}
 
 	public String getIntroduction() {
@@ -134,68 +99,32 @@ public class Book {
 		this.introduction = introduction;
 	}
 
-	public String getToc() {
-		return toc;
+	public String getCategory() {
+		return category;
 	}
 
-	public void setToc(String toc) {
-		this.toc = toc;
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
-	public String getPublishedDate() {
-		return publishedDate;
+	public String getCoverName() {
+		return coverName;
 	}
 
-	public void setPublishedDate(String publishedDate) {
-		this.publishedDate = publishedDate;
+	public void setCoverName(String coverName) {
+		this.coverName = coverName;
 	}
 
-	public String getNumberDownloads() {
-		return numberDownloads;
+	public String getId() {
+		return id;
 	}
 
-	public void setNumberDownloads(String numberDownloads) {
-		this.numberDownloads = numberDownloads;
+	public String getKeywords() {
+		return keywords;
 	}
 
-	public String getOtherPubsByAuthor() {
-		return otherPubsByAuthor;
+	public void setKeywords(String keywords) {
+		this.keywords = keywords;
 	}
 
-	public void setOtherPubsByAuthor(String otherPubsByAuthor) {
-		this.otherPubsByAuthor = otherPubsByAuthor;
-	}
-
-	public BookState getBookState() {
-		return bookState;
-	}
-
-	public void setBookState(BookState bookState) {
-		this.bookState = bookState;
-	}
-
-	public BookCategory getCatagory() {
-		return catagory;
-	}
-
-	public void setCatagory(BookCategory catagory) {
-		this.catagory = catagory;
-	}
-
-	public BookBackgroundPattern getBookBackgroundPattern() {
-		return bookBackgroundPattern;
-	}
-
-	public void setBookBackgroundPattern(
-			BookBackgroundPattern bookBackgroundPattern) {
-		this.bookBackgroundPattern = bookBackgroundPattern;
-	}
-
-	public String getBookBackgroundColor() {
-		return bookBackgroundColor;
-	}
-
-	public void setBookBackgroundColor(String bookBackgroundColor) {
-		this.bookBackgroundColor = bookBackgroundColor;
-	}
 }

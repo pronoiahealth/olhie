@@ -22,9 +22,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
 import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
-import com.pronoiahealth.olhie.client.shared.vo.Book;
-import com.pronoiahealth.olhie.client.shared.vo.BookBackgroundPattern;
+import com.pronoiahealth.olhie.client.shared.vo.BookForDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
+import com.pronoiahealth.olhie.client.shared.vo.BookCover;
 import com.pronoiahealth.olhie.client.shared.vo.BookState;
 import com.pronoiahealth.olhie.client.widgets.booklist.BookListResultWidget;
 import com.watopi.chosen.client.gwt.ChosenListBox;
@@ -34,11 +34,11 @@ import com.watopi.chosen.client.gwt.ChosenListBox;
  * Responsibilities:<br/>
  * 1. Show the results of a search query on the Search page<br/>
  * 2. Observes for the SearchPageLoadedEvent<br/>
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since May 26, 2013
- *
+ * 
  */
 public class SearchResultsComponent extends AbstractComposite {
 
@@ -47,7 +47,7 @@ public class SearchResultsComponent extends AbstractComposite {
 
 	// @UiField
 	// public Pagination searchResultsPager;
-	
+
 	@UiField
 	public FluidRow searchResultsHeader;
 
@@ -59,7 +59,7 @@ public class SearchResultsComponent extends AbstractComposite {
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 */
 	public SearchResultsComponent() {
 	}
@@ -73,51 +73,21 @@ public class SearchResultsComponent extends AbstractComposite {
 
 		// Hearder for list
 		searchResultsHeader.addStyleName("ph-SearchResults-Header");
-		
+
 		// Set width of dropdown
 		resultListCnt.setWidth("100px");
 		
-		// add a book for test
-		BookListResultWidget widget = new BookListResultWidget(new Book("1",
-				"Book 1 Test Test Test Test Test Test Test", "John DeStefano", 4, "Test introduction",
-				"Need some help here", "06/26/2011", "400", "Book 3, Book 4",
-				BookBackgroundPattern.PAPER, BookState.BOOK_STATE_INVISIBLE, new BookCategory("black", "Interface"), "green"));
+		// Test add some books
+
+		BookListResultWidget widget = new BookListResultWidget(new BookForDisplay("id", "Title 1", "John D", 4, "Test introduction",
+				"TOC", "06/26/1958", "400", "Book 1 Book2",
+				BookState.BOOK_STATE_INVISIBLE, new BookCategory("yellow", "Legal"),
+				new BookCover("Olhie/images/p1.png", "Paper")));
 		if (widget.getBook().getBookState() == BookState.BOOK_STATE_INVISIBLE) {
 			widget.getBookImagePanelWidget().setVisible(false);
 			searchResultsContainerList.add(widget);
 		}
 
-		widget = new BookListResultWidget(new Book("2", "Book 2",
-				"John DeStefano", 4, "Test introduction",
-				"Need some help here", "06/26/2011", "400", "Book 3, Book 4",
-				BookBackgroundPattern.PAPER, BookState.BOOK_STATE_VISIBLE, new BookCategory("yellow", "Legal"),"orange"));
-		if (widget.getBook().getBookState() == BookState.BOOK_STATE_VISIBLE) {
-			searchResultsContainerList.add(widget);
-		}
-
-		widget = new BookListResultWidget(new Book("3", "Book 3",
-				"John DeStefano", 4, "Test introduction",
-				"Need some help here", "06/26/2011", "400", "Book 3, Book 4",
-				BookBackgroundPattern.PAPER, BookState.BOOK_STATE_VISIBLE, new BookCategory("yellow", "Legal"), "black"));
-		if (widget.getBook().getBookState() == BookState.BOOK_STATE_VISIBLE) {
-			searchResultsContainerList.add(widget);
-		}
-
-		widget = new BookListResultWidget(new Book("4", "Book 2",
-				"John DeStefano", 4, "Test introduction",
-				"Need some help here", "06/26/2011", "400", "Book 3, Book 4",
-				BookBackgroundPattern.PAPER, BookState.BOOK_STATE_VISIBLE, new BookCategory("yellow", "Legal"), "lime"));
-		if (widget.getBook().getBookState() == BookState.BOOK_STATE_VISIBLE) {
-			searchResultsContainerList.add(widget);
-		}
-
-		widget = new BookListResultWidget(new Book("5", "Book 3",
-				"John DeStefano", 4, "Test introduction",
-				"Need some help here", "06/26/2011", "400", "Book 3, Book 4",
-				BookBackgroundPattern.PAPER, BookState.BOOK_STATE_VISIBLE, new BookCategory("yellow", "Legal"), "green"));
-		if (widget.getBook().getBookState() == BookState.BOOK_STATE_VISIBLE) {
-			searchResultsContainerList.add(widget);
-		}
 	}
 
 	/**

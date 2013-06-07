@@ -22,29 +22,31 @@ import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
  * BookCategoryListWidget.java<br/>
  * Responsibilities:<br/>
  * 1. Holds BookCategories for diplay<br/>
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since Jun 6, 2013
- *
+ * 
  */
 public class BookCategoryListWidget extends NavWidget {
+	public static final String BINDER_COLOR_HOLDER = "binder-color";
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 */
 	public BookCategoryListWidget() {
 	}
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param category
 	 */
 	public BookCategoryListWidget(BookCategory category) {
 		super();
 		String name = category.getCatagory();
+		String color = category.getColor();
 		FlowPanel fp = new FlowPanel();
 		SimplePanel colorPanel = new SimplePanel();
 		colorPanel
@@ -52,9 +54,10 @@ public class BookCategoryListWidget extends NavWidget {
 				.setAttribute(
 						"style",
 						"background-color: "
-								+ category.getColor()
+								+ color
 								+ "; margin-right: 5px; display: inline; border: 1px solid black;");
-		Image i = new Image(GWT.getModuleName() + "/images/transparent_15x1.png");
+		Image i = new Image(GWT.getModuleName()
+				+ "/images/transparent_15x1.png");
 		colorPanel.add(i);
 		fp.add(colorPanel);
 		HTML h = new HTML();
@@ -62,6 +65,7 @@ public class BookCategoryListWidget extends NavWidget {
 		h.setText(name);
 		fp.add(h);
 		setName(name);
+		getAnchor().getElement().setAttribute(BINDER_COLOR_HOLDER, color);
 		add(fp);
 	}
 }

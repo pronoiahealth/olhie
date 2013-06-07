@@ -30,7 +30,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.pronoiahealth.olhie.client.shared.vo.Book;
+import com.pronoiahealth.olhie.client.shared.vo.BookForDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.BookState;
 import com.pronoiahealth.olhie.client.widgets.iosswitch.IOSSwitch;
 import com.pronoiahealth.olhie.client.widgets.rating.StarRating;
@@ -78,17 +78,17 @@ public class BookListResultWidget extends Composite {
 
 	private BookImagePanelWidget bookImagePanelWidget;
 
-	private Book book;
+	private BookForDisplay book;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param book
 	 */
-	public BookListResultWidget(Book book) {
+	public BookListResultWidget(BookForDisplay book) {
 		this.book = book;
 		String dragContainmentMarker = "ph-SearchResults-BookListResult-"
-				+ book.getBookId();
+				+ book.getId();
 		ratingLabel = new StarRating(5, true);
 		ratingLabel.setRating(book.getRating());
 		initWidget(uiBinder.createAndBindUi(this));
@@ -116,9 +116,8 @@ public class BookListResultWidget extends Composite {
 		addToCollectionPanelHolder.add(dropTarget);
 
 		// Draggable book image panel
-		bookImagePanelWidget = new BookImagePanelWidget(
-				book.getBookBackgroundColor(), book.getBookBackgroundPattern()
-						.getPattern(), book.getCatagory().getColor());
+		bookImagePanelWidget = new BookImagePanelWidget("white", book
+				.getBookCover().getImgUrl(), book.getCatagory().getColor());
 		if (book.getBookState() == BookState.BOOK_STATE_INVISIBLE) {
 			bookImagePanelWidget.setVisible(false);
 		}
@@ -152,11 +151,11 @@ public class BookListResultWidget extends Composite {
 		return options;
 	}
 
-	public Book getBook() {
+	public BookForDisplay getBook() {
 		return book;
 	}
 
-	public void setBook(Book book) {
+	public void setBook(BookForDisplay book) {
 		this.book = book;
 	}
 

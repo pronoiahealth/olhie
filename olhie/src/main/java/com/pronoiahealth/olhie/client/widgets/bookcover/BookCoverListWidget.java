@@ -29,6 +29,7 @@ import com.pronoiahealth.olhie.client.shared.vo.BookCover;
  *
  */
 public class BookCoverListWidget extends NavWidget {
+	public static final String IMG_URL_HOLDER = "img-url";
 
 	/**
 	 * Constructor
@@ -45,12 +46,13 @@ public class BookCoverListWidget extends NavWidget {
 	public BookCoverListWidget(BookCover bookCover) {
 		super();
 		String name = bookCover.getCoverName();
+		String imgUrl = bookCover.getImgUrl();
 		FlowPanel fp = new FlowPanel();
 		SimplePanel colorPanel = new SimplePanel();
 		colorPanel.setStyleName("ph-NewBook-BookImagePanel", true);
 		colorPanel.getElement().setAttribute(
 				"style",
-				"background-image: url('" + bookCover.getImgUrl()
+				"background-image: url('" + imgUrl
 						+ "'); background-repeat: repeat; display: inline;");
 		Image i = new Image(GWT.getModuleName() + "/images/transparent_15x1.png");
 		i.getElement().setAttribute("style", "width: 40px;");
@@ -61,6 +63,7 @@ public class BookCoverListWidget extends NavWidget {
 		h.setText(name);
 		fp.add(h);
 		setName(name);
+		getAnchor().getElement().setAttribute(IMG_URL_HOLDER, imgUrl);
 		add(fp);
 	}
 }

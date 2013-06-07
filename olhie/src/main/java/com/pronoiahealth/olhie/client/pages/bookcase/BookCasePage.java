@@ -17,7 +17,6 @@ import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.bus.client.api.messaging.MessageBus;
 import org.jboss.errai.bus.client.api.messaging.MessageCallback;
 import org.jboss.errai.ui.nav.client.local.Page;
-import org.jboss.errai.ui.nav.client.local.PageShown;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -30,10 +29,10 @@ import com.pronoiahealth.olhie.client.navigation.RegisteredRole;
 import com.pronoiahealth.olhie.client.pages.AppSelectors;
 import com.pronoiahealth.olhie.client.pages.MenuSyncSecureAbstractPage;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
-import com.pronoiahealth.olhie.client.shared.vo.Book;
-import com.pronoiahealth.olhie.client.shared.vo.BookBackgroundPattern;
+import com.pronoiahealth.olhie.client.shared.vo.BookForDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
 import com.pronoiahealth.olhie.client.shared.vo.BookCollection;
+import com.pronoiahealth.olhie.client.shared.vo.BookCover;
 import com.pronoiahealth.olhie.client.shared.vo.BookState;
 import com.pronoiahealth.olhie.client.shared.vo.Bookcase;
 import com.pronoiahealth.olhie.client.widgets.bookcase.BookcaseWidget;
@@ -114,23 +113,23 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 		bk1.setCollectionName("Authored by Me");
 
 		for (int i = 1; i <= 100; i++) {
-			Book book1 = new Book("" + i, "Book 1", "John DeStefano", 4,
-					"Test introduction", "Need some help here", "06/26/2011",
-					"400", "Book 3, Book 4", BookBackgroundPattern.PAPER,
-					BookState.BOOK_STATE_INVISIBLE, new BookCategory("black", "Interface"), "green");
+			BookForDisplay book1 = new BookForDisplay("id", "Title 1", "John D", 4, "Test introduction",
+					"TOC", "06/26/1958", "400", "Book 1 Book2",
+					BookState.BOOK_STATE_INVISIBLE, new BookCategory("yellow", "Legal"),
+					new BookCover("Olhie/images/p1.png", "Paper"));
 			bk1.addBook(book1);
 		}
 		bookcase.addCollection(bk1);
 
-		Book book2 = new Book("2", "Book 2", "John DeStefano", 4,
-				"Test introduction", "Need some help here", "06/26/2011",
-				"400", "Book 3, Book 4", BookBackgroundPattern.PAPER,
-				BookState.BOOK_STATE_VISIBLE, new BookCategory("yellow", "Legal"), "blue");
+		BookForDisplay book2 = new BookForDisplay("id", "Title 1", "John D", 4, "Test introduction",
+				"TOC", "06/26/1958", "400", "Book 1 Book2",
+				BookState.BOOK_STATE_INVISIBLE, new BookCategory("yellow", "Legal"),
+				new BookCover("Olhie/images/p1.png", "Paper"));
 
-		Book book3 = new Book("3", "Book 3", "John DeStefano", 4,
-				"Test introduction", "Need some help here", "06/26/2011",
-				"400", "Book 3, Book 4", BookBackgroundPattern.PAPER,
-				BookState.BOOK_STATE_VISIBLE, new BookCategory("yellow", "Legal"), "blue");
+		BookForDisplay book3 = new BookForDisplay("id", "Title 1", "John D", 4, "Test introduction",
+				"TOC", "06/26/1958", "400", "Book 1 Book2",
+				BookState.BOOK_STATE_INVISIBLE, new BookCategory("yellow", "Legal"),
+				new BookCover("Olhie/images/p1.png", "Paper"));
 
 		BookCollection bk2 = new BookCollection();
 		bk2.setCollectionName("My Favorites");

@@ -11,18 +11,32 @@
 package com.pronoiahealth.olhie.client.pages.newbook;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 
+import org.jboss.errai.databinding.client.BindableProxy;
+import org.jboss.errai.databinding.client.api.DataBinder;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.Column;
+import com.github.gwtbootstrap.client.ui.ControlGroup;
+import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.SplitDropdownButton;
+import com.github.gwtbootstrap.client.ui.TextArea;
+import com.github.gwtbootstrap.client.ui.TextBox;
+import com.github.gwtbootstrap.client.ui.WellForm;
 import com.github.gwtbootstrap.client.ui.base.IconAnchor;
+import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -30,15 +44,20 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.validation.client.impl.Validation;
 import com.pronoiahealth.olhie.client.shared.events.BookCategoryListRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookCategoryListResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookCoverListRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookCoverListResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewBookModalEvent;
+import com.pronoiahealth.olhie.client.shared.exceptions.DataValidationException;
+import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
 import com.pronoiahealth.olhie.client.shared.vo.BookCover;
+import com.pronoiahealth.olhie.client.shared.vo.RegistrationForm;
 import com.pronoiahealth.olhie.client.widgets.bookcat.BookCategoryListWidget;
 import com.pronoiahealth.olhie.client.widgets.bookcover.BookCoverListWidget;
+import com.pronoiahealth.olhie.client.widgets.booklargeshow.LargeBookWidget;
 
 /**
  * NewBookDialog.java<br/>
@@ -55,14 +74,55 @@ public class NewBookDialog extends Composite {
 	@Inject
 	UiBinder<Widget, NewBookDialog> binder;
 
+	@Inject
+	private DataBinder<Book> dataBinder;
+
+	private Book book;
+
 	@UiField
 	public Modal newBookModal;
 
 	@UiField
+	public WellForm newBookForm;
+
+	@UiField
+	public TextBox bookTitle;
+
+	@UiField
+	public ControlGroup bookTitleCG;
+
+	@UiField
+	public TextArea introduction;
+	
+	@UiField
+	public ControlGroup introductionCG;
+
+	@UiField
+	public TextBox keywords;
+	
+	@UiField
+	public ControlGroup keywordsCG;
+
+	@UiField
 	public SplitDropdownButton catagoryDropDown;
+	
+	@UiField
+	public ControlGroup categoryCG;
 
 	@UiField
 	public SplitDropdownButton bookCoverDropDown;
+	
+	@UiField
+	public ControlGroup bookCoverCG;
+	
+	@UiField
+	public Column bookDesignCol;
+
+	@UiField
+	public Label bookDisplayTitle;
+
+	@UiField
+	public LargeBookWidget largeBookWidget;
 
 	@UiField
 	public Button submitButton;
@@ -85,39 +145,69 @@ public class NewBookDialog extends Composite {
 	}
 
 	/**
-	 * Init the display and set its style. Load the catagory list box
+	 * Init the display and set its style. Load the category list box
 	 */
 	@PostConstruct
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
 		newBookModal.setStyleName("ph-NewBook-Modal", true);
 		newBookModal.setStyleName("ph-NewBook-Modal-Size", true);
+		bookDesignCol.getElement().setAttribute("style", "margin-left: 60px;");
 
 		// Set up click events
 		// When the user clicks one of the categories then set the text of the
-		// drop down to the category name
+		// drop down to the category name and change the largeBookWidget
 		categoryClickedHandler = new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				Object obj = event.getSource();
 				if (obj instanceof IconAnchor) {
 					IconAnchor a = (IconAnchor) obj;
+
+					// Update the label in the drop down
 					catagoryDropDown.setText(a.getName());
+
+					// update the book display
+					String binderColor = a.getElement().getAttribute(
+							BookCategoryListWidget.BINDER_COLOR_HOLDER);
+					largeBookWidget.setBinderColor(binderColor);
 				}
 			}
 		};
 
-		// Update the drop down after a cover is selected
+		// Update the drop down after a cover is selected and change the
+		// largeBookWidget
 		coverClickedHandler = new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				Object obj = event.getSource();
 				if (obj instanceof IconAnchor) {
 					IconAnchor a = (IconAnchor) obj;
+
+					// Set text in buton
 					bookCoverDropDown.setText(a.getName());
+
+					// Change book background
+					String imgUrl = a.getElement().getAttribute(
+							BookCoverListWidget.IMG_URL_HOLDER);
+					largeBookWidget.setBackground(imgUrl);
 				}
 			}
 		};
+
+		// Lose focus handler to bookTile to update book title display
+		bookTitle.addBlurHandler(new BlurHandler() {
+			@Override
+			public void onBlur(BlurEvent event) {
+				bookDisplayTitle.setText(bookTitle.getText());
+			}
+		});
+
+		// Bind fields
+		book = dataBinder.bind(bookTitle, "bookTitle")
+				.bind(introduction, "introduction").bind(keywords, "keywords")
+				.bind(catagoryDropDown, "category")
+				.bind(bookCoverDropDown, "coverName").getModel();
 	}
 
 	/**
@@ -147,10 +237,9 @@ public class NewBookDialog extends Composite {
 			}
 		}
 	}
-	
+
 	/**
-	 * Watches for a list of covers to be returned and then loads the
-	 * cover list
+	 * Watches for a list of covers to be returned and then loads the cover list
 	 * 
 	 * @param bookCoverListResponseEvent
 	 */
@@ -171,6 +260,12 @@ public class NewBookDialog extends Composite {
 	 */
 	public void show() {
 		// Clear form
+		newBookForm.reset();
+
+		// Clear form display
+		bookDisplayTitle.setText("");
+		largeBookWidget.setBackground("");
+		largeBookWidget.setBinderColor("");
 
 		// Show modal
 		newBookModal.show();
@@ -185,13 +280,82 @@ public class NewBookDialog extends Composite {
 	@UiHandler("submitButton")
 	public void handleSubmitButtonClick(ClickEvent clickEvt) {
 		try {
-			// Validate form
-
-			// Submit to server
+			Book book = validateForm();
+			// registrationRequestEvent.fire(new RegistrationRequestEvent(
+			// populatedForm));
 		} catch (Exception e) {
 			// Intentionally blank. The Form will post error
 			// messages to the form during the validation process
 		}
+	}
+
+	/**
+	 * Validates the form and sets errors when needed
+	 * 
+	 * @return
+	 * @throws DataValidationException
+	 */
+	public Book validateForm() throws DataValidationException {
+		clearErrors();
+		Validator validator = Validation.buildDefaultValidatorFactory()
+				.getValidator();
+
+		// proxy needs to be unwrapped to work with the validator
+		Book book = getUnwrappedModelData();
+		Set<ConstraintViolation<Book>> violations = validator.validate(book);
+
+		// Check the easy stuff
+		for (ConstraintViolation<Book> cv : violations) {
+			String prop = cv.getPropertyPath().toString();
+			if (prop.equals("bookTitle")) {
+				bookTitleCG.setType(ControlGroupType.ERROR);
+			} else if (prop.equals("introduction")) {
+				introductionCG.setType(ControlGroupType.ERROR);
+			} else if (prop.equals("keywords")) {
+				keywordsCG.setType(ControlGroupType.ERROR);
+			}
+		}
+
+		// Check the category and book drop down
+		boolean foundError = false;
+		if (catagoryDropDown.getText().equals("Select a catagory")) {
+			categoryCG.setType(ControlGroupType.ERROR);
+			foundError = true;
+		}
+
+		if (bookCoverDropDown.getText().equals("Select a cover design")) {
+			bookCoverCG.setType(ControlGroupType.ERROR);
+			foundError = true;
+		}
+
+		if (violations.isEmpty() && foundError == false) {
+			return book;
+		} else {
+			throw new DataValidationException();
+		}
+	}
+
+	/**
+	 * Clear form errors
+	 */
+	private void clearErrors() {
+		bookTitleCG.setType(ControlGroupType.NONE);
+		introductionCG.setType(ControlGroupType.NONE);
+		keywordsCG.setType(ControlGroupType.NONE);
+		categoryCG.setType(ControlGroupType.NONE);
+		bookCoverCG.setType(ControlGroupType.NONE);
+	}
+
+	/**
+	 * Get the current data in the form. This requires "unwrapping" the data
+	 * model from the dataBinder.
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Book getUnwrappedModelData() {
+		return (Book) ((BindableProxy<RegistrationForm>) dataBinder.getModel())
+				.unwrap();
 	}
 
 	/**

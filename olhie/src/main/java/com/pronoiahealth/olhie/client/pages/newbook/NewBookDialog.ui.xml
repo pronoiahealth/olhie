@@ -1,7 +1,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
-	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base' xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'
+	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base'
+	xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets.booklargeshow'
 	xmlns:chzn='urn:import:com.watopi.chosen.client.gwt'>
 
 	<b:Modal ui:field="newBookModal" title="Create a New Book"
@@ -10,37 +11,64 @@
 		<b:FluidContainer>
 			<b:Column size="6">
 				<b:FluidRow>
-					<b:WellForm>
+					<b:WellForm ui:field="newBookForm">
 						<b:ControlLabel>Book Title:</b:ControlLabel>
-						<b:TextBox placeholder="Keep titles short but descriptive"
-							maxLength="250" width="400px"></b:TextBox>
+						<b:ControlGroup ui:field="bookTitleCG">
+							<b:Popover text="Must be between 1 and 250 characters." heading="Title">
+								<b:TextBox ui:field="bookTitle"
+									placeholder="Keep titles short but descriptive" maxLength="250"
+									width="400px"></b:TextBox>
+							</b:Popover>
+						</b:ControlGroup>
 						<b:ControlLabel>Introduction:</b:ControlLabel>
-						<b:TextArea placeholder="What's in this Book?" width="400px"></b:TextArea>
+						<b:ControlGroup ui:field="introductionCG">
+							<b:Popover text="Can't be empty." heading="Introduction">
+								<b:TextArea ui:field="introduction" placeholder="What's in this Book?"
+									width="400px"></b:TextArea>
+							</b:Popover>
+						</b:ControlGroup>
 						<b:ControlLabel>List some key words separated by commas:</b:ControlLabel>
-						<b:TextBox placeholder="Legal, DURSA, CT" width="400px"
-							maxLength="250"></b:TextBox>
+						<b:ControlGroup ui:field="keywordsCG">
+							<b:Popover text="Can't be more than 250 characters long." heading="Key Words">
+								<b:TextBox ui:field="keywords" placeholder="Legal, DURSA, CT"
+									width="400px" maxLength="250"></b:TextBox>
+							</b:Popover>
+						</b:ControlGroup>
 						<b:FluidRow>
 							<b:Column size="6">
 								<b:ControlLabel>Catagory:</b:ControlLabel>
-								<b:SplitDropdownButton ui:field="catagoryDropDown"
-									dropup="true" text="Select a catagory">
-								</b:SplitDropdownButton>
+								<b:ControlGroup ui:field="categoryCG">
+									<b:Popover text="Must select a category from the list." heading="Category">
+										<b:SplitDropdownButton ui:field="catagoryDropDown"
+											dropup="true" text="Select a catagory">
+										</b:SplitDropdownButton>
+									</b:Popover>
+								</b:ControlGroup>
 							</b:Column>
 							<b:Column size="6">
 								<b:ControlLabel>Cover Design:</b:ControlLabel>
-								<b:SplitDropdownButton ui:field="bookCoverDropDown"
-									dropup="true" text="Select a cover design">
-								</b:SplitDropdownButton>
+								<b:ControlGroup ui:field="bookCoverCG">
+									<b:Popover text="Must select a cover from the list." heading="Cover Design">
+										<b:SplitDropdownButton ui:field="bookCoverDropDown"
+											dropup="true" text="">
+										</b:SplitDropdownButton>
+									</b:Popover>
+								</b:ControlGroup>
 							</b:Column>
 						</b:FluidRow>
 					</b:WellForm>
 				</b:FluidRow>
 			</b:Column>
-			<b:Column size="2">
+			<b:Column ui:field="bookDesignCol" size="2">
+				<g:VerticalPanel horizontalAlignment="CENTER">
+					<b:ControlLabel>My Book Design</b:ControlLabel>
+					<g:SimplePanel styleName="ph-NewBook-BookDesign-Frame">
+						<my:LargeBookWidget ui:field="largeBookWidget"></my:LargeBookWidget>
+					</g:SimplePanel>
+					<b:Label ui:field="bookDisplayTitle" wordWrap="true" width="100px"></b:Label>
+				</g:VerticalPanel>
 			</b:Column>
 		</b:FluidContainer>
-		<g:HTMLPanel ui:field="newBookFormHolder">
-		</g:HTMLPanel>
 
 		<b:ModalFooter>
 			<b:Button ui:field="submitButton" icon="SAVE" type="PRIMARY">Save</b:Button>

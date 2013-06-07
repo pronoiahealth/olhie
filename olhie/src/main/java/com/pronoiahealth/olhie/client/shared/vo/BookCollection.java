@@ -28,7 +28,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class BookCollection {
 	private String collectionName;
-	private List<Book> books;
+	private List<BookForDisplay> books;
 
 	/**
 	 * Constructor
@@ -37,7 +37,7 @@ public class BookCollection {
 	public BookCollection() {
 	}
 
-	public BookCollection(String collectionName, List<Book> books) {
+	public BookCollection(String collectionName, List<BookForDisplay> books) {
 		super();
 		this.collectionName = collectionName;
 		this.books = books;
@@ -51,17 +51,17 @@ public class BookCollection {
 		this.collectionName = collectionName;
 	}
 
-	public List<Book> getBooks() {
+	public List<BookForDisplay> getBooks() {
 		return books;
 	}
 
-	public void setBooks(List<Book> books) {
+	public void setBooks(List<BookForDisplay> books) {
 		this.books = books;
 	}
 	
-	public void addBook(Book book) {
+	public void addBook(BookForDisplay book) {
 		if (getBooks() == null) {
-			books = new ArrayList<Book>();
+			books = new ArrayList<BookForDisplay>();
 		}
 		books.add(book);
 	}
