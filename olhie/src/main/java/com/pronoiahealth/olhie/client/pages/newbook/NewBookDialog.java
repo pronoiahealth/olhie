@@ -45,10 +45,13 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.validation.client.impl.Validation;
+import com.pronoiahealth.olhie.client.shared.annotations.New;
 import com.pronoiahealth.olhie.client.shared.events.BookCategoryListRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookCategoryListResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookCoverListRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookCoverListResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.BookUpdateCommittedEvent;
+import com.pronoiahealth.olhie.client.shared.events.BookUpdateEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewBookModalEvent;
 import com.pronoiahealth.olhie.client.shared.exceptions.DataValidationException;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
@@ -93,28 +96,28 @@ public class NewBookDialog extends Composite {
 
 	@UiField
 	public TextArea introduction;
-	
+
 	@UiField
 	public ControlGroup introductionCG;
 
 	@UiField
 	public TextBox keywords;
-	
+
 	@UiField
 	public ControlGroup keywordsCG;
 
 	@UiField
 	public SplitDropdownButton catagoryDropDown;
-	
+
 	@UiField
 	public ControlGroup categoryCG;
 
 	@UiField
 	public SplitDropdownButton bookCoverDropDown;
-	
+
 	@UiField
 	public ControlGroup bookCoverCG;
-	
+
 	@UiField
 	public Column bookDesignCol;
 
@@ -136,6 +139,10 @@ public class NewBookDialog extends Composite {
 
 	@Inject
 	private Event<BookCoverListRequestEvent> bookCoverListRequestEvent;
+
+	@Inject
+	@New
+	private Event<BookUpdateEvent> newBookUpdateEvent;
 
 	/**
 	 * Constructor
@@ -261,6 +268,7 @@ public class NewBookDialog extends Composite {
 	public void show() {
 		// Clear form
 		newBookForm.reset();
+		clearErrors();
 
 		// Clear form display
 		bookDisplayTitle.setText("");
@@ -281,8 +289,9 @@ public class NewBookDialog extends Composite {
 	public void handleSubmitButtonClick(ClickEvent clickEvt) {
 		try {
 			Book book = validateForm();
-			// registrationRequestEvent.fire(new RegistrationRequestEvent(
-			// populatedForm));
+
+			// Fire event and wait for BookUpdateCommittedEvent
+			newBookUpdateEvent.fire(new BookUpdateEvent(book));
 		} catch (Exception e) {
 			// Intentionally blank. The Form will post error
 			// messages to the form during the validation process
@@ -305,30 +314,39 @@ public class NewBookDialog extends Composite {
 		Set<ConstraintViolation<Book>> violations = validator.validate(book);
 
 		// Check the easy stuff
+		boolean foundError = false;
 		for (ConstraintViolation<Book> cv : violations) {
 			String prop = cv.getPropertyPath().toString();
 			if (prop.equals("bookTitle")) {
 				bookTitleCG.setType(ControlGroupType.ERROR);
+				foundError = true;
 			} else if (prop.equals("introduction")) {
 				introductionCG.setType(ControlGroupType.ERROR);
+				foundError = true;
 			} else if (prop.equals("keywords")) {
 				keywordsCG.setType(ControlGroupType.ERROR);
+				foundError = true;
 			}
 		}
 
 		// Check the category and book drop down
-		boolean foundError = false;
-		if (catagoryDropDown.getText().equals("Select a catagory")) {
+		String cat = catagoryDropDown.getText().trim();
+		if (cat.trim().equals("Select a category")) {
 			categoryCG.setType(ControlGroupType.ERROR);
 			foundError = true;
+		} else {
+			book.setCategory(cat);
 		}
 
-		if (bookCoverDropDown.getText().equals("Select a cover design")) {
+		String cov = bookCoverDropDown.getText().trim();
+		if (cov.trim().equals("Select a book cover")) {
 			bookCoverCG.setType(ControlGroupType.ERROR);
 			foundError = true;
+		} else {
+			book.setCoverName(cov);
 		}
 
-		if (violations.isEmpty() && foundError == false) {
+		if (foundError == false) {
 			return book;
 		} else {
 			throw new DataValidationException();
@@ -366,6 +384,16 @@ public class NewBookDialog extends Composite {
 	protected void observersShowNewBookModalEvent(
 			@Observes ShowNewBookModalEvent showNewBookModalEvent) {
 		show();
+	}
+
+	/**
+	 * When the update is committed the close the dialog
+	 * 
+	 * @param bookUpdateCommittedEvent
+	 */
+	protected void observesBookUpdateCommittedEvent(
+			@Observes BookUpdateCommittedEvent bookUpdateCommittedEvent) {
+		newBookModal.hide();
 	}
 
 }

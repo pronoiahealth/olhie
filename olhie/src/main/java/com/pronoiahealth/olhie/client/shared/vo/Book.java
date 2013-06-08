@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.shared.vo;
 
+import java.util.Date;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -56,6 +58,13 @@ public class Book {
 	@NotNull
 	@Size(min = 1, max = 50)
 	private String coverName;
+	
+	@NotNull
+	private Date publishedDate;
+	
+	@NotNull
+	@Size(min = 6, max = 20, message= "Must be between 6 and 20 characters")
+	private String authorId;
 
 	/**
 	 * Constructor
@@ -125,6 +134,22 @@ public class Book {
 
 	public void setKeywords(String keywords) {
 		this.keywords = keywords;
+	}
+
+	public Date getPublishedDate() {
+		return publishedDate;
+	}
+
+	public void setPublishedDate(Date publishedDate) {
+		this.publishedDate = publishedDate;
+	}
+
+	public String getAuthorId() {
+		return authorId;
+	}
+
+	public void setAuthorId(String authorId) {
+		this.authorId = authorId;
 	}
 
 }

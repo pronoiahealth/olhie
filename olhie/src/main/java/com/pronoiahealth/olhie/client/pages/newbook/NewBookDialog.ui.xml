@@ -14,7 +14,8 @@
 					<b:WellForm ui:field="newBookForm">
 						<b:ControlLabel>Book Title:</b:ControlLabel>
 						<b:ControlGroup ui:field="bookTitleCG">
-							<b:Popover text="Must be between 1 and 250 characters." heading="Title">
+							<b:Popover text="Must be between 1 and 250 characters."
+								heading="Title">
 								<b:TextBox ui:field="bookTitle"
 									placeholder="Keep titles short but descriptive" maxLength="250"
 									width="400px"></b:TextBox>
@@ -29,28 +30,31 @@
 						</b:ControlGroup>
 						<b:ControlLabel>List some key words separated by commas:</b:ControlLabel>
 						<b:ControlGroup ui:field="keywordsCG">
-							<b:Popover text="Can't be more than 250 characters long." heading="Key Words">
+							<b:Popover text="Can't be more than 250 characters long."
+								heading="Key Words">
 								<b:TextBox ui:field="keywords" placeholder="Legal, DURSA, CT"
 									width="400px" maxLength="250"></b:TextBox>
 							</b:Popover>
 						</b:ControlGroup>
 						<b:FluidRow>
 							<b:Column size="6">
-								<b:ControlLabel>Catagory:</b:ControlLabel>
 								<b:ControlGroup ui:field="categoryCG">
-									<b:Popover text="Must select a category from the list." heading="Category">
+									<b:ControlLabel>Catagory:</b:ControlLabel>
+									<b:Popover text="Must select a category from the list."
+										heading="Category">
 										<b:SplitDropdownButton ui:field="catagoryDropDown"
-											dropup="true" text="Select a catagory">
+											dropup="true" text="Select a category">
 										</b:SplitDropdownButton>
 									</b:Popover>
 								</b:ControlGroup>
 							</b:Column>
 							<b:Column size="6">
-								<b:ControlLabel>Cover Design:</b:ControlLabel>
 								<b:ControlGroup ui:field="bookCoverCG">
-									<b:Popover text="Must select a cover from the list." heading="Cover Design">
+									<b:ControlLabel>Cover Design:</b:ControlLabel>
+									<b:Popover text="Must select a cover from the list."
+										heading="Cover Design">
 										<b:SplitDropdownButton ui:field="bookCoverDropDown"
-											dropup="true" text="">
+											dropup="true" text="Select a book cover">
 										</b:SplitDropdownButton>
 									</b:Popover>
 								</b:ControlGroup>
