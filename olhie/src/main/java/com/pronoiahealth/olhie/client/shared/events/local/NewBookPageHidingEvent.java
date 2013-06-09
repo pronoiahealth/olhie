@@ -8,18 +8,33 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.shared.constants;
+package com.pronoiahealth.olhie.client.shared.events.local;
+
+import org.jboss.errai.bus.client.api.Local;
 
 /**
- * NavEnum.java<br/>
+ * NewBookPageHidingEvent.java<br/>
  * Responsibilities:<br/>
- * 1. An enumeration of page names used in Errai navigatioon system<br/>
+ * 1. Signals the NewBookPage is hiding<br/>
+ * 
+ * <p>
+ * Fired By: NewBookPage class<br/>
+ * Observed By: Header class<br/>
+ * </p>
  * 
  * @author John DeStefano
  * @version 1.0
- * @since May 26, 2013
+ * @since Jun 8, 2013
  * 
  */
-public enum NavEnum {
-	BulletinboardPage, BookCasePage, SearchPage, NewBookPage, BookReviewPage;
+@Local
+public class NewBookPageHidingEvent {
+
+	/**
+	 * Constructor
+	 * 
+	 */
+	public NewBookPageHidingEvent() {
+	}
+
 }

@@ -16,7 +16,7 @@ import javax.inject.Inject;
 import org.jboss.errai.ui.nav.client.local.PageShown;
 
 import com.google.gwt.query.client.GQuery;
-import com.pronoiahealth.olhie.client.navigation.Navigator;
+import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.shared.events.local.PageVisibleEvent;
 import com.pronoiahealth.olhie.client.utils.Utils;
 
@@ -32,18 +32,19 @@ import com.pronoiahealth.olhie.client.utils.Utils;
  * 
  */
 public abstract class AbstractPage extends AbstractComposite {
-	
+
 	@Inject
 	protected Event<PageVisibleEvent> pageVisibleEvent;
 
 	@Inject
-	protected Navigator nav;
+	protected PageNavigator nav;
 
 	public AbstractPage() {
 	}
 
 	/**
-	 * Allows for page background to be set
+	 * Allows for page background to be set by adding a class to the div with
+	 * the class center-background. Adjust the style attribute to be empty
 	 * 
 	 * @param backgroundClass
 	 */
@@ -51,9 +52,24 @@ public abstract class AbstractPage extends AbstractComposite {
 		GQuery gObj = AppSelectors.INSTANCE.getCenterBackground();
 		if (backgroundClass == null || backgroundClass.length() == 0) {
 			gObj.attr("class", "center-background");
+			gObj.attr("style", "");
 		} else {
 			gObj.attr("class", "center-background " + backgroundClass);
+			gObj.attr("style", "");
 		}
+	}
+
+	/**
+	 * Sets a background image by setting the style attribute of the div with
+	 * the class center-background. Calling the setPageBackgroundClass will
+	 * remove the style setting.
+	 * 
+	 * @param backgroundImage
+	 */
+	protected void setPageBackgroundStyle(String backgroundImage) {
+		GQuery gObj = AppSelectors.INSTANCE.getCenterBackground();
+		gObj.attr("style", "background: white; " + "background-image: url(\""
+				+ backgroundImage + "\"); " + "background-repeat: repeat;");
 	}
 
 	/**
@@ -72,7 +88,7 @@ public abstract class AbstractPage extends AbstractComposite {
 	private void pageShown() {
 		whenPageShownCalled();
 	}
-	
+
 	/**
 	 * Fire a PageVisibleEvent if required when the @PageShown method is called.
 	 */

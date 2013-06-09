@@ -12,7 +12,9 @@ package com.pronoiahealth.olhie.server.services;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +45,16 @@ public class SessionTracker {
 	private final ScheduledExecutorService service = Executors
 			.newScheduledThreadPool(1);
 
+	/**
+	 * Tracks sessionId and the user assoiciated with them
+	 */
 	private final Map<String, UserSessionToken> activeSessions = new ConcurrentHashMap<String, UserSessionToken>();
+
+	/**
+	 * Tracks users and the session they have, a user may have more than one
+	 * browser open.
+	 */
+	private final Map<String, ConcurrentSkipListSet<String>> activeUsers = new ConcurrentHashMap<String, ConcurrentSkipListSet<String>>();
 
 	public SessionTracker() {
 	}
@@ -63,7 +74,22 @@ public class SessionTracker {
 							.values().iterator();
 					while (entryIterator.hasNext()) {
 						UserSessionToken user = entryIterator.next();
-						if (user.isTimedout()) {
+						if (user.isSessionTimedout()) {
+							// Remove user session
+							String userId = user.getUserId();
+							String sessionId = user.getErraiSessionId();
+							Set<String> userSessions = activeUsers.get(userId);
+							if (userSessions != null && userSessions.size() > 0) {
+								userSessions.remove(sessionId);
+							}
+
+							// If user has no session remove them from the
+							// active users map
+							if (userSessions.size() == 0) {
+								activeUsers.remove(userId);
+							}
+
+							// Remove the session from the active sessions map
 							entryIterator.remove();
 						}
 					}
@@ -108,7 +134,17 @@ public class SessionTracker {
 	 */
 	public void trackUserSession(String userId, String erraiSessionId) {
 		UserSessionToken user = new UserSessionToken(userId, erraiSessionId);
+
+		// Add an active session
 		activeSessions.put(erraiSessionId, user);
+
+		// Add a session the active users session
+		ConcurrentSkipListSet<String> sessions = activeUsers.get(userId);
+		if (sessions == null) {
+			sessions = new ConcurrentSkipListSet<String>();
+			activeUsers.put(userId, sessions);
+		}
+		sessions.add(erraiSessionId);
 	}
 
 	/**
@@ -117,7 +153,22 @@ public class SessionTracker {
 	 * @param erraiSessionId
 	 */
 	public void stopTrackingUserSession(String erraiSessionId) {
+		// Remove from active session
+		UserSessionToken token = activeSessions.get(erraiSessionId);
+		String userId = token.getUserId();
 		activeSessions.remove(erraiSessionId);
+
+		// Remove from user sessions
+		ConcurrentSkipListSet<String> sessions = activeUsers.get(userId);
+		if (sessions != null) {
+			sessions.remove(erraiSessionId);
+		}
+
+		// If the user has no more sessions remove the user from the user
+		// sessions
+		if (sessions.size() == 0) {
+			activeUsers.remove(userId);
+		}
 	}
 
 }

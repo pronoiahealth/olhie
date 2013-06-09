@@ -33,7 +33,7 @@
 	float: left;
 	width: 10px;
 	height: 75px;
-	/*border-right: 1px solid black;*/
+	border-right: 1px solid black;
 }
 
 .ph-NewBook-BookDesign {

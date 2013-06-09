@@ -42,7 +42,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.clientfactories.PingFireTime;
 import com.pronoiahealth.olhie.client.clientfactories.ScreenTimeout;
-import com.pronoiahealth.olhie.client.navigation.Navigator;
+import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
 import com.pronoiahealth.olhie.client.pages.comments.CommentsDialog;
 import com.pronoiahealth.olhie.client.pages.error.ErrorDisplayDialog;
@@ -145,7 +145,7 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 	private Integer pingFireTime;
 
 	@Inject
-	private Navigator navigator;
+	private PageNavigator navigator;
 
 	@Inject
 	private ClientUserToken clientUserToken;

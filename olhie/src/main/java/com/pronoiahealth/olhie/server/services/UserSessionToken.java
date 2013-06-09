@@ -71,7 +71,7 @@ public class UserSessionToken {
 		lastActivity = System.currentTimeMillis();
 	}
 
-	public boolean isTimedout() {
+	public boolean isSessionTimedout() {
 		return (System.currentTimeMillis() - lastActivity) > TIMEOUT;
 	}
 }

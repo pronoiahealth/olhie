@@ -35,6 +35,8 @@ import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.WellForm;
 import com.github.gwtbootstrap.client.ui.base.IconAnchor;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -45,7 +47,9 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.validation.client.impl.Validation;
+import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.shared.annotations.New;
+import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.events.BookCategoryListRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookCategoryListResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookCoverListRequestEvent;
@@ -133,6 +137,9 @@ public class NewBookDialog extends Composite {
 	private ClickHandler categoryClickedHandler;
 
 	private ClickHandler coverClickedHandler;
+	
+	@Inject
+	private PageNavigator nav;
 
 	@Inject
 	private Event<BookCategoryListRequestEvent> bookCategoryListRequestEvent;
@@ -218,15 +225,6 @@ public class NewBookDialog extends Composite {
 	}
 
 	/**
-	 * Call out for the list of books categories
-	 */
-	@AfterInitialization
-	protected void afterInitialization() {
-		bookCategoryListRequestEvent.fire(new BookCategoryListRequestEvent());
-		bookCoverListRequestEvent.fire(new BookCoverListRequestEvent());
-	}
-
-	/**
 	 * Watches for a list of categories to be returned and then loads the
 	 * category list
 	 * 
@@ -234,6 +232,7 @@ public class NewBookDialog extends Composite {
 	 */
 	protected void observesBookCategoryListResponseEvent(
 			@Observes BookCategoryListResponseEvent bookCategoryListResponseEvent) {
+		catagoryDropDown.getMenuWiget().clear();
 		List<BookCategory> bookCategories = bookCategoryListResponseEvent
 				.getBokkCategories();
 		if (bookCategories != null) {
@@ -252,6 +251,7 @@ public class NewBookDialog extends Composite {
 	 */
 	protected void observesBookCoverListResponseEvent(
 			@Observes BookCoverListResponseEvent bookCoverListResponseEvent) {
+		bookCoverDropDown.getMenuWiget().clear();
 		List<BookCover> bookCovers = bookCoverListResponseEvent.getBookCover();
 		if (bookCovers != null) {
 			for (BookCover cover : bookCovers) {
@@ -260,6 +260,19 @@ public class NewBookDialog extends Composite {
 				bookCoverDropDown.getMenuWiget().add(nav);
 			}
 		}
+	}
+	
+	/**
+	 * When the update is committed the close the dialog
+	 * 
+	 * @param bookUpdateCommittedEvent
+	 */
+	protected void observesBookUpdateCommittedEvent(
+			@Observes BookUpdateCommittedEvent bookUpdateCommittedEvent) {
+		newBookModal.hide();
+		Multimap<String, Object> map = ArrayListMultimap.create();
+		map.put("bookId", bookUpdateCommittedEvent.getBookId());
+		nav.performTransition(NavEnum.NewBookPage.toString(), map);
 	}
 
 	/**
@@ -274,6 +287,10 @@ public class NewBookDialog extends Composite {
 		bookDisplayTitle.setText("");
 		largeBookWidget.setBackground("");
 		largeBookWidget.setBinderColor("");
+		
+		// Get the lists
+		bookCategoryListRequestEvent.fire(new BookCategoryListRequestEvent());
+		bookCoverListRequestEvent.fire(new BookCoverListRequestEvent());
 
 		// Show modal
 		newBookModal.show();
@@ -384,16 +401,6 @@ public class NewBookDialog extends Composite {
 	protected void observersShowNewBookModalEvent(
 			@Observes ShowNewBookModalEvent showNewBookModalEvent) {
 		show();
-	}
-
-	/**
-	 * When the update is committed the close the dialog
-	 * 
-	 * @param bookUpdateCommittedEvent
-	 */
-	protected void observesBookUpdateCommittedEvent(
-			@Observes BookUpdateCommittedEvent bookUpdateCommittedEvent) {
-		newBookModal.hide();
 	}
 
 }

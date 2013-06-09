@@ -21,7 +21,7 @@ import com.google.common.collect.Multimap;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.pronoiahealth.olhie.client.navigation.Navigator;
+import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientUserUpdatedEvent;
@@ -48,7 +48,7 @@ public class AppNavMenu extends UnorderedListWidget {
 	private ClientUserToken clientUserToken;
 
 	@Inject
-	private Navigator navigator;
+	private PageNavigator navigator;
 
 	@Inject
 	private Event<SyncMenuWithViewEvent> syncMenuWithViewEvent;

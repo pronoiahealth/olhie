@@ -15,7 +15,6 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.nav.client.local.Navigation;
@@ -28,13 +27,10 @@ import com.pronoiahealth.olhie.client.clientfactories.PageRoleMap;
 import com.pronoiahealth.olhie.client.pages.bookcase.BookCasePage;
 import com.pronoiahealth.olhie.client.pages.bookreview.BookReviewPage;
 import com.pronoiahealth.olhie.client.pages.bulletinboard.BulletinboardPage;
+import com.pronoiahealth.olhie.client.pages.newbook.NewBookPage;
 import com.pronoiahealth.olhie.client.pages.search.SearchPage;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
-import com.pronoiahealth.olhie.client.shared.events.local.ShowCommentsModalEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.ShowLoginModalEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.ShowNewBookModalEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.ShowRegisterModalEvent;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 
 /**
@@ -49,7 +45,7 @@ import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
  * 
  */
 @ApplicationScoped
-public class Navigator {
+public class PageNavigator {
 
 	@Inject
 	private Navigation nav;
@@ -76,10 +72,13 @@ public class Navigator {
 
 	@Inject
 	private TransitionTo<BookReviewPage> showBookReviewPage;
+	
+	@Inject
+	private TransitionTo<NewBookPage> showNewBookPage;
 
 
 	@Inject
-	public Navigator() {
+	public PageNavigator() {
 	}
 
 	public Widget getNavContentPanel() {
@@ -131,6 +130,15 @@ public class Navigator {
 				showBookReviewPage.go();
 			} else {
 				showBookReviewPage.go(state);
+			}
+			break;
+		}
+		
+		case NewBookPage: {
+			if (state == null) {
+				showBookReviewPage.go();
+			} else {
+				showNewBookPage.go(state);
 			}
 			break;
 		}

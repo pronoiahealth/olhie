@@ -25,9 +25,11 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
-import com.pronoiahealth.olhie.client.navigation.Navigator;
+import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.shared.events.LogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientUserUpdatedEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowCommentsModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowLoginModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewBookModalEvent;
@@ -54,7 +56,7 @@ public class Header extends Composite {
 	 * The application navigator which consolidates navigation
 	 */
 	@Inject
-	private Navigator nav;
+	private PageNavigator nav;
 
 	@UiField
 	public NavLink commentsLink;
@@ -181,6 +183,30 @@ public class Header extends Composite {
 		} else {
 			setNotLoggedIn();
 		}
+	}
+
+	/**
+	 * Observes for the new book page hiding event and then shows the add book
+	 * selection.
+	 * 
+	 * @param newBookPageHidingEvent
+	 */
+	protected void observesNewBookPageHidingEvent(
+			@Observes NewBookPageHidingEvent newBookPageHidingEvent) {
+		showAddBook();
+		showAddBookPersonDivider();
+	}
+
+	/**
+	 * Observes for the new book page showing event and then hides the add book
+	 * selection.
+	 * 
+	 * @param newBookPageShowingEvent
+	 */
+	protected void observesNewBookPageShowingEvent(
+			@Observes NewBookPageShowingEvent newBookPageShowingEvent) {
+		hideAddBook();
+		hideAddBookPersonDivider();
 	}
 
 	/**

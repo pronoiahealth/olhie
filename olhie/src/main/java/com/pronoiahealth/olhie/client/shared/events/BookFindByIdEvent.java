@@ -14,31 +14,30 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
 /**
- * BookUpdateCommittedEvent.java<br/>
+ * BookFindByIdEvent.java<br/>
  * Responsibilities:<br/>
- * 1. Success book add, update<br/>
+ * 1. Used to ask the server for a book by its id<br/>
  * 
  * <p>
- * Fired By: BookUpdateService<br/>
- * Observed By: newBookDialog<br/>
+ * Fired By: NewBookPage class<br/>
+ * Observed By: BookFindService class<br/>
  * </p>
- * 
+ *
  * @author John DeStefano
  * @version 1.0
- * @since Jun 7, 2013
- * 
+ * @since Jun 8, 2013
+ *
  */
 @Portable
 @Conversational
-public class BookUpdateCommittedEvent {
-	
-	String bookId;
+public class BookFindByIdEvent {
+	private String bookId;
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 */
-	public BookUpdateCommittedEvent() {
+	public BookFindByIdEvent() {
 	}
 
 	/**
@@ -46,7 +45,7 @@ public class BookUpdateCommittedEvent {
 	 *
 	 * @param bookId
 	 */
-	public BookUpdateCommittedEvent(String bookId) {
+	public BookFindByIdEvent(String bookId) {
 		super();
 		this.bookId = bookId;
 	}
@@ -58,5 +57,4 @@ public class BookUpdateCommittedEvent {
 	public void setBookId(String bookId) {
 		this.bookId = bookId;
 	}
-
 }

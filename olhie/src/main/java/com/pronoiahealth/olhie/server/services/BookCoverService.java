@@ -19,19 +19,21 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.BookCoverListRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookCoverListResponseEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookCover;
+import com.pronoiahealth.olhie.server.security.SecureAccess;
 
 /**
  * BookCoverService.java<br/>
  * Responsibilities:<br/>
  * 1. Returns book covers
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since Jun 7, 2013
- *
+ * 
  */
 @RequestScoped
 public class BookCoverService {
@@ -41,6 +43,9 @@ public class BookCoverService {
 
 	@Inject
 	private Event<BookCoverListResponseEvent> bookCoverListResponseEvent;
+
+	@Inject
+	private TempCoverBinderHolder holder;
 
 	/**
 	 * Constructor
@@ -55,14 +60,10 @@ public class BookCoverService {
 	 * @param bookCoverListRequestEvent
 	 */
 	// TODO: Store in database
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
 	protected void observesBookCoverListRequestEvent(
 			@Observes BookCoverListRequestEvent bookCoverListRequestEvent) {
-		List<BookCover> bookCovers = new ArrayList<BookCover>();
-		bookCovers.add(new BookCover("Olhie/images/p1.png", "Paper"));
-		bookCovers.add(new BookCover("Olhie/images/paper.png", "Paper 1"));
-		bookCovers.add(new BookCover("Olhie/images/paper1.png", "Paper 2"));
-
-		bookCoverListResponseEvent.fire(new BookCoverListResponseEvent(
-				bookCovers));
+		bookCoverListResponseEvent.fire(new BookCoverListResponseEvent(holder
+				.getCovers()));
 	}
 }

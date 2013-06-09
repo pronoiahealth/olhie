@@ -8,18 +8,21 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.shared.constants;
+package com.pronoiahealth.olhie.client.shared.annotations;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
 
 /**
- * NavEnum.java<br/>
- * Responsibilities:<br/>
- * 1. An enumeration of page names used in Errai navigatioon system<br/>
- * 
- * @author John DeStefano
- * @version 1.0
- * @since May 26, 2013
- * 
+ * CDI Qualifier to indicate the qualified bean instance is new (that is, has
+ * just been newly persisted in the application).
  */
-public enum NavEnum {
-	BulletinboardPage, BookCasePage, SearchPage, NewBookPage, BookReviewPage;
+@Qualifier
+@Target({ ElementType.FIELD, ElementType.PARAMETER })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface NewBook {
 }

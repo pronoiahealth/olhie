@@ -19,9 +19,11 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.BookCategoryListRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookCategoryListResponseEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
+import com.pronoiahealth.olhie.server.security.SecureAccess;
 
 /**
  * BookCatagoryService.java<br/>
@@ -42,6 +44,9 @@ public class BookCatagoryService {
 	@Inject
 	private Event<BookCategoryListResponseEvent> bookCategoryListResponseEvent;
 
+	@Inject
+	private TempCoverBinderHolder holder;
+
 	/**
 	 * Constructor
 	 * 
@@ -56,12 +61,10 @@ public class BookCatagoryService {
 	 * @param bookCategoryListRequestEvent
 	 */
 	// TODO: Store in database
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
 	protected void observesBookCategoryListRequestEvent(
 			@Observes BookCategoryListRequestEvent bookCategoryListRequestEvent) {
-		List<BookCategory> bookCategories = new ArrayList<BookCategory>();
-		bookCategories.add(new BookCategory("black", "Interface"));
-		bookCategories.add(new BookCategory("yellow", "Legal"));
-
-		bookCategoryListResponseEvent.fire(new BookCategoryListResponseEvent(bookCategories));
+		bookCategoryListResponseEvent.fire(new BookCategoryListResponseEvent(
+				holder.getCategories()));
 	}
 }
