@@ -38,6 +38,7 @@ public class BookFindResponseEvent {
 	private Book book;
 	private BookCategory bookCategory;
 	private BookCover bookCover;
+	private String authorFullName;
 
 	/**
 	 * Constructor
@@ -54,11 +55,12 @@ public class BookFindResponseEvent {
 	 * @param bookCover
 	 */
 	public BookFindResponseEvent(Book book, BookCategory bookCategory,
-			BookCover bookCover) {
+			BookCover bookCover, String authorFullName) {
 		super();
 		this.book = book;
 		this.bookCategory = bookCategory;
 		this.bookCover = bookCover;
+		this.authorFullName = authorFullName;
 	}
 
 	public Book getBook() {
@@ -83,5 +85,13 @@ public class BookFindResponseEvent {
 
 	public void setBookCover(BookCover bookCover) {
 		this.bookCover = bookCover;
+	}
+
+	public String getAuthorFullName() {
+		return authorFullName;
+	}
+
+	public void setAuthorFullName(String authorFullName) {
+		this.authorFullName = authorFullName;
 	}
 }

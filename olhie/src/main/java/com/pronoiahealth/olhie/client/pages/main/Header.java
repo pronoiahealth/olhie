@@ -238,8 +238,10 @@ public class Header extends Composite {
 	 */
 	private void showAddBook() {
 		if (clientUserToken.isRoleAtLeastAuthor() == true) {
-			addBookLink.removeStyleName("header-North-AddBookLink-Hide");
-			addBookLink.setStyleName("header-North-AddBookLink-Show", true);
+			if (addBookLink != null) {
+				addBookLink.removeStyleName("header-North-AddBookLink-Hide");
+				addBookLink.setStyleName("header-North-AddBookLink-Show", true);
+			}
 		}
 	}
 
@@ -247,16 +249,21 @@ public class Header extends Composite {
 	 * Hides the add book selection
 	 */
 	private void hideAddBook() {
-		addBookLink.removeStyleName("header-North-AddBookLink-Show");
-		addBookLink.setStyleName("header-North-AddBookLink-Hide", true);
+		if (addBookLink != null) {
+			addBookLink.removeStyleName("header-North-AddBookLink-Show");
+			addBookLink.setStyleName("header-North-AddBookLink-Hide", true);
+		}
 	}
 
 	/**
 	 * Hides the person dropdown
 	 */
 	private void hidePersonDropDown() {
-		personDropDown.removeStyleName("header-North-PersonDropDown-Show");
-		personDropDown.setStyleName("header-North-PersonDropDown-Hide", true);
+		if (personDropDown != null) {
+			personDropDown.removeStyleName("header-North-PersonDropDown-Show");
+			personDropDown.setStyleName("header-North-PersonDropDown-Hide",
+					true);
+		}
 	}
 
 	/**
@@ -265,81 +272,100 @@ public class Header extends Composite {
 	 * @param userName
 	 */
 	private void showPersonDropDown(String userName) {
-		personDropDown.removeStyleName("header-North-PersonDropDown-Hide");
-		personDropDown.setStyleName("header-North-PersonDropDown-Show", true);
-		personDropDown.setText(userName);
+		if (personDropDown != null) {
+			personDropDown.removeStyleName("header-North-PersonDropDown-Hide");
+			personDropDown.setStyleName("header-North-PersonDropDown-Show",
+					true);
+			personDropDown.setText(userName);
+		}
 	}
 
 	/**
 	 * Hide the Login Link
 	 */
 	private void hideLoginLink() {
-		loginLink.removeStyleName("header-North-LoginLink-Show");
-		loginLink.setStyleName("header-North-LoginLink-Hide", true);
+		if (loginLink != null) {
+			loginLink.removeStyleName("header-North-LoginLink-Show");
+			loginLink.setStyleName("header-North-LoginLink-Hide", true);
+		}
 	}
 
 	/**
 	 * Shows the Login Link
 	 */
 	private void showLoginLink() {
-		loginLink.removeStyleName("header-North-LoginLink-Hide");
-		loginLink.setStyleName("header-North-LoginLink-Show", true);
+		if (loginLink != null) {
+			loginLink.removeStyleName("header-North-LoginLink-Hide");
+			loginLink.setStyleName("header-North-LoginLink-Show", true);
+		}
 	}
 
 	/**
 	 * Hide the Register Link
 	 */
 	private void hideRegisterLink() {
-		registerLink.removeStyleName("header-North-RegisterLink-Show");
-		registerLink.setStyleName("header-North-RegisterLink-Hide", true);
+		if (registerLink != null) {
+			registerLink.removeStyleName("header-North-RegisterLink-Show");
+			registerLink.setStyleName("header-North-RegisterLink-Hide", true);
+		}
 	}
 
 	/**
 	 * Shows the Register Link
 	 */
 	private void showRegisterLink() {
-		registerLink.removeStyleName("header-North-RegisterLink-Hide");
-		registerLink.setStyleName("header-North-RegisterLink-Show", true);
+		if (registerLink != null) {
+			registerLink.removeStyleName("header-North-RegisterLink-Hide");
+			registerLink.setStyleName("header-North-RegisterLink-Show", true);
+		}
 	}
 
 	/**
 	 * Hide the divider between the Book Add and Log in link
 	 */
 	private void hideRegBookAddDivider() {
-		regBookAddDivider
-				.removeStyleName("header-North-RegBookAddDivider-Show");
-		regBookAddDivider.setStyleName("header-North-RegBookAddDivider-Hide",
-				true);
+		if (regBookAddDivider != null) {
+			regBookAddDivider
+					.removeStyleName("header-North-RegBookAddDivider-Show");
+			regBookAddDivider.setStyleName(
+					"header-North-RegBookAddDivider-Hide", true);
+		}
 	}
 
 	/**
 	 * Shows the divider between the Book Add and Log in link
 	 */
 	private void showRegBookAddDivider() {
-		regBookAddDivider
-				.removeStyleName("header-North-RegBookAddDivider-Hide");
-		regBookAddDivider.setStyleName("header-North-RegBookAddDivider-Show",
-				true);
+		if (regBookAddDivider != null) {
+			regBookAddDivider
+					.removeStyleName("header-North-RegBookAddDivider-Hide");
+			regBookAddDivider.setStyleName(
+					"header-North-RegBookAddDivider-Show", true);
+		}
 	}
 
 	/**
 	 * Hide the divider between the Book Add and person link
 	 */
 	private void hideAddBookPersonDivider() {
-		addBookPersonDivider
-				.removeStyleName("header-North-AddBookPersonDivider-Show");
-		addBookPersonDivider.setStyleName(
-				"header-North-AddBookPersonDivider-Hide", true);
+		if (addBookPersonDivider != null) {
+			addBookPersonDivider
+					.removeStyleName("header-North-AddBookPersonDivider-Show");
+			addBookPersonDivider.setStyleName(
+					"header-North-AddBookPersonDivider-Hide", true);
+		}
 	}
 
 	/**
 	 * Shows the divider between the Book Add and person link
 	 */
 	private void showAddBookPersonDivider() {
-		addBookPersonDivider
-				.removeStyleName("header-North-AddBookPersonDivider-Hide");
-		addBookPersonDivider.setStyleName(
-				"header-North-AddBookPersonDivider-Show", true);
+		if (addBookPersonDivider != null) {
+			addBookPersonDivider
+					.removeStyleName("header-North-AddBookPersonDivider-Hide");
+			addBookPersonDivider.setStyleName(
+					"header-North-AddBookPersonDivider-Show", true);
+		}
 	}
 
 }

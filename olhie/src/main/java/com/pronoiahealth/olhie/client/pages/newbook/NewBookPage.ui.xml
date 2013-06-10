@@ -3,8 +3,26 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
 	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base' xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'>
 
-	<g:HTMLPanel ui:field="bookreviewContainer" height="100%"
-		width="100%" styleName="ph-BookReview-Container">
+	<g:HTMLPanel ui:field="newBookContainer" height="100%"
+		width="100%" styleName="ph-NewBook-Container">
+		<b:FluidContainer>
+			<b:FluidRow>
+				<b:PageHeader ui:field="bookTitle">Test</b:PageHeader>
+			</b:FluidRow>
+			<b:FluidRow>
+				<b:Heading ui:field="authorLbl" size="4">Author: </b:Heading>
+				<b:Heading ui:field="createdPublishedLbl" size="4">Created: Published: </b:Heading>
+			</b:FluidRow>
+		</b:FluidContainer>
+		<g:HTMLPanel styleName="ph-NewBook-Container-Intro-Column">
+			<b:Hero>
+				<b:Heading size="4">Introduction</b:Heading>
+			</b:Hero>
+		</g:HTMLPanel>
+		<g:HTMLPanel styleName="ph-NewBook-Container-TOC-Column">
+			<b:Hero>
+				<b:Heading size="4">Table of Contents</b:Heading>
+			</b:Hero>
+		</g:HTMLPanel>
 	</g:HTMLPanel>
-
 </ui:UiBinder>

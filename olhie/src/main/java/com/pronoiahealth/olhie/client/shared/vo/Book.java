@@ -58,12 +58,15 @@ public class Book {
 	@NotNull
 	@Size(min = 1, max = 50)
 	private String coverName;
-	
+
+	@NotNull
+	private Date createdDate;
+
 	@NotNull
 	private Date publishedDate;
-	
+
 	@NotNull
-	@Size(min = 6, max = 20, message= "Must be between 6 and 20 characters")
+	@Size(min = 6, max = 20, message = "Must be between 6 and 20 characters")
 	private String authorId;
 
 	/**
@@ -75,7 +78,7 @@ public class Book {
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param bookTitle
 	 * @param introduction
 	 * @param keywords
@@ -150,6 +153,14 @@ public class Book {
 
 	public void setAuthorId(String authorId) {
 		this.authorId = authorId;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
 	}
 
 }

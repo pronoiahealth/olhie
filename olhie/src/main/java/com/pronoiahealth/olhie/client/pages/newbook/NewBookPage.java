@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages.newbook;
 
+import java.util.Date;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -20,6 +22,9 @@ import org.jboss.errai.ui.nav.client.local.PageHiding;
 import org.jboss.errai.ui.nav.client.local.PageShowing;
 import org.jboss.errai.ui.nav.client.local.PageState;
 
+import com.github.gwtbootstrap.client.ui.Heading;
+import com.github.gwtbootstrap.client.ui.PageHeader;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -31,6 +36,7 @@ import com.pronoiahealth.olhie.client.shared.events.BookFindByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEvent;
+import com.pronoiahealth.olhie.client.shared.vo.Book;
 
 /**
  * NewBookPage.java<br/>
@@ -46,14 +52,25 @@ import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEven
 @Page(role = { AuthorRole.class })
 public class NewBookPage extends PageShownSecureAbstractPage {
 
+	private final DateTimeFormat dtf = DateTimeFormat.getFormat("MM/dd/yyyy");
+
 	@Inject
 	UiBinder<Widget, NewBookPage> binder;
 
 	@UiField
-	public HTMLPanel bookreviewContainer;
+	public HTMLPanel newBookContainer;
+
+	@UiField
+	public PageHeader bookTitle;
 
 	@PageState
 	private String bookId;
+
+	@UiField
+	public Heading authorLbl;
+
+	@UiField
+	public Heading createdPublishedLbl;
 
 	@Inject
 	private Event<NewBookPageShowingEvent> newBookPageShowingEvent;
@@ -78,6 +95,9 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	@PostConstruct
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
+		bookTitle.setStyleName("ph-NewBook-BookTitle", true);
+		authorLbl.setStyleName("ph-NewBook-Author", true);
+		createdPublishedLbl.setStyleName("ph-NewBook-Created-Published", true);
 	}
 
 	/**
@@ -122,7 +142,16 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	 */
 	protected void observesBookFindResponse(
 			@Observes BookFindResponseEvent bookFindResponseEvent) {
+		// Set page background to the book cover background
 		setPageBackgroundStyle(bookFindResponseEvent.getBookCover().getImgUrl());
+
+		// Set the fields
+		Book book = bookFindResponseEvent.getBook();
+		bookTitle.setText(book.getBookTitle());
+		authorLbl.setText("by " + bookFindResponseEvent.getAuthorFullName());
+		String createdDateFt = book.getCreatedDate() != null ? dtf.format(book.getCreatedDate()) : "";
+		String publDateFt = book.getPublishedDate() != null ? dtf.format(book.getPublishedDate()) : "";
+		createdPublishedLbl.setText("Created: " + createdDateFt + " Published: " + publDateFt);
 	}
 
 }

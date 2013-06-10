@@ -30,6 +30,7 @@ import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
 import com.pronoiahealth.olhie.client.shared.vo.BookCover;
+import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 
@@ -77,16 +78,27 @@ public class BookFindService {
 	protected void observesBookNewFindByIdEvent(
 			@Observes @NewBook BookFindByIdEvent bookFindByIdEvent) {
 		try {
-			OSQLSynchQuery<Book> uQuery = new OSQLSynchQuery<Book>(
+			// Find Book
+			OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
 					"select from Book where @rid = :bId");
-			HashMap<String, String> uparams = new HashMap<String, String>();
-			uparams.put("bId", bookFindByIdEvent.getBookId());
-			List<Book> bResult = ooDbTx.command(uQuery).execute(uparams);
+			HashMap<String, String> bparams = new HashMap<String, String>();
+			bparams.put("bId", bookFindByIdEvent.getBookId());
+			List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
 			Book book = ooDbTx.detach(bResult.get(0), true);
+
+			// Find author
+			OSQLSynchQuery<User> uQuery = new OSQLSynchQuery<User>(
+					"select from User where userId = :uId");
+			HashMap<String, String> uparams = new HashMap<String, String>();
+			uparams.put("uId", book.getAuthorId());
+			List<User> uResult = ooDbTx.command(uQuery).execute(uparams);
+			User user = uResult.get(0);
+			String authorName = user.getFirstName() + " " + user.getLastName();
+
 			BookCover cover = holder.getCoverByName(book.getCoverName());
 			BookCategory cat = holder.getCategoryByName(book.getCategory());
 			bookFindResponseEvent.fire(new BookFindResponseEvent(book, cat,
-					cover));
+					cover, authorName));
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);

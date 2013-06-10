@@ -1,3 +1,42 @@
+.ph-NewBook-Container {
+	overflow: auto;
+}
+
+.ph-NewBook-Container-Intro-Column {
+	float: left;
+	width: 47%;
+	margin-left: 2%
+}
+
+.ph-NewBook-Container-TOC-Column {
+	float: right;
+	width: 47%;
+	margin-right: 2%;
+}
+
+.ph-NewBook-BookTitle {
+	text-align: center;
+	font-family: "Swanky and Moo Moo",cursive;
+    font-size: 36px;
+    font-weight: bold;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.ph-NewBook-Author {
+	text-align: center;
+	font-family: "Swanky and Moo Moo",cursive;
+    font-size: 18px;
+    font-weight: bold;	
+}
+
+.ph-NewBook-Created-Published {
+	text-align: center;
+	font-family: "Swanky and Moo Moo",cursive;
+    font-size: 18px;
+    font-weight: bold;
+}
+
 .ph-NewBook-Modal {
 	background-image: url("Olhie/images/register_paper.png");
 	background-repeat: repeat;

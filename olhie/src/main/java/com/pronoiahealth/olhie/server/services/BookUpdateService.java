@@ -78,7 +78,7 @@ public class BookUpdateService {
 		try {
 			ooDbTx.begin(TXTYPE.OPTIMISTIC);
 			Book book = bookUpdateEvent.getBook();
-			book.setPublishedDate(new Date());
+			book.setCreatedDate(new Date());
 			book.setAuthorId(userToken.getUserId());
 			book = ooDbTx.save(book);
 			ooDbTx.commit();
