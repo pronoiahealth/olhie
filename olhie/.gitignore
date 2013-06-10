@@ -30,7 +30,7 @@ extra_libs/
 
 .externalToolBuilders/
 
-META-INF/
+# META-INF/
 
 src/main/gwt-unitCache/
 
