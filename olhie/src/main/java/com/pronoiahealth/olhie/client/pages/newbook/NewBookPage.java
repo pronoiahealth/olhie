@@ -10,8 +10,6 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages.newbook;
 
-import java.util.Date;
-
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -22,12 +20,16 @@ import org.jboss.errai.ui.nav.client.local.PageHiding;
 import org.jboss.errai.ui.nav.client.local.PageShowing;
 import org.jboss.errai.ui.nav.client.local.PageState;
 
+import com.github.gwtbootstrap.client.ui.FluidRow;
 import com.github.gwtbootstrap.client.ui.Heading;
+import com.github.gwtbootstrap.client.ui.Hero;
 import com.github.gwtbootstrap.client.ui.PageHeader;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.AuthorRole;
 import com.pronoiahealth.olhie.client.pages.PageShownSecureAbstractPage;
@@ -36,6 +38,7 @@ import com.pronoiahealth.olhie.client.shared.events.BookFindByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 
 /**
@@ -68,9 +71,24 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 
 	@UiField
 	public Heading authorLbl;
+	
+	@UiField
+	public FluidRow createdPublishedCategoryRow;
 
 	@UiField
-	public Heading createdPublishedLbl;
+	public HTML createdPublishedCategoryLbl;
+
+	@UiField
+	public Heading introductionHeader;
+
+	@UiField
+	public Hero introductionHero;
+
+	@UiField
+	public ScrollPanel introductionPanel;
+
+	@UiField
+	public HTML introductionTxt;
 
 	@Inject
 	private Event<NewBookPageShowingEvent> newBookPageShowingEvent;
@@ -97,7 +115,13 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 		initWidget(binder.createAndBindUi(this));
 		bookTitle.setStyleName("ph-NewBook-BookTitle", true);
 		authorLbl.setStyleName("ph-NewBook-Author", true);
-		createdPublishedLbl.setStyleName("ph-NewBook-Created-Published", true);
+		createdPublishedCategoryRow.setStyleName("ph-NewBook-Created-Published-Category-Row", true);
+		createdPublishedCategoryLbl.setStyleName(
+				"ph-NewBook-Created-Published-Category", true);
+		introductionHeader.setStyleName(
+				"ph-NewBook-Introduction-Hero-Introduction-Header", true);
+		introductionTxt.setStyleName(
+				"ph-NewBook-Introduction-Hero-IntroductionTxt", true);
 	}
 
 	/**
@@ -120,7 +144,8 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 
 	/**
 	 * Called when the page is shown. Sub class annotates the method that this
-	 * method is invoked from with the @PageShown annotation.
+	 * method is invoked from with the @PageShown annotation. The size of the
+	 * Heros are adjusted here also.
 	 * 
 	 * @see com.pronoiahealth.olhie.client.pages.PageShownSecureAbstractPage#whenPageShownCalled()
 	 */
@@ -128,6 +153,7 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	protected boolean whenPageShownCalled() {
 		if (super.whenPageShownCalled() == true) {
 			bookFindByIdEvent.fire(new BookFindByIdEvent(bookId));
+			adjustSize();
 			return true;
 		} else {
 			return false;
@@ -149,9 +175,39 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 		Book book = bookFindResponseEvent.getBook();
 		bookTitle.setText(book.getBookTitle());
 		authorLbl.setText("by " + bookFindResponseEvent.getAuthorFullName());
-		String createdDateFt = book.getCreatedDate() != null ? dtf.format(book.getCreatedDate()) : "";
-		String publDateFt = book.getPublishedDate() != null ? dtf.format(book.getPublishedDate()) : "";
-		createdPublishedLbl.setText("Created: " + createdDateFt + " Published: " + publDateFt);
+		String createdDateFt = book.getCreatedDate() != null ? dtf.format(book
+				.getCreatedDate()) : "";
+		String publDateFt = book.getPublishedDate() != null ? dtf.format(book
+				.getPublishedDate()) : "Not yet published";
+		createdPublishedCategoryLbl.setHTML(NewBookMessages.INSTANCE
+				.setCreatedPublishedCategoryLbl(createdDateFt, publDateFt,
+						book.getCategory()));
+		introductionTxt.setHTML(NewBookMessages.INSTANCE
+				.setIntroductionText(book.getIntroduction()));
+	}
+
+	/**
+	 * Need to adjust the Heros dynamically
+	 * 
+	 * @param event
+	 */
+	protected void observesWindowResizeEvent(@Observes WindowResizeEvent event) {
+		adjustSize();
+	}
+
+	private void adjustSize() {
+		if (isAttached() == true) {
+			// Difference from window height
+			int wndHeight = this.getPageContainerHeight();
+
+			// 145 at top + footer at bottom
+			if (wndHeight <= 300) {
+				wndHeight = 300;
+			}
+			int newHeroHeight = wndHeight - 300;
+			introductionHero.setHeight("" + newHeroHeight + "px");
+			introductionPanel.setHeight("" + (newHeroHeight - 40) + "px");
+		}
 	}
 
 }

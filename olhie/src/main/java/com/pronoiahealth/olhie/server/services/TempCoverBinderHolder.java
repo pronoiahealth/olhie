@@ -21,9 +21,10 @@ public class TempCoverBinderHolder {
 
 		// Covers
 		this.bookCovers = new ArrayList<BookCover>();
-		bookCovers.add(new BookCover("Olhie/images/p1.png", "Paper"));
-		bookCovers.add(new BookCover("Olhie/images/paper.png", "Paper 1"));
-		bookCovers.add(new BookCover("Olhie/images/paper1.png", "Paper 2"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover-green1.png", "Green 1"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover-green2.png", "Green 2"));
+		bookCovers.add(new BookCover("Olhie/images/mauve1.png", "Mauve 1"));
+		bookCovers.add(new BookCover("Olhie/images/wood1.png", "Wood 1"));
 	}
 	
 	public List<BookCategory> getCategories() {

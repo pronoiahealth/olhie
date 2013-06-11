@@ -17,7 +17,7 @@
 .ph-NewBook-BookTitle {
 	text-align: center;
 	font-family: "Swanky and Moo Moo",cursive;
-    font-size: 36px;
+    font-size: 28px;
     font-weight: bold;
     margin-top: 0px;
     margin-bottom: 0px;
@@ -30,11 +30,25 @@
     font-weight: bold;	
 }
 
-.ph-NewBook-Created-Published {
+.ph-NewBook-Created-Published-Category-Row {
+	margin-bottom: 10px;
+}
+
+.ph-NewBook-Created-Published-Category {
 	text-align: center;
 	font-family: "Swanky and Moo Moo",cursive;
     font-size: 18px;
     font-weight: bold;
+}
+
+.ph-NewBook-Introduction-Hero-Introduction-Header {
+	font-family: "Swanky and Moo Moo",cursive;
+    font-size: 24px;
+}
+
+.ph-NewBook-Introduction-Hero-IntroductionTxt {
+	font-family: "Swanky and Moo Moo",cursive;
+    font-size: 16px;
 }
 
 .ph-NewBook-Modal {

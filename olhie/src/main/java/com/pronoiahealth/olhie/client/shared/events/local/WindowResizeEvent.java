@@ -14,7 +14,12 @@ import org.jboss.errai.bus.client.api.Local;
 
 /**
  * Generated from the MainPage class. Can be used to make adjustments to
- * componet sizes.<br/>
+ * component sizes.<br/>
+ * 
+ * <p>
+ * Fired By: MainPage class<br/>
+ * Observed By: SearchResultsComponent class<br/>
+ * </p>
  * 
  * @author John DeStefano
  * @version 1.0

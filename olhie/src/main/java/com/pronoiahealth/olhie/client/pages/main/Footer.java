@@ -10,9 +10,12 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages.main;
 
-import org.jboss.errai.ui.shared.api.annotations.Templated;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
+import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Footer.java<br/>
@@ -25,14 +28,20 @@ import com.google.gwt.user.client.ui.Composite;
  * @since May 26, 2013
  * 
  */
-@Templated("#main")
 public class Footer extends Composite {
+	@Inject
+	UiBinder<Widget, Footer> binder;
 
 	/**
 	 * Default Constructor
 	 * 
 	 */
 	public Footer() {
+	}
+
+	@PostConstruct
+	private void postConstruct() {
+		initWidget(binder.createAndBindUi(this));
 	}
 
 }

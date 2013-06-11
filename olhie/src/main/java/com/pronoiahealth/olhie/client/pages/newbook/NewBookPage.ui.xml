@@ -7,16 +7,19 @@
 		width="100%" styleName="ph-NewBook-Container">
 		<b:FluidContainer>
 			<b:FluidRow>
-				<b:PageHeader ui:field="bookTitle">Test</b:PageHeader>
+				<b:PageHeader ui:field="bookTitle"></b:PageHeader>
 			</b:FluidRow>
-			<b:FluidRow>
+			<b:FluidRow ui:field="createdPublishedCategoryRow">
 				<b:Heading ui:field="authorLbl" size="4">Author: </b:Heading>
-				<b:Heading ui:field="createdPublishedLbl" size="4">Created: Published: </b:Heading>
+				<g:HTML ui:field="createdPublishedCategoryLbl"></g:HTML>
 			</b:FluidRow>
 		</b:FluidContainer>
 		<g:HTMLPanel styleName="ph-NewBook-Container-Intro-Column">
-			<b:Hero>
-				<b:Heading size="4">Introduction</b:Heading>
+			<b:Hero ui:field="introductionHero">
+				<b:Heading ui:field="introductionHeader" size="4">Introduction</b:Heading>
+				<g:ScrollPanel ui:field="introductionPanel">
+					<g:HTML ui:field="introductionTxt"></g:HTML>
+				</g:ScrollPanel>
 			</b:Hero>
 		</g:HTMLPanel>
 		<g:HTMLPanel styleName="ph-NewBook-Container-TOC-Column">
