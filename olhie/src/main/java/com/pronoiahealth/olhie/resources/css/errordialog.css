@@ -8,4 +8,5 @@
 .ph-Error-Modal {
 	background-image: url("Olhie/images/error_paper.png");
 	background-repeat: repeat;
+	z-index: 30000;
 }

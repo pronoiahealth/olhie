@@ -8,7 +8,7 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.pages.newbook;
+package com.pronoiahealth.olhie.client.pages.newbook.dialogs;
 
 import java.util.List;
 import java.util.Set;

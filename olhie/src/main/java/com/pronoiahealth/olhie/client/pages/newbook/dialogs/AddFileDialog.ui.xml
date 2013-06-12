@@ -1,0 +1,26 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
+	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base'>
+
+	<b:Modal ui:field="addFileModal" title="What file do you want to add?"
+		backdrop="STATIC" keyboard="true" animation="true">
+
+		<b:FluidContainer>
+			<b:WellForm ui:field="addFileForm">
+				<b:ControlLabel>Description (1-250 characters):</b:ControlLabel>
+				<b:ControlGroup ui:field="descriptionCG">
+					<b:TextBox ui:field="description" placeholder="Keep titles short but descriptive"
+						maxLength="250" width="400px"></b:TextBox>
+				</b:ControlGroup>
+				<b:ControlLabel>Upload a File:</b:ControlLabel>
+				<b:ControlGroup ui:field="uploadFileCG">
+					<g:HorizontalPanel ui:field="uploadContainer">
+					</g:HorizontalPanel>
+				</b:ControlGroup>
+			</b:WellForm>
+		</b:FluidContainer>
+
+	</b:Modal>
+
+</ui:UiBinder>

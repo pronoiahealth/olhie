@@ -23,6 +23,9 @@ import org.jboss.errai.bus.client.api.base.TransportIOException;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.bus.client.api.messaging.MessageBus;
 import org.jboss.errai.bus.client.api.messaging.MessageCallback;
+import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.ErrorCallback;
+import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.common.client.protocols.MessageParts;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
 
@@ -47,7 +50,9 @@ import com.pronoiahealth.olhie.client.pages.AbstractComposite;
 import com.pronoiahealth.olhie.client.pages.comments.CommentsDialog;
 import com.pronoiahealth.olhie.client.pages.error.ErrorDisplayDialog;
 import com.pronoiahealth.olhie.client.pages.login.LoginDialog;
-import com.pronoiahealth.olhie.client.pages.newbook.NewBookDialog;
+import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddFileDialog;
+import com.pronoiahealth.olhie.client.pages.newbook.dialogs.NewAssetDialog;
+import com.pronoiahealth.olhie.client.pages.newbook.dialogs.NewBookDialog;
 import com.pronoiahealth.olhie.client.pages.register.RegisterDialog;
 import com.pronoiahealth.olhie.client.shared.events.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.LoggedInPingEvent;
@@ -56,6 +61,7 @@ import com.pronoiahealth.olhie.client.shared.events.LogoutResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.NewsItemsRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientUserUpdatedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
+import com.pronoiahealth.olhie.client.shared.rest.TestRest;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.client.widgets.newsdisplay.NewsDisplay;
@@ -114,6 +120,12 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 	@Inject
 	NewBookDialog newBookDialog;
 
+	@Inject
+	NewAssetDialog newAssetDialog;
+
+	@Inject
+	AddFileDialog addFileDialog;
+
 	@UiField
 	public HTMLPanel loginModalPlaceHolder;
 
@@ -128,6 +140,12 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 
 	@UiField
 	public HTMLPanel newBookModalPlaceHolder;
+
+	@UiField
+	public HTMLPanel newAssetModalPlaceHolder;
+
+	@UiField
+	public HTMLPanel addFileModalPlaceHolder;
 
 	/*
 	 * Used to time things on screen such as when a key is pressed.
@@ -179,6 +197,9 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 
 	@Inject
 	private Event<ClientErrorEvent> clientErrorEvent;
+
+	@Inject
+	private Caller<TestRest> testRestService;
 
 	/**
 	 * Default Constructor
@@ -288,6 +309,20 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 
 		// Fire get news event
 		newsItemsRequestEvent.fire(new NewsItemsRequestEvent());
+
+		/*
+		testRestService.call(new RemoteCallback<String>() {
+			@Override
+			public void callback(String response) {
+				Window.alert(response);
+			}
+		}, new ErrorCallback() {
+			@Override
+			public boolean error(Object message, Throwable throwable) {
+				return true;
+			}
+		}).getTest();
+		*/
 	}
 
 	/**
@@ -328,6 +363,8 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 		commentsModalPlaceHolder.add(commentsDialog);
 		errorModalPlaceHolder.add(errorDisplayDialog);
 		newBookModalPlaceHolder.add(newBookDialog);
+		newAssetModalPlaceHolder.add(newAssetDialog);
+		addFileModalPlaceHolder.add(addFileDialog);
 	}
 
 	/**

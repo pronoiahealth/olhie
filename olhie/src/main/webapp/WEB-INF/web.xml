@@ -4,6 +4,11 @@
 		  http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	version="3.0">
 
+	<!-- context-param>
+		<param-name>resteasy.injector.factory</param-name>
+		<param-value>com.pronoiahealth.olhie.server.utils.CustomRestEasyCdiInjectorFactory</param-value>
+	</context-param -->
+
 	<servlet>
 		<servlet-name>ErraiServlet</servlet-name>
 		<servlet-class>org.jboss.errai.bus.server.servlet.DefaultBlockingServlet</servlet-class>
@@ -15,10 +20,8 @@
 		<url-pattern>*.erraiBus</url-pattern>
 	</servlet-mapping>
 
-	<!-- env-entry>
-		<env-entry-name>java:comp/env/deltaspike/hello</env-entry-name>
-		<env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>Hello World</env-entry-value>
-	</env-entry -->
+	<!-- env-entry> <env-entry-name>java:comp/env/deltaspike/hello</env-entry-name> 
+		<env-entry-type>java.lang.String</env-entry-type> <env-entry-value>Hello 
+		World</env-entry-value> </env-entry -->
 
 </web-app>

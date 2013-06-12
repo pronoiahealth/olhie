@@ -23,8 +23,17 @@
 			</b:Hero>
 		</g:HTMLPanel>
 		<g:HTMLPanel styleName="ph-NewBook-Container-TOC-Column">
-			<b:Hero>
-				<b:Heading size="4">Table of Contents</b:Heading>
+			<b:Hero ui:field="tocHero">
+				<b:Heading ui:field="tocHeader" size="4">Table of Contents</b:Heading>
+				<b:NavPills ui:field="tocAddElementContainer">
+					<b:NavLink ui:field="tocAddElement" icon="PLUS_SIGN_ALT" iconSize="LARGE">
+					</b:NavLink>
+				</b:NavPills>
+				<g:HTMLPanel ui:field="addTOCElementContainer"
+					styleName="ph-NewBook-TOC-Element-Container">
+				</g:HTMLPanel>
+				<g:HTMLPanel ui:field="tocContainer">
+				</g:HTMLPanel>
 			</b:Hero>
 		</g:HTMLPanel>
 	</g:HTMLPanel>

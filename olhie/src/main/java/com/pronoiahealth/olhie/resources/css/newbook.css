@@ -16,18 +16,18 @@
 
 .ph-NewBook-BookTitle {
 	text-align: center;
-	font-family: "Swanky and Moo Moo",cursive;
-    font-size: 28px;
-    font-weight: bold;
-    margin-top: 0px;
-    margin-bottom: 0px;
+	font-family: "Swanky and Moo Moo", cursive;
+	font-size: 28px;
+	font-weight: bold;
+	margin-top: 0px;
+	margin-bottom: 0px;
 }
 
 .ph-NewBook-Author {
 	text-align: center;
-	font-family: "Swanky and Moo Moo",cursive;
-    font-size: 18px;
-    font-weight: bold;	
+	font-family: "Swanky and Moo Moo", cursive;
+	font-size: 18px;
+	font-weight: bold;
 }
 
 .ph-NewBook-Created-Published-Category-Row {
@@ -36,19 +36,32 @@
 
 .ph-NewBook-Created-Published-Category {
 	text-align: center;
-	font-family: "Swanky and Moo Moo",cursive;
-    font-size: 18px;
-    font-weight: bold;
+	font-family: "Swanky and Moo Moo", cursive;
+	font-size: 18px;
+	font-weight: bold;
 }
 
 .ph-NewBook-Introduction-Hero-Introduction-Header {
-	font-family: "Swanky and Moo Moo",cursive;
-    font-size: 24px;
+	font-family: "Swanky and Moo Moo", cursive;
+	font-size: 24px;
+}
+
+.ph-NewBook-Introduction-Hero-TOC-Header {
+	font-family: "Swanky and Moo Moo", cursive;
+	font-size: 24px;
+}
+
+.ph-NewBook-TOC-Element-Container {
+	float: right;
+}
+
+.ph-NewBook-TOC-Add-Element-Container {
+	float: right;
 }
 
 .ph-NewBook-Introduction-Hero-IntroductionTxt {
-	font-family: "Swanky and Moo Moo",cursive;
-    font-size: 16px;
+	font-family: "Swanky and Moo Moo", cursive;
+	font-size: 16px;
 }
 
 .ph-NewBook-Modal {
@@ -65,8 +78,8 @@
 }
 
 .ph-NewBook-Error-Msg {
-    color: red;
-    font-size: smaller;
+	color: red;
+	font-size: smaller;
 }
 
 .ph-NewBook-BookImagePanel {
@@ -95,16 +108,32 @@
 
 .ph-NewBook-BookDesign-Frame {
 	-moz-border-bottom-colors: none;
-    -moz-border-left-colors: none;
-    -moz-border-right-colors: none;
-    -moz-border-top-colors: none;
-    border-color: #2E1A12;
-    border-image: url("Olhie/images/wood1.png") 100 100 100 100;
-    border-style: solid;
-    border-width: 20px;
-    box-shadow: 1px 1px 10px #000000;
-    float: left;
-    margin: 10px;
-    width: 60px;
-    height: 75px;
+	-moz-border-left-colors: none;
+	-moz-border-right-colors: none;
+	-moz-border-top-colors: none;
+	border-color: #2E1A12;
+	border-image: url("Olhie/images/wood1.png") 100 100 100 100;
+	border-style: solid;
+	border-width: 20px;
+	box-shadow: 1px 1px 10px #000000;
+	float: left;
+	margin: 10px;
+	width: 60px;
+	height: 75px;
+}
+
+.ph-NewBook-NewAssetDialog-Add-Elements {
+	/*border: 1px solid #000;*/
+	display: inline-block;
+	margin: 15px;
+	cursor: pointer;
+}
+
+.ph-NewBook-NewAssetDialog-AssetTypesPanel {
+	text-align: center;
+}
+
+.ph-NewBook-AddFileDialog-ProgressLabel {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
 }

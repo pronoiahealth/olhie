@@ -23,10 +23,14 @@ import org.jboss.errai.ui.nav.client.local.PageState;
 import com.github.gwtbootstrap.client.ui.FluidRow;
 import com.github.gwtbootstrap.client.ui.Heading;
 import com.github.gwtbootstrap.client.ui.Hero;
+import com.github.gwtbootstrap.client.ui.NavLink;
+import com.github.gwtbootstrap.client.ui.NavPills;
 import com.github.gwtbootstrap.client.ui.PageHeader;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -38,6 +42,7 @@ import com.pronoiahealth.olhie.client.shared.events.BookFindByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowNewAssetModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 
@@ -71,7 +76,7 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 
 	@UiField
 	public Heading authorLbl;
-	
+
 	@UiField
 	public FluidRow createdPublishedCategoryRow;
 
@@ -90,11 +95,29 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	@UiField
 	public HTML introductionTxt;
 
+	@UiField
+	public Hero tocHero;
+
+	@UiField
+	public Heading tocHeader;
+
+	@UiField
+	public HTMLPanel tocContainer;
+
+	@UiField
+	public NavPills tocAddElementContainer;
+
+	@UiField
+	public NavLink tocAddElement;
+
 	@Inject
 	private Event<NewBookPageShowingEvent> newBookPageShowingEvent;
 
 	@Inject
 	private Event<NewBookPageHidingEvent> newBookPageHidingEvent;
+
+	@Inject
+	private Event<ShowNewAssetModalEvent> showNewAssetModalEvent;
 
 	@Inject
 	@NewBook
@@ -115,13 +138,17 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 		initWidget(binder.createAndBindUi(this));
 		bookTitle.setStyleName("ph-NewBook-BookTitle", true);
 		authorLbl.setStyleName("ph-NewBook-Author", true);
-		createdPublishedCategoryRow.setStyleName("ph-NewBook-Created-Published-Category-Row", true);
+		createdPublishedCategoryRow.setStyleName(
+				"ph-NewBook-Created-Published-Category-Row", true);
 		createdPublishedCategoryLbl.setStyleName(
 				"ph-NewBook-Created-Published-Category", true);
 		introductionHeader.setStyleName(
 				"ph-NewBook-Introduction-Hero-Introduction-Header", true);
 		introductionTxt.setStyleName(
 				"ph-NewBook-Introduction-Hero-IntroductionTxt", true);
+		tocHeader.setStyleName("ph-NewBook-Introduction-Hero-TOC-Header", true);
+		tocAddElementContainer.setStyleName("ph-NewBook-TOC-Element-Container",
+				true);
 	}
 
 	/**
@@ -195,6 +222,9 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 		adjustSize();
 	}
 
+	/**
+	 * Adjusts component sizes in response to window size changes
+	 */
 	private void adjustSize() {
 		if (isAttached() == true) {
 			// Difference from window height
@@ -205,9 +235,24 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 				wndHeight = 300;
 			}
 			int newHeroHeight = wndHeight - 300;
+
+			// introduction
 			introductionHero.setHeight("" + newHeroHeight + "px");
 			introductionPanel.setHeight("" + (newHeroHeight - 40) + "px");
+
+			// TOC
+			tocHero.setHeight("" + newHeroHeight + "px");
+			tocContainer.setHeight("" + (newHeroHeight - 55) + "px");
 		}
 	}
 
+	/**
+	 * Open the new asset dialog
+	 * 
+	 * @param event
+	 */
+	@UiHandler("tocAddElement")
+	public void tocAddElementClicked(ClickEvent event) {
+		showNewAssetModalEvent.fire(new ShowNewAssetModalEvent());
+	}
 }

@@ -75,8 +75,8 @@ public class FileUploadServiceImpl implements FileUploadService {
 	@POST
 	@Path("/upload")
 	@Produces("text/html")
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
-			SecurityRoleEnum.REGISTERED })
+	//@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+	//		SecurityRoleEnum.REGISTERED })
 	public String process() throws ServletException, IOException {
 		StringBuilder stringBuilder = new StringBuilder();
 		Writer w = null;
@@ -141,8 +141,8 @@ public class FileUploadServiceImpl implements FileUploadService {
 	@POST
 	@Path("/upload2")
 	@Produces("text/html")
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
-			SecurityRoleEnum.REGISTERED })
+	//@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+	//		SecurityRoleEnum.REGISTERED })
 	public String process2(@Context HttpServletRequest req)
 			throws ServletException, IOException {
 		try {
