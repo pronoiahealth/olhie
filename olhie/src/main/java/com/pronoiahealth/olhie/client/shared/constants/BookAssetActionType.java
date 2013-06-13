@@ -8,27 +8,18 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.server.rest;
-
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
+package com.pronoiahealth.olhie.client.shared.constants;
 
 /**
+ * BookAssetActionType.java<br/>
  * Responsibilities:<br/>
- * 1. Receive an uploaded file<br>
+ * 1.
  *
  * @author John DeStefano
  * @version 1.0
- * @since May 25, 2013
+ * @since Jun 12, 2013
  *
  */
-public interface FileUploadService {
-
-	public String process()
-			throws ServletException, IOException;
-	
-	public String process2( HttpServletRequest req)
-			throws ServletException, IOException;
+public enum BookAssetActionType {
+	NEW, REVISE;
 }

@@ -8,47 +8,29 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.shared.events.local;
+package com.pronoiahealth.olhie.server.rest;
 
-import org.jboss.errai.bus.client.api.Local;
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+
+import com.pronoiahealth.olhie.client.shared.exceptions.FileUploadException;
 
 /**
- * ShowAddFileModalEvent.java<br/>
  * Responsibilities:<br/>
- * 1.
- * 
- * <p>
- * Fired By: NewAssetDialog <br/>
- * Observed By: AddFileDialog <br/>
- * </p>
- * 
+ * 1. Receive an uploaded file<br>
+ *
  * @author John DeStefano
  * @version 1.0
- * @since Jun 11, 2013
- * 
+ * @since May 25, 2013
+ *
  */
-@Local
-public class ShowAddFileModalEvent {
-	private String bookId;
+public interface BookAssetUploadService {
 
-	/**
-	 * Constructor
-	 * 
-	 */
-	public ShowAddFileModalEvent() {
-	}
-
-	public ShowAddFileModalEvent(String bookId) {
-		super();
-		this.bookId = bookId;
-	}
-
-	public String getBookId() {
-		return bookId;
-	}
-
-	public void setBookId(String bookId) {
-		this.bookId = bookId;
-	}
-
+	public String process()
+			throws ServletException, IOException;
+	
+	public String process2( HttpServletRequest req)
+			throws ServletException, IOException, FileUploadException;
 }

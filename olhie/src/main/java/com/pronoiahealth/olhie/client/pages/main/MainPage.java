@@ -15,18 +15,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.jboss.errai.bus.client.api.BusLifecycleEvent;
-import org.jboss.errai.bus.client.api.BusLifecycleListener;
-import org.jboss.errai.bus.client.api.TransportError;
-import org.jboss.errai.bus.client.api.base.DefaultErrorCallback;
-import org.jboss.errai.bus.client.api.base.TransportIOException;
-import org.jboss.errai.bus.client.api.messaging.Message;
-import org.jboss.errai.bus.client.api.messaging.MessageBus;
-import org.jboss.errai.bus.client.api.messaging.MessageCallback;
 import org.jboss.errai.common.client.api.Caller;
-import org.jboss.errai.common.client.api.ErrorCallback;
-import org.jboss.errai.common.client.api.RemoteCallback;
-import org.jboss.errai.common.client.protocols.MessageParts;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
 
 import com.google.gwt.core.client.GWT;
@@ -36,8 +25,6 @@ import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Event.NativePreviewEvent;
-import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -59,6 +46,7 @@ import com.pronoiahealth.olhie.client.shared.events.LoggedInPingEvent;
 import com.pronoiahealth.olhie.client.shared.events.LoginResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.LogoutResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.NewsItemsRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientUserUpdatedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.rest.TestRest;
@@ -82,7 +70,7 @@ import com.pronoiahealth.olhie.client.widgets.newsdisplay.NewsDisplay;
  * @Version 1.0
  * @since 1/4/2013
  */
-public class MainPage extends AbstractComposite implements BusLifecycleListener {
+public class MainPage extends AbstractComposite {
 
 	@Inject
 	UiBinder<Widget, MainPage> binder;
@@ -181,9 +169,6 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 	public DockLayoutPanel dockLayoutPanel;
 
 	@Inject
-	protected MessageBus bus;
-
-	@Inject
 	private Event<WindowResizeEvent> windowResizeEvent;
 
 	@Inject
@@ -224,34 +209,12 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 
 	/**
 	 * Tasks include:<br/>
-	 * 1. Set up ErraiBus default error handlers<br/>
-	 * 2. Set up screen timer<br/>
-	 * 3. Initial sidebar menu <br/>
+	 * 1. Set up screen timer<br/>
+	 * 2. Initial sidebar menu <br/>
+	 * 3. Request news items <br/>
 	 */
 	@AfterInitialization
 	public void postInit() {
-
-		// Default bus error handler
-		bus.subscribe(DefaultErrorCallback.CLIENT_ERROR_SUBJECT,
-				new MessageCallback() {
-
-					@Override
-					public void callback(Message message) {
-						try {
-							Throwable caught = message.get(Throwable.class,
-									MessageParts.Throwable);
-							throw caught;
-						} catch (TransportIOException e) {
-							// thrown in case the server can't be reached or an
-							// unexpected status code was returned
-
-						} catch (Throwable throwable) {
-							// handle system errors (e.g response marshaling
-							// errors) - that of course should never happen :)
-
-						}
-					}
-				});
 
 		GWT.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
 			@Override
@@ -261,23 +224,19 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 		});
 
 		// Create timer and schedule
-		screenTimer = new Timer() {
-			@Override
-			public void run() {
-			}
-		};
-		screenTimer.schedule(screenTimeout);
-
-		// Create global event listener
-		// Any events (mouse or keyboard) will reset the timer
-		com.google.gwt.user.client.Event
-				.addNativePreviewHandler(new NativePreviewHandler() {
-					@Override
-					public void onPreviewNativeEvent(NativePreviewEvent event) {
-						screenTimer.cancel();
-						screenTimer.schedule(screenTimeout);
-					}
-				});
+		/*
+		 * screenTimer = new Timer() {
+		 * 
+		 * @Override public void run() { } };
+		 * screenTimer.schedule(screenTimeout);
+		 * 
+		 * // Create global event listener // Any events (mouse or keyboard)
+		 * will reset the timer com.google.gwt.user.client.Event
+		 * .addNativePreviewHandler(new NativePreviewHandler() {
+		 * 
+		 * @Override public void onPreviewNativeEvent(NativePreviewEvent event)
+		 * { screenTimer.cancel(); screenTimer.schedule(screenTimeout); } });
+		 */
 
 		// Not all GWT panel will resize when the window resizes
 		// Observing this event gives panel a chance to resize if necessary
@@ -311,18 +270,14 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 		newsItemsRequestEvent.fire(new NewsItemsRequestEvent());
 
 		/*
-		testRestService.call(new RemoteCallback<String>() {
-			@Override
-			public void callback(String response) {
-				Window.alert(response);
-			}
-		}, new ErrorCallback() {
-			@Override
-			public boolean error(Object message, Throwable throwable) {
-				return true;
-			}
-		}).getTest();
-		*/
+		 * testRestService.call(new RemoteCallback<String>() {
+		 * 
+		 * @Override public void callback(String response) {
+		 * Window.alert(response); } }, new ErrorCallback() {
+		 * 
+		 * @Override public boolean error(Object message, Throwable throwable) {
+		 * return true; } }).getTest();
+		 */
 	}
 
 	/**
@@ -368,17 +323,30 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 	}
 
 	/**
-	 * When the user logs out the ClientUserToken is updated, the pind service
-	 * is stopped, and the ClientUserUpdatedEvent is fired.
+	 * When the user logs out the ClientUserToken is updated, the ping service
+	 * is stopped, and the ClientUserUpdatedEvent is fired. This event is fired
+	 * from the Header class along with the LogoutRequestEvent. The
+	 * ClientLogoutRequestEvent is processed here while the LogoutRequestEvent
+	 * is processed by the server.
 	 * 
 	 * @param logoutResponseEvent
 	 */
-	public void observesLogoutResponseEvent(
-			@Observes LogoutResponseEvent logoutResponseEvent) {
+	protected void observesClientLogoutRequestEvent(
+			@Observes ClientLogoutRequestEvent clientLogoutResponseEvent) {
 		clientUserToken.clear();
 		cancelPing();
 		clientUserUpdatedEvent.fire(new ClientUserUpdatedEvent());
 		navigator.showDefaultPage();
+	}
+
+	/**
+	 * A message from the server telling the client that the user has logged out
+	 * 
+	 * @param logoutResponseEvent
+	 */
+	protected void observesLogoutResponseEvent(
+			@Observes LogoutResponseEvent logoutResponseEvent) {
+		observesClientLogoutRequestEvent(null);
 	}
 
 	/**
@@ -387,7 +355,7 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 	 * 
 	 * @param loginResponseEvent
 	 */
-	public void observesLoginResponseEvent(
+	protected void observesLoginResponseEvent(
 			@Observes LoginResponseEvent loginResponseEvent) {
 		User user = loginResponseEvent.getUser();
 		clientUserToken.setFullName(user.getFirstName() + " "
@@ -400,72 +368,7 @@ public class MainPage extends AbstractComposite implements BusLifecycleListener 
 	}
 
 	/**
-	 * Captures the ErraiBus event
-	 * 
-	 * @see org.jboss.errai.bus.client.api.BusLifecycleListener#busAssociating(org.jboss.errai.bus.client.api.BusLifecycleEvent)
-	 */
-
-	/**
-	 * Captures the ErraiBus event
-	 * 
-	 * @see org.jboss.errai.bus.client.api.BusLifecycleListener#busAssociating(org.jboss.errai.bus.client.api.BusLifecycleEvent)
-	 */
-	@Override
-	public void busAssociating(BusLifecycleEvent e) {
-		clientErrorEvent.fire(new ClientErrorEvent(e.getReason()
-				.getErrorMessage()));
-	}
-
-	/**
-	 * Captures the ErraiBus event
-	 * 
-	 * @see org.jboss.errai.bus.client.api.BusLifecycleListener#busDisassociating(org.jboss.errai.bus.client.api.BusLifecycleEvent)
-	 */
-	@Override
-	public void busDisassociating(BusLifecycleEvent e) {
-		clientErrorEvent.fire(new ClientErrorEvent(e.getReason()
-				.getErrorMessage()));
-	}
-
-	/**
-	 * Captures the ErraiBus event
-	 * 
-	 * @see org.jboss.errai.bus.client.api.BusLifecycleListener#busOnline(org.jboss.errai.bus.client.api.BusLifecycleEvent)
-	 */
-	@Override
-	public void busOnline(BusLifecycleEvent e) {
-		clientErrorEvent.fire(new ClientErrorEvent(e.getReason()
-				.getErrorMessage()));
-	}
-
-	/**
-	 * Captures the ErraiBus event
-	 * 
-	 * @see org.jboss.errai.bus.client.api.BusLifecycleListener#busOffline(org.jboss.errai.bus.client.api.BusLifecycleEvent)
-	 */
-	@Override
-	public void busOffline(BusLifecycleEvent e) {
-		clientErrorEvent.fire(new ClientErrorEvent(e.getReason()
-				.getErrorMessage()));
-	}
-
-	/**
-	 * Gets the error message from and ErraiBuss error event
-	 * 
-	 * @param e
-	 * @return
-	 */
-	private String getErrMsg(BusLifecycleEvent e) {
-		TransportError err = e.getReason();
-		if (err != null) {
-			return err.getErrorMessage();
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * After a user logs in the start pinging the server.
+	 * After a user logs in start pinging the server.
 	 */
 	private void startPinging() {
 		ping();

@@ -10,16 +10,20 @@
 			<b:WellForm ui:field="addFileForm">
 				<b:ControlLabel>Description (1-250 characters):</b:ControlLabel>
 				<b:ControlGroup ui:field="descriptionCG">
-					<b:TextBox ui:field="description" placeholder="Keep titles short but descriptive"
+					<b:TextBox ui:field="description" placeholder="Between 1 and 250 characters"
 						maxLength="250" width="400px"></b:TextBox>
 				</b:ControlGroup>
 				<b:ControlLabel>Upload a File:</b:ControlLabel>
-				<b:ControlGroup ui:field="uploadFileCG">
-					<g:HorizontalPanel ui:field="uploadContainer">
-					</g:HorizontalPanel>
-				</b:ControlGroup>
+				<g:HorizontalPanel ui:field="uploadContainer">
+				</g:HorizontalPanel>
+				<g:Label ui:field="noFileToUploadErr"
+					styleName="ph-NewBook-AddFileDialog-NoFileToUploadErr"></g:Label>
 			</b:WellForm>
 		</b:FluidContainer>
+
+		<b:ModalFooter>
+			<b:Button ui:field="uploadButton" icon="CLOUD_UPLOAD" type="PRIMARY">Upload</b:Button>
+		</b:ModalFooter>
 
 	</b:Modal>
 

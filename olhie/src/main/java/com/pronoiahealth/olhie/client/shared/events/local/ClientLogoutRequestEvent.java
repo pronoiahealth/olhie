@@ -13,42 +13,28 @@ package com.pronoiahealth.olhie.client.shared.events.local;
 import org.jboss.errai.bus.client.api.Local;
 
 /**
- * ShowAddFileModalEvent.java<br/>
+ * ClientLogoutRequestEvent.java<br/>
  * Responsibilities:<br/>
- * 1.
+ * 1. Signals the client side of the application should be configured for a new login.<br/>
  * 
  * <p>
- * Fired By: NewAssetDialog <br/>
- * Observed By: AddFileDialog <br/>
+ * Fired By: Header class<br/>
+ * Observed By: MainPage class<br/>
  * </p>
- * 
+ *
  * @author John DeStefano
  * @version 1.0
- * @since Jun 11, 2013
- * 
+ * @since Jun 12, 2013
+ *
  */
 @Local
-public class ShowAddFileModalEvent {
-	private String bookId;
+public class ClientLogoutRequestEvent {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 */
-	public ShowAddFileModalEvent() {
-	}
-
-	public ShowAddFileModalEvent(String bookId) {
-		super();
-		this.bookId = bookId;
-	}
-
-	public String getBookId() {
-		return bookId;
-	}
-
-	public void setBookId(String bookId) {
-		this.bookId = bookId;
+	public ClientLogoutRequestEvent() {
 	}
 
 }

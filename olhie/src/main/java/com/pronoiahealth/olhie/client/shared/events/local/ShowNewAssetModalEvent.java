@@ -19,12 +19,31 @@ import org.jboss.errai.bus.client.api.Local;
  */
 @Local
 public class ShowNewAssetModalEvent {
+	String bookId;
 
 	/**
 	 * Constructor
 	 *
 	 */
 	public ShowNewAssetModalEvent() {
+	}
+
+	/**
+	 * Constructor
+	 *
+	 * @param bookId
+	 */
+	public ShowNewAssetModalEvent(String bookId) {
+		super();
+		this.bookId = bookId;
+	}
+
+	public String getBookId() {
+		return bookId;
+	}
+
+	public void setBookId(String bookId) {
+		this.bookId = bookId;
 	}
 
 }

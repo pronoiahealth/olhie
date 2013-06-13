@@ -247,12 +247,12 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	}
 
 	/**
-	 * Open the new asset dialog
+	 * Open the new asset dialog and send it the book Id
 	 * 
 	 * @param event
 	 */
 	@UiHandler("tocAddElement")
 	public void tocAddElementClicked(ClickEvent event) {
-		showNewAssetModalEvent.fire(new ShowNewAssetModalEvent());
+		showNewAssetModalEvent.fire(new ShowNewAssetModalEvent(bookId));
 	}
 }

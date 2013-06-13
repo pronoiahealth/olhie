@@ -137,3 +137,7 @@
     font-family: Arial, sans-serif;
     font-size: 12px;
 }
+
+.ph-NewBook-AddFileDialog-NoFileToUploadErr {
+	 color: red;
+}

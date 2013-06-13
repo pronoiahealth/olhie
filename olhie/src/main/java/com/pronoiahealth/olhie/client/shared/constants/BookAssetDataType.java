@@ -8,47 +8,18 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.shared.events.local;
-
-import org.jboss.errai.bus.client.api.Local;
+package com.pronoiahealth.olhie.client.shared.constants;
 
 /**
- * ShowAddFileModalEvent.java<br/>
+ * BookAssetDataType.java<br/>
  * Responsibilities:<br/>
- * 1.
- * 
- * <p>
- * Fired By: NewAssetDialog <br/>
- * Observed By: AddFileDialog <br/>
- * </p>
- * 
+ * 1. Various types of uploadable book assets<br/>
+ *
  * @author John DeStefano
  * @version 1.0
- * @since Jun 11, 2013
- * 
+ * @since Jun 12, 2013
+ *
  */
-@Local
-public class ShowAddFileModalEvent {
-	private String bookId;
-
-	/**
-	 * Constructor
-	 * 
-	 */
-	public ShowAddFileModalEvent() {
-	}
-
-	public ShowAddFileModalEvent(String bookId) {
-		super();
-		this.bookId = bookId;
-	}
-
-	public String getBookId() {
-		return bookId;
-	}
-
-	public void setBookId(String bookId) {
-		this.bookId = bookId;
-	}
-
+public enum BookAssetDataType {
+	FILE, LINK;
 }

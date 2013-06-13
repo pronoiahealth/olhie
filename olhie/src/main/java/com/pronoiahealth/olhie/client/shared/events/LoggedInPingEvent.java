@@ -11,7 +11,6 @@
 package com.pronoiahealth.olhie.client.shared.events;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
-import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
 /**
  * LoggedInPingEvent.java<br/>
@@ -24,7 +23,6 @@ import org.jboss.errai.enterprise.client.cdi.api.Conversational;
  * 
  */
 @Portable
-@Conversational
 public class LoggedInPingEvent {
 
 	public LoggedInPingEvent() {

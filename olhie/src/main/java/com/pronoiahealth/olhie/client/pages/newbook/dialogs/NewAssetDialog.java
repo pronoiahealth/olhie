@@ -52,6 +52,8 @@ public class NewAssetDialog extends Composite {
 
 	@Inject
 	private Event<ShowAddFileModalEvent> showAddFileModalEvent;
+	
+	private String currentBookId;
 
 	/**
 	 * Constructor
@@ -76,13 +78,14 @@ public class NewAssetDialog extends Composite {
 	 */
 	protected void observersShowNewAssetModalEvent(
 			@Observes ShowNewAssetModalEvent showNewAssetModalEvent) {
+		this.currentBookId = showNewAssetModalEvent.getBookId();
 		show();
 	}
 
 	@UiHandler("addFile")
 	public void handleAddFileClick(ClickEvent click) {
 		newAssetModal.hide();
-		showAddFileModalEvent.fire(new ShowAddFileModalEvent());
+		showAddFileModalEvent.fire(new ShowAddFileModalEvent(currentBookId));
 	}
 
 	@UiHandler("addLink")

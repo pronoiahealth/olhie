@@ -8,47 +8,34 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.shared.events.local;
-
-import org.jboss.errai.bus.client.api.Local;
+package com.pronoiahealth.olhie.client.shared.exceptions;
 
 /**
- * ShowAddFileModalEvent.java<br/>
+ * FileUploadException.java<br/>
  * Responsibilities:<br/>
- * 1.
- * 
- * <p>
- * Fired By: NewAssetDialog <br/>
- * Observed By: AddFileDialog <br/>
- * </p>
- * 
+ * 1. Returned from a file uplaod if an unexpected exception occurs<br/>
+ *
  * @author John DeStefano
  * @version 1.0
- * @since Jun 11, 2013
- * 
+ * @since Jun 12, 2013
+ *
  */
-@Local
-public class ShowAddFileModalEvent {
-	private String bookId;
+public class FileUploadException extends Exception {
+	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Constructor
-	 * 
-	 */
-	public ShowAddFileModalEvent() {
-	}
-
-	public ShowAddFileModalEvent(String bookId) {
+	public FileUploadException() {
 		super();
-		this.bookId = bookId;
 	}
 
-	public String getBookId() {
-		return bookId;
+	public FileUploadException(String arg0, Throwable arg1) {
+		super(arg0, arg1);
 	}
 
-	public void setBookId(String bookId) {
-		this.bookId = bookId;
+	public FileUploadException(String arg0) {
+		super(arg0);
 	}
 
+	public FileUploadException(Throwable arg0) {
+		super(arg0);
+	}
 }
