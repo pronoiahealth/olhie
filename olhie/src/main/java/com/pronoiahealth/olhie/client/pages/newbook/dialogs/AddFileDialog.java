@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.pages.newbook.dialogs;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -51,6 +52,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.pages.newbook.NewBookConstants;
 import com.pronoiahealth.olhie.client.shared.constants.BookAssetActionType;
+import com.pronoiahealth.olhie.client.shared.events.local.BookContentUpdatedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowAddFileModalEvent;
 import com.pronoiahealth.olhie.client.widgets.progressbar.ProgressBar;
 
@@ -92,8 +94,11 @@ public class AddFileDialog extends Composite {
 	private ProgressBar progressBar;
 
 	private Image cancelButton;
-	
+
 	private String currentBookId;
+
+	@Inject
+	private Event<BookContentUpdatedEvent> bookContentUpdatedEvent;
 
 	/**
 	 * Constructor
@@ -171,11 +176,14 @@ public class AddFileDialog extends Composite {
 						return true;
 					}
 				})
+				// Close the dialog, clean up screen, tell the app that a book
+				// has been updated
 				.setUploadSuccessHandler(new UploadSuccessHandler() {
 					public boolean onUploadSuccess(
 							UploadSuccessEvent uploadSuccessEvent) {
 						cancelButton.removeFromParent();
 						addFileModal.hide();
+						onSuccess();
 						clearErrors();
 						clearFields();
 						return true;
@@ -238,7 +246,7 @@ public class AddFileDialog extends Composite {
 	private void showModal(String bookId) {
 		// clear fields
 		clearFields();
-		
+
 		// Remove the current one
 		removeUploader();
 
@@ -250,7 +258,7 @@ public class AddFileDialog extends Composite {
 
 		// Clear any left over error messages
 		clearErrors();
-		
+
 		// Set the book Id
 		this.currentBookId = bookId;
 	}
@@ -263,6 +271,14 @@ public class AddFileDialog extends Composite {
 	protected void observesShowAddFileModalEvent(
 			@Observes ShowAddFileModalEvent showAddFileModalEvent) {
 		showModal(showAddFileModalEvent.getBookId());
+	}
+
+	/**
+	 * If the upload was successful fire the book content updated event
+	 */
+	protected void onSuccess() {
+		bookContentUpdatedEvent
+				.fire(new BookContentUpdatedEvent(currentBookId));
 	}
 
 	/**
@@ -299,12 +315,9 @@ public class AddFileDialog extends Composite {
 
 		if (hasErrors == false) {
 			JSONObject params = new JSONObject();
-			params.put("description",
-					new JSONString(desc));
-			params.put("bookId",
-					new JSONString(this.currentBookId));
-			params.put("action",
-					new JSONString(BookAssetActionType.NEW.name()));
+			params.put("description", new JSONString(desc));
+			params.put("bookId", new JSONString(this.currentBookId));
+			params.put("action", new JSONString(BookAssetActionType.NEW.name()));
 			uploader.setPostParams(params);
 			uploader.startUpload();
 		}
@@ -317,12 +330,12 @@ public class AddFileDialog extends Composite {
 		descriptionCG.setType(ControlGroupType.NONE);
 		noFileToUploadErr.setText("");
 	}
-	
+
 	/**
 	 * Clear form fields
 	 */
 	private void clearFields() {
-		description.setText("");
+		description.setText(null);
 		this.currentBookId = null;
 	}
 }

@@ -127,7 +127,7 @@ public class Olhie {
 					if (error.getStatusCode() == 400) {
 						clientLogoutRequestEvent
 								.fire(new ClientLogoutRequestEvent());
-						cBus.stop(false);
+						cBus.stop(true);
 						cBus.init();
 					}
 				}

@@ -4,13 +4,13 @@
 
 .ph-NewBook-Container-Intro-Column {
 	float: left;
-	width: 47%;
+	width: 37%;
 	margin-left: 2%
 }
 
 .ph-NewBook-Container-TOC-Column {
 	float: right;
-	width: 47%;
+	width: 57%;
 	margin-right: 2%;
 }
 
@@ -57,6 +57,29 @@
 
 .ph-NewBook-TOC-Add-Element-Container {
 	float: right;
+}
+
+.ph-NewBook-TOC-Table {
+	width: 100%;
+}
+
+.ph-NewBook-TOC-NumberCol {
+	text-align: right;
+	width: 25px;
+	padding-right: 10px;
+	vertical-align: top;
+	font-weight: bold;
+	
+}
+
+.ph-NewBook-TOC-DescriptionCol {
+	width: 805%;
+}
+
+.ph-NewBook-TOC-Container {
+	float: left;
+	width: 85%;
+	overflow-y: auto;
 }
 
 .ph-NewBook-Introduction-Hero-IntroductionTxt {

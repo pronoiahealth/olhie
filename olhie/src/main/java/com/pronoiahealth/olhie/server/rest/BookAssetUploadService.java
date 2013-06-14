@@ -27,9 +27,6 @@ import com.pronoiahealth.olhie.client.shared.exceptions.FileUploadException;
  *
  */
 public interface BookAssetUploadService {
-
-	public String process()
-			throws ServletException, IOException;
 	
 	public String process2( HttpServletRequest req)
 			throws ServletException, IOException, FileUploadException;

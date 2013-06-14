@@ -25,14 +25,18 @@
 		<g:HTMLPanel styleName="ph-NewBook-Container-TOC-Column">
 			<b:Hero ui:field="tocHero">
 				<b:Heading ui:field="tocHeader" size="4">Table of Contents</b:Heading>
-				<b:NavPills ui:field="tocAddElementContainer">
-					<b:NavLink ui:field="tocAddElement" icon="PLUS_SIGN_ALT" iconSize="LARGE">
-					</b:NavLink>
-				</b:NavPills>
-				<g:HTMLPanel ui:field="addTOCElementContainer"
-					styleName="ph-NewBook-TOC-Element-Container">
-				</g:HTMLPanel>
-				<g:HTMLPanel ui:field="tocContainer">
+				<g:HTMLPanel width="100%">
+					<g:HTMLPanel styleName="ph-NewBook-TOC-Element-Container"
+						width="47px">
+						<b:NavPills ui:field="tocAddElementContainer">
+							<b:NavLink ui:field="tocAddElement" icon="PLUS_SIGN_ALT"
+								iconSize="LARGE">
+							</b:NavLink>
+						</b:NavPills>
+					</g:HTMLPanel>
+					<g:HTMLPanel ui:field="addTOCElementContainer" stylePrimaryName="ph-NewBook-TOC-Container">
+						<my:FlexTableExt ui:field="tocTable"></my:FlexTableExt>
+					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</b:Hero>
 		</g:HTMLPanel>

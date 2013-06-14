@@ -10,12 +10,15 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.shared.events;
 
+import java.util.List;
+
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
 import com.pronoiahealth.olhie.client.shared.vo.BookCover;
+import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 
 /**
  * BookFindResponseEvent.java<br/>
@@ -39,6 +42,7 @@ public class BookFindResponseEvent {
 	private BookCategory bookCategory;
 	private BookCover bookCover;
 	private String authorFullName;
+	private List<Bookassetdescription> bookAssetDescriptions;
 
 	/**
 	 * Constructor
@@ -49,18 +53,21 @@ public class BookFindResponseEvent {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param book
 	 * @param bookCategory
 	 * @param bookCover
+	 * @param authorFullName
+	 * @param bookAssetDescriptions
 	 */
 	public BookFindResponseEvent(Book book, BookCategory bookCategory,
-			BookCover bookCover, String authorFullName) {
+			BookCover bookCover, String authorFullName, List<Bookassetdescription> bookAssetDescriptions) {
 		super();
 		this.book = book;
 		this.bookCategory = bookCategory;
 		this.bookCover = bookCover;
 		this.authorFullName = authorFullName;
+		this.bookAssetDescriptions = bookAssetDescriptions;
 	}
 
 	public Book getBook() {
@@ -93,5 +100,14 @@ public class BookFindResponseEvent {
 
 	public void setAuthorFullName(String authorFullName) {
 		this.authorFullName = authorFullName;
+	}
+
+	public List<Bookassetdescription> getBookAssetDescriptions() {
+		return bookAssetDescriptions;
+	}
+
+	public void setBookAssetDescriptions(
+			List<Bookassetdescription> bookAssetDescriptions) {
+		this.bookAssetDescriptions = bookAssetDescriptions;
 	}
 }

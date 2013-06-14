@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -30,6 +31,7 @@ import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
 import com.pronoiahealth.olhie.client.shared.vo.BookCover;
+import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
@@ -78,11 +80,12 @@ public class BookFindService {
 	protected void observesBookNewFindByIdEvent(
 			@Observes @NewBook BookFindByIdEvent bookFindByIdEvent) {
 		try {
+			String bookId = bookFindByIdEvent.getBookId();
 			// Find Book
 			OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
 					"select from Book where @rid = :bId");
 			HashMap<String, String> bparams = new HashMap<String, String>();
-			bparams.put("bId", bookFindByIdEvent.getBookId());
+			bparams.put("bId", bookId);
 			List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
 			Book book = ooDbTx.detach(bResult.get(0), true);
 
@@ -95,10 +98,35 @@ public class BookFindService {
 			User user = uResult.get(0);
 			String authorName = user.getFirstName() + " " + user.getLastName();
 
+			// Find the cover and the category
 			BookCover cover = holder.getCoverByName(book.getCoverName());
 			BookCategory cat = holder.getCategoryByName(book.getCategory());
+
+			// Get a list of Bookassetdescriptions
+			OSQLSynchQuery<Bookassetdescription> baQuery = new OSQLSynchQuery<Bookassetdescription>(
+					"select from Bookassetdescription where bookId = :bId");
+			HashMap<String, String> baparams = new HashMap<String, String>();
+			baparams.put("bId", bookId);
+			List<Bookassetdescription> baResult = ooDbTx.command(baQuery)
+					.execute(baparams);
+			List<Bookassetdescription> retBaResults = new ArrayList<Bookassetdescription>();
+			// Need to detach them. We don't want to pull back the entire object
+			// tree
+			if (baResult != null) {
+				for (Bookassetdescription ba : baResult) {
+					if (ba.getRemoved().booleanValue() == false) {
+						Bookassetdescription retBa = new Bookassetdescription();
+						retBa.setBookId(ba.getBookId());
+						retBa.setCreatedDate(ba.getCreatedDate());
+						retBa.setDescription(ba.getDescription());
+						retBaResults.add(retBa);
+					}
+				}
+			}
+
+			// Fire the event
 			bookFindResponseEvent.fire(new BookFindResponseEvent(book, cat,
-					cover, authorName));
+					cover, authorName, retBaResults));
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);

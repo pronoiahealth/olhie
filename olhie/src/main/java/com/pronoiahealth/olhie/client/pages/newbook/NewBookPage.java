@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages.newbook;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -33,6 +35,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.AuthorRole;
@@ -40,11 +43,14 @@ import com.pronoiahealth.olhie.client.pages.PageShownSecureAbstractPage;
 import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.events.BookFindByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookFindResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.BookContentUpdatedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewAssetModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
+import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
+import com.pronoiahealth.olhie.client.widgets.FlexTableExt;
 
 /**
  * NewBookPage.java<br/>
@@ -60,7 +66,8 @@ import com.pronoiahealth.olhie.client.shared.vo.Book;
 @Page(role = { AuthorRole.class })
 public class NewBookPage extends PageShownSecureAbstractPage {
 
-	private final DateTimeFormat dtf = DateTimeFormat.getFormat("MM/dd/yyyy");
+	private static final DateTimeFormat dtf = DateTimeFormat
+			.getFormat("MM/dd/yyyy");
 
 	@Inject
 	UiBinder<Widget, NewBookPage> binder;
@@ -102,13 +109,16 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	public Heading tocHeader;
 
 	@UiField
-	public HTMLPanel tocContainer;
+	public HTMLPanel addTOCElementContainer;
 
 	@UiField
 	public NavPills tocAddElementContainer;
 
 	@UiField
 	public NavLink tocAddElement;
+
+	@UiField
+	public FlexTableExt tocTable;
 
 	@Inject
 	private Event<NewBookPageShowingEvent> newBookPageShowingEvent;
@@ -188,6 +198,23 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	}
 
 	/**
+	 * Watches for the book content update event. If the book id matchs the one
+	 * showing then asks for the new data.
+	 * 
+	 * @param bookContentUpdatedEvent
+	 */
+	protected void observersBookContentUpdatedEvent(
+			@Observes BookContentUpdatedEvent bookContentUpdatedEvent) {
+
+		// Test to see if the book id's match
+		// If so ask for updated data
+		String id = bookContentUpdatedEvent.getBookId();
+		if (id != null && id.equals(bookId)) {
+			bookFindByIdEvent.fire(new BookFindByIdEvent(bookId));
+		}
+	}
+
+	/**
 	 * From the bookId a request is make for the book from the
 	 * whenPageShownCalled method. The response is received here and processed.
 	 * 
@@ -211,6 +238,23 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 						book.getCategory()));
 		introductionTxt.setHTML(NewBookMessages.INSTANCE
 				.setIntroductionText(book.getIntroduction()));
+
+		// TOC container elements
+		// Clear current values
+		tocTable.clear();
+		List<Bookassetdescription> descriptions = bookFindResponseEvent
+				.getBookAssetDescriptions();
+		for (int i = 0; i < descriptions.size(); i++) {
+			Bookassetdescription bad = descriptions.get(i);
+			String[] data = new String[2];
+			data[0] = NewBookMessages.INSTANCE.createTOCNumber("" + (i + 1));
+			data[1] = bad.getDescription();
+			String createdDt = dtf.format(bad.getCreatedDate());
+			tocTable.addRow(data, new String[] { "ph-NewBook-TOC-NumberCol",
+					"ph-NewBook-TOC-DescriptionCol" }, "Details",
+					NewBookMessages.INSTANCE.setCreatedDateText(createdDt), 0);
+		}
+
 	}
 
 	/**
@@ -242,7 +286,7 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 
 			// TOC
 			tocHero.setHeight("" + newHeroHeight + "px");
-			tocContainer.setHeight("" + (newHeroHeight - 55) + "px");
+			addTOCElementContainer.setHeight("" + (newHeroHeight - 55) + "px");
 		}
 	}
 

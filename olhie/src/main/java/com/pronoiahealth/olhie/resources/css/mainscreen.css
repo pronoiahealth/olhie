@@ -126,3 +126,11 @@ body {
 .header-North-AddBookLink-Show {
 	visibility: visible;
 }
+
+.FlexTable-OddRow {
+	/*background-color: #cccccc;*/
+}
+
+.FlexTable-EvenRow {
+	/*background-color: #505050;*/
+}

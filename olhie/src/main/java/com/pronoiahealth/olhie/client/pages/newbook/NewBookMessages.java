@@ -36,4 +36,11 @@ public interface NewBookMessages extends Messages {
 	
 	@DefaultMessage("{0}")
 	SafeHtml setIntroductionText(String txt);
+	
+	@DefaultMessage("Created on {0}")
+	String setCreatedDateText(String txt);
+	
+	@DefaultMessage("{0}.")
+	String createTOCNumber(String txt);
+	
 }

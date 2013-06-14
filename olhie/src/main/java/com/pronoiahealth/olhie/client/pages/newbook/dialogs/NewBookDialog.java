@@ -22,7 +22,6 @@ import javax.validation.Validator;
 
 import org.jboss.errai.databinding.client.BindableProxy;
 import org.jboss.errai.databinding.client.api.DataBinder;
-import org.jboss.errai.ioc.client.api.AfterInitialization;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Column;
@@ -284,9 +283,9 @@ public class NewBookDialog extends Composite {
 		clearErrors();
 
 		// Clear form display
-		bookDisplayTitle.setText("");
-		largeBookWidget.setBackground("");
-		largeBookWidget.setBinderColor("");
+		bookDisplayTitle.setText(null);
+		largeBookWidget.setBackground(null);
+		largeBookWidget.setBinderColor(null);
 		
 		// Get the lists
 		bookCategoryListRequestEvent.fire(new BookCategoryListRequestEvent());

@@ -15,6 +15,8 @@ import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.jboss.errai.common.client.api.annotations.Portable;
+
 import com.orientechnologies.orient.core.annotation.OId;
 import com.orientechnologies.orient.core.annotation.OVersion;
 
@@ -28,6 +30,7 @@ import com.orientechnologies.orient.core.annotation.OVersion;
  * @since Jun 12, 2013
  * 
  */
+@Portable
 public class Bookasset {
 	@OId
 	private String id;
