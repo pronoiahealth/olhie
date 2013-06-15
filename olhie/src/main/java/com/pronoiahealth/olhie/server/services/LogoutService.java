@@ -69,16 +69,18 @@ public class LogoutService {
 	 * 
 	 * @param logoutRequestEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
-			SecurityRoleEnum.REGISTERED })
+	// @SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+	// SecurityRoleEnum.REGISTERED })
 	public void observesLogoutRequestEvent(
 			@Observes LogoutRequestEvent logoutRequestEvent) {
 		try {
-			userToken.setLoggedIn(false);
+			if (userToken.getLoggedIn() == true) {
+				userToken.setLoggedIn(false);
+				logoutResponseEvent.fire(new LogoutResponseEvent());
+			}
 			String erraiSessionId = EventConversationContext.get()
 					.getSessionId();
 			sessionTracker.stopTrackingUserSession(erraiSessionId);
-			logoutResponseEvent.fire(new LogoutResponseEvent());
 		} catch (Exception e) {
 			serviceErrorEvent.fire(new ServiceErrorEvent(e.getMessage()));
 		}

@@ -3,12 +3,14 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
 	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base' xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'>
 
-	<g:HTMLPanel styleName="footer-style">
-		<g:HTML>
+	<g:HTMLPanel styleName="footer-style-container">
+		<g:HTMLPanel ui:field="statusWidgetContainer" styleName="footer-style-bus-widget">
+		</g:HTMLPanel>
+		<g:HTMLPanel styleName="footer-style">
 			OLHIE
 			<br />
 			Copyright 2013
-		</g:HTML>
+		</g:HTMLPanel>
 	</g:HTMLPanel>
 
 </ui:UiBinder>

@@ -27,6 +27,15 @@ body {
 	background-repeat: repeat;
 }
 
+.footer-style-container {
+	width: 100%;
+}
+
+.footer-style-bus-widget {
+	float: right;
+	vertical-align: middle;
+}
+
 .footer-style {
 	font-family: 'Swanky and Moo Moo', cursive;
 	font-size: 16px;

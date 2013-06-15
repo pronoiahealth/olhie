@@ -23,7 +23,11 @@ import javax.inject.Inject;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.pronoiahealth.olhie.client.shared.annotations.Load;
+import com.pronoiahealth.olhie.client.shared.annotations.New;
+import com.pronoiahealth.olhie.client.shared.annotations.Update;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
+import com.pronoiahealth.olhie.client.shared.events.LoadProfileResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.RegistrationErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.RegistrationRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.RegistrationResponseEvent;
@@ -61,6 +65,9 @@ public class RegistrationService {
 	@Inject
 	private Event<RegistrationResponseEvent> registrationResponseEvent;
 
+	@Inject
+	private Event<LoadProfileResponseEvent> loadProfileResponseEvent;
+
 	/**
 	 * Constructor
 	 * 
@@ -74,7 +81,7 @@ public class RegistrationService {
 	 * @param commentEvent
 	 */
 	protected void observesRegistrationRequestEvent(
-			@Observes RegistrationRequestEvent registrationRequestEvent) {
+			@Observes @New RegistrationRequestEvent registrationRequestEvent) {
 
 		// Check the id to make sure it is unique
 		RegistrationForm form = registrationRequestEvent.getRegistrationForm();
@@ -106,6 +113,7 @@ public class RegistrationService {
 				user.setFirstName(form.getFirstName());
 				user.setLastName(form.getLastName());
 				user.setRole(SecurityRoleEnum.AUTHOR.getName());
+				user.setEmail(form.getEmail());
 				user.setUserId(userId);
 				ooDbTx.save(user);
 
@@ -127,6 +135,94 @@ public class RegistrationService {
 				password.setPwdSalt(passSalt.getSalt());
 				password.setUserId(userId);
 				ooDbTx.save(password);
+
+				// Saved the user and password now commit
+				ooDbTx.commit();
+
+				// Fire the good response event
+				registrationResponseEvent.fire(new RegistrationResponseEvent());
+			}
+		} catch (Exception e) {
+			ooDbTx.rollback();
+			handleError(Level.SEVERE, e.getMessage(),
+					RegistrationErrorEvent.ErrorTypeEnum.OTHER, e);
+		}
+	}
+
+	/**
+	 * When a new comment is received add it to the database
+	 * 
+	 * @param commentEvent
+	 */
+	protected void observesLoadRegistrationRequestEvent(
+			@Observes @Load RegistrationRequestEvent registrationRequestEvent) {
+
+		// Check the id to make sure it is unique
+		RegistrationForm form = registrationRequestEvent.getRegistrationForm();
+		String userId = form.getUserId();
+		//log.log(Level.SEVERE, userId);
+
+		try {
+			// Do in a single transaction
+			ooDbTx.begin(TXTYPE.OPTIMISTIC);
+
+			OSQLSynchQuery<User> uQuery = new OSQLSynchQuery<User>(
+					"select from User where userId = :uId");
+			HashMap<String, String> uparams = new HashMap<String, String>();
+			uparams.put("uId", userId);
+			List<User> uResult = ooDbTx.command(uQuery).execute(uparams);
+
+			//
+			if (uResult != null && uResult.size() == 1) {
+				
+				User user = uResult.get(0);
+				form.setLastName(user.getLastName());
+				form.setFirstName(user.getFirstName());
+				form.setEmail(user.getEmail());
+
+				// Fire the good response event
+				loadProfileResponseEvent.fire(new LoadProfileResponseEvent(form));
+			}
+		} catch (Exception e) {
+			log.log(Level.SEVERE, e.getMessage());
+			ooDbTx.rollback();
+			handleError(Level.SEVERE, e.getMessage(),
+					RegistrationErrorEvent.ErrorTypeEnum.OTHER, e);
+		}
+	}
+	
+	/**
+	 * When a new comment is received add it to the database
+	 * 
+	 * @param commentEvent
+	 */
+	protected void observesUpdateRegistrationRequestEvent(
+			@Observes @Update RegistrationRequestEvent registrationRequestEvent) {
+
+		// Check the id to make sure it is unique
+		RegistrationForm form = registrationRequestEvent.getRegistrationForm();
+		String userId = form.getUserId();
+
+		try {
+			// Do in a single transaction
+			ooDbTx.begin(TXTYPE.OPTIMISTIC);
+
+			OSQLSynchQuery<User> uQuery = new OSQLSynchQuery<User>(
+					"select from User where userId = :uId");
+			HashMap<String, String> uparams = new HashMap<String, String>();
+			uparams.put("uId", userId);
+			List<User> uResult = ooDbTx.command(uQuery).execute(uparams);
+
+			//
+			if (uResult != null && uResult.size() == 1) {
+				
+				User user = uResult.get(0);
+				user.setFirstName(form.getFirstName());
+				user.setLastName(form.getLastName());
+				user.setRole(SecurityRoleEnum.AUTHOR.getName());
+				user.setEmail(form.getEmail());
+
+				ooDbTx.save(user);
 
 				// Saved the user and password now commit
 				ooDbTx.commit();

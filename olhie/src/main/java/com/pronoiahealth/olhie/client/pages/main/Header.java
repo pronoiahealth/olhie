@@ -15,9 +15,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.jboss.errai.bus.client.ErraiBus;
-import org.jboss.errai.bus.client.api.ClientMessageBus;
-
 import com.github.gwtbootstrap.client.ui.Dropdown;
 import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.NavWidget;
@@ -30,11 +27,11 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.shared.events.LogoutRequestEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientUserUpdatedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowCommentsModalEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowEditProfileModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowLoginModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewBookModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowRegisterModalEvent;
@@ -96,9 +93,6 @@ public class Header extends Composite {
 	private Event<LogoutRequestEvent> logoutRequestEvent;
 
 	@Inject
-	private Event<ClientLogoutRequestEvent> clientLogoutRequestEvent;
-
-	@Inject
 	private Event<ShowNewBookModalEvent> showNewBookModalEvent;
 
 	@Inject
@@ -109,6 +103,9 @@ public class Header extends Composite {
 
 	@Inject
 	private Event<ShowCommentsModalEvent> showCommentsEvent;
+
+	@Inject
+	private Event<ShowEditProfileModalEvent> showEditProfileEvent;
 
 	/**
 	 * Default Constructor
@@ -174,8 +171,12 @@ public class Header extends Composite {
 
 	@UiHandler("logoutMenuItemLink")
 	public void logoutMenuItemLinkClicked(ClickEvent event) {
-		clientLogoutRequestEvent.fire(new ClientLogoutRequestEvent());
 		logoutRequestEvent.fire(new LogoutRequestEvent());
+	}
+
+	@UiHandler("editProfileMenuLink")
+	public void editProfileMenuLinkClicked(ClickEvent event) {
+		showEditProfileEvent.fire(new ShowEditProfileModalEvent());
 	}
 
 	/**

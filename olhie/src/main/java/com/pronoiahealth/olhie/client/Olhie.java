@@ -15,14 +15,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.jboss.errai.bus.client.api.ClientMessageBus;
-import org.jboss.errai.bus.client.api.TransportError;
-import org.jboss.errai.bus.client.api.TransportErrorHandler;
-import org.jboss.errai.bus.client.api.base.DefaultErrorCallback;
-import org.jboss.errai.bus.client.api.base.TransportIOException;
-import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.bus.client.api.messaging.MessageBus;
-import org.jboss.errai.bus.client.api.messaging.MessageCallback;
-import org.jboss.errai.common.client.protocols.MessageParts;
 import org.jboss.errai.enterprise.client.jaxrs.api.RestClient;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
 import org.jboss.errai.ioc.client.api.EntryPoint;
@@ -83,12 +76,15 @@ public class Olhie {
 	}
 
 	/**
-	 * 1. Set up bus error listener. <br/>
-	 * 2. Set up transport error <br/>
-	 * 3. Set up bus Life Cycle listener
+	 * 1. Set up transport error <br/>
+	 * 2. Set up bus Life Cycle listener
 	 */
 	@AfterInitialization
 	protected void afterInitialization() {
+		final ClientMessageBus cBus = (ClientMessageBus) bus;
+		
+		/*
+
 		// 1. Default bus error handler
 		bus.subscribe(DefaultErrorCallback.CLIENT_ERROR_SUBJECT,
 				new MessageCallback() {
@@ -102,6 +98,13 @@ public class Olhie {
 						} catch (TransportIOException e) {
 							// thrown in case the server can't be reached or an
 							// unexpected status code was returned
+							if (Log.isWarnEnabled()) {
+								String errMsg = "ErraiBus Transport error occured - "
+										+ e.getErrorMessage()
+										+ " with code "
+										+ e.errorCode();
+								Log.warn(errMsg);
+							}
 							clientErrorEvent
 									.fire(new ClientErrorEvent(
 											"Client side error "
@@ -110,6 +113,10 @@ public class Olhie {
 						} catch (Throwable t) {
 							// handle system errors (e.g response marshaling
 							// errors) - that of course should never happen :)
+							if (Log.isWarnEnabled()) {
+								Log.warn("Sytem error occured "
+										+ t.getMessage());
+							}
 							clientErrorEvent.fire(new ClientErrorEvent(
 									"Client side error " + t.getMessage()));
 						}
@@ -117,24 +124,26 @@ public class Olhie {
 				});
 
 		// 2. Transport error handler
-		// - If its a 400, can't find the server then log the client out and
+		// - If its a 404, can't find the server then log the client out and
 		// restart the bus
-		final ClientMessageBus cBus = (ClientMessageBus) bus;
 		cBus.addTransportErrorHandler(new TransportErrorHandler() {
 			@Override
 			public void onError(TransportError error) {
-				if (error.isHTTP() == true) {
-					if (error.getStatusCode() == 400) {
-						clientLogoutRequestEvent
-								.fire(new ClientLogoutRequestEvent());
-						cBus.stop(true);
-						cBus.init();
-					}
+				if (Log.isWarnEnabled()) {
+					Log.warn("Errai transport error:", error.getException()
+							+ " with code " + error.getStatusCode());
 				}
+				// if (error.isHTTP() == true) {
+				// if (error.getStatusCode() == 404) {
+				// clientLogoutRequestEvent
+				// .fire(new ClientLogoutRequestEvent());
+				// cBus.stop(true);
+				// cBus.init();
+				// }
+				// }
 			}
 		});
-
-		// 3. Life Cycle listener
-		cBus.addLifecycleListener(new BusStatusLogger());
+		
+		*/
 	}
 }

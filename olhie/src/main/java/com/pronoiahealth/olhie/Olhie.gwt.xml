@@ -45,9 +45,24 @@
 
 	<!-- Inherit the gwt-recaptcha module -->
 	<inherits name="com.claudiushauptmann.gwt.recaptcha.gwt-recaptcha" />
-	
+
 	<!-- MoxieApps File Upload -->
-	<inherits name="org.moxieapps.gwt.uploader.Uploader"/>
+	<inherits name="org.moxieapps.gwt.uploader.Uploader" />
+
+	<!-- Logging -->
+	<!-- For production, most teams prefer to set the default log level to `OFF` -->
+	<!-- inherits name="com.allen_sauer.gwt.log.gwt-log-OFF" / -->
+	<!-- For development, a default of `DEBUG` is recommended -->
+	<inherits name="com.allen_sauer.gwt.log.gwt-log-WARN" />
+	<!-- extend-property name="log_level" values="WARN" / -->
+	
+	<!-- Loggers Enabled by default -->
+	<set-property name="log_ConsoleLogger" value="ENABLED" />
+	<set-property name="log_DivLogger" value="DISABLED" />
+	<set-property name="log_FirebugLogger" value="ENABLED" />
+	<set-property name="log_GWTLogger" value="ENABLED" />
+	<set-property name="log_SystemLogger" value="ENABLED" />
+	<set-property name="log_WindowLogger" value="DISABLED" />
 
 	<!-- Specify the paths for translatable code -->
 	<source path='client' />

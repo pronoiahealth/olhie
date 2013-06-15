@@ -13,15 +13,22 @@ package com.pronoiahealth.olhie.client.pages.main;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.jboss.errai.bus.client.ErraiBus;
+import org.jboss.errai.bus.client.api.ClientMessageBus;
+
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.pronoiahealth.olhie.client.widgets.BusStatusWidget;
 
 /**
  * Footer.java<br/>
  * Responsibilities:<br/>
  * 1. Shows the footer of the main layout using Errai pure html templating
  * system<br/>
+ * 2. Registers the bus status widget with the client message bus.
  * 
  * @author John DeStefano
  * @version 1.0
@@ -32,6 +39,14 @@ public class Footer extends Composite {
 	@Inject
 	UiBinder<Widget, Footer> binder;
 
+	@UiField
+	public HTMLPanel statusWidgetContainer;
+
+	@Inject
+	private BusStatusWidget statusWidget;
+
+	private ClientMessageBus cBus = (ClientMessageBus) ErraiBus.get();
+
 	/**
 	 * Default Constructor
 	 * 
@@ -39,9 +54,16 @@ public class Footer extends Composite {
 	public Footer() {
 	}
 
+	/**
+	 * Register the bus lifecycle listener class
+	 */
 	@PostConstruct
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
+
+		// Add the status widget
+		cBus.addLifecycleListener(statusWidget);
+		statusWidgetContainer.add(statusWidget);
 	}
 
 }

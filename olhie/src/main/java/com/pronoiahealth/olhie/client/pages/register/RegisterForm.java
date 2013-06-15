@@ -76,12 +76,20 @@ public class RegisterForm extends Composite {
 
 	@Inject
 	@DataField
+	private Label pwdLbl;
+
+	@Inject
+	@DataField
 	private Label pwdErr;
 
 	@Inject
 	@Bound
 	@DataField
 	private TextBox pwdRepeat;
+
+	@Inject
+	@DataField
+	private Label pwdRepeatLbl;
 
 	@Inject
 	@DataField
@@ -100,6 +108,45 @@ public class RegisterForm extends Composite {
 		formBinder.getModel();
 	}
 
+	/**
+	 * 
+	 */
+	public void prepareEdit()
+	{
+		userId.setReadOnly(true);
+		pwd.setVisible(false);
+		pwdLbl.setVisible(false);
+		pwdRepeat.setVisible(false);
+		pwdRepeatLbl.setVisible(false);
+	}
+	
+	/**
+	 * 
+	 */
+	public void prepareRegister()
+	{
+		userId.setReadOnly(false);
+		pwd.setVisible(true);
+		pwdLbl.setVisible(true);
+		pwdRepeat.setVisible(true);
+		pwdRepeatLbl.setVisible(true);
+		pwdLbl.setText("Password:");
+		pwdRepeatLbl.setText("Retype Password:");
+	}
+	
+	/**
+	 * 
+	 */
+	public void populateForm() {
+		RegistrationForm form = getUnwrappedModelData();
+		lastName.setText(form.getLastName());
+		firstName.setText(form.getFirstName());
+		email.setText(form.getEmail());
+		userId.setText(form.getUserId());
+		pwd.setText(form.getPwd());
+		pwdRepeat.setText(form.getPwdRepeat());
+	}
+	
 	/**
 	 * Clear form
 	 */

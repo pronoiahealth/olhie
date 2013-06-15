@@ -24,12 +24,19 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.pronoiahealth.olhie.client.shared.annotations.Load;
+import com.pronoiahealth.olhie.client.shared.annotations.New;
+import com.pronoiahealth.olhie.client.shared.annotations.Update;
+import com.pronoiahealth.olhie.client.shared.events.LoadProfileResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.RegistrationErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.RegistrationRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.RegistrationResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ClientUserUpdatedEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowEditProfileModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowRegisterModalEvent;
 import com.pronoiahealth.olhie.client.shared.exceptions.DataValidationException;
+import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.shared.vo.RegistrationForm;
 
 /**
@@ -45,8 +52,13 @@ import com.pronoiahealth.olhie.client.shared.vo.RegistrationForm;
  */
 public class RegisterDialog extends Composite {
 
+	private boolean updateState = false;
+	
 	@Inject
 	UiBinder<Widget, RegisterDialog> binder;
+
+	@Inject
+	private ClientUserToken clientUserToken;
 
 	@UiField
 	public Modal registerModal;
@@ -60,11 +72,20 @@ public class RegisterDialog extends Composite {
 	@Inject
 	private RegisterForm regForm;
 
-	@Inject
+	@Inject @New
 	private Event<RegistrationRequestEvent> registrationRequestEvent;
+
+	@Inject @Update
+	private Event<RegistrationRequestEvent> editRegistrationRequestEvent;
+
+	@Inject @Load
+	private Event<RegistrationRequestEvent> loadRegistrationRequestEvent;
 
 	@Inject
 	private Event<ServiceErrorEvent> serviceErrorEvent;
+	
+	@Inject
+	private Event<ClientUserUpdatedEvent> clientUserUpdatedEvent;
 
 	/**
 	 * Constructor
@@ -104,8 +125,15 @@ public class RegisterDialog extends Composite {
 	public void handleSubmitButtonClick(ClickEvent clickEvt) {
 		try {
 			RegistrationForm populatedForm = regForm.validateForm();
-			registrationRequestEvent.fire(new RegistrationRequestEvent(
+			if (updateState) {
+				editRegistrationRequestEvent.fire(new RegistrationRequestEvent(
 					populatedForm));
+				clientUserToken.setFullName(populatedForm.getFirstName() + " " + populatedForm.getLastName());
+				clientUserUpdatedEvent.fire(new ClientUserUpdatedEvent());
+			} else {
+				registrationRequestEvent.fire(new RegistrationRequestEvent(
+					populatedForm));
+			}
 		} catch (DataValidationException e) {
 			// Intentionally blank. The RegistrationForm will post error
 			// messages to the form during the validation process
@@ -159,7 +187,43 @@ public class RegisterDialog extends Composite {
 	 */
 	protected void observesShowRegisterModalEvent(
 			@Observes ShowRegisterModalEvent showRegisterModalEvent) {
+		updateState = false;
+		regForm.prepareRegister();
 		show();
+	}
+
+	/**
+	 * Shows the dialog
+	 * 
+	 * @param ShowEditProfileModalEvent
+	 */
+	protected void observesLoadProfileModalEvent(
+			@Observes LoadProfileResponseEvent loadProfileResponseEvent) {
+		RegistrationForm populatedForm = loadProfileResponseEvent.getRegistrationForm();
+		RegistrationForm blankForm = regForm.getUnwrappedModelData();
+		blankForm.setFirstName(populatedForm.getFirstName());
+		blankForm.setLastName(populatedForm.getLastName());
+		blankForm.setEmail(populatedForm.getEmail());
+		blankForm.setPwd("Aaaaaaaa8"); // TODO: remove validation bypass -- not actually read
+		blankForm.setPwdRepeat("Aaaaaaaa8"); // TODO: remove validation bypass -- not actually read
+		updateState = true;
+		regForm.populateForm();
+		regForm.prepareEdit();
+		registerModal.show();
+	}
+
+	/**
+	 * Shows the dialog
+	 * 
+	 * @param ShowEditProfileModalEvent
+	 */
+	protected void observesEditProfileModalEvent(
+			@Observes ShowEditProfileModalEvent showEditProfileModalEvent) {
+		regForm.clearForm();
+		RegistrationForm blankForm = regForm.getUnwrappedModelData();
+		blankForm.setUserId(clientUserToken.getUserId());
+		loadRegistrationRequestEvent.fire(new RegistrationRequestEvent(
+				blankForm));
 	}
 
 }
