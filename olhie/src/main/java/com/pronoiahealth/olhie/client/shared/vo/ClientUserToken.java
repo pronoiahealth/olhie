@@ -32,7 +32,7 @@ public class ClientUserToken {
 	private String fullName;
 	private boolean loggedIn;
 	private String userId;
-	private String role;
+	private String role = SecurityRoleEnum.ANONYMOUS.getName();
 
 	/**
 	 * Constructor
@@ -77,7 +77,7 @@ public class ClientUserToken {
 		fullName = null;
 		userId = null;
 		loggedIn = false;
-		role = null;
+		role = SecurityRoleEnum.ANONYMOUS.getName();
 	}
 
 	/**

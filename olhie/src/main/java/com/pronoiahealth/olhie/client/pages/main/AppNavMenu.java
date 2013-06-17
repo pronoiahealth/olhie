@@ -73,12 +73,21 @@ public class AppNavMenu extends UnorderedListWidget {
 
 		// Create desktop screen and search
 		clear();
+		
+		// Bulletin board
 		SideBarNavWidget navWidget = new SideBarNavWidget(
 				NavEnum.BulletinboardPage.toString(), "", "", "icon-calendar",
 				"Bulletin Board");
 		addSideBarNavWidget(navWidget);
+		
+		// Search screen
 		navWidget = new SideBarNavWidget(NavEnum.SearchPage.toString(), "", "",
 				"icon-search", "Find a Book");
+		addSideBarNavWidget(navWidget);
+		
+		// Book display
+		navWidget = new SideBarNavWidget(NavEnum.BookDisplayPage.toString(), "", "",
+				"icon-search", "Display Book");
 		addSideBarNavWidget(navWidget);
 
 		// See the SideBarNavWidget doc and currentPage

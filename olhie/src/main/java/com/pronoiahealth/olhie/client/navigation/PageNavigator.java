@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.clientfactories.DefaultAppPage;
 import com.pronoiahealth.olhie.client.clientfactories.PageRoleMap;
 import com.pronoiahealth.olhie.client.pages.bookcase.BookCasePage;
+import com.pronoiahealth.olhie.client.pages.bookdisplay.BookDisplayPage;
 import com.pronoiahealth.olhie.client.pages.bookreview.BookReviewPage;
 import com.pronoiahealth.olhie.client.pages.bulletinboard.BulletinboardPage;
 import com.pronoiahealth.olhie.client.pages.newbook.NewBookPage;
@@ -63,6 +64,9 @@ public class PageNavigator {
 
 	@Inject
 	private TransitionTo<BulletinboardPage> showBulletinboardPage;
+	
+	@Inject
+	private TransitionTo<BookDisplayPage> showBookDisplayPage;
 
 	@Inject
 	private TransitionTo<BookCasePage> showBookCasePage;
@@ -103,6 +107,15 @@ public class PageNavigator {
 				showBulletinboardPage.go();
 			} else {
 				showBulletinboardPage.go(state);
+			}
+			break;
+		}
+		
+		case BookDisplayPage: {
+			if (state == null) {
+				showBookDisplayPage.go();
+			} else {
+				showBookDisplayPage.go(state);
 			}
 			break;
 		}

@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.shared.vo;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -68,6 +69,8 @@ public class Book {
 	@NotNull
 	@Size(min = 6, max = 20, message = "Must be between 6 and 20 characters")
 	private String authorId;
+	
+	private List<Bookassetdescription> bookDescriptions;
 
 	/**
 	 * Constructor
@@ -161,6 +164,14 @@ public class Book {
 
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
+	}
+
+	public List<Bookassetdescription> getBookDescriptions() {
+		return bookDescriptions;
+	}
+
+	public void setBookDescriptions(List<Bookassetdescription> bookDescriptions) {
+		this.bookDescriptions = bookDescriptions;
 	}
 
 }

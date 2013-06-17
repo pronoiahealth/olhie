@@ -17,6 +17,8 @@ import org.jboss.errai.ui.nav.client.local.DefaultPage;
 import org.jboss.errai.ui.nav.client.local.Page;
 
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.pages.MenuSyncSecureAbstractPage;
 
@@ -35,6 +37,9 @@ public class BulletinboardPage extends MenuSyncSecureAbstractPage {
 
 	@Inject
 	UiBinder<Widget, BulletinboardPage> binder;
+	
+	@UiField
+	public Label test;
 
 	public BulletinboardPage() {
 	}

@@ -65,6 +65,7 @@ public class OlhieResourceInjector {
 		OlhieResources.INSTANCE.commentdialogcss().ensureInjected();
 		OlhieResources.INSTANCE.newsdisplaycss().ensureInjected();
 		OlhieResources.INSTANCE.newbookcss().ensureInjected();
+		OlhieResources.INSTANCE.booklist3dcss().ensureInjected();
 		/*
 		 * injectResourceCssAsFile("bookshelf_skin01.css");
 		 */
