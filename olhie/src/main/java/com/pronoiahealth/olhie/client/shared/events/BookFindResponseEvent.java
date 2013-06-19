@@ -10,15 +10,10 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.shared.events;
 
-import java.util.List;
-
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
-import com.pronoiahealth.olhie.client.shared.vo.Book;
-import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
-import com.pronoiahealth.olhie.client.shared.vo.BookCover;
-import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
+import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 
 /**
  * BookFindResponseEvent.java<br/>
@@ -38,11 +33,8 @@ import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 @Portable
 @Conversational
 public class BookFindResponseEvent {
-	private Book book;
-	private BookCategory bookCategory;
-	private BookCover bookCover;
-	private String authorFullName;
-	private List<Bookassetdescription> bookAssetDescriptions;
+	
+	private BookDisplay bookDisplay;
 
 	/**
 	 * Constructor
@@ -54,60 +46,29 @@ public class BookFindResponseEvent {
 	/**
 	 * Constructor
 	 *
-	 * @param book
+	 * @param bookDisplay
 	 * @param bookCategory
 	 * @param bookCover
 	 * @param authorFullName
 	 * @param bookAssetDescriptions
 	 */
-	public BookFindResponseEvent(Book book, BookCategory bookCategory,
-			BookCover bookCover, String authorFullName, List<Bookassetdescription> bookAssetDescriptions) {
+	public BookFindResponseEvent(BookDisplay bookDisplay) {
 		super();
-		this.book = book;
-		this.bookCategory = bookCategory;
-		this.bookCover = bookCover;
-		this.authorFullName = authorFullName;
-		this.bookAssetDescriptions = bookAssetDescriptions;
+		this.bookDisplay = bookDisplay;
 	}
 
-	public Book getBook() {
-		return book;
+	/**
+	 * @return
+	 */
+	public BookDisplay getBookDisplay() {
+		return bookDisplay;
 	}
 
-	public void setBook(Book book) {
-		this.book = book;
+	/**
+	 * @param bookDisplay
+	 */
+	public void setBookDisplay(BookDisplay bookDisplay) {
+		this.bookDisplay = bookDisplay;
 	}
 
-	public BookCategory getBookCategory() {
-		return bookCategory;
-	}
-
-	public void setBookCategory(BookCategory bookCategory) {
-		this.bookCategory = bookCategory;
-	}
-
-	public BookCover getBookCover() {
-		return bookCover;
-	}
-
-	public void setBookCover(BookCover bookCover) {
-		this.bookCover = bookCover;
-	}
-
-	public String getAuthorFullName() {
-		return authorFullName;
-	}
-
-	public void setAuthorFullName(String authorFullName) {
-		this.authorFullName = authorFullName;
-	}
-
-	public List<Bookassetdescription> getBookAssetDescriptions() {
-		return bookAssetDescriptions;
-	}
-
-	public void setBookAssetDescriptions(
-			List<Bookassetdescription> bookAssetDescriptions) {
-		this.bookAssetDescriptions = bookAssetDescriptions;
-	}
 }

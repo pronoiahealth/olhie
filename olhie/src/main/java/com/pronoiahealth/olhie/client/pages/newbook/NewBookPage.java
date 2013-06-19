@@ -35,7 +35,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.AuthorRole;
@@ -223,12 +222,12 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	protected void observesBookFindResponse(
 			@Observes BookFindResponseEvent bookFindResponseEvent) {
 		// Set page background to the book cover background
-		setPageBackgroundStyle(bookFindResponseEvent.getBookCover().getImgUrl());
+		setPageBackgroundStyle(bookFindResponseEvent.getBookDisplay().getBookCover().getImgUrl());
 
 		// Set the fields
-		Book book = bookFindResponseEvent.getBook();
+		Book book = bookFindResponseEvent.getBookDisplay().getBook();
 		bookTitle.setText(book.getBookTitle());
-		authorLbl.setText("by " + bookFindResponseEvent.getAuthorFullName());
+		authorLbl.setText("by " + bookFindResponseEvent.getBookDisplay().getAuthorFullName());
 		String createdDateFt = book.getCreatedDate() != null ? dtf.format(book
 				.getCreatedDate()) : "";
 		String publDateFt = book.getPublishedDate() != null ? dtf.format(book
@@ -243,7 +242,7 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 		// Clear current values
 		tocTable.clear();
 		List<Bookassetdescription> descriptions = bookFindResponseEvent
-				.getBookAssetDescriptions();
+				.getBookDisplay().getBookAssetDescriptions();
 		for (int i = 0; i < descriptions.size(); i++) {
 			Bookassetdescription bad = descriptions.get(i);
 			String[] data = new String[2];

@@ -31,6 +31,7 @@ import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
 import com.pronoiahealth.olhie.client.shared.vo.BookCover;
+import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
@@ -123,10 +124,11 @@ public class BookFindService {
 					}
 				}
 			}
+			
+			BookDisplay bookDisplay = new BookDisplay(book, cat, cover, authorName, retBaResults);
 
 			// Fire the event
-			bookFindResponseEvent.fire(new BookFindResponseEvent(book, cat,
-					cover, authorName, retBaResults));
+			bookFindResponseEvent.fire(new BookFindResponseEvent(bookDisplay));
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);
