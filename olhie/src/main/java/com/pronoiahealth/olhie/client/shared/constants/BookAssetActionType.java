@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.shared.constants;
 
+import org.jboss.errai.common.client.api.annotations.Portable;
+
 /**
  * BookAssetActionType.java<br/>
  * Responsibilities:<br/>

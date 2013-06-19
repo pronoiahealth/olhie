@@ -7,6 +7,46 @@
 
 .ph-Bookcase-Background {
 	background: #93643a url(Olhie/images/dark_wood.jpg) repeat;
-	
 	background-color: black;
+}
+
+.ph-Bookcase-Book-Container {
+	margin-top: 60px;
+}
+
+.ph-Bookcase-TabHolder {
+	margin-top: 10px;
+	height: 100%;
+	width: 100%;
+}
+
+.ph-Bookcase-Marker {
+	margin-bottom: 0px;
+}
+
+.ph-Bookcase-Marker .gwt-TabLayoutPanelContentContainer {
+    border-width: 0px;
+    margin-top: 40px;
+    marging-left:30px;
+}
+
+.ph-Bookcase-Marker .gwt-TabLayoutPanelContent {
+	margin-left: 40px;
+	margin-top: 20px;
+	overflow-y: auto;
+}
+
+.ph-Bookcase-Marker .gwt-TabLayoutPanelTab {
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.ph-Bookcase-Marker .gwt-TabLayoutPanelTabInner {
+	background: #ccc;
+	padding: 6px;
+	cursor: pointer;
+}
+
+.ph-Bookcase-Marker .gwt-TabLayoutPanelTab-selected {
+	
 }
