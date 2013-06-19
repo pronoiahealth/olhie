@@ -55,6 +55,4 @@ This link maybe useful as an alternative set-up: https://groups.google.com/forum
 Building
 --------
 
-For Eclipse users, import the project as a maven project using the included pom.xml All dependencies are included in the pom (I think, please let me know if this is not the case.) Development requires the  current GWT plugin for Eclipse. Deploy the built project to the configured JBoss server (as above).
-
-test commit  
+For Eclipse users, import the project as a maven project using the included pom.xml All dependencies are included in the pom (I think, please let me know if this is not the case.) Development requires the  current GWT plugin for Eclipse. Deploy the built project to the configured JBoss server (as above).  
