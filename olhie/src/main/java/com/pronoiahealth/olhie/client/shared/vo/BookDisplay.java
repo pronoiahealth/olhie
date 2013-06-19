@@ -33,6 +33,11 @@ public class BookDisplay {
 	private String authorFullName;
 	private List<Bookassetdescription> bookAssetDescriptions;
 	
+	/**
+	 * 
+	 */
+	public BookDisplay(){
+	}
 	
 	/**
 	 * @param book
