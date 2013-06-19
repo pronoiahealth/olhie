@@ -3,8 +3,24 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
 	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base' xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'>
 
-	<g:HTMLPanel ui:field="bookcaseContainer" styleName="ph-Bookcase-Container" height="100%"
-		width="100%" >
+	<g:HTMLPanel ui:field="bookcaseContainer" styleName="ph-Bookcase-Container">
+		<g:TabLayoutPanel ui:field="tabPanel"
+			animationDuration="1000" barHeight="2.5" barUnit="EM"
+			stylePrimaryName="ph-Bookcase-Marker" height="100%">
+			<g:tab>
+				<g:customHeader size='7'>
+					<g:Label>My Books</g:Label>
+				</g:customHeader>
+				<g:HTMLPanel ui:field="myBooksTab" height="100%">
+				</g:HTMLPanel>
+			</g:tab>
+			<g:tab>
+				<g:customHeader size='7'>
+					<g:Label>My Collection</g:Label>
+				</g:customHeader>
+				<g:HTMLPanel ui:field="myCollectionTab" height="100%"></g:HTMLPanel>
+			</g:tab>
+		</g:TabLayoutPanel>
 	</g:HTMLPanel>
 
 </ui:UiBinder>

@@ -10,44 +10,42 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages.bookcase;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.jboss.errai.bus.client.api.messaging.Message;
-import org.jboss.errai.bus.client.api.messaging.MessageBus;
-import org.jboss.errai.bus.client.api.messaging.MessageCallback;
 import org.jboss.errai.ui.nav.client.local.Page;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.query.client.GQuery;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.RegisteredRole;
 import com.pronoiahealth.olhie.client.pages.AppSelectors;
 import com.pronoiahealth.olhie.client.pages.MenuSyncSecureAbstractPage;
-import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
-import com.pronoiahealth.olhie.client.shared.vo.BookForDisplay;
-import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
-import com.pronoiahealth.olhie.client.shared.vo.BookCollection;
-import com.pronoiahealth.olhie.client.shared.vo.BookCover;
-import com.pronoiahealth.olhie.client.shared.vo.BookState;
-import com.pronoiahealth.olhie.client.shared.vo.Bookcase;
-import com.pronoiahealth.olhie.client.widgets.bookcase.BookcaseWidget;
+import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
+import com.pronoiahealth.olhie.client.shared.vo.Book;
+import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D;
 
 /**
  * BookCasePage<br/>
  * Responsibilities:<br/>
  * 1. Displays Bookcase view for a user<br/>
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since May 26, 2013
- *
+ * 
  */
-@Page(role = {RegisteredRole.class})
+@Page(role = { RegisteredRole.class })
 public class BookCasePage extends MenuSyncSecureAbstractPage {
 
 	@Inject
@@ -55,13 +53,17 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 
 	@UiField
 	public HTMLPanel bookcaseContainer;
+	
+	@UiField
+	public HTMLPanel myBooksTab;
+	
+	@UiField
+	public HTMLPanel myCollectionTab;
 
-	@Inject
-	private MessageBus bus;
+	@UiField
+	public TabLayoutPanel tabPanel;
 
-	private Bookcase currentBookcase;
-
-	private BookcaseWidget bWidget;
+	private BookList3D bookList;
 
 	public BookCasePage() {
 	}
@@ -72,24 +74,32 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 	@PostConstruct
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
-		this.currentBookcase = getBookcase();
 
-		// Build the widget but don't attach yet
-		// There are some issues with the javascript and
-		// when you call attach.
-		// See onAttach below.
-		bWidget = new BookcaseWidget(currentBookcase, ".center-background");// ".center-background");
+		// Tab 1
+		// Some books
+		List<Book> books = new ArrayList<Book>();
+		for (int i = 0; i < 10; i++) {
+			Book book = new Book();
+			book.setAuthorId("jdestef");
+			book.setBookTitle("This is a book title");
+			book.setIntroduction("This is the books introduction.");
+			List<Bookassetdescription> descs = new ArrayList<Bookassetdescription>();
+			book.setBookDescriptions(descs);
+			Bookassetdescription baDesc = new Bookassetdescription();
+			baDesc.setDescription("This is a test book description");
+			Bookassetdescription baDesc2 = new Bookassetdescription();
+			baDesc2.setDescription("This is a test book description2 ");
+			descs.add(baDesc);
+			descs.add(baDesc2);
+			books.add(book);
+		}
 
-		// Bind a listener to BookCaseWidgetBookClicked
-		bus.subscribeLocal("BookCaseWidgetBookClicked", new MessageCallback() {
-			@Override
-			public void callback(Message message) {
-				String bookId = message.get(String.class, "bookId");
-				Multimap<String, Object> map = ArrayListMultimap.create();
-				map.put("bookId", bookId);
-				nav.performTransition(NavEnum.BookReviewPage.toString(), map);
-			}
-		});
+		// List
+		bookList = new BookList3D(books);
+		myBooksTab.add(bookList);
+		
+		// Tab 2
+		myCollectionTab.add(new HTML("Test Test"));
 	}
 
 	@Override
@@ -97,7 +107,6 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 		super.onLoad();
 		setPageBackgroundClass("ph-Bookcase-Background");
 		setContainerSize();
-		bookcaseContainer.add(bWidget);
 	}
 
 	private void setContainerSize() {
@@ -106,37 +115,12 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 		this.bookcaseContainer.setHeight("" + h + "px");
 	}
 
-	private Bookcase getBookcase() {
-		Bookcase bookcase = new Bookcase();
-
-		BookCollection bk1 = new BookCollection();
-		bk1.setCollectionName("Authored by Me");
-
-		for (int i = 1; i <= 100; i++) {
-			BookForDisplay book1 = new BookForDisplay("id", "Title 1", "John D", 4, "Test introduction",
-					"TOC", "06/26/1958", "400", "Book 1 Book2",
-					BookState.BOOK_STATE_INVISIBLE, new BookCategory("yellow", "Legal"),
-					new BookCover("Olhie/images/p1.png", "Paper"));
-			bk1.addBook(book1);
-		}
-		bookcase.addCollection(bk1);
-
-		BookForDisplay book2 = new BookForDisplay("id", "Title 1", "John D", 4, "Test introduction",
-				"TOC", "06/26/1958", "400", "Book 1 Book2",
-				BookState.BOOK_STATE_INVISIBLE, new BookCategory("yellow", "Legal"),
-				new BookCover("Olhie/images/p1.png", "Paper"));
-
-		BookForDisplay book3 = new BookForDisplay("id", "Title 1", "John D", 4, "Test introduction",
-				"TOC", "06/26/1958", "400", "Book 1 Book2",
-				BookState.BOOK_STATE_INVISIBLE, new BookCategory("yellow", "Legal"),
-				new BookCover("Olhie/images/p1.png", "Paper"));
-
-		BookCollection bk2 = new BookCollection();
-		bk2.setCollectionName("My Favorites");
-		bk2.addBook(book2);
-		bk2.addBook(book3);
-		bookcase.addCollection(bk2);
-
-		return bookcase;
+	/**
+	 * Need to adjust the search results panel dynamically
+	 * 
+	 * @param event
+	 */
+	public void observesWindowResizeEvent(@Observes WindowResizeEvent event) {
+		setContainerSize();
 	}
 }

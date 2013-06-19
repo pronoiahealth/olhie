@@ -1,6 +1,8 @@
 .bk-list {
 	list-style: none;
 	position: relative;
+	padding-top: 20px;
+	padding-left:30px;
 }
 
 .bk-list li {
@@ -21,6 +23,7 @@
 .bk-info {
 	position: relative;
 	margin-top: 440px;
+	margin-bottom: 10px;
 }
 
 .bk-info h3 {
@@ -389,7 +392,7 @@
 	font-size: 15px;
 	line-height: 40px;
 	padding-right: 10px;
-	text-align: right;
+	text-align: center;
 }
 
 .book-1 .bk-back p {
@@ -416,8 +419,10 @@
 	display: none;
 }
 
+/*
 *, *:after, *:before {
     -moz-box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
+*/
