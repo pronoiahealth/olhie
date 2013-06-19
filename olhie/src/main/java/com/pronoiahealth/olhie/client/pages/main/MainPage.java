@@ -46,6 +46,8 @@ import com.pronoiahealth.olhie.client.shared.events.LoggedInPingEvent;
 import com.pronoiahealth.olhie.client.shared.events.LoginResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.LogoutResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.NewsItemsRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.BulletinBoardNavigationEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.BulletinBoardNavigationEvent.VisibleStateEnum;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientUserUpdatedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
@@ -185,6 +187,8 @@ public class MainPage extends AbstractComposite {
 
 	@Inject
 	private Caller<TestRest> testRestService;
+
+	private static final int EAST_PANEL_WIDTH = 180;
 
 	/**
 	 * Default Constructor
@@ -367,6 +371,16 @@ public class MainPage extends AbstractComposite {
 		clientUserUpdatedEvent.fire(new ClientUserUpdatedEvent());
 	}
 
+	protected void observesBulletinBoardNavigationEvent(
+			@Observes BulletinBoardNavigationEvent bulletinBoardNavigationEvent) {
+		if (bulletinBoardNavigationEvent.getVisibleState().equals(
+				VisibleStateEnum.HIDING)) {
+			hideEast();
+		} else {
+			showEast();
+		}
+	}
+
 	/**
 	 * After a user logs in start pinging the server.
 	 */
@@ -393,5 +407,36 @@ public class MainPage extends AbstractComposite {
 	 */
 	private void ping() {
 		loggedInPingEvent.fire(new LoggedInPingEvent());
+	}
+
+	/**
+	 * Hide east newsDisplayPlaceHolder
+	 */
+	private void hideEast() {
+		if (newsDisplayPlaceHolder != null) {
+			int currentWidgetWidth = newsDisplayPlaceHolder.getOffsetWidth();
+			dockLayoutPanel.setWidgetSize(newsDisplayPlaceHolder,
+					currentWidgetWidth);
+			dockLayoutPanel.forceLayout();
+			dockLayoutPanel.setWidgetSize(newsDisplayPlaceHolder, 0);
+			dockLayoutPanel.animate(1000);
+		}
+	}
+
+	/**
+	 * Show newsDisplayPlaceHolder
+	 */
+	private void showEast() {
+		if (newsDisplayPlaceHolder != null) {
+			int currentWidth = newsDisplayPlaceHolder.getOffsetWidth();
+			if (currentWidth != EAST_PANEL_WIDTH) {
+				dockLayoutPanel.setWidgetSize(newsDisplayPlaceHolder,
+						currentWidth);
+				dockLayoutPanel.forceLayout();
+				dockLayoutPanel.setWidgetSize(newsDisplayPlaceHolder,
+						EAST_PANEL_WIDTH);
+				dockLayoutPanel.animate(1000);
+			}
+		}
 	}
 }
