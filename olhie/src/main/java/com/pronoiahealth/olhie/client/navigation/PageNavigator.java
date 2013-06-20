@@ -64,7 +64,7 @@ public class PageNavigator {
 
 	@Inject
 	private TransitionTo<BulletinboardPage> showBulletinboardPage;
-	
+
 	@Inject
 	private TransitionTo<BookDisplayPage> showBookDisplayPage;
 
@@ -76,10 +76,9 @@ public class PageNavigator {
 
 	@Inject
 	private TransitionTo<BookReviewPage> showBookReviewPage;
-	
+
 	@Inject
 	private TransitionTo<NewBookPage> showNewBookPage;
-
 
 	@Inject
 	public PageNavigator() {
@@ -87,6 +86,21 @@ public class PageNavigator {
 
 	public Widget getNavContentPanel() {
 		return nav.getContentPanel();
+	}
+
+	/**
+	 * Tests the name of the current page being shown against a value.
+	 * 
+	 * @param pageInQuestionName
+	 * @return
+	 */
+	public boolean isCurrentPage(String pageInQuestionName) {
+		String currentPageName = nav.getCurrentPage().name();
+		if (currentPageName.equals(pageInQuestionName)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -110,7 +124,7 @@ public class PageNavigator {
 			}
 			break;
 		}
-		
+
 		case BookDisplayPage: {
 			if (state == null) {
 				showBookDisplayPage.go();
@@ -146,7 +160,7 @@ public class PageNavigator {
 			}
 			break;
 		}
-		
+
 		case NewBookPage: {
 			if (state == null) {
 				showBookReviewPage.go();

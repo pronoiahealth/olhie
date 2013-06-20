@@ -48,6 +48,12 @@ public class UserBookRelationship {
 	
 	@NotNull
 	private boolean activeRelationship;
+	
+	@NotNull
+	private Book theBook;
+	
+	@NotNull
+	private User theUser;
 
 	/**
 	 * Constructor
@@ -90,5 +96,21 @@ public class UserBookRelationship {
 
 	public String getId() {
 		return id;
+	}
+
+	public Book getTheBook() {
+		return theBook;
+	}
+
+	public void setTheBook(Book theBook) {
+		this.theBook = theBook;
+	}
+
+	public User getTheUser() {
+		return theUser;
+	}
+
+	public void setTheUser(User theUser) {
+		this.theUser = theUser;
 	}
 }

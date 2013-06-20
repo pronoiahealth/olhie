@@ -41,6 +41,7 @@ import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddFileDialog;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.NewAssetDialog;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.NewBookDialog;
 import com.pronoiahealth.olhie.client.pages.register.RegisterDialog;
+import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.events.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.LoggedInPingEvent;
 import com.pronoiahealth.olhie.client.shared.events.LoginResponseEvent;
@@ -282,6 +283,11 @@ public class MainPage extends AbstractComposite {
 		 * @Override public boolean error(Object message, Throwable throwable) {
 		 * return true; } }).getTest();
 		 */
+
+		// Test to see if we are on the BulletinBoardPage as the initial page
+		if (!navigator.isCurrentPage(NavEnum.BulletinboardPage.name())) {
+			hideEast();
+		}
 	}
 
 	/**
