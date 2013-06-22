@@ -85,13 +85,13 @@ public class FlexTableExt extends FlexTable {
 	 * @param cellObject
 	 * @return
 	 */
-	private Widget createCellWidget(String cellObject) {
-		Widget widget = null;
-		Label l = new Label(cellObject.toString());
-		l.setWordWrap(true);
-		widget = l;
-		return widget;
-	}
+	// private Widget createCellWidget(String cellObject) {
+	// Widget widget = null;
+	// Label l = new Label(cellObject.toString());
+	// l.setWordWrap(true);
+	// widget = l;
+	// return widget;
+	// }
 
 	/**
 	 * Add a row of string values
@@ -109,14 +109,13 @@ public class FlexTableExt extends FlexTable {
 	 *            - If its less than 0 the not popup will be placed. The value
 	 *            is 0 based.
 	 */
-	public void addRow(String[] cellObjects, String[] cellColStyles,
+	public void addRow(Object[] cellObjects, String[] cellColStyles,
 			String popOverTitle, String popOverTxt, int popOverCol) {
 		for (int cell = 0; cell < cellObjects.length; cell++) {
 			Widget widget = createCellWidget(cellObjects[cell]);
 			setWidget(rowIndex, cell, widget);
 			getCellFormatter()
 					.addStyleName(rowIndex, cell, cellColStyles[cell]);
-
 			if (popOverCol >= 0 && cell == popOverCol) {
 				setupPopover(widget, popOverTxt, popOverTitle);
 			}

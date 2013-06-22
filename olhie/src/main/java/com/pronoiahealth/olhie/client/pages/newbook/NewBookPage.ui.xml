@@ -35,7 +35,6 @@
 						</b:NavPills>
 					</g:HTMLPanel>
 					<g:HTMLPanel ui:field="addTOCElementContainer" stylePrimaryName="ph-NewBook-TOC-Container">
-						<my:FlexTableExt ui:field="tocTable"></my:FlexTableExt>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</b:Hero>

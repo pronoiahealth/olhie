@@ -55,6 +55,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.rest.TestRest;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.shared.vo.User;
+import com.pronoiahealth.olhie.client.widgets.DownloadFrame;
 import com.pronoiahealth.olhie.client.widgets.newsdisplay.NewsDisplay;
 
 /**
@@ -116,6 +117,9 @@ public class MainPage extends AbstractComposite {
 
 	@Inject
 	AddFileDialog addFileDialog;
+	
+	@Inject
+	DownloadFrame downloadFrame;
 
 	@UiField
 	public HTMLPanel loginModalPlaceHolder;
@@ -137,6 +141,9 @@ public class MainPage extends AbstractComposite {
 
 	@UiField
 	public HTMLPanel addFileModalPlaceHolder;
+	
+	@UiField
+	public HTMLPanel downloadFramePlaceHolder;
 
 	/*
 	 * Used to time things on screen such as when a key is pressed.
@@ -330,6 +337,7 @@ public class MainPage extends AbstractComposite {
 		newBookModalPlaceHolder.add(newBookDialog);
 		newAssetModalPlaceHolder.add(newAssetDialog);
 		addFileModalPlaceHolder.add(addFileDialog);
+		downloadFramePlaceHolder.add(downloadFrame);
 	}
 
 	/**

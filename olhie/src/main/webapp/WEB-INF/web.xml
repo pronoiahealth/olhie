@@ -18,10 +18,16 @@
 		<url-pattern>*.erraiBus</url-pattern>
 	</servlet-mapping>
 
-	<!-- Redirect any 500 Error Code to /error.jsf -->
+	<!-- Redirect any 500 Error Code to serverError.html -->
 	<error-page>
 		<error-code>500</error-code>
-		<location>/Olhie.html</location>
+		<location>/serverError.html</location>
+	</error-page>
+	
+	<!-- Redirect any 401 Error Code to authError.html -->
+	<error-page>
+		<error-code>401</error-code>
+		<location>/authError.html</location>
 	</error-page>
 
 	<!-- env-entry> <env-entry-name>java:comp/env/deltaspike/hello</env-entry-name> 

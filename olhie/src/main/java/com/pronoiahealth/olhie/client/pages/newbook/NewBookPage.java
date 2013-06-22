@@ -29,6 +29,7 @@ import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.NavPills;
 import com.github.gwtbootstrap.client.ui.PageHeader;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -43,12 +44,14 @@ import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.events.BookFindByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.BookContentUpdatedEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.DownloadBookAssetEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewAssetModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
+import com.pronoiahealth.olhie.client.widgets.DownloadBookassetButton;
 import com.pronoiahealth.olhie.client.widgets.FlexTableExt;
 
 /**
@@ -116,9 +119,6 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	@UiField
 	public NavLink tocAddElement;
 
-	@UiField
-	public FlexTableExt tocTable;
-
 	@Inject
 	private Event<NewBookPageShowingEvent> newBookPageShowingEvent;
 
@@ -129,8 +129,13 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	private Event<ShowNewAssetModalEvent> showNewAssetModalEvent;
 
 	@Inject
+	private Event<DownloadBookAssetEvent> downloadBookAssetEvent;
+
+	@Inject
 	@NewBook
 	private Event<BookFindByIdEvent> bookFindByIdEvent;
+
+	private ClickHandler downloadClickHandler;
 
 	/**
 	 * Default Constructor
@@ -158,6 +163,19 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 		tocHeader.setStyleName("ph-NewBook-Introduction-Hero-TOC-Header", true);
 		tocAddElementContainer.setStyleName("ph-NewBook-TOC-Element-Container",
 				true);
+
+		this.downloadClickHandler = new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Object obj = event.getSource();
+				if (obj instanceof DownloadBookassetButton) {
+					DownloadBookassetButton but = (DownloadBookassetButton) obj;
+					String bookAssetId = but.getBookassetId();
+					downloadBookAssetEvent.fire(new DownloadBookAssetEvent(
+							bookAssetId));
+				}
+			}
+		};
 	}
 
 	/**
@@ -222,12 +240,14 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	protected void observesBookFindResponse(
 			@Observes BookFindResponseEvent bookFindResponseEvent) {
 		// Set page background to the book cover background
-		setPageBackgroundStyle(bookFindResponseEvent.getBookDisplay().getBookCover().getImgUrl());
+		setPageBackgroundStyle(bookFindResponseEvent.getBookDisplay()
+				.getBookCover().getImgUrl());
 
 		// Set the fields
 		Book book = bookFindResponseEvent.getBookDisplay().getBook();
 		bookTitle.setText(book.getBookTitle());
-		authorLbl.setText("by " + bookFindResponseEvent.getBookDisplay().getAuthorFullName());
+		authorLbl.setText("by "
+				+ bookFindResponseEvent.getBookDisplay().getAuthorFullName());
 		String createdDateFt = book.getCreatedDate() != null ? dtf.format(book
 				.getCreatedDate()) : "";
 		String publDateFt = book.getPublishedDate() != null ? dtf.format(book
@@ -240,20 +260,25 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 
 		// TOC container elements
 		// Clear current values
-		tocTable.clear();
+		addTOCElementContainer.clear();
+		FlexTableExt tocTable = new FlexTableExt();
 		List<Bookassetdescription> descriptions = bookFindResponseEvent
 				.getBookDisplay().getBookAssetDescriptions();
 		for (int i = 0; i < descriptions.size(); i++) {
 			Bookassetdescription bad = descriptions.get(i);
-			String[] data = new String[2];
+			Object[] data = new Object[3];
 			data[0] = NewBookMessages.INSTANCE.createTOCNumber("" + (i + 1));
 			data[1] = bad.getDescription();
 			String createdDt = dtf.format(bad.getCreatedDate());
-			tocTable.addRow(data, new String[] { "ph-NewBook-TOC-NumberCol",
-					"ph-NewBook-TOC-DescriptionCol" }, "Details",
+			String baId = bad.getBookAssets().get(0).getId();
+			data[2] = new DownloadBookassetButton(downloadClickHandler, baId);
+			tocTable.addRow(data,
+					new String[] { "ph-NewBook-TOC-NumberCol",
+							"ph-NewBook-TOC-DescriptionCol",
+							"ph-NewBook-TOC-NumberCol" }, "Details",
 					NewBookMessages.INSTANCE.setCreatedDateText(createdDt), 0);
 		}
-
+		addTOCElementContainer.add(tocTable);
 	}
 
 	/**

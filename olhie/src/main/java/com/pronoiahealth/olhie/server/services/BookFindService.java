@@ -32,6 +32,7 @@ import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
 import com.pronoiahealth.olhie.client.shared.vo.BookCover;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
+import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
@@ -114,13 +115,19 @@ public class BookFindService {
 			// Need to detach them. We don't want to pull back the entire object
 			// tree
 			if (baResult != null) {
-				for (Bookassetdescription ba : baResult) {
-					if (ba.getRemoved().booleanValue() == false) {
-						Bookassetdescription retBa = new Bookassetdescription();
-						retBa.setBookId(ba.getBookId());
-						retBa.setCreatedDate(ba.getCreatedDate());
-						retBa.setDescription(ba.getDescription());
-						retBaResults.add(retBa);
+				for (Bookassetdescription bad : baResult) {
+					if (bad.getRemoved().booleanValue() == false) {
+						Bookassetdescription retBad = new Bookassetdescription();
+						retBad.setBookId(bad.getBookId());
+						retBad.setCreatedDate(bad.getCreatedDate());
+						retBad.setDescription(bad.getDescription());
+						Bookasset ba = bad.getBookAssets().get(0);
+						Bookasset retBa = new Bookasset();
+						retBa.setId(ba.getId());
+						ArrayList<Bookasset> retbookAssets = new ArrayList<Bookasset>();
+						retbookAssets.add(retBa);
+						retBad.setBookAssets(retbookAssets);
+						retBaResults.add(retBad);
 					}
 				}
 			}

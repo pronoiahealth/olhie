@@ -28,7 +28,7 @@
 		</b:Form>
 		<g:HTML ui:field="errorMsg" styleName="ph-LoginDialog-Error"></g:HTML>
 		<b:ModalFooter>
-			<b:Button ui:field="loginButton" type="PRIMARY" text="Sign-In" />
+			<b:Button ui:field="loginButton" type="PRIMARY" text="Sign-In" icon="PENCIL"/>
 		</b:ModalFooter>
 	</b:Modal>
 

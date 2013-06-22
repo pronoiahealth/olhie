@@ -139,4 +139,8 @@ public class Bookasset {
 	public void setBase64Data(String base64Data) {
 		this.base64Data = base64Data;
 	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 }

@@ -14,6 +14,11 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.jboss.errai.bus.client.api.base.CommandMessage;
+import org.jboss.errai.bus.client.api.messaging.Message;
+import org.jboss.errai.bus.client.api.messaging.MessageBus;
+import org.jboss.errai.bus.client.api.messaging.MessageCallback;
+
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -55,6 +60,9 @@ public class ErrorDisplayDialog extends Composite {
 	@UiField
 	public Button closeButton;
 
+	@Inject
+	private MessageBus bus;
+
 	/**
 	 * Constructor
 	 * 
@@ -69,6 +77,15 @@ public class ErrorDisplayDialog extends Composite {
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
 		errorDisplayModal.setStyleName("ph-Error-Modal", true);
+
+		// Set up message listener for JAX-RS errors
+		bus.subscribe("ClientErrorDialog", new MessageCallback() {
+			@Override
+			public void callback(Message message) {
+				String msg = message.get(String.class, "Message");
+				displayError(msg);
+			}
+		});
 	}
 
 	/**
@@ -78,10 +95,7 @@ public class ErrorDisplayDialog extends Composite {
 	 */
 	protected void observesServiceErrorEvent(
 			@Observes ServiceErrorEvent serviceErrorEvent) {
-		SafeHtmlBuilder builder = new SafeHtmlBuilder();
-		errorMsg.setHTML(builder.appendEscaped(serviceErrorEvent.getErrorMsg())
-				.toSafeHtml());
-		errorDisplayModal.show();
+		displayError(serviceErrorEvent.getErrorMsg());
 	}
 
 	/**
@@ -91,9 +105,15 @@ public class ErrorDisplayDialog extends Composite {
 	 */
 	protected void observesClientErrorEvent(
 			@Observes ClientErrorEvent clientErrorEvent) {
+		displayError(clientErrorEvent.getMessage());
+	}
+
+	private void displayError(String msg) {
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
-		errorMsg.setHTML(builder.appendEscaped(clientErrorEvent.getMessage())
-				.toSafeHtml());
+		if (msg == null) {
+			msg = "No error message was reported.";
+		}
+		errorMsg.setHTML(builder.appendEscaped(msg).toSafeHtml());
 		errorDisplayModal.show();
 	}
 
