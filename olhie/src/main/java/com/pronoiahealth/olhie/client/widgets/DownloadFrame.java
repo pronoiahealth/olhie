@@ -10,10 +10,19 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.widgets;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.IFrameElement;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.NamedFrame;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.inject.Inject;
+import com.pronoiahealth.olhie.client.shared.events.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.DownloadBookAssetEvent;
 import com.pronoiahealth.olhie.client.utils.Utils;
 
@@ -29,12 +38,42 @@ import com.pronoiahealth.olhie.client.utils.Utils;
  */
 public class DownloadFrame extends SimplePanel {
 	private NamedFrame iFrame;
+	private LoadHandler loadHandler;
+
+	@Inject
+	private Event<ClientErrorEvent> clientErrorEvent;
 
 	/**
 	 * Constructor
 	 * 
 	 */
 	public DownloadFrame() {
+	}
+
+	/**
+	 * Create the LoadHandler to observe the Frame. Errors from the server will
+	 * get sent back to the frame.
+	 */
+	@PostConstruct
+	private void postConstruct() {
+
+		// Create a load handler to watch for errors.
+		loadHandler = new LoadHandler() {
+			@Override
+			public void onLoad(LoadEvent event) {
+				IFrameElement elem = ((IFrameElement) iFrame.getElement()
+						.cast());
+				Document doc = elem.getContentDocument();
+				if (doc != null) {
+					if (doc.getBody() != null) {
+						String str = doc.getBody().getInnerHTML();
+						if (str != null && str.length() > 0) {
+							clientErrorEvent.fire(new ClientErrorEvent(str));
+						}
+					}
+				}
+			}
+		};
 	}
 
 	/**
@@ -45,11 +84,14 @@ public class DownloadFrame extends SimplePanel {
 	private void downloadContent(String uri) {
 		if (iFrame != null) {
 			iFrame.removeFromParent();
+			iFrame = null;
 		}
 		iFrame = new NamedFrame("download");
+		iFrame.getElement().setId("downloadFrame");
 		iFrame.setVisible(false);
-		iFrame.setUrl(uri);
+		iFrame.addLoadHandler(loadHandler);
 		add(iFrame);
+		iFrame.setUrl(uri);
 	}
 
 	protected void observesDownloadBookAssetEvent(

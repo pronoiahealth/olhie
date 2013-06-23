@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.rest.exceptionmaps;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -39,7 +40,10 @@ public class FileUploadExceptionMapper implements
 
 	@Override
 	public Response toResponse(FileUploadException arg0) {
-		return Response.status(500).build();
+		StringBuilder response = new StringBuilder();
+		response.append("There was an error on the server uploading the asset.");
+		return Response.serverError().entity(response.toString())
+				.type(MediaType.TEXT_PLAIN_TYPE).build();
 	}
 
 }

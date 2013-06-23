@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.rest.exceptionmaps;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -20,11 +21,11 @@ import com.pronoiahealth.olhie.client.shared.exceptions.FileDownloadException;
  * FileDownloadExceptionMapper.java<br/>
  * Responsibilities:<br/>
  * 1. Maps the exception to an HTTP response (500)<br/>
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since Jun 22, 2013
- *
+ * 
  */
 @Provider
 public class FileDownloadExceptionMapper implements
@@ -32,14 +33,17 @@ public class FileDownloadExceptionMapper implements
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 */
 	public FileDownloadExceptionMapper() {
 	}
 
 	@Override
 	public Response toResponse(FileDownloadException arg0) {
-		return Response.status(401).build();
+		StringBuilder response = new StringBuilder();
+		response.append("There was an error on the server downloading the asset.");
+		return Response.serverError().entity(response.toString())
+				.type(MediaType.TEXT_PLAIN_TYPE).build();
 	}
 
 }

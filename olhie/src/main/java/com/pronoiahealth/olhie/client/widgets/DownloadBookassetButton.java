@@ -17,12 +17,12 @@
 package com.pronoiahealth.olhie.client.widgets;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.Tooltip;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.github.gwtbootstrap.client.ui.constants.Placement;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.SimplePanel;
 
 /**
  * DownloadBookassetIcon.java<br/>
@@ -46,6 +46,12 @@ public class DownloadBookassetButton extends Button {
 		this.setType(ButtonType.INFO);
 		this.addClickHandler(handler);
 		this.setBookassetId(bookassetId);
+		Tooltip tip = new Tooltip();
+		tip.setWidget(this);
+		tip.setText("Download");
+		tip.setPlacement(Placement.TOP);
+		tip.setContainer("body");
+		tip.reconfigure();
 	}
 
 	public void setBookassetId(String id) {

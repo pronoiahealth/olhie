@@ -22,6 +22,7 @@ import org.jboss.errai.ui.nav.client.local.PageHiding;
 import org.jboss.errai.ui.nav.client.local.PageShowing;
 import org.jboss.errai.ui.nav.client.local.PageState;
 
+import com.github.gwtbootstrap.client.ui.ButtonGroup;
 import com.github.gwtbootstrap.client.ui.FluidRow;
 import com.github.gwtbootstrap.client.ui.Heading;
 import com.github.gwtbootstrap.client.ui.Hero;
@@ -271,7 +272,10 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 			data[1] = bad.getDescription();
 			String createdDt = dtf.format(bad.getCreatedDate());
 			String baId = bad.getBookAssets().get(0).getId();
-			data[2] = new DownloadBookassetButton(downloadClickHandler, baId);
+			ButtonGroup btns = new ButtonGroup();
+			btns.add(new DownloadBookassetButton(downloadClickHandler, baId));
+			//data[2] = new DownloadBookassetButton(downloadClickHandler, baId);
+			data[2] = btns;
 			tocTable.addRow(data,
 					new String[] { "ph-NewBook-TOC-NumberCol",
 							"ph-NewBook-TOC-DescriptionCol",

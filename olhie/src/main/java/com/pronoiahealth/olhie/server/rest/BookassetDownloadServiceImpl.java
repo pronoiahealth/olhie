@@ -115,8 +115,7 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 			}
 
 			in = new DataInputStream(new ByteArrayInputStream(fileBytes));
-			throw new Exception("This is a test");
-			// return in;
+			return in;
 		} catch (Exception e) {
 			log.log(Level.SEVERE,
 					"Throwing servlet exception for unhandled exception", e);

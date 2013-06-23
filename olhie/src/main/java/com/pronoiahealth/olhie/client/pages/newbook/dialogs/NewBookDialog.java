@@ -60,6 +60,7 @@ import com.pronoiahealth.olhie.client.shared.exceptions.DataValidationException;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
 import com.pronoiahealth.olhie.client.shared.vo.BookCover;
+import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.shared.vo.RegistrationForm;
 import com.pronoiahealth.olhie.client.widgets.bookcat.BookCategoryListWidget;
 import com.pronoiahealth.olhie.client.widgets.bookcover.BookCoverListWidget;
@@ -82,6 +83,9 @@ public class NewBookDialog extends Composite {
 
 	@Inject
 	private DataBinder<Book> dataBinder;
+	
+	@Inject
+	private ClientUserToken clientToken;
 
 	private Book book;
 
@@ -304,7 +308,11 @@ public class NewBookDialog extends Composite {
 	@UiHandler("submitButton")
 	public void handleSubmitButtonClick(ClickEvent clickEvt) {
 		try {
+			// Validate form
 			Book book = validateForm();
+			
+			// Add creator id
+			book.setAuthorId(clientToken.getUserId());
 
 			// Fire event and wait for BookUpdateCommittedEvent
 			newBookUpdateEvent.fire(new BookUpdateEvent(book));

@@ -28,13 +28,16 @@
 				<g:HTMLPanel width="100%">
 					<g:HTMLPanel styleName="ph-NewBook-TOC-Element-Container"
 						width="47px">
-						<b:NavPills ui:field="tocAddElementContainer">
-							<b:NavLink ui:field="tocAddElement" icon="PLUS_SIGN_ALT"
-								iconSize="LARGE">
-							</b:NavLink>
-						</b:NavPills>
+						<b:Tooltip text="Add content">
+							<b:NavPills ui:field="tocAddElementContainer">
+								<b:NavLink ui:field="tocAddElement" icon="PLUS_SIGN_ALT"
+									iconSize="LARGE">
+								</b:NavLink>
+							</b:NavPills>
+						</b:Tooltip>
 					</g:HTMLPanel>
-					<g:HTMLPanel ui:field="addTOCElementContainer" stylePrimaryName="ph-NewBook-TOC-Container">
+					<g:HTMLPanel ui:field="addTOCElementContainer"
+						stylePrimaryName="ph-NewBook-TOC-Container">
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</b:Hero>
