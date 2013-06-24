@@ -124,6 +124,8 @@ public class BookFindService {
 						Bookasset ba = bad.getBookAssets().get(0);
 						Bookasset retBa = new Bookasset();
 						retBa.setId(ba.getId());
+						retBa.setContentType(ba.getContentType());
+						retBa.setItemType(ba.getItemType());
 						ArrayList<Bookasset> retbookAssets = new ArrayList<Bookasset>();
 						retbookAssets.add(retBa);
 						retBad.setBookAssets(retbookAssets);

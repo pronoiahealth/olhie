@@ -39,9 +39,11 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.pronoiahealth.olhie.client.clientfactories.ViewableContentType;
 import com.pronoiahealth.olhie.client.navigation.AuthorRole;
 import com.pronoiahealth.olhie.client.pages.PageShownSecureAbstractPage;
 import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
+import com.pronoiahealth.olhie.client.shared.constants.BookAssetDataType;
 import com.pronoiahealth.olhie.client.shared.events.BookFindByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.BookContentUpdatedEvent;
@@ -51,9 +53,12 @@ import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEven
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewAssetModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
+import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 import com.pronoiahealth.olhie.client.widgets.DownloadBookassetButton;
 import com.pronoiahealth.olhie.client.widgets.FlexTableExt;
+import com.pronoiahealth.olhie.client.widgets.RemoveBookassetdescriptionButton;
+import com.pronoiahealth.olhie.client.widgets.ViewBookassetButton;
 
 /**
  * NewBookPage.java<br/>
@@ -71,6 +76,10 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 
 	private static final DateTimeFormat dtf = DateTimeFormat
 			.getFormat("MM/dd/yyyy");
+
+	@Inject
+	@ViewableContentType
+	private List<String> viewableContentType;
 
 	@Inject
 	UiBinder<Widget, NewBookPage> binder;
@@ -138,6 +147,10 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 
 	private ClickHandler downloadClickHandler;
 
+	private ClickHandler removeClickHandler;
+
+	private ClickHandler viewClickHandler;
+
 	/**
 	 * Default Constructor
 	 * 
@@ -174,6 +187,34 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 					String bookAssetId = but.getBookassetId();
 					downloadBookAssetEvent.fire(new DownloadBookAssetEvent(
 							bookAssetId));
+				}
+			}
+		};
+
+		this.removeClickHandler = new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Object obj = event.getSource();
+				if (obj instanceof RemoveBookassetdescriptionButton) {
+					RemoveBookassetdescriptionButton but = (RemoveBookassetdescriptionButton) obj;
+					String bookAssetId = but.getBookassetId();
+					// removeBookAssetDescriptionEvent.fire(new
+					// RemoveBookAssetDescriptionEvent(
+					// bookAssetId));
+				}
+			}
+		};
+
+		this.viewClickHandler = new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Object obj = event.getSource();
+				if (obj instanceof ViewBookassetButton) {
+					ViewBookassetButton but = (ViewBookassetButton) obj;
+					String bookAssetId = but.getBookassetId();
+					// removeBookAssetDescriptionEvent.fire(new
+					// RemoveBookAssetDescriptionEvent(
+					// bookAssetId));
 				}
 			}
 		};
@@ -271,18 +312,49 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 			data[0] = NewBookMessages.INSTANCE.createTOCNumber("" + (i + 1));
 			data[1] = bad.getDescription();
 			String createdDt = dtf.format(bad.getCreatedDate());
-			String baId = bad.getBookAssets().get(0).getId();
-			ButtonGroup btns = new ButtonGroup();
-			btns.add(new DownloadBookassetButton(downloadClickHandler, baId));
-			//data[2] = new DownloadBookassetButton(downloadClickHandler, baId);
+			Bookasset ba = bad.getBookAssets().get(0);
+			String baId = ba.getId();
+			ButtonGroup btns = this.makeButtonGroup(ba.getContentType(),
+					ba.getItemType(), baId);
 			data[2] = btns;
-			tocTable.addRow(data,
-					new String[] { "ph-NewBook-TOC-NumberCol",
-							"ph-NewBook-TOC-DescriptionCol",
-							"ph-NewBook-TOC-NumberCol" }, "Details",
+			tocTable.addRow(data, new String[] { "ph-NewBook-TOC-NumberCol",
+					"ph-NewBook-TOC-DescriptionCol",
+					"ph-NewBook-TOC-ButtonsCol" }, "Details",
 					NewBookMessages.INSTANCE.setCreatedDateText(createdDt), 0);
 		}
 		addTOCElementContainer.add(tocTable);
+	}
+
+	/**
+	 * Make a button grpup with the correbt buttons based on the params
+	 * 
+	 * @param contentType
+	 * @param itemTypeStr
+	 * @param baId
+	 * @return
+	 */
+	private ButtonGroup makeButtonGroup(String contentType, String itemTypeStr,
+			String baId) {
+		// Group of buttons to return
+		ButtonGroup btns = new ButtonGroup();
+
+		// Download button
+		BookAssetDataType itemType = BookAssetDataType.valueOf(itemTypeStr);
+		if (itemType.equals(BookAssetDataType.FILE)) {
+			btns.add(new DownloadBookassetButton(downloadClickHandler, baId));
+		}
+
+		// Can this content be viewed in an iFrame
+		if (viewableContentType.contains(contentType) == true) {
+			btns.add(new ViewBookassetButton(viewClickHandler, baId));
+		}
+
+		// Always add remove
+		btns.add(new RemoveBookassetdescriptionButton(downloadClickHandler,
+				baId));
+
+		// Return the buttons
+		return btns;
 	}
 
 	/**
@@ -308,7 +380,7 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 			}
 			int newHeroHeight = wndHeight - 300;
 
-			// introduction
+			// Introduction
 			introductionHero.setHeight("" + newHeroHeight + "px");
 			introductionPanel.setHeight("" + (newHeroHeight - 40) + "px");
 

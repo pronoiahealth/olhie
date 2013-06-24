@@ -10,8 +10,10 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.clientfactories;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -42,6 +44,7 @@ import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
  */
 @ApplicationScoped
 public class ClientFactory {
+	private List<String> viewableContentTypeLst;
 
 	public ClientFactory() {
 	}
@@ -56,7 +59,7 @@ public class ClientFactory {
 	public Integer getScreenTimeout() {
 		return AppConstants.SCREEN_TIMEOUT;
 	}
-	
+
 	/**
 	 * Return the news fade interval
 	 * 
@@ -67,7 +70,7 @@ public class ClientFactory {
 	public Integer getNewsFadeInterval() {
 		return AppConstants.NEWS_FADE_INTERVAL;
 	}
-	
+
 	/**
 	 * Return the ping fire interval
 	 * 
@@ -169,6 +172,22 @@ public class ClientFactory {
 	public String getDefaultAnnotatedPageName(Navigation nav) {
 		return collectPageNames(nav.getPagesByRole(DefaultPage.class))
 				.iterator().next();
+	}
+
+	/**
+	 * Content types that can be viewed in an iFrame
+	 * 
+	 * @return
+	 */
+	@Produces
+	@ViewableContentType
+	public List<String> getViewableContentTypeLst() {
+		if (viewableContentTypeLst == null) {
+			viewableContentTypeLst = new ArrayList<String>();
+			viewableContentTypeLst.add("application/pdf");
+			viewableContentTypeLst.add("text/html");
+		}
+		return viewableContentTypeLst;
 	}
 
 }

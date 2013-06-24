@@ -69,11 +69,14 @@
 	padding-right: 10px;
 	vertical-align: top;
 	font-weight: bold;
-	
 }
 
 .ph-NewBook-TOC-DescriptionCol {
-	width: 805%;
+	width: 75%;
+}
+
+.ph-NewBook-TOC-ButtonsCol {
+	text-align: left;
 }
 
 .ph-NewBook-TOC-Container {

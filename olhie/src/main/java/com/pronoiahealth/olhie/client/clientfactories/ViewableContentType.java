@@ -8,18 +8,31 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.shared.constants;
+package com.pronoiahealth.olhie.client.clientfactories;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
 
 /**
- * BookAssetActionType.java<br/>
+ * ViewableContentType.java<br/>
  * Responsibilities:<br/>
- * 1.
- *
+ * 1. Used to inject a list of viewable content types<br/>
+ * 
  * @author John DeStefano
  * @version 1.0
- * @since Jun 12, 2013
- *
+ * @since Jun 23, 2013
+ * 
  */
-public enum BookAssetActionType {
-	NEW, REVISE;
+@Target({ ElementType.METHOD, ElementType.TYPE, ElementType.PARAMETER,
+		ElementType.FIELD })
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Qualifier
+public @interface ViewableContentType {
+
 }

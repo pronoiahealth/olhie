@@ -1,0 +1,12 @@
+.ph-ViewBookassetDialog-ErrorMsg-Container {
+	border-width: 1px;
+	border-color: black;
+	border-style: solid;
+	padding: 5px;
+}
+
+.ph-ViewBookassetDialog-Modal {
+	background-image: url("Olhie/images/error_paper.png");
+	background-repeat: repeat;
+	z-index: 30000;
+}
