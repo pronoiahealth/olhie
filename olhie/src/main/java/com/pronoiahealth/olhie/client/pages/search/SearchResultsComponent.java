@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages.search;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -20,11 +22,12 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
+import com.pronoiahealth.olhie.client.shared.events.BookSearchResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
-import com.pronoiahealth.olhie.client.shared.vo.BookForDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
 import com.pronoiahealth.olhie.client.shared.vo.BookCover;
+import com.pronoiahealth.olhie.client.shared.vo.BookForDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.BookState;
 import com.pronoiahealth.olhie.client.widgets.booklist.BookListResultWidget;
 import com.watopi.chosen.client.gwt.ChosenListBox;
@@ -78,7 +81,7 @@ public class SearchResultsComponent extends AbstractComposite {
 		resultListCnt.setWidth("100px");
 		
 		// Test add some books
-
+		/*
 		BookListResultWidget widget = new BookListResultWidget(new BookForDisplay("id", "Title 1", "John D", 4, "Test introduction",
 				"TOC", "06/26/1958", "400", "Book 1 Book2",
 				BookState.BOOK_STATE_INVISIBLE, new BookCategory("yellow", "Legal"),
@@ -87,7 +90,27 @@ public class SearchResultsComponent extends AbstractComposite {
 			widget.getBookImagePanelWidget().setVisible(false);
 			searchResultsContainerList.add(widget);
 		}
+		*/
 
+	}
+
+	/**
+	 * Observes the results from a book search query.
+	 * 
+	 * @param event
+	 */
+	public void observesBookSearchResponseEvent(
+			@Observes BookSearchResponseEvent event) {
+
+		List<BookForDisplay> bookForDisplayList = event.getBookForDisplayList();
+		
+		for (BookForDisplay bookForDisplay : bookForDisplayList) {
+			BookListResultWidget widget = new BookListResultWidget(bookForDisplay);
+			if (widget.getBook().getBookState() == BookState.BOOK_STATE_INVISIBLE) {
+				widget.getBookImagePanelWidget().setVisible(false);
+				searchResultsContainerList.add(widget);
+			}
+		}
 	}
 
 	/**

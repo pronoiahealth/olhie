@@ -8,7 +8,7 @@
 		<b:WellForm ui:field="searchForm" type="SEARCH">
 			<b:Icon type="SEARCH" />
 			<b:TextBox ui:field="searchQryBox" searchQuery="true" placeholder="search our site..." />
-			<b:Button type="PRIMARY" icon="PLAY">Find</b:Button>
+			<b:Button ui:field="findButton" type="PRIMARY" icon="PLAY">Find</b:Button>
 		</b:WellForm>
 	</g:HTMLPanel>
 
