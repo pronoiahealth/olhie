@@ -40,25 +40,25 @@ public class RemoveBookassetdescriptionButton extends Button {
 	 * Constructor
 	 * 
 	 */
-	public RemoveBookassetdescriptionButton(ClickHandler handler, String bookassetId) {
+	public RemoveBookassetdescriptionButton(ClickHandler handler, String bookassetdescriptionId) {
 		this.setSize(ButtonSize.MINI);
 		this.setIcon(IconType.REMOVE_CIRCLE);
 		this.setType(ButtonType.WARNING);
 		this.addClickHandler(handler);
-		this.setBookassetId(bookassetId);
+		this.setBookassetdescriptionId(bookassetdescriptionId);
 		Tooltip tip = new Tooltip();
 		tip.setWidget(this);
 		tip.setText("Remove this item.");
-		tip.setPlacement(Placement.TOP);
-		tip.setContainer("body");
+		tip.setPlacement(Placement.BOTTOM);
+		//tip.setContainer("body");
 		tip.reconfigure();
 	}
 
-	public void setBookassetId(String id) {
+	public void setBookassetdescriptionId(String id) {
 		this.getElement().setAttribute("bookassetdescriptionId", id);
 	}
 
-	public String getBookassetId() {
+	public String getBookassetdescriptionId() {
 		return this.getElement().getAttribute("bookassetdescriptionId");
 	}
 }

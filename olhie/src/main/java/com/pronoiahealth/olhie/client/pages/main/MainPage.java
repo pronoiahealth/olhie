@@ -41,6 +41,7 @@ import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddFileDialog;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.NewAssetDialog;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.NewBookDialog;
 import com.pronoiahealth.olhie.client.pages.register.RegisterDialog;
+import com.pronoiahealth.olhie.client.pages.viewbookasset.ViewBookassetDialog;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.events.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.LoggedInPingEvent;
@@ -117,7 +118,10 @@ public class MainPage extends AbstractComposite {
 
 	@Inject
 	AddFileDialog addFileDialog;
-	
+
+	@Inject
+	ViewBookassetDialog viewBookassetDialog;
+
 	@Inject
 	DownloadFrame downloadFrame;
 
@@ -141,7 +145,10 @@ public class MainPage extends AbstractComposite {
 
 	@UiField
 	public HTMLPanel addFileModalPlaceHolder;
-	
+
+	@UiField
+	public HTMLPanel viewBookassetModalPlaceHolder;
+
 	@UiField
 	public HTMLPanel downloadFramePlaceHolder;
 
@@ -337,6 +344,7 @@ public class MainPage extends AbstractComposite {
 		newBookModalPlaceHolder.add(newBookDialog);
 		newAssetModalPlaceHolder.add(newAssetDialog);
 		addFileModalPlaceHolder.add(addFileDialog);
+		viewBookassetModalPlaceHolder.add(viewBookassetDialog);
 		downloadFramePlaceHolder.add(downloadFrame);
 	}
 

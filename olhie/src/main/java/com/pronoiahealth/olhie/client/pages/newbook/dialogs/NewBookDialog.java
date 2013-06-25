@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages.newbook.dialogs;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -24,6 +25,7 @@ import org.jboss.errai.databinding.client.BindableProxy;
 import org.jboss.errai.databinding.client.api.DataBinder;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.Column;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.Label;
@@ -127,6 +129,9 @@ public class NewBookDialog extends Composite {
 
 	@UiField
 	public Column bookDesignCol;
+	
+	@UiField
+	public CheckBox publishCB;
 
 	@UiField
 	public Label bookDisplayTitle;
@@ -170,6 +175,8 @@ public class NewBookDialog extends Composite {
 		newBookModal.setStyleName("ph-NewBook-Modal", true);
 		newBookModal.setStyleName("ph-NewBook-Modal-Size", true);
 		bookDesignCol.getElement().setAttribute("style", "margin-left: 60px;");
+		publishCB.setStyleName("ph-NewBook-Published-CB", true);
+		
 
 		// Set up click events
 		// When the user clicks one of the categories then set the text of the
@@ -224,7 +231,9 @@ public class NewBookDialog extends Composite {
 		book = dataBinder.bind(bookTitle, "bookTitle")
 				.bind(introduction, "introduction").bind(keywords, "keywords")
 				.bind(catagoryDropDown, "category")
-				.bind(bookCoverDropDown, "coverName").getModel();
+				.bind(bookCoverDropDown, "coverName")
+				.bind(publishCB, "active")
+				.getModel();
 	}
 
 	/**
@@ -313,7 +322,7 @@ public class NewBookDialog extends Composite {
 			
 			// Add creator id
 			book.setAuthorId(clientToken.getUserId());
-
+			
 			// Fire event and wait for BookUpdateCommittedEvent
 			newBookUpdateEvent.fire(new BookUpdateEvent(book));
 		} catch (Exception e) {

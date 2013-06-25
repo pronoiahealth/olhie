@@ -30,6 +30,7 @@ import org.jboss.errai.bus.client.api.Local;
 @Local
 public class ShowViewBookassetDialogEvent {
 	private String bookassetId;
+	private String viewType;
 	
 
 	/**
@@ -45,9 +46,10 @@ public class ShowViewBookassetDialogEvent {
 	 *
 	 * @param booassetId
 	 */
-	public ShowViewBookassetDialogEvent(String bookassetId) {
+	public ShowViewBookassetDialogEvent(String bookassetId, String viewType) {
 		super();
 		this.bookassetId = bookassetId;
+		this.viewType = viewType;
 	}
 
 	public String getBookassetId() {
@@ -56,5 +58,15 @@ public class ShowViewBookassetDialogEvent {
 
 	public void setBookassetId(String bookassetId) {
 		this.bookassetId = bookassetId;
+	}
+
+
+	public String getViewType() {
+		return viewType;
+	}
+
+
+	public void setViewType(String viewType) {
+		this.viewType = viewType;
 	}
 }

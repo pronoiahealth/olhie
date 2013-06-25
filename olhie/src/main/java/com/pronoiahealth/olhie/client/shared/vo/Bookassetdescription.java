@@ -50,6 +50,8 @@ public class Bookassetdescription {
 	private Boolean removed;
 
 	private Date removedDate;
+	
+	private String removedBy;
 
 	@NotNull
 	private String bookId;
@@ -113,5 +115,17 @@ public class Bookassetdescription {
 
 	public String getId() {
 		return id;
+	}
+
+	public String getRemovedBy() {
+		return removedBy;
+	}
+
+	public void setRemovedBy(String removedBy) {
+		this.removedBy = removedBy;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 }

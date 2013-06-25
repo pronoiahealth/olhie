@@ -31,7 +31,7 @@
 								width="400px" maxLength="250"></b:TextBox>
 						</b:ControlGroup>
 						<b:FluidRow>
-							<b:Column size="6">
+							<b:Column size="4">
 								<b:ControlGroup ui:field="categoryCG">
 									<b:ControlLabel>Catagory:</b:ControlLabel>
 									<b:SplitDropdownButton ui:field="catagoryDropDown"
@@ -39,13 +39,16 @@
 									</b:SplitDropdownButton>
 								</b:ControlGroup>
 							</b:Column>
-							<b:Column size="6">
+							<b:Column size="4">
 								<b:ControlGroup ui:field="bookCoverCG">
 									<b:ControlLabel>Cover Design:</b:ControlLabel>
 									<b:SplitDropdownButton ui:field="bookCoverDropDown"
 										dropup="true" text="Select a book cover">
 									</b:SplitDropdownButton>
 								</b:ControlGroup>
+							</b:Column>
+							<b:Column size="4">
+								<b:CheckBox ui:field="publishCB" checked="false">Publish</b:CheckBox>
 							</b:Column>
 						</b:FluidRow>
 					</b:WellForm>

@@ -66,7 +66,8 @@ public class ViewBookassetDialog extends Composite {
 	@PostConstruct
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
-		viewBookassetModal.setStyleName("ph-Error-Modal", true);
+		viewBookassetModal.setStyleName("ph-ViewBookassetDialog-Modal", true);
+		viewBookassetModal.setStyleName("ph-ViewBookassetDialog-Modal-Size", true);;
 	}
 
 	/**
@@ -77,8 +78,10 @@ public class ViewBookassetDialog extends Composite {
 	protected void observesShowViewBookassetDialogEvent(
 			@Observes ShowViewBookassetDialogEvent showViewBookassetDialogEvent) {
 		String assetId = showViewBookassetDialogEvent.getBookassetId();
-		String uri = Utils.buildRestServiceForAssetDownloadLink(assetId, false);
+		String viewType = showViewBookassetDialogEvent.getViewType();
+		String uri = Utils.buildRestServiceForAssetDownloadLink(assetId, viewType);
 		downloadContent(uri);
+		viewBookassetModal.show();
 	}
 
 	/**
@@ -93,6 +96,8 @@ public class ViewBookassetDialog extends Composite {
 		}
 		iFrame = new NamedFrame("view");
 		iFrame.getElement().setId("viewFrame");
+		iFrame.setWidth("100%");
+		iFrame.setHeight("590px");
 		viewBookassetPanel.add(iFrame);
 		iFrame.setUrl(uri);
 	}

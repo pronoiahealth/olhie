@@ -44,7 +44,7 @@ import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
  */
 @ApplicationScoped
 public class ClientFactory {
-	private List<String> viewableContentTypeLst;
+	private Map<String, String> viewableContentTypeLst;
 
 	public ClientFactory() {
 	}
@@ -175,17 +175,19 @@ public class ClientFactory {
 	}
 
 	/**
-	 * Content types that can be viewed in an iFrame
+	 * Content types that can be viewed in an iFrame. The value for the content
+	 * type matchs the Get annotation suffix in the BookassetDownloadService
 	 * 
 	 * @return
 	 */
 	@Produces
 	@ViewableContentType
-	public List<String> getViewableContentTypeLst() {
+	public Map<String, String> getViewableContentTypeMap() {
 		if (viewableContentTypeLst == null) {
-			viewableContentTypeLst = new ArrayList<String>();
-			viewableContentTypeLst.add("application/pdf");
-			viewableContentTypeLst.add("text/html");
+			viewableContentTypeLst = new HashMap<String, String>();
+			viewableContentTypeLst.put("application/pdf", "PDF");
+			viewableContentTypeLst.put("text/html", "HTML");
+			viewableContentTypeLst.put("text/plain", "TEXT");
 		}
 		return viewableContentTypeLst;
 	}

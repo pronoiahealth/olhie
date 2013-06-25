@@ -108,9 +108,13 @@ public class BookUpdateService {
 			}
 
 			// Add the book
+			Date now = new Date();
 			Book book = bookUpdateEvent.getBook();
-			book.setCreatedDate(new Date());
+			book.setCreatedDate(now);
 			book.setAuthorId(userToken.getUserId());
+			if (book.getActive() == true) {
+				book.setActDate(now);
+			}
 			book = ooDbTx.save(book);
 			ooDbTx.commit();
 

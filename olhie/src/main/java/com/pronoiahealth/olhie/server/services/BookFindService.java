@@ -121,6 +121,7 @@ public class BookFindService {
 						retBad.setBookId(bad.getBookId());
 						retBad.setCreatedDate(bad.getCreatedDate());
 						retBad.setDescription(bad.getDescription());
+						retBad.setId(bad.getId());
 						Bookasset ba = bad.getBookAssets().get(0);
 						Bookasset retBa = new Bookasset();
 						retBa.setId(ba.getId());

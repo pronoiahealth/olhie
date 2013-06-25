@@ -28,24 +28,26 @@ import com.google.gwt.event.dom.client.ClickHandler;
  * ViewBookassetButton.java<br/>
  * Responsibilities:<br/>
  * 1.
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since Jun 23, 2013
- *
+ * 
  */
-public class ViewBookassetButton  extends Button {
-	
+public class ViewBookassetButton extends Button {
+
 	/**
 	 * Constructor
 	 * 
 	 */
-	public ViewBookassetButton(ClickHandler handler, String bookassetId) {
+	public ViewBookassetButton(ClickHandler handler, String bookassetId,
+			String viewType) {
 		this.setSize(ButtonSize.MINI);
 		this.setIcon(IconType.EYE_OPEN);
 		this.setType(ButtonType.SUCCESS);
 		this.addClickHandler(handler);
 		this.setBookassetId(bookassetId);
+		this.setBookassetViewType(viewType);
 		Tooltip tip = new Tooltip();
 		tip.setWidget(this);
 		tip.setText("View item.");
@@ -60,5 +62,13 @@ public class ViewBookassetButton  extends Button {
 
 	public String getBookassetId() {
 		return this.getElement().getAttribute("bookassetId");
+	}
+
+	public void setBookassetViewType(String viewType) {
+		this.getElement().setAttribute("viewType", viewType);
+	}
+
+	public String getBookassetViewType() {
+		return this.getElement().getAttribute("viewType");
 	}
 }

@@ -1,4 +1,4 @@
-input[type="checkbox"] { /* :root here acting as a filter for older browsers */
+input[type="checkbox"].ios-switch { /* :root here acting as a filter for older browsers */
 	position: absolute;
 	opacity: 0;
 }

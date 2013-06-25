@@ -167,3 +167,7 @@
 .ph-NewBook-AddFileDialog-NoFileToUploadErr {
 	 color: red;
 }
+
+.ph-NewBook-Published-CB {
+	opacity: 100%;
+}

@@ -50,18 +50,14 @@ public class Utils {
 	 * @return
 	 */
 	public static String buildRestServiceForAssetDownloadLink(String assetId,
-			boolean forDownload) {
+			String viewType) {
 		StringBuilder urlStr = new StringBuilder();
 		urlStr.append("rest/book_download/book/");
 		urlStr.append(Random.nextInt(100000));
 		urlStr.append("/");
 		urlStr.append(URL.encodeQueryString(assetId));
 		urlStr.append("/");
-		if (forDownload == true) {
-			urlStr.append("download");
-		} else {
-			urlStr.append("view");
-		}
+			urlStr.append(viewType);
 		return urlStr.toString();
 	}
 

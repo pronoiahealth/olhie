@@ -17,6 +17,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
 
 import com.pronoiahealth.olhie.client.shared.exceptions.FileDownloadException;
 
@@ -32,7 +34,24 @@ import com.pronoiahealth.olhie.client.shared.exceptions.FileDownloadException;
  */
 public interface BookassetDownloadService {
 	public InputStream downloadAsset(HttpServletRequest request,
-			HttpServletResponse response, String assetId, String fordownload,
-			ServletContext context) throws ServletException, IOException,
-			FileDownloadException;
+			HttpServletResponse response, String assetId, ServletContext context)
+			throws ServletException, IOException, FileDownloadException;
+
+	public InputStream viewPDFAsset(@Context HttpServletRequest request,
+			@Context HttpServletResponse response,
+			@PathParam("assetId") String assetId,
+			@Context ServletContext context) throws ServletException,
+			IOException, FileDownloadException;
+
+	public InputStream viewTestAsset(@Context HttpServletRequest request,
+			@Context HttpServletResponse response,
+			@PathParam("assetId") String assetId,
+			@Context ServletContext context) throws ServletException,
+			IOException, FileDownloadException;
+
+	public InputStream viewHTMLAsset(@Context HttpServletRequest request,
+			@Context HttpServletResponse response,
+			@PathParam("assetId") String assetId,
+			@Context ServletContext context) throws ServletException,
+			IOException, FileDownloadException;
 }

@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.pages.newbook;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
@@ -46,11 +47,14 @@ import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.constants.BookAssetDataType;
 import com.pronoiahealth.olhie.client.shared.events.BookFindByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookFindResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.RemoveBookassetdescriptionEvent;
+import com.pronoiahealth.olhie.client.shared.events.RemoveBookassetdescriptionResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.BookContentUpdatedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.DownloadBookAssetEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewAssetModalEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowViewBookassetDialogEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
@@ -79,7 +83,7 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 
 	@Inject
 	@ViewableContentType
-	private List<String> viewableContentType;
+	private Map<String, String> viewableContentType;
 
 	@Inject
 	UiBinder<Widget, NewBookPage> binder;
@@ -142,6 +146,12 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	private Event<DownloadBookAssetEvent> downloadBookAssetEvent;
 
 	@Inject
+	private Event<RemoveBookassetdescriptionEvent> removeBookassetdescriptionEvent;
+
+	@Inject
+	private Event<ShowViewBookassetDialogEvent> showViewBookassetDialogEvent;
+
+	@Inject
 	@NewBook
 	private Event<BookFindByIdEvent> bookFindByIdEvent;
 
@@ -150,6 +160,8 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	private ClickHandler removeClickHandler;
 
 	private ClickHandler viewClickHandler;
+	
+	private FlexTableExt tocTable;
 
 	/**
 	 * Default Constructor
@@ -196,11 +208,15 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 			public void onClick(ClickEvent event) {
 				Object obj = event.getSource();
 				if (obj instanceof RemoveBookassetdescriptionButton) {
+					if (tocTable != null) {
+						tocTable.clear();
+					}
 					RemoveBookassetdescriptionButton but = (RemoveBookassetdescriptionButton) obj;
-					String bookAssetId = but.getBookassetId();
-					// removeBookAssetDescriptionEvent.fire(new
-					// RemoveBookAssetDescriptionEvent(
-					// bookAssetId));
+					String bookAssetdescriptionId = but
+							.getBookassetdescriptionId();
+					removeBookassetdescriptionEvent
+							.fire(new RemoveBookassetdescriptionEvent(
+									bookAssetdescriptionId));
 				}
 			}
 		};
@@ -211,10 +227,11 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 				Object obj = event.getSource();
 				if (obj instanceof ViewBookassetButton) {
 					ViewBookassetButton but = (ViewBookassetButton) obj;
-					String bookAssetId = but.getBookassetId();
-					// removeBookAssetDescriptionEvent.fire(new
-					// RemoveBookAssetDescriptionEvent(
-					// bookAssetId));
+					String bookassetId = but.getBookassetId();
+					String viewType = but.getBookassetViewType();
+					showViewBookassetDialogEvent
+							.fire(new ShowViewBookassetDialogEvent(bookassetId,
+									viewType));
 				}
 			}
 		};
@@ -264,10 +281,31 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	 */
 	protected void observersBookContentUpdatedEvent(
 			@Observes BookContentUpdatedEvent bookContentUpdatedEvent) {
+		String id = bookContentUpdatedEvent.getBookId();
+		callBookFindById(id);
+	}
 
+	/**
+	 * Observes for a positive response to a remove and then fires a find book
+	 * event
+	 * 
+	 * @param removeBookassetdescriptionEvent
+	 */
+	protected void observesRemoveBookassetdescriptionResponseEvent(
+			@Observes RemoveBookassetdescriptionResponseEvent removeBookassetdescriptionResponseEvent) {
+		String id = removeBookassetdescriptionResponseEvent.getBookId();
+		callBookFindById(id);
+	}
+
+	/**
+	 * Called by observesRemoveBookassetdescriptionResponseEvent and
+	 * observersBookContentUpdatedEvent
+	 * 
+	 * @param id
+	 */
+	private void callBookFindById(String id) {
 		// Test to see if the book id's match
 		// If so ask for updated data
-		String id = bookContentUpdatedEvent.getBookId();
 		if (id != null && id.equals(bookId)) {
 			bookFindByIdEvent.fire(new BookFindByIdEvent(bookId));
 		}
@@ -292,8 +330,8 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 				+ bookFindResponseEvent.getBookDisplay().getAuthorFullName());
 		String createdDateFt = book.getCreatedDate() != null ? dtf.format(book
 				.getCreatedDate()) : "";
-		String publDateFt = book.getPublishedDate() != null ? dtf.format(book
-				.getPublishedDate()) : "Not yet published";
+		String publDateFt = book.getActDate() != null ? dtf.format(book
+				.getActDate()) : "Not yet published";
 		createdPublishedCategoryLbl.setHTML(NewBookMessages.INSTANCE
 				.setCreatedPublishedCategoryLbl(createdDateFt, publDateFt,
 						book.getCategory()));
@@ -303,7 +341,7 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 		// TOC container elements
 		// Clear current values
 		addTOCElementContainer.clear();
-		FlexTableExt tocTable = new FlexTableExt();
+		tocTable = new FlexTableExt();
 		List<Bookassetdescription> descriptions = bookFindResponseEvent
 				.getBookDisplay().getBookAssetDescriptions();
 		for (int i = 0; i < descriptions.size(); i++) {
@@ -314,8 +352,9 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 			String createdDt = dtf.format(bad.getCreatedDate());
 			Bookasset ba = bad.getBookAssets().get(0);
 			String baId = ba.getId();
+			String badId = bad.getId();
 			ButtonGroup btns = this.makeButtonGroup(ba.getContentType(),
-					ba.getItemType(), baId);
+					ba.getItemType(), badId, baId);
 			data[2] = btns;
 			tocTable.addRow(data, new String[] { "ph-NewBook-TOC-NumberCol",
 					"ph-NewBook-TOC-DescriptionCol",
@@ -334,7 +373,7 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	 * @return
 	 */
 	private ButtonGroup makeButtonGroup(String contentType, String itemTypeStr,
-			String baId) {
+			String badId, String baId) {
 		// Group of buttons to return
 		ButtonGroup btns = new ButtonGroup();
 
@@ -345,13 +384,13 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 		}
 
 		// Can this content be viewed in an iFrame
-		if (viewableContentType.contains(contentType) == true) {
-			btns.add(new ViewBookassetButton(viewClickHandler, baId));
+		String val = viewableContentType.get(contentType);
+		if (val != null) {
+			btns.add(new ViewBookassetButton(viewClickHandler, baId, val));
 		}
 
 		// Always add remove
-		btns.add(new RemoveBookassetdescriptionButton(downloadClickHandler,
-				baId));
+		btns.add(new RemoveBookassetdescriptionButton(removeClickHandler, badId));
 
 		// Return the buttons
 		return btns;

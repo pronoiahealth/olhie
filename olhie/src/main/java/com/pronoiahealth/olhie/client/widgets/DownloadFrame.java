@@ -97,7 +97,7 @@ public class DownloadFrame extends SimplePanel {
 	protected void observesDownloadBookAssetEvent(
 			@Observes DownloadBookAssetEvent downloadBookAssetEvent) {
 		String assetId = downloadBookAssetEvent.getBookAssetId();
-		String uri = Utils.buildRestServiceForAssetDownloadLink(assetId, true);
+		String uri = Utils.buildRestServiceForAssetDownloadLink(assetId, "DOWNLOAD");
 		downloadContent(uri);
 	}
 }

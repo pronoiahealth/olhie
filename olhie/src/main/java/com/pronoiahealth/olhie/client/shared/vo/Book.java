@@ -64,12 +64,14 @@ public class Book {
 	private Date createdDate;
 
 	@NotNull
-	private Date publishedDate;
+	private boolean active;
+
+	private Date actDate;
 
 	@NotNull
 	@Size(min = 6, max = 20, message = "Must be between 6 and 20 characters")
 	private String authorId;
-	
+
 	private List<Bookassetdescription> bookDescriptions;
 
 	/**
@@ -89,13 +91,14 @@ public class Book {
 	 * @param coverName
 	 */
 	public Book(String bookTitle, String introduction, String keywords,
-			String category, String coverName) {
+			String category, String coverName, boolean active) {
 		super();
 		this.bookTitle = bookTitle;
 		this.introduction = introduction;
 		this.keywords = keywords;
 		this.category = category;
 		this.coverName = coverName;
+		this.active = active;
 	}
 
 	public String getBookTitle() {
@@ -142,14 +145,6 @@ public class Book {
 		this.keywords = keywords;
 	}
 
-	public Date getPublishedDate() {
-		return publishedDate;
-	}
-
-	public void setPublishedDate(Date publishedDate) {
-		this.publishedDate = publishedDate;
-	}
-
 	public String getAuthorId() {
 		return authorId;
 	}
@@ -174,4 +169,19 @@ public class Book {
 		this.bookDescriptions = bookDescriptions;
 	}
 
+	public Date getActDate() {
+		return actDate;
+	}
+
+	public void setActDate(Date actDate) {
+		this.actDate = actDate;
+	}
+
+	public boolean getActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 }
