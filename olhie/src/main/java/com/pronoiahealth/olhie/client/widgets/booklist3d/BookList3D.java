@@ -19,14 +19,16 @@ import com.google.gwt.query.client.css.CSS;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
+import com.pronoiahealth.olhie.client.shared.vo.BookCover;
+import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 
 public class BookList3D extends Widget {
-	//private List<DivElement> bookLst;
+	// private List<DivElement> bookLst;
 
-	public BookList3D(List<Book> books) {
+	public BookList3D(List<BookDisplay> books) {
 		super();
-		//bookLst = new ArrayList<DivElement>();
+		// bookLst = new ArrayList<DivElement>();
 		Document doc = Document.get();
 		UListElement ulElem = doc.createULElement();
 
@@ -34,7 +36,11 @@ public class BookList3D extends Widget {
 		this.setElement(ulElem);
 		ulElem.setId("bk-list");
 		ulElem.setClassName("bk-list clearfix");
-		for (Book book : books) {
+		for (BookDisplay bookDisplay : books) {
+			Book book = bookDisplay.getBook();
+			String bookCoverUrl = bookDisplay.getBookCover().getImgUrl();
+			String catColor = bookDisplay.getBookCategory().getColor();
+
 			// Add the list element
 			LIElement li = doc.createLIElement();
 			ulElem.appendChild(li);
@@ -53,12 +59,15 @@ public class BookList3D extends Widget {
 			DivElement bookCoverDiv = doc.createDivElement();
 			bookFrontDiv.appendChild(bookCoverDiv);
 			bookCoverDiv.setClassName("bk-cover");
+			// Set the book cover image
+			bookCoverDiv.setAttribute("style", "background-image: url('"
+					+ bookCoverUrl + "'); overflow:auto;");
 			HeadingElement h2AuthorTitleElement = doc.createHElement(2);
 			bookCoverDiv.appendChild(h2AuthorTitleElement);
 			// Author
 			SpanElement authorSpan = doc.createSpanElement();
 			h2AuthorTitleElement.appendChild(authorSpan);
-			authorSpan.setInnerText(book.getAuthorId());
+			authorSpan.setInnerText(bookDisplay.getAuthorFullName());
 			// Title
 			SpanElement titleSpan = doc.createSpanElement();
 			h2AuthorTitleElement.appendChild(titleSpan);
@@ -71,30 +80,38 @@ public class BookList3D extends Widget {
 			DivElement bookBackCoverkDiv = doc.createDivElement();
 			bookFrontDiv.appendChild(bookBackCoverkDiv);
 			bookBackCoverkDiv.setClassName("bk-cover-back");
+			bookBackCoverkDiv.setAttribute("style", "background-color: "
+					+ catColor + ";");
 
 			// Add the pages to the book
 			DivElement bookPages = doc.createDivElement();
 			bookDiv.appendChild(bookPages);
 			bookPages.addClassName("bk-page");
 			boolean bookCurrentPageSet = false;
-			for (Bookassetdescription desc : book.getBookDescriptions()) {
-				DivElement bookContentkDiv = doc.createDivElement();
-				bookPages.appendChild(bookContentkDiv);
-				if (bookCurrentPageSet == false) {
-					bookContentkDiv
-							.setClassName("bk-content bk-content-current");
-				} else {
-					bookContentkDiv.setClassName("bk-content");
+			List<Bookassetdescription> descs = bookDisplay
+					.getBookAssetDescriptions();
+			if (descs != null && descs.size() > 0) {
+				for (Bookassetdescription desc : descs) {
+					DivElement bookContentkDiv = doc.createDivElement();
+					bookPages.appendChild(bookContentkDiv);
+					if (bookCurrentPageSet == false) {
+						bookContentkDiv
+								.setClassName("bk-content bk-content-current");
+					} else {
+						bookContentkDiv.setClassName("bk-content");
+					}
+					ParagraphElement pageContentElem = doc.createPElement();
+					bookContentkDiv.appendChild(pageContentElem);
+					pageContentElem.setInnerText(desc.getDescription());
 				}
-				ParagraphElement pageContentElem = doc.createPElement();
-				bookContentkDiv.appendChild(pageContentElem);
-				pageContentElem.setInnerText(desc.getDescription());
 			}
 
 			// Back of book now
 			DivElement bookBackElem = doc.createDivElement();
 			bookDiv.appendChild(bookBackElem);
 			bookBackElem.setClassName("bk-back");
+			bookBackElem.setAttribute("style", "background-image: url('"
+					+ bookCoverUrl + "'); overflow:auto;");
 			ParagraphElement bookIntroElem = doc.createPElement();
 			bookBackElem.appendChild(bookIntroElem);
 			bookIntroElem.setInnerText(book.getIntroduction());
@@ -108,6 +125,8 @@ public class BookList3D extends Widget {
 			DivElement bookLeftElem = doc.createDivElement();
 			bookDiv.appendChild(bookLeftElem);
 			bookLeftElem.addClassName("bk-left");
+			bookLeftElem.setAttribute("style", "background-color: " + catColor
+					+ ";");
 			HeadingElement h2AuthorTitleLeftElement = doc.createHElement(2);
 			bookLeftElem.appendChild(h2AuthorTitleLeftElement);
 			// Author
@@ -171,15 +190,16 @@ public class BookList3D extends Widget {
 						boolean flipVal = false;
 						Object flipObj = book.data("flip");
 						if (flipObj != null) {
-							flipVal = (Boolean)flipObj;
+							flipVal = (Boolean) flipObj;
 						}
 						if (flipVal == true) {
-							book.data("opened",false).data("flip",false);
+							book.data("opened", false).data("flip", false);
 							book.removeClass("bk-viewback");
 							book.addClass("bk-bookdefault");
 						} else {
-							book.data("opened",false).data("flip",true);
-							book.removeClass("bk-viewinside").removeClass("bk-bookdefault");
+							book.data("opened", false).data("flip", true);
+							book.removeClass("bk-viewinside").removeClass(
+									"bk-bookdefault");
 							book.addClass("bk-viewback");
 						}
 						return true;
@@ -204,17 +224,18 @@ public class BookList3D extends Widget {
 						boolean openedVal = false;
 						Object openedObj = book.data("opened");
 						if (openedObj != null) {
-							openedVal = (Boolean)openedObj;
+							openedVal = (Boolean) openedObj;
 						}
 						if (openedVal == true) {
 							thisPt.removeClass("bk-active");
-							book.data("opened", false).data("flip",false);
+							book.data("opened", false).data("flip", false);
 							book.removeClass("bk-viewinside");
 							book.addClass("bk-bookdefault");
 						} else {
 							thisPt.addClass("bk-active");
 							book.data("opened", true).data("flip", false);
-							book.removeClass("bk-viewback").removeClass("bk-bookdefault");
+							book.removeClass("bk-viewback").removeClass(
+									"bk-bookdefault");
 							book.addClass("bk-viewinside");
 							parent.css(CSS.ZINDEX.with(booksCount));
 							current.setIntVal(0);

@@ -26,6 +26,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
+import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
 import com.pronoiahealth.olhie.client.shared.events.LogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientUserUpdatedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent;
@@ -166,7 +167,8 @@ public class Header extends Composite {
 	 */
 	@UiHandler("addBookLink")
 	public void addBookLinkClicked(ClickEvent event) {
-		showNewBookModalEvent.fire(new ShowNewBookModalEvent());
+		showNewBookModalEvent
+				.fire(new ShowNewBookModalEvent(ModeEnum.NEW, null));
 	}
 
 	@UiHandler("logoutMenuItemLink")

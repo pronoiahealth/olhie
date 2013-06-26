@@ -50,6 +50,7 @@ public class BookDisplayPage extends MenuSyncSecureAbstractPage {
 
 		// Sample
 		// Some books
+		/*
 		List<Book> books = new ArrayList<Book>();
 		for (int i = 0; i < 10; i++) {
 			Book book = new Book();
@@ -70,6 +71,7 @@ public class BookDisplayPage extends MenuSyncSecureAbstractPage {
 		// List
 		bookList = new BookList3D(books);
 		bookListContainer.add(bookList);
+		*/
 	}
 
 	@Override

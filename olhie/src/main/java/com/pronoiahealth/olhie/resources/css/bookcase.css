@@ -48,5 +48,10 @@
 }
 
 .ph-Bookcase-Marker .gwt-TabLayoutPanelTab-selected {
-	
+}
+
+.ph-Bookcase-BookTab-NoResults-HTML {
+	font-size: x-large;
+	font-style: italic;
+	font-weight: bold;
 }

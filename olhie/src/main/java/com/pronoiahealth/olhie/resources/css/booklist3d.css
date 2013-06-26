@@ -288,7 +288,7 @@
 	bottom: 20px;
 	right: 20px;
 	padding: 30px;
-	overflow: hidden;
+	overflow: auto;
 	background: #fff;
 	opacity: 0;
 	pointer-events: none;
@@ -341,16 +341,18 @@
 
 /* Individual style & artwork */
 /* Book 1 */
+/*
 .book-1 .bk-front > div,
 .book-1 .bk-back,
 .book-1 .bk-left,
 .book-1 .bk-front:after {
 	background-color: #ff924a;
 }
+*/
 
 .book-1 .bk-cover {
-	background-image: url(../images/1.png);	
-	background-repeat: no-repeat;
+	/*background-image: url(../images/1.png);*/	
+	background-repeat: repeat;
 	background-position: 10px 40px;
 }
 

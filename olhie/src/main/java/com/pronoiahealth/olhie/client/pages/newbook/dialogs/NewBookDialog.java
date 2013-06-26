@@ -10,7 +10,6 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages.newbook.dialogs;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -23,6 +22,7 @@ import javax.validation.Validator;
 
 import org.jboss.errai.databinding.client.BindableProxy;
 import org.jboss.errai.databinding.client.api.DataBinder;
+import org.jboss.errai.databinding.client.api.InitialState;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.CheckBox;
@@ -50,6 +50,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.validation.client.impl.Validation;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.shared.annotations.New;
+import com.pronoiahealth.olhie.client.shared.annotations.Update;
+import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.events.BookCategoryListRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookCategoryListResponseEvent;
@@ -85,11 +87,16 @@ public class NewBookDialog extends Composite {
 
 	@Inject
 	private DataBinder<Book> dataBinder;
-	
+
 	@Inject
 	private ClientUserToken clientToken;
 
 	private Book book;
+
+	/**
+	 * Is this a new book or are we editing a previously created one
+	 */
+	private ModeEnum mode;
 
 	@UiField
 	public Modal newBookModal;
@@ -129,7 +136,7 @@ public class NewBookDialog extends Composite {
 
 	@UiField
 	public Column bookDesignCol;
-	
+
 	@UiField
 	public CheckBox publishCB;
 
@@ -145,7 +152,7 @@ public class NewBookDialog extends Composite {
 	private ClickHandler categoryClickedHandler;
 
 	private ClickHandler coverClickedHandler;
-	
+
 	@Inject
 	private PageNavigator nav;
 
@@ -158,6 +165,10 @@ public class NewBookDialog extends Composite {
 	@Inject
 	@New
 	private Event<BookUpdateEvent> newBookUpdateEvent;
+
+	@Inject
+	@Update
+	private Event<BookUpdateEvent> updateBookUpdateEvent;
 
 	/**
 	 * Constructor
@@ -176,7 +187,6 @@ public class NewBookDialog extends Composite {
 		newBookModal.setStyleName("ph-NewBook-Modal-Size", true);
 		bookDesignCol.getElement().setAttribute("style", "margin-left: 60px;");
 		publishCB.setStyleName("ph-NewBook-Published-CB", true);
-		
 
 		// Set up click events
 		// When the user clicks one of the categories then set the text of the
@@ -231,8 +241,7 @@ public class NewBookDialog extends Composite {
 		book = dataBinder.bind(bookTitle, "bookTitle")
 				.bind(introduction, "introduction").bind(keywords, "keywords")
 				.bind(catagoryDropDown, "category")
-				.bind(bookCoverDropDown, "coverName")
-				.bind(publishCB, "active")
+				.bind(bookCoverDropDown, "coverName").bind(publishCB, "active")
 				.getModel();
 	}
 
@@ -244,6 +253,7 @@ public class NewBookDialog extends Composite {
 	 */
 	protected void observesBookCategoryListResponseEvent(
 			@Observes BookCategoryListResponseEvent bookCategoryListResponseEvent) {
+		catagoryDropDown.setText("Select a category");
 		catagoryDropDown.getMenuWiget().clear();
 		List<BookCategory> bookCategories = bookCategoryListResponseEvent
 				.getBokkCategories();
@@ -263,6 +273,7 @@ public class NewBookDialog extends Composite {
 	 */
 	protected void observesBookCoverListResponseEvent(
 			@Observes BookCoverListResponseEvent bookCoverListResponseEvent) {
+		bookCoverDropDown.setText("Select a book cover");
 		bookCoverDropDown.getMenuWiget().clear();
 		List<BookCover> bookCovers = bookCoverListResponseEvent.getBookCover();
 		if (bookCovers != null) {
@@ -273,7 +284,7 @@ public class NewBookDialog extends Composite {
 			}
 		}
 	}
-	
+
 	/**
 	 * When the update is committed the close the dialog
 	 * 
@@ -291,7 +302,20 @@ public class NewBookDialog extends Composite {
 	 * Shows the modal dialog
 	 */
 	public void show() {
+		// Show modal
+		newBookModal.show();
+	}
+
+	/**
+	 * Resets the form for a new book entry
+	 */
+	private void resetFormForNewMode() {
+		// / Set mode
+		this.mode = ModeEnum.NEW;
+
 		// Clear form
+		this.book = new Book();
+		this.dataBinder.setModel(this.book, InitialState.FROM_MODEL);
 		newBookForm.reset();
 		clearErrors();
 
@@ -299,13 +323,16 @@ public class NewBookDialog extends Composite {
 		bookDisplayTitle.setText(null);
 		largeBookWidget.setBackground(null);
 		largeBookWidget.setBinderColor(null);
-		
+
 		// Get the lists
 		bookCategoryListRequestEvent.fire(new BookCategoryListRequestEvent());
 		bookCoverListRequestEvent.fire(new BookCoverListRequestEvent());
+	}
 
-		// Show modal
-		newBookModal.show();
+	private void setFormForEdit(Book theBook) {
+		this.mode = ModeEnum.EDIT;
+		this.book = theBook;
+		this.dataBinder.setModel(this.book, InitialState.FROM_MODEL);
 	}
 
 	/**
@@ -319,12 +346,16 @@ public class NewBookDialog extends Composite {
 		try {
 			// Validate form
 			Book book = validateForm();
-			
+
 			// Add creator id
 			book.setAuthorId(clientToken.getUserId());
-			
+
 			// Fire event and wait for BookUpdateCommittedEvent
-			newBookUpdateEvent.fire(new BookUpdateEvent(book));
+			if (mode.equals(ModeEnum.NEW)) {
+				newBookUpdateEvent.fire(new BookUpdateEvent(book));
+			} else {
+				updateBookUpdateEvent.fire(new BookUpdateEvent(book));
+			}
 		} catch (Exception e) {
 			// Intentionally blank. The Form will post error
 			// messages to the form during the validation process
@@ -410,12 +441,18 @@ public class NewBookDialog extends Composite {
 	}
 
 	/**
-	 * Shows the modal dialog
+	 * Shows the modal dialog. If we are editing then sync up the model.
 	 * 
 	 * @param showNewBookModalEvent
 	 */
 	protected void observersShowNewBookModalEvent(
 			@Observes ShowNewBookModalEvent showNewBookModalEvent) {
+		Book theBook = showNewBookModalEvent.getEditBook();
+		if (theBook != null) {
+			setFormForEdit(theBook);
+		} else {
+			resetFormForNewMode();
+		}
 		show();
 	}
 

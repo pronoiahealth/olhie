@@ -10,29 +10,6 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.shared.constants;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
-
-/**
- * UserBookRelationshipEnum.java<br/>
- * Responsibilities:<br/>
- * 1. The relationship between books and the collector.<br/>
- * 
- * @author John DeStefano
- * @version 1.0
- * @since Jun 25, 2013
- * 
- */
-@Portable
-public enum UserBookRelationshipEnum {
-	CREATOR("My Books"), COAUTHOR("My Books"), MYCOLLECTION("My Collection");
-
-	private String description;
-
-	UserBookRelationshipEnum(String description) {
-		this.description = description;
-	}
-
-	public String getDescription() {
-		return description;
-	}
+public enum ModeEnum {
+	NEW, EDIT;
 }

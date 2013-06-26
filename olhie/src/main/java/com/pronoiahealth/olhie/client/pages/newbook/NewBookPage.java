@@ -23,6 +23,7 @@ import org.jboss.errai.ui.nav.client.local.PageHiding;
 import org.jboss.errai.ui.nav.client.local.PageShowing;
 import org.jboss.errai.ui.nav.client.local.PageState;
 
+import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ButtonGroup;
 import com.github.gwtbootstrap.client.ui.FluidRow;
 import com.github.gwtbootstrap.client.ui.Heading;
@@ -45,6 +46,7 @@ import com.pronoiahealth.olhie.client.navigation.AuthorRole;
 import com.pronoiahealth.olhie.client.pages.PageShownSecureAbstractPage;
 import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.constants.BookAssetDataType;
+import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
 import com.pronoiahealth.olhie.client.shared.events.BookFindByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.RemoveBookassetdescriptionEvent;
@@ -54,6 +56,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.DownloadBookAssetEvent
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewAssetModalEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowNewBookModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowViewBookassetDialogEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
@@ -94,8 +97,13 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	@UiField
 	public PageHeader bookTitle;
 
+	@UiField
+	public Button editBookButton;
+
 	@PageState
 	private String bookId;
+	
+	private Book currentBook;
 
 	@UiField
 	public Heading authorLbl;
@@ -152,6 +160,9 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	private Event<ShowViewBookassetDialogEvent> showViewBookassetDialogEvent;
 
 	@Inject
+	private Event<ShowNewBookModalEvent> showNewBookModalEvent;
+
+	@Inject
 	@NewBook
 	private Event<BookFindByIdEvent> bookFindByIdEvent;
 
@@ -160,7 +171,7 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	private ClickHandler removeClickHandler;
 
 	private ClickHandler viewClickHandler;
-	
+
 	private FlexTableExt tocTable;
 
 	/**
@@ -324,19 +335,19 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 				.getBookCover().getImgUrl());
 
 		// Set the fields
-		Book book = bookFindResponseEvent.getBookDisplay().getBook();
-		bookTitle.setText(book.getBookTitle());
+		this.currentBook = bookFindResponseEvent.getBookDisplay().getBook();
+		bookTitle.setText(currentBook.getBookTitle());
 		authorLbl.setText("by "
 				+ bookFindResponseEvent.getBookDisplay().getAuthorFullName());
-		String createdDateFt = book.getCreatedDate() != null ? dtf.format(book
+		String createdDateFt = currentBook.getCreatedDate() != null ? dtf.format(currentBook
 				.getCreatedDate()) : "";
-		String publDateFt = book.getActDate() != null ? dtf.format(book
+		String publDateFt = currentBook.getActDate() != null ? dtf.format(currentBook
 				.getActDate()) : "Not yet published";
 		createdPublishedCategoryLbl.setHTML(NewBookMessages.INSTANCE
 				.setCreatedPublishedCategoryLbl(createdDateFt, publDateFt,
-						book.getCategory()));
+						currentBook.getCategory()));
 		introductionTxt.setHTML(NewBookMessages.INSTANCE
-				.setIntroductionText(book.getIntroduction()));
+				.setIntroductionText(currentBook.getIntroduction()));
 
 		// TOC container elements
 		// Clear current values
@@ -414,10 +425,10 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 			int wndHeight = this.getPageContainerHeight();
 
 			// 145 at top + footer at bottom
-			if (wndHeight <= 300) {
-				wndHeight = 300;
+			if (wndHeight <= 322) {
+				wndHeight = 322;
 			}
-			int newHeroHeight = wndHeight - 300;
+			int newHeroHeight = wndHeight - 322;
 
 			// Introduction
 			introductionHero.setHeight("" + newHeroHeight + "px");
@@ -437,5 +448,11 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	@UiHandler("tocAddElement")
 	public void tocAddElementClicked(ClickEvent event) {
 		showNewAssetModalEvent.fire(new ShowNewAssetModalEvent(bookId));
+	}
+
+	@UiHandler("editBookButton")
+	public void editBookButtonClicked(ClickEvent event) {
+		showNewBookModalEvent
+				.fire(new ShowNewBookModalEvent(ModeEnum.EDIT, this.currentBook));
 	}
 }

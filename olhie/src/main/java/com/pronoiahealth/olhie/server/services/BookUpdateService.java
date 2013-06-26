@@ -25,6 +25,7 @@ import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.annotations.New;
+import com.pronoiahealth.olhie.client.shared.annotations.Update;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.events.BookUpdateCommittedEvent;
@@ -47,6 +48,8 @@ import com.pronoiahealth.olhie.server.security.ServerUserToken;
  * @since Jun 7, 2013
  * 
  */
+// TODO: Need to track update history. Not sure to what detail. This could be an
+// additional attribute of the Book class
 @RequestScoped
 public class BookUpdateService {
 
@@ -80,6 +83,64 @@ public class BookUpdateService {
 	 */
 	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
 	protected void observesNewBookUpdateEvent(
+			@Observes @Update BookUpdateEvent bookUpdateEvent) {
+		try {
+			ooDbTx.begin(TXTYPE.OPTIMISTIC);
+			// Find the user. The user sending this request should be the same
+			// one in the session
+			String sessionUserId = userToken.getUserId();
+			OSQLSynchQuery<User> uQuery = new OSQLSynchQuery<User>(
+					"select from User where userId = :uId");
+			HashMap<String, String> uparams = new HashMap<String, String>();
+			uparams.put("uId", sessionUserId);
+			List<User> uResult = ooDbTx.command(uQuery).execute(uparams);
+			User currentUser = null;
+			if (uResult != null && uResult.size() == 1) {
+				// Got the user
+				currentUser = uResult.get(0);
+			} else {
+				throw new Exception(
+						"Can't find the book creator in the database.");
+			}
+
+			// Compare the session user and the one sending the request
+			String currentUserId = currentUser.getUserId();
+			if (!currentUserId.equals(bookUpdateEvent.getBook().getAuthorId())) {
+				throw new Exception(
+						"The current user and the author don't match.");
+			}
+
+			// Add the book
+			Date now = new Date();
+			Book book = bookUpdateEvent.getBook();
+			book.setAuthorId(userToken.getUserId());
+			if (book.getActive() == true) {
+				book.setActDate(now);
+			} else {
+				book.setActDate(null);
+			}
+			book = ooDbTx.save(book);
+			ooDbTx.commit();
+
+			// Return the result
+			BookUpdateCommittedEvent event = new BookUpdateCommittedEvent(
+					book.getId());
+			bookUpdateCommittedEvent.fire(event);
+		} catch (Exception e) {
+			String msg = e.getMessage();
+			log.log(Level.SEVERE, msg, e);
+			ooDbTx.rollback();
+			serviceErrorEvent.fire(new ServiceErrorEvent(msg));
+		}
+	}
+
+	/**
+	 * Watches for a new book
+	 * 
+	 * @param bookUpdateEvent
+	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
+	protected void observesUpdateBookUpdateEvent(
 			@Observes @New BookUpdateEvent bookUpdateEvent) {
 		try {
 			ooDbTx.begin(TXTYPE.OPTIMISTIC);

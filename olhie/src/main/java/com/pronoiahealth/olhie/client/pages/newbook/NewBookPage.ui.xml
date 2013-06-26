@@ -8,6 +8,12 @@
 		<b:FluidContainer>
 			<b:FluidRow>
 				<b:PageHeader ui:field="bookTitle"></b:PageHeader>
+				<g:HTMLPanel styleName="ph-NewBook-EditCurrentBook-Button-Container">
+					<b:Tooltip text="Edit the Book details">
+						<b:Button ui:field="editBookButton" icon="EDIT" type="PRIMARY"
+							size="SMALL"></b:Button>
+					</b:Tooltip>
+				</g:HTMLPanel>
 			</b:FluidRow>
 			<b:FluidRow ui:field="createdPublishedCategoryRow">
 				<b:Heading ui:field="authorLbl" size="4">Author: </b:Heading>

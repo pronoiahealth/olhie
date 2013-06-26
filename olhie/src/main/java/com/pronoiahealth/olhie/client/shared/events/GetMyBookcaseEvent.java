@@ -8,14 +8,20 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.shared.constants;
+package com.pronoiahealth.olhie.client.shared.events;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
+import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
 /**
- * UserBookRelationshipEnum.java<br/>
+ * ShowMyBookcaseEvent.java<br/>
  * Responsibilities:<br/>
- * 1. The relationship between books and the collector.<br/>
+ * 1. Event to signal the server to send back the contents of my bookcase.<br/>
+ * 
+ * <p>
+ * Fired By: BookcasePage<br/>
+ * Observed By: BookcaseService<br/>
+ * </p>
  * 
  * @author John DeStefano
  * @version 1.0
@@ -23,16 +29,33 @@ import org.jboss.errai.common.client.api.annotations.Portable;
  * 
  */
 @Portable
-public enum UserBookRelationshipEnum {
-	CREATOR("My Books"), COAUTHOR("My Books"), MYCOLLECTION("My Collection");
+@Conversational
+public class GetMyBookcaseEvent {
+	private String userId;
 
-	private String description;
-
-	UserBookRelationshipEnum(String description) {
-		this.description = description;
+	/**
+	 * Constructor
+	 *
+	 */
+	public GetMyBookcaseEvent() {
 	}
 
-	public String getDescription() {
-		return description;
+	/**
+	 * Constructor
+	 *
+	 * @param userId
+	 */
+	public GetMyBookcaseEvent(String userId) {
+		super();
+		this.userId = userId;
 	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
 }

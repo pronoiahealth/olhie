@@ -21,6 +21,7 @@
 	font-weight: bold;
 	margin-top: 0px;
 	margin-bottom: 0px;
+	color: white;
 }
 
 .ph-NewBook-Author {
@@ -28,6 +29,7 @@
 	font-family: "Swanky and Moo Moo", cursive;
 	font-size: 18px;
 	font-weight: bold;
+	color: white;
 }
 
 .ph-NewBook-Created-Published-Category-Row {
@@ -39,6 +41,7 @@
 	font-family: "Swanky and Moo Moo", cursive;
 	font-size: 18px;
 	font-weight: bold;
+	color: white;
 }
 
 .ph-NewBook-Introduction-Hero-Introduction-Header {
@@ -170,4 +173,9 @@
 
 .ph-NewBook-Published-CB {
 	opacity: 100%;
+}
+
+.ph-NewBook-EditCurrentBook-Button-Container {
+	float: right;
+	margin: 6px;
 }

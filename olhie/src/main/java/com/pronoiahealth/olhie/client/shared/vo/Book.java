@@ -184,4 +184,8 @@ public class Book {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 }
