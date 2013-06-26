@@ -23,6 +23,7 @@ import org.jboss.errai.ui.nav.client.local.Page;
 import com.google.gwt.query.client.GQuery;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -36,6 +37,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.BookSelectCallBack;
 
 /**
  * BookCasePage<br/>
@@ -76,6 +78,8 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 	@Inject
 	private Event<GetMyBookcaseEvent> getMyBookcaseEvent;
 
+	private BookSelectCallBack bookSelectCallBack;
+
 	public BookCasePage() {
 	}
 
@@ -86,25 +90,19 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
 
-		// Tab 1
-		// Some books
-		/*
-		 * List<Book> books = new ArrayList<Book>(); for (int i = 0; i < 10;
-		 * i++) { Book book = new Book(); book.setAuthorId("jdestef");
-		 * book.setBookTitle("This is a book title");
-		 * book.setIntroduction("This is the books introduction.");
-		 * List<Bookassetdescription> descs = new
-		 * ArrayList<Bookassetdescription>(); book.setBookDescriptions(descs);
-		 * Bookassetdescription baDesc = new Bookassetdescription();
-		 * baDesc.setDescription("This is a test book description");
-		 * Bookassetdescription baDesc2 = new Bookassetdescription();
-		 * baDesc2.setDescription("This is a test book description2 ");
-		 * descs.add(baDesc); descs.add(baDesc2); books.add(book); }
-		 * 
-		 * // List bookList = new BookList3D(books); myBooksTab.add(bookList);
-		 * 
-		 * // Tab 2 myCollectionTab.add(new HTML("Test Test"));
-		 */
+		// create selector - This will fire the bookId to the server to see what
+		// the users relationship with the book is. If he's the author or
+		// co-author he will be directed to the NewBookPage to edit the book. If
+		// not he will be directed to the book review page.
+		bookSelectCallBack = new BookSelectCallBack() {
+			@Override
+			public void onBookSelect(String bookId) {
+				if (bookId != null) {
+					Window.alert("Called");
+				}
+			}
+		};
+
 	}
 
 	/**
@@ -166,7 +164,7 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 				.entrySet()) {
 			UserBookRelationshipEnum key = entry.getKey();
 			List<BookDisplay> lst = entry.getValue();
-			BookList3D bookLst = new BookList3D(lst);
+			BookList3D bookLst = new BookList3D(lst, bookSelectCallBack);
 
 			switch (key) {
 			case CREATOR:

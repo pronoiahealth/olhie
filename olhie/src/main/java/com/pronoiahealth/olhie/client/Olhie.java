@@ -11,12 +11,18 @@
 package com.pronoiahealth.olhie.client;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.jboss.errai.bus.client.ErraiBus;
 import org.jboss.errai.bus.client.api.ClientMessageBus;
 import org.jboss.errai.bus.client.api.TransportError;
 import org.jboss.errai.bus.client.api.TransportErrorHandler;
+import org.jboss.errai.bus.client.api.base.DefaultErrorCallback;
+import org.jboss.errai.bus.client.api.base.TransportIOException;
+import org.jboss.errai.bus.client.api.messaging.Message;
+import org.jboss.errai.bus.client.api.messaging.MessageCallback;
+import org.jboss.errai.common.client.protocols.MessageParts;
 import org.jboss.errai.enterprise.client.jaxrs.api.RestClient;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
 import org.jboss.errai.ioc.client.api.EntryPoint;
@@ -24,6 +30,7 @@ import org.jboss.errai.ioc.client.api.EntryPoint;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.pronoiahealth.olhie.client.pages.main.MainPage;
+import com.pronoiahealth.olhie.client.shared.events.ClientErrorEvent;
 import com.pronoiahealth.olhie.resources.OlhieResourceInjector;
 
 /**
@@ -40,6 +47,9 @@ public class Olhie {
 
 	@Inject
 	private MainPage mainPage;
+
+	@Inject
+	private Event<ClientErrorEvent> clientErrorEvent;
 
 	private ClientMessageBus cBus = (ClientMessageBus) ErraiBus.get();
 
@@ -89,5 +99,34 @@ public class Olhie {
 				// }
 			}
 		});
+
+		// General catch for errors
+		cBus.subscribe(DefaultErrorCallback.CLIENT_ERROR_SUBJECT,
+				new MessageCallback() {
+					@Override
+					public void callback(Message message) {
+						try {
+							Throwable caught = message.get(Throwable.class,
+									MessageParts.Throwable);
+							throw caught;
+						} catch (TransportIOException e) {
+							String errStr = e.getErrorMessage();
+							if (Log.isWarnEnabled()) {
+								Log.warn(
+										"Errai transport error:",
+										errStr + " with code "
+												+ e.errorCode());
+							}
+							clientErrorEvent.fire(new ClientErrorEvent(errStr));
+							
+						} catch (Throwable throwable) {
+							String errStr = throwable.getMessage();
+							if (Log.isWarnEnabled()) {
+								Log.warn("Errai transport error:", errStr);
+							}
+							clientErrorEvent.fire(new ClientErrorEvent(errStr));
+						}
+					}
+				});
 	}
 }

@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2013 Pronoia Health LLC.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Pronoia Health LLC - initial API and implementation
+ *******************************************************************************/
 package com.pronoiahealth.olhie.client.widgets.booklist3d;
 
 import static com.google.gwt.query.client.GQuery.$;
@@ -19,15 +29,17 @@ import com.google.gwt.query.client.css.CSS;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
-import com.pronoiahealth.olhie.client.shared.vo.BookCover;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 
 public class BookList3D extends Widget {
 	// private List<DivElement> bookLst;
+	private BookSelectCallBack bookSelectCallBack;
 
-	public BookList3D(List<BookDisplay> books) {
+	public BookList3D(List<BookDisplay> books, BookSelectCallBack bookSelectCallBack) {
 		super();
+		this.bookSelectCallBack = bookSelectCallBack;
+		
 		// bookLst = new ArrayList<DivElement>();
 		Document doc = Document.get();
 		UListElement ulElem = doc.createULElement();
@@ -49,6 +61,8 @@ public class BookList3D extends Widget {
 			DivElement bookDiv = doc.createDivElement();
 			li.appendChild(bookDiv);
 			bookDiv.setClassName("bk-book book-1 bk-bookdefault");
+			// Set the book id
+			bookDiv.setAttribute("bookId", book.getId());
 
 			// Add the front and cover
 			DivElement bookFrontDiv = doc.createDivElement();
@@ -182,6 +196,17 @@ public class BookList3D extends Widget {
 				final GQuery content = page.children("div.bk-content");
 				final IntHolder current = new IntHolder();
 
+				// Bind the call back
+				book.bind(Event.ONCLICK, new Function() {
+					@Override
+					public boolean f(Event e) {
+						String bookId = book.attr("bookId");
+						bookSelectCallBack.onBookSelect(bookId);
+						return true;
+					}
+				});
+				
+				
 				GQuery flipAction = parent.find("button.bk-bookback");
 				flipAction.bind(Event.ONCLICK, new Function() {
 					@Override
