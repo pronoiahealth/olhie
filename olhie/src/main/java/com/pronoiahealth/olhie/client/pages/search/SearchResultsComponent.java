@@ -22,6 +22,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
+import com.pronoiahealth.olhie.client.shared.events.BookListBookSelectedEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookSearchResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
@@ -30,6 +31,8 @@ import com.pronoiahealth.olhie.client.shared.vo.BookCover;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.BookState;
 import com.pronoiahealth.olhie.client.widgets.booklist.BookListResultWidget;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.BookSelectCallBack;
 import com.watopi.chosen.client.gwt.ChosenListBox;
 
 /**
@@ -59,6 +62,8 @@ public class SearchResultsComponent extends AbstractComposite {
 
 	@UiField
 	public HTMLPanel searchResultsContainerList;
+
+	private BookSelectCallBack bookSelectCallBack;
 
 	/**
 	 * Constructor
@@ -92,6 +97,22 @@ public class SearchResultsComponent extends AbstractComposite {
 		}
 		*/
 
+		// create selector - This will fire the bookId to the server to see what
+		// the users relationship with the book is. If he's the author or
+		// co-author he will be directed to the NewBookPage to edit the book. If
+		// not he will be directed to the book review page.
+		bookSelectCallBack = new BookSelectCallBack() {
+			@Override
+			public void onBookSelect(String bookId) {
+				/*
+				//TODO: implement book select event
+				if (bookId != null) {
+					bookListBookSelectedEvent
+							.fire(new BookListBookSelectedEvent(bookId));
+				}
+				*/
+			}
+		};
 	}
 
 	/**
@@ -102,8 +123,12 @@ public class SearchResultsComponent extends AbstractComposite {
 	public void observesBookSearchResponseEvent(
 			@Observes BookSearchResponseEvent event) {
 
-		List<BookDisplay> bookDisplayList = event.getBookDisplayList();
+		List<BookDisplay> lst = event.getBookDisplayList();
 		
+		BookList3D bookLst = new BookList3D(lst, bookSelectCallBack);
+
+		searchResultsContainerList.clear();
+		searchResultsContainerList.add(bookLst);
 		/*
 		 * TODO: replace with the booklist3d widget
 		for (BookDisplay bookDisplay : bookDisplayList) {

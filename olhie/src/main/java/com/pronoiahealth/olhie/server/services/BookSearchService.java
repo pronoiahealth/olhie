@@ -94,11 +94,12 @@ public class BookSearchService {
 			bparams.put("title", "%" + searchText + "%");
 			List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
 
-			for (Book bookAttached : bResult) {
-				log.log(Level.SEVERE, bookAttached.getBookTitle());
+			for (Book book : bResult) {
+				log.log(Level.SEVERE, book.getBookTitle());
 
-				Book book = ooDbTx.detach(bookAttached, true);
+				//Book book = ooDbTx.detach(bookAttached, true);
 
+				log.log(Level.SEVERE, "Find Author");
 				// Find author
 				OSQLSynchQuery<User> uQuery = new OSQLSynchQuery<User>(
 						"select from User where userId = :uId");
@@ -108,10 +109,12 @@ public class BookSearchService {
 				User user = uResult.get(0);
 				String authorName = user.getFirstName() + " " + user.getLastName();
 
+				log.log(Level.SEVERE, "Find Cover and Category");
 				// Find the cover and the category
 				BookCover cover = holder.getCoverByName(book.getCoverName());
 				BookCategory cat = holder.getCategoryByName(book.getCategory());
 
+				log.log(Level.SEVERE, "Find Book asset descriptions");
 				// Get a list of Bookassetdescriptions
 				OSQLSynchQuery<Bookassetdescription> baQuery = new OSQLSynchQuery<Bookassetdescription>(
 						"select from Bookassetdescription where bookId = :bId");
@@ -142,8 +145,11 @@ public class BookSearchService {
 						}
 					}
 				}
-				
+
+				log.log(Level.SEVERE, "create book display");
 				BookDisplay bookDisplay = new BookDisplay(book, cat, cover, authorName, retBaResults);
+				
+				bookDisplayList.add(bookDisplay);
 			}
 
 			// Fire the event
