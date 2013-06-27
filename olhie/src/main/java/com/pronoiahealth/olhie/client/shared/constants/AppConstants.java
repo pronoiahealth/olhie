@@ -27,7 +27,7 @@ public class AppConstants {
 	public static String APP_URL = "http://localhost:8080/olhie/index.html"
 			+ HOSTED;
 	public static String FRONT_PAGE = "http://localhost:8080/olhie/";
-	public static int SCREEN_TIMEOUT = 900000;
+	public static int SCREEN_TIMEOUT = 3600000;
 	public static int PING_FIRE_INTERVAL = 10000;
 	public static int NEWS_FADE_INTERVAL = 5000;
 }

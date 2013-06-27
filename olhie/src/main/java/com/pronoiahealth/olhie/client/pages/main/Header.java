@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
 import com.pronoiahealth.olhie.client.shared.events.LogoutRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientUserUpdatedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEvent;
@@ -92,6 +93,9 @@ public class Header extends Composite {
 
 	@Inject
 	private Event<LogoutRequestEvent> logoutRequestEvent;
+
+	@Inject
+	private Event<ClientLogoutRequestEvent> clientLogoutRequestEvent;
 
 	@Inject
 	private Event<ShowNewBookModalEvent> showNewBookModalEvent;
@@ -171,8 +175,14 @@ public class Header extends Composite {
 				.fire(new ShowNewBookModalEvent(ModeEnum.NEW, null));
 	}
 
+	/**
+	 * Informs the client and server that the user wishes to log out.
+	 * 
+	 * @param event
+	 */
 	@UiHandler("logoutMenuItemLink")
 	public void logoutMenuItemLinkClicked(ClickEvent event) {
+		clientLogoutRequestEvent.fire(new ClientLogoutRequestEvent());
 		logoutRequestEvent.fire(new LogoutRequestEvent());
 	}
 

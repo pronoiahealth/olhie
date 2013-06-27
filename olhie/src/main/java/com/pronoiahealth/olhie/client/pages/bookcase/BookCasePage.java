@@ -138,8 +138,6 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 		super.onLoad();
 		setPageBackgroundClass("ph-Bookcase-Background");
 		setContainerSize();
-		getMyBookcaseEvent
-				.fire(new GetMyBookcaseEvent(clientToken.getUserId()));
 	}
 
 	private void setContainerSize() {
@@ -202,10 +200,12 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 	 */
 	protected void observersBookListBookSelectedResponseEvent(
 			@Observes BookListBookSelectedResponseEvent bookListBookSelectedResponseEvent) {
+		Multimap<String, Object> map = ArrayListMultimap.create();
+		map.put("bookId", bookListBookSelectedResponseEvent.getBookId());
 		if (bookListBookSelectedResponseEvent.isAuthorSelected() == true) {
-			Multimap<String, Object> map = ArrayListMultimap.create();
-			map.put("bookId", bookListBookSelectedResponseEvent.getBookId());
 			nav.performTransition(NavEnum.NewBookPage.toString(), map);
+		} else {
+			nav.performTransition(NavEnum.BookReviewPage.toString(), map);
 		}
 	}
 }

@@ -4,7 +4,49 @@
 	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base' xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'>
 
 	<g:HTMLPanel ui:field="bookreviewContainer" height="100%"
-		width="100%" styleName="ph-BookReview-Container">
+		width="100%" styleName="ph-NewBook-Container">
+		<b:FluidContainer>
+			<b:FluidRow>
+				<b:PageHeader ui:field="bookTitle"></b:PageHeader>
+				<g:HTMLPanel styleName="ph-NewBook-EditCurrentBook-Button-Container">
+					<b:Tooltip text="Edit the Book details">
+						<b:Button ui:field="editBookButton" icon="EDIT" type="PRIMARY"
+							size="SMALL"></b:Button>
+					</b:Tooltip>
+				</g:HTMLPanel>
+			</b:FluidRow>
+			<b:FluidRow ui:field="createdPublishedCategoryRow">
+				<b:Heading ui:field="authorLbl" size="4">Author: </b:Heading>
+				<g:HTML ui:field="createdPublishedCategoryLbl"></g:HTML>
+			</b:FluidRow>
+		</b:FluidContainer>
+		<g:HTMLPanel styleName="ph-NewBook-Container-Intro-Column">
+			<b:Hero ui:field="introductionHero">
+				<b:Heading ui:field="introductionHeader" size="4">Introduction</b:Heading>
+				<g:ScrollPanel ui:field="introductionPanel">
+					<g:HTML ui:field="introductionTxt"></g:HTML>
+				</g:ScrollPanel>
+			</b:Hero>
+		</g:HTMLPanel>
+		<g:HTMLPanel styleName="ph-NewBook-Container-TOC-Column">
+			<b:Hero ui:field="tocHero">
+				<b:Heading ui:field="tocHeader" size="4">Table of Contents</b:Heading>
+				<g:HTMLPanel width="100%">
+					<g:HTMLPanel styleName="ph-NewBook-TOC-Element-Container"
+						width="47px">
+						<b:Tooltip text="Add content">
+							<b:NavPills ui:field="tocAddElementContainer">
+								<b:NavLink ui:field="tocAddElement" icon="PLUS_SIGN_ALT"
+									iconSize="LARGE">
+								</b:NavLink>
+							</b:NavPills>
+						</b:Tooltip>
+					</g:HTMLPanel>
+					<g:HTMLPanel ui:field="addTOCElementContainer"
+						stylePrimaryName="ph-NewBook-TOC-Container">
+					</g:HTMLPanel>
+				</g:HTMLPanel>
+			</b:Hero>
+		</g:HTMLPanel>
 	</g:HTMLPanel>
-
 </ui:UiBinder>

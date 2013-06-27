@@ -25,6 +25,8 @@ import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Event.NativePreviewEvent;
+import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -243,19 +245,22 @@ public class MainPage extends AbstractComposite {
 		});
 
 		// Create timer and schedule
-		/*
-		 * screenTimer = new Timer() {
-		 * 
-		 * @Override public void run() { } };
-		 * screenTimer.schedule(screenTimeout);
-		 * 
-		 * // Create global event listener // Any events (mouse or keyboard)
-		 * will reset the timer com.google.gwt.user.client.Event
-		 * .addNativePreviewHandler(new NativePreviewHandler() {
-		 * 
-		 * @Override public void onPreviewNativeEvent(NativePreviewEvent event)
-		 * { screenTimer.cancel(); screenTimer.schedule(screenTimeout); } });
-		 */
+		screenTimer = new Timer() {
+			@Override
+			public void run() {
+			}
+		};
+
+		// Create global event listener // Any events (mouse or keyboard)
+		// will reset the timer
+		com.google.gwt.user.client.Event
+				.addNativePreviewHandler(new NativePreviewHandler() {
+					@Override
+					public void onPreviewNativeEvent(NativePreviewEvent event) {
+						screenTimer.cancel();
+						screenTimer.schedule(screenTimeout);
+					}
+				});
 
 		// Not all GWT panel will resize when the window resizes
 		// Observing this event gives panel a chance to resize if necessary
@@ -287,16 +292,6 @@ public class MainPage extends AbstractComposite {
 
 		// Fire get news event
 		newsItemsRequestEvent.fire(new NewsItemsRequestEvent());
-
-		/*
-		 * testRestService.call(new RemoteCallback<String>() {
-		 * 
-		 * @Override public void callback(String response) {
-		 * Window.alert(response); } }, new ErrorCallback() {
-		 * 
-		 * @Override public boolean error(Object message, Throwable throwable) {
-		 * return true; } }).getTest();
-		 */
 
 		// Test to see if we are on the BulletinBoardPage as the initial page
 		if (!navigator.isCurrentPage(NavEnum.BulletinboardPage.name())) {
@@ -360,9 +355,10 @@ public class MainPage extends AbstractComposite {
 	protected void observesClientLogoutRequestEvent(
 			@Observes ClientLogoutRequestEvent clientLogoutResponseEvent) {
 		clientUserToken.clear();
-		cancelPing();
 		clientUserUpdatedEvent.fire(new ClientUserUpdatedEvent());
 		navigator.showDefaultPage();
+		cancelPing();
+		cancelScreenTimer();
 	}
 
 	/**
@@ -370,9 +366,9 @@ public class MainPage extends AbstractComposite {
 	 * 
 	 * @param logoutResponseEvent
 	 */
+	//TODO: Do we need this method
 	protected void observesLogoutResponseEvent(
 			@Observes LogoutResponseEvent logoutResponseEvent) {
-		observesClientLogoutRequestEvent(null);
 	}
 
 	/**
@@ -389,8 +385,9 @@ public class MainPage extends AbstractComposite {
 		clientUserToken.setLoggedIn(true);
 		clientUserToken.setUserId(user.getUserId());
 		clientUserToken.setRole(user.getRole());
-		startPinging();
 		clientUserUpdatedEvent.fire(new ClientUserUpdatedEvent());
+		startPinging();
+		startScreenTimer();
 	}
 
 	protected void observesBulletinBoardNavigationEvent(
@@ -429,6 +426,14 @@ public class MainPage extends AbstractComposite {
 	 */
 	private void ping() {
 		loggedInPingEvent.fire(new LoggedInPingEvent());
+	}
+	
+	private void cancelScreenTimer() {
+		screenTimer.cancel();
+	}
+	
+	private void startScreenTimer() {
+		screenTimer.scheduleRepeating(this.screenTimeout);
 	}
 
 	/**
