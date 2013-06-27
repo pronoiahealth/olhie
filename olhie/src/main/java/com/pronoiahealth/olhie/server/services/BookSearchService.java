@@ -30,8 +30,10 @@ import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
 import com.pronoiahealth.olhie.client.shared.vo.BookCover;
-import com.pronoiahealth.olhie.client.shared.vo.BookForDisplay;
-import com.pronoiahealth.olhie.client.shared.vo.BookState;
+import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
+import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
+import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
+import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 
@@ -83,46 +85,69 @@ public class BookSearchService {
 			
 			log.log(Level.SEVERE, "observesBookSearchEvent: " + searchText);
 			
-			List<BookForDisplay> bookForDisplayList = new ArrayList<BookForDisplay>();
-			
-			//TODO: removed when query is fixed
-			/*
-			bookForDisplayList.add(
-					new BookForDisplay("id", "Title 1", "John D", 4, "Test introduction",
-							"TOC", "06/26/1958", "400", "Book 1 Book2",
-							BookState.BOOK_STATE_INVISIBLE, new BookCategory("yellow", "Legal"),
-							new BookCover("Olhie/images/p1.png", "Paper")));
-							*/
+			List<BookDisplay> bookDisplayList = new ArrayList<BookDisplay>();
 
 			// Find Book
-			//TODO: fix the query
 			OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
-					"select from Book where @bookTitle like :title");
+					"select from Book where bookTitle like :title");
 			HashMap<String, String> bparams = new HashMap<String, String>();
-			bparams.put("title", "'%" + searchText + "%'");
+			bparams.put("title", "%" + searchText + "%");
 			List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
 
-			for (Book book : bResult) {
-				log.log(Level.SEVERE, book.getBookTitle());
+			for (Book bookAttached : bResult) {
+				log.log(Level.SEVERE, bookAttached.getBookTitle());
 
-				BookForDisplay bookForDisplay = new BookForDisplay(
-						book.getId(),
-						book.getBookTitle(),
-						book.getAuthorId(),
-						4,
-						book.getIntroduction(),
-						"TOC", 
-						"06/26/1958", 
-						"400", 
-						"Book 1 Book2",
-						BookState.BOOK_STATE_INVISIBLE, 
-						new BookCategory("yellow", "Legal"),
-						new BookCover("Olhie/images/p1.png", "Paper"));
-				bookForDisplayList.add(bookForDisplay);
+				Book book = ooDbTx.detach(bookAttached, true);
+
+				// Find author
+				OSQLSynchQuery<User> uQuery = new OSQLSynchQuery<User>(
+						"select from User where userId = :uId");
+				HashMap<String, String> uparams = new HashMap<String, String>();
+				uparams.put("uId", book.getAuthorId());
+				List<User> uResult = ooDbTx.command(uQuery).execute(uparams);
+				User user = uResult.get(0);
+				String authorName = user.getFirstName() + " " + user.getLastName();
+
+				// Find the cover and the category
+				BookCover cover = holder.getCoverByName(book.getCoverName());
+				BookCategory cat = holder.getCategoryByName(book.getCategory());
+
+				// Get a list of Bookassetdescriptions
+				OSQLSynchQuery<Bookassetdescription> baQuery = new OSQLSynchQuery<Bookassetdescription>(
+						"select from Bookassetdescription where bookId = :bId");
+				HashMap<String, String> baparams = new HashMap<String, String>();
+				baparams.put("bId", book.getId());
+				List<Bookassetdescription> baResult = ooDbTx.command(baQuery)
+						.execute(baparams);
+				List<Bookassetdescription> retBaResults = new ArrayList<Bookassetdescription>();
+				// Need to detach them. We don't want to pull back the entire object
+				// tree
+				if (baResult != null) {
+					for (Bookassetdescription bad : baResult) {
+						if (bad.getRemoved().booleanValue() == false) {
+							Bookassetdescription retBad = new Bookassetdescription();
+							retBad.setBookId(bad.getBookId());
+							retBad.setCreatedDate(bad.getCreatedDate());
+							retBad.setDescription(bad.getDescription());
+							retBad.setId(bad.getId());
+							Bookasset ba = bad.getBookAssets().get(0);
+							Bookasset retBa = new Bookasset();
+							retBa.setId(ba.getId());
+							retBa.setContentType(ba.getContentType());
+							retBa.setItemType(ba.getItemType());
+							ArrayList<Bookasset> retbookAssets = new ArrayList<Bookasset>();
+							retbookAssets.add(retBa);
+							retBad.setBookAssets(retbookAssets);
+							retBaResults.add(retBad);
+						}
+					}
+				}
+				
+				BookDisplay bookDisplay = new BookDisplay(book, cat, cover, authorName, retBaResults);
 			}
 
 			// Fire the event
-			bookSearchResponseEvent.fire(new BookSearchResponseEvent(bookForDisplayList));
+			bookSearchResponseEvent.fire(new BookSearchResponseEvent(bookDisplayList));
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);

@@ -27,7 +27,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
 import com.pronoiahealth.olhie.client.shared.vo.BookCover;
-import com.pronoiahealth.olhie.client.shared.vo.BookForDisplay;
+import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.BookState;
 import com.pronoiahealth.olhie.client.widgets.booklist.BookListResultWidget;
 import com.watopi.chosen.client.gwt.ChosenListBox;
@@ -102,15 +102,18 @@ public class SearchResultsComponent extends AbstractComposite {
 	public void observesBookSearchResponseEvent(
 			@Observes BookSearchResponseEvent event) {
 
-		List<BookForDisplay> bookForDisplayList = event.getBookForDisplayList();
+		List<BookDisplay> bookDisplayList = event.getBookDisplayList();
 		
-		for (BookForDisplay bookForDisplay : bookForDisplayList) {
-			BookListResultWidget widget = new BookListResultWidget(bookForDisplay);
+		/*
+		 * TODO: replace with the booklist3d widget
+		for (BookDisplay bookDisplay : bookDisplayList) {
+			BookListResultWidget widget = new BookListResultWidget(bookDisplay);
 			if (widget.getBook().getBookState() == BookState.BOOK_STATE_INVISIBLE) {
 				widget.getBookImagePanelWidget().setVisible(false);
 				searchResultsContainerList.add(widget);
 			}
 		}
+		 */
 	}
 
 	/**

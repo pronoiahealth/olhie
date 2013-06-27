@@ -15,7 +15,7 @@ import java.util.List;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
-import com.pronoiahealth.olhie.client.shared.vo.BookForDisplay;
+import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 
 /**
  * BookSearchResponseEvent.java<br/>
@@ -36,7 +36,7 @@ import com.pronoiahealth.olhie.client.shared.vo.BookForDisplay;
 @Conversational
 public class BookSearchResponseEvent {
 	
-	private List<BookForDisplay> bookForDisplayList;
+	private List<BookDisplay> bookDisplayList;
 
 	/**
 	 * Constructor
@@ -48,17 +48,17 @@ public class BookSearchResponseEvent {
 	/**
 	 * @param bookList
 	 */
-	public BookSearchResponseEvent(List<BookForDisplay> bookForDisplayList) {
+	public BookSearchResponseEvent(List<BookDisplay> bookDisplayList) {
 		super();
-		this.bookForDisplayList = bookForDisplayList;
+		this.bookDisplayList = bookDisplayList;
 	}
 
-	public List<BookForDisplay> getBookForDisplayList() {
-		return bookForDisplayList;
+	public List<BookDisplay> getBookDisplayList() {
+		return bookDisplayList;
 	}
 
-	public void setBookForDisplayList(List<BookForDisplay> bookForDisplayList) {
-		this.bookForDisplayList = bookForDisplayList;
+	public void setBookDisplayList(List<BookDisplay> bookDisplayList) {
+		this.bookDisplayList = bookDisplayList;
 	}
 
 	
