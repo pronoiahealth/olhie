@@ -262,6 +262,12 @@ public class NewBookDialog extends Composite {
 				BookCategoryListWidget nav = new BookCategoryListWidget(cat);
 				nav.addClickHandler(categoryClickedHandler);
 				catagoryDropDown.getMenuWiget().add(nav);
+
+				// If editing set the binder color
+				if (mode.equals(ModeEnum.EDIT)
+						&& cat.getCatagory().equals(book.getCategory())) {
+					largeBookWidget.setBinderColor(cat.getColor());
+				}
 			}
 		}
 	}
@@ -281,6 +287,12 @@ public class NewBookDialog extends Composite {
 				BookCoverListWidget nav = new BookCoverListWidget(cover);
 				nav.addClickHandler(coverClickedHandler);
 				bookCoverDropDown.getMenuWiget().add(nav);
+
+				// If editing set the backgroup
+				if (mode.equals(ModeEnum.EDIT)
+						&& cover.getCoverName().equals(book.getCoverName())) {
+					largeBookWidget.setBackground(cover.getImgUrl());
+				}
 			}
 		}
 	}
@@ -333,6 +345,15 @@ public class NewBookDialog extends Composite {
 		this.mode = ModeEnum.EDIT;
 		this.book = theBook;
 		this.dataBinder.setModel(this.book, InitialState.FROM_MODEL);
+
+		// Clear form display
+		bookDisplayTitle.setText(book.getBookTitle());
+		largeBookWidget.setBackground(null);
+		largeBookWidget.setBinderColor(null);
+
+		// Get the lists
+		bookCategoryListRequestEvent.fire(new BookCategoryListRequestEvent());
+		bookCoverListRequestEvent.fire(new BookCoverListRequestEvent());
 	}
 
 	/**

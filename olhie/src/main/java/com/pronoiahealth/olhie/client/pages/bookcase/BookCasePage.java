@@ -20,17 +20,21 @@ import javax.inject.Inject;
 
 import org.jboss.errai.ui.nav.client.local.Page;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.gwt.query.client.GQuery;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.RegisteredRole;
 import com.pronoiahealth.olhie.client.pages.AppSelectors;
 import com.pronoiahealth.olhie.client.pages.MenuSyncSecureAbstractPage;
+import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
+import com.pronoiahealth.olhie.client.shared.events.BookListBookSelectedEvent;
+import com.pronoiahealth.olhie.client.shared.events.BookListBookSelectedResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.GetMyBookcaseEvent;
 import com.pronoiahealth.olhie.client.shared.events.GetMyBookcaseResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
@@ -78,6 +82,9 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 	@Inject
 	private Event<GetMyBookcaseEvent> getMyBookcaseEvent;
 
+	@Inject
+	private Event<BookListBookSelectedEvent> bookListBookSelectedEvent;
+
 	private BookSelectCallBack bookSelectCallBack;
 
 	public BookCasePage() {
@@ -98,7 +105,8 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 			@Override
 			public void onBookSelect(String bookId) {
 				if (bookId != null) {
-					Window.alert("Called");
+					bookListBookSelectedEvent
+							.fire(new BookListBookSelectedEvent(bookId));
 				}
 			}
 		};
@@ -182,6 +190,22 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 				myCollectionTab.add(bookLst);
 				break;
 			}
+		}
+	}
+
+	/**
+	 * Looks for the BookListBookSelectedResponseEvent in order to tell where to
+	 * navigate to, the NewBookPage if the user is the author or co-author of
+	 * the book or the ReviewBookPage if not.
+	 * 
+	 * @param bookListBookSelectedResponseEvent
+	 */
+	protected void observersBookListBookSelectedResponseEvent(
+			@Observes BookListBookSelectedResponseEvent bookListBookSelectedResponseEvent) {
+		if (bookListBookSelectedResponseEvent.isAuthorSelected() == true) {
+			Multimap<String, Object> map = ArrayListMultimap.create();
+			map.put("bookId", bookListBookSelectedResponseEvent.getBookId());
+			nav.performTransition(NavEnum.NewBookPage.toString(), map);
 		}
 	}
 }
