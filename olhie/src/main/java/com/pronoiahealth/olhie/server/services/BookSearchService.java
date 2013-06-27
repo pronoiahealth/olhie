@@ -86,18 +86,20 @@ public class BookSearchService {
 			List<BookForDisplay> bookForDisplayList = new ArrayList<BookForDisplay>();
 			
 			//TODO: removed when query is fixed
+			/*
 			bookForDisplayList.add(
 					new BookForDisplay("id", "Title 1", "John D", 4, "Test introduction",
 							"TOC", "06/26/1958", "400", "Book 1 Book2",
 							BookState.BOOK_STATE_INVISIBLE, new BookCategory("yellow", "Legal"),
 							new BookCover("Olhie/images/p1.png", "Paper")));
-			/*
+							*/
+
 			// Find Book
 			//TODO: fix the query
 			OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
 					"select from Book where @bookTitle like :title");
 			HashMap<String, String> bparams = new HashMap<String, String>();
-			bparams.put("title", "%" + searchText + "%");
+			bparams.put("title", "'%" + searchText + "%'");
 			List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
 
 			for (Book book : bResult) {
@@ -118,7 +120,7 @@ public class BookSearchService {
 						new BookCover("Olhie/images/p1.png", "Paper"));
 				bookForDisplayList.add(bookForDisplay);
 			}
-			*/
+
 			// Fire the event
 			bookSearchResponseEvent.fire(new BookSearchResponseEvent(bookForDisplayList));
 		} catch (Exception e) {
