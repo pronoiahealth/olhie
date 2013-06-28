@@ -84,11 +84,6 @@ public class AppNavMenu extends UnorderedListWidget {
 		navWidget = new SideBarNavWidget(NavEnum.SearchPage.toString(), "", "",
 				"icon-search", "Find a Book");
 		addSideBarNavWidget(navWidget);
-		
-		// Book display
-		navWidget = new SideBarNavWidget(NavEnum.BookDisplayPage.toString(), "", "",
-				"icon-search", "Display Book");
-		addSideBarNavWidget(navWidget);
 
 		// See the SideBarNavWidget doc and currentPage
 		syncMenuWithPage(currentPage);

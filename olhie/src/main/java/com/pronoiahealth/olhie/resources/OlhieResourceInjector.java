@@ -49,14 +49,12 @@ public class OlhieResourceInjector {
 	 * </pre>
 	 */
 	public static void configureWithCssFile() {
-		OlhieResources.INSTANCE.bookshelfslidercss().ensureInjected();
 		OlhieResources.INSTANCE.bookcasecss().ensureInjected();
 		OlhieResources.INSTANCE.cbgbuttoncss().ensureInjected();
 		OlhieResources.INSTANCE.mainscreencss().ensureInjected();
 		OlhieResources.INSTANCE.searchscreencss().ensureInjected();
 		OlhieResources.INSTANCE.sidebarmenucss().ensureInjected();
 		OlhieResources.INSTANCE.starratingcss().ensureInjected();
-		OlhieResources.INSTANCE.bookreviewcss().ensureInjected();
 		OlhieResources.INSTANCE.bulletinboardcss().ensureInjected();
 		OlhieResources.INSTANCE.ioscheckboxcss().ensureInjected();
 		OlhieResources.INSTANCE.logindialogcss().ensureInjected();
@@ -76,15 +74,9 @@ public class OlhieResourceInjector {
 	public static void configureJs() {
 
 		// JQuery might be there already from GWTBootstrap
-		if (isNotLoadedJquery()) {
-			injectJs(OlhieResources.INSTANCE.jquery172minjs());
-		}
-
-		// Need for bookshelf
-		injectJs(OlhieResources.INSTANCE.jqueryeasing13js());
-
-		// Bookshelf
-		injectJs(OlhieResources.INSTANCE.jquerybookshelfsliderjs());
+		//if (isNotLoadedJquery()) {
+		//	injectJs(OlhieResources.INSTANCE.jquery172minjs());
+		//}
 	}
 
 	/**

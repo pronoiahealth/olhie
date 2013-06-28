@@ -37,7 +37,7 @@ public class SecurityAuthorizer {
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 */
 	public SecurityAuthorizer() {
 	}
@@ -54,14 +54,24 @@ public class SecurityAuthorizer {
 
 		// If the user has the appropriate role and is logged in then proceed
 		// allowAccess = false;
-		if (allowAccess == true && userToken.getLoggedIn() == true) {
-			return true;
+		if (allowAccess == true) {
+			if (SecurityRoleEnum.ANONYMOUS.getName()
+					.equals(userToken.getRole())) {
+				return true;
+			} else {
+				if (userToken.getLoggedIn() == true) {
+					return true;
+				} else {
+					return false;
+				}
+			}
 		} else {
 			return false;
 		}
 	}
 
-	private boolean userInRole(SecurityRoleEnum[] roles, ServerUserToken userToken) {
+	private boolean userInRole(SecurityRoleEnum[] roles,
+			ServerUserToken userToken) {
 		String userRole = userToken.getRole();
 
 		if (userRole != null) {

@@ -28,8 +28,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.clientfactories.DefaultAppPage;
 import com.pronoiahealth.olhie.client.clientfactories.PageRoleMap;
 import com.pronoiahealth.olhie.client.pages.bookcase.BookCasePage;
-import com.pronoiahealth.olhie.client.pages.bookdisplay.BookDisplayPage;
-import com.pronoiahealth.olhie.client.pages.bookreview.BookReviewPage;
 import com.pronoiahealth.olhie.client.pages.bulletinboard.BulletinboardPage;
 import com.pronoiahealth.olhie.client.pages.newbook.NewBookPage;
 import com.pronoiahealth.olhie.client.pages.search.SearchPage;
@@ -69,16 +67,10 @@ public class PageNavigator {
 	private TransitionTo<BulletinboardPage> showBulletinboardPage;
 
 	@Inject
-	private TransitionTo<BookDisplayPage> showBookDisplayPage;
-
-	@Inject
 	private TransitionTo<BookCasePage> showBookCasePage;
 
 	@Inject
 	private TransitionTo<SearchPage> showSearchPage;
-
-	@Inject
-	private TransitionTo<BookReviewPage> showBookReviewPage;
 
 	@Inject
 	private TransitionTo<NewBookPage> showNewBookPage;
@@ -128,15 +120,6 @@ public class PageNavigator {
 			break;
 		}
 
-		case BookDisplayPage: {
-			if (state == null) {
-				showBookDisplayPage.go();
-			} else {
-				showBookDisplayPage.go(state);
-			}
-			break;
-		}
-
 		case SearchPage: {
 			if (state == null) {
 				showSearchPage.go();
@@ -155,18 +138,9 @@ public class PageNavigator {
 			break;
 		}
 
-		case BookReviewPage: {
-			if (state == null) {
-				showBookReviewPage.go();
-			} else {
-				showBookReviewPage.go(state);
-			}
-			break;
-		}
-
 		case NewBookPage: {
 			if (state == null) {
-				showBookReviewPage.go();
+				showNewBookPage.go();
 			} else {
 				showNewBookPage.go(state);
 			}

@@ -25,6 +25,7 @@ import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
+import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.events.BookFindByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
@@ -35,13 +36,20 @@ import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 import com.pronoiahealth.olhie.client.shared.vo.User;
+import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
+import com.pronoiahealth.olhie.server.security.ServerUserToken;
 
 /**
  * BookFindService.java<br/>
  * Responsibilities:<br/>
  * 1. Use to return a book based on the books id<br/>
+ * 
+ * <p>
+ * This class will enforce the rule that if the book is not yet published it may
+ * only be returned to the creator of the book or a co-author.
+ * </p>
  * 
  * @author John DeStefano
  * @version 1.0
@@ -52,6 +60,9 @@ import com.pronoiahealth.olhie.server.security.SecureAccess;
 public class BookFindService {
 	@Inject
 	private Logger log;
+
+	@Inject
+	private ServerUserToken userToken;
 
 	@Inject
 	private Event<BookFindResponseEvent> bookFindResponseEvent;
@@ -78,7 +89,8 @@ public class BookFindService {
 	 * 
 	 * @param bookFindByIdEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.ANONYMOUS })
 	protected void observesBookNewFindByIdEvent(
 			@Observes @NewBook BookFindByIdEvent bookFindByIdEvent) {
 		try {
@@ -100,6 +112,57 @@ public class BookFindService {
 			User user = uResult.get(0);
 			String authorName = user.getFirstName() + " " + user.getLastName();
 
+			// We need to check that if the book is not yet published only an
+			// author or co-author can see it.
+			boolean canView = false;
+			if (book.getActive() == false) {
+				String userId = userToken.getUserId();
+				if (userId != null && userId.length() > 0) {
+					// Get UserBookRelatioship
+					OSQLSynchQuery<UserBookRelationship> rQuery = new OSQLSynchQuery<UserBookRelationship>(
+							"select from UserBookRelationship where bookId = :bId");
+					HashMap<String, String> rparams = new HashMap<String, String>();
+					rparams.put("bId", bookId);
+					List<UserBookRelationship> rResult = ooDbTx.command(rQuery)
+							.execute(rparams);
+					if (rResult != null && rResult.size() > 0) {
+						for (UserBookRelationship r : rResult) {
+							if (r.getUserId().equals(userId)) {
+								String relationship = r.getUserRelationship();
+								if (relationship
+										.equals(UserBookRelationshipEnum.CREATOR
+												.name())
+										|| relationship
+												.equals(UserBookRelationshipEnum.COAUTHOR
+														.name())) {
+									// You are an author or co-author
+									// You can see it.
+									canView = true;
+									break;
+								}
+							}
+						}
+					} else {
+						// Current relationships for this book.
+						// This shouldn't happen?
+						canView = false;
+					}
+				} else {
+					// Non published book and you are not logged in.
+					canView = false;
+				}
+			} else {
+				// Book is active, no worries
+				canView = true;
+			}
+			
+			if (canView == false) {
+				// No user to check against and trying to get a
+				// non-published book. That's a no go
+				throw new Exception("You don't have rights to view this book.");
+			}
+			
+			
 			// Find the cover and the category
 			BookCover cover = holder.getCoverByName(book.getCoverName());
 			BookCategory cat = holder.getCategoryByName(book.getCategory());
@@ -134,8 +197,9 @@ public class BookFindService {
 					}
 				}
 			}
-			
-			BookDisplay bookDisplay = new BookDisplay(book, cat, cover, authorName, retBaResults);
+
+			BookDisplay bookDisplay = new BookDisplay(book, cat, cover,
+					authorName, retBaResults);
 
 			// Fire the event
 			bookFindResponseEvent.fire(new BookFindResponseEvent(bookDisplay));

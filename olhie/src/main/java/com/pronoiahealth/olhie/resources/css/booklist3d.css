@@ -75,6 +75,7 @@
 }
 
 .bk-list li .bk-book {
+	cursor: pointer;
 	position: absolute;
 	width: 100%;
 	height: 400px;

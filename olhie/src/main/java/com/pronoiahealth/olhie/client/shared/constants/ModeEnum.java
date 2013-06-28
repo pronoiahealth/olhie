@@ -11,5 +11,5 @@
 package com.pronoiahealth.olhie.client.shared.constants;
 
 public enum ModeEnum {
-	NEW, EDIT;
+	NEW, EDIT, VIEW;
 }

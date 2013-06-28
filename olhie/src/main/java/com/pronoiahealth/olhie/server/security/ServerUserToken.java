@@ -29,11 +29,11 @@ import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
  * ServerUserToken.java<br/>
  * Responsibilities:<br/>
  * 1. A session scoped component that holds user information<br/>
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since May 26, 2013
- *
+ * 
  */
 @Named
 @SessionScoped
@@ -48,16 +48,17 @@ public class ServerUserToken implements Serializable {
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 */
 	public ServerUserToken() {
+		this.role = SecurityRoleEnum.ANONYMOUS.getName();
 	}
 
 	public void clearToken() {
 		this.userId = "";
 		this.userLastName = "";
 		this.userFirstName = "";
-		this.role = "";
+		this.role = SecurityRoleEnum.ANONYMOUS.getName();
 		this.loggedIn = false;
 	}
 
@@ -100,7 +101,7 @@ public class ServerUserToken implements Serializable {
 	public void setLoggedIn(boolean loggedIn) {
 		this.loggedIn = loggedIn;
 	}
-	
+
 	/**
 	 * Tests to see if this user is an Admin
 	 * 
@@ -123,4 +124,3 @@ public class ServerUserToken implements Serializable {
 		this.forcePasswordReset = forcePasswordReset;
 	}
 }
-

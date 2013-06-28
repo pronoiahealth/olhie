@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.pages.search;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
@@ -35,6 +36,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
  * @since May 26, 2013
  *
  */
+@ApplicationScoped
 @Page(role={AnonymousRole.class})
 public class SearchPage extends MenuSyncSecureAbstractPage {
 
@@ -51,7 +53,7 @@ public class SearchPage extends MenuSyncSecureAbstractPage {
 	public HTMLPanel searchResultsPlaceHolder;
 
 	@Inject
-	public SearchResultsComponent searchResultsComponent;
+	private SearchResultsComponent searchResultsComponent;
 
 	@Inject
 	private Event<SearchPageLoadedEvent> searchPageLoadedEvent;

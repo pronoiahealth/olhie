@@ -42,13 +42,15 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.clientfactories.ViewableContentType;
-import com.pronoiahealth.olhie.client.navigation.AuthorRole;
+import com.pronoiahealth.olhie.client.navigation.AnonymousRole;
 import com.pronoiahealth.olhie.client.pages.PageShownSecureAbstractPage;
 import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.constants.BookAssetDataType;
 import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
 import com.pronoiahealth.olhie.client.shared.events.BookFindByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookFindResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.BookListBookSelectedEvent;
+import com.pronoiahealth.olhie.client.shared.events.BookListBookSelectedResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.RemoveBookassetdescriptionEvent;
 import com.pronoiahealth.olhie.client.shared.events.RemoveBookassetdescriptionResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.BookContentUpdatedEvent;
@@ -72,13 +74,20 @@ import com.pronoiahealth.olhie.client.widgets.ViewBookassetButton;
  * Responsibilities:<br/>
  * 1. Handle the creation of a new Book<br/>
  * 2. Handle the updating of a Book<br/>
+ * 3. Handle the viewing of a books contents<br/>
+ * 
+ * <p>
+ * This page will set the view mode (edit or view) based on the relationship
+ * between the book (from bookId) and the user who is currently logged in.
+ * </p>
+ * 
  * 
  * @author John DeStefano
  * @version 1.0
  * @since May 26, 2013
  * 
  */
-@Page(role = { AuthorRole.class })
+@Page(role = { AnonymousRole.class })
 public class NewBookPage extends PageShownSecureAbstractPage {
 
 	private static final DateTimeFormat dtf = DateTimeFormat
@@ -102,7 +111,9 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 
 	@PageState
 	private String bookId;
-	
+
+	private ModeEnum editMode;
+
 	private Book currentBook;
 
 	@UiField
@@ -161,6 +172,9 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 
 	@Inject
 	private Event<ShowNewBookModalEvent> showNewBookModalEvent;
+
+	@Inject
+	private Event<BookListBookSelectedEvent> bookListBookSelectedEvent;
 
 	@Inject
 	@NewBook
@@ -269,18 +283,57 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	/**
 	 * Called when the page is shown. Sub class annotates the method that this
 	 * method is invoked from with the @PageShown annotation. The size of the
-	 * Heros are adjusted here also.
+	 * Heros are adjusted here also. The method asks the server for the role of
+	 * the user in order to set the mode (edit/view) for the page.
 	 * 
 	 * @see com.pronoiahealth.olhie.client.pages.PageShownSecureAbstractPage#whenPageShownCalled()
 	 */
 	@Override
 	protected boolean whenPageShownCalled() {
 		if (super.whenPageShownCalled() == true) {
-			bookFindByIdEvent.fire(new BookFindByIdEvent(bookId));
-			adjustSize();
+			// Put the page components in view only state until the users role
+			// with the book is determined
+			setState(ModeEnum.VIEW);
+			bookListBookSelectedEvent
+					.fire(new BookListBookSelectedEvent(bookId));
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	/**
+	 * Looks for the BookListBookSelectedResponseEvent in order to tell if the
+	 * user is the author or co-author of the book. If author or co-author the
+	 * page is set to the edit mode. If not the page is set to the view mode.
+	 * After that the BookFindByIdEvent is fired.
+	 * 
+	 * @param bookListBookSelectedResponseEvent
+	 */
+	protected void observersBookListBookSelectedResponseEvent(
+			@Observes BookListBookSelectedResponseEvent bookListBookSelectedResponseEvent) {
+		if (bookListBookSelectedResponseEvent.isAuthorSelected() == true) {
+			setState(ModeEnum.EDIT);
+		} else {
+			setState(ModeEnum.VIEW);
+		}
+		bookFindByIdEvent.fire(new BookFindByIdEvent(bookId));
+	}
+
+	/**
+	 * Set page components to match the editMode
+	 * 
+	 * @param mode
+	 */
+	private void setState(ModeEnum mode) {
+		if (mode == ModeEnum.EDIT) {
+			this.editMode = ModeEnum.EDIT;
+			tocAddElementContainer.setVisible(true);
+			editBookButton.setVisible(true);
+		} else {
+			this.editMode = ModeEnum.VIEW;
+			tocAddElementContainer.setVisible(false);
+			editBookButton.setVisible(false);
 		}
 	}
 
@@ -339,10 +392,10 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 		bookTitle.setText(currentBook.getBookTitle());
 		authorLbl.setText("by "
 				+ bookFindResponseEvent.getBookDisplay().getAuthorFullName());
-		String createdDateFt = currentBook.getCreatedDate() != null ? dtf.format(currentBook
-				.getCreatedDate()) : "";
-		String publDateFt = currentBook.getActDate() != null ? dtf.format(currentBook
-				.getActDate()) : "Not yet published";
+		String createdDateFt = currentBook.getCreatedDate() != null ? dtf
+				.format(currentBook.getCreatedDate()) : "";
+		String publDateFt = currentBook.getActDate() != null ? dtf
+				.format(currentBook.getActDate()) : "Not yet published";
 		createdPublishedCategoryLbl.setHTML(NewBookMessages.INSTANCE
 				.setCreatedPublishedCategoryLbl(createdDateFt, publDateFt,
 						currentBook.getCategory()));
@@ -373,6 +426,7 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 					NewBookMessages.INSTANCE.setCreatedDateText(createdDt), 0);
 		}
 		addTOCElementContainer.add(tocTable);
+		adjustSize();
 	}
 
 	/**
@@ -400,8 +454,11 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 			btns.add(new ViewBookassetButton(viewClickHandler, baId, val));
 		}
 
-		// Always add remove
-		btns.add(new RemoveBookassetdescriptionButton(removeClickHandler, badId));
+		// Always add remove when editing
+		if (editMode == ModeEnum.EDIT) {
+			btns.add(new RemoveBookassetdescriptionButton(removeClickHandler,
+					badId));
+		}
 
 		// Return the buttons
 		return btns;
@@ -447,12 +504,16 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	 */
 	@UiHandler("tocAddElement")
 	public void tocAddElementClicked(ClickEvent event) {
-		showNewAssetModalEvent.fire(new ShowNewAssetModalEvent(bookId));
+		if (editMode == ModeEnum.EDIT) {
+			showNewAssetModalEvent.fire(new ShowNewAssetModalEvent(bookId));
+		}
 	}
 
 	@UiHandler("editBookButton")
 	public void editBookButtonClicked(ClickEvent event) {
-		showNewBookModalEvent
-				.fire(new ShowNewBookModalEvent(ModeEnum.EDIT, this.currentBook));
+		if (editMode == ModeEnum.EDIT) {
+			showNewBookModalEvent.fire(new ShowNewBookModalEvent(ModeEnum.EDIT,
+					this.currentBook));
+		}
 	}
 }

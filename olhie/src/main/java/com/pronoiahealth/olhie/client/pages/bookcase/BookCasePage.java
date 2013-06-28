@@ -33,8 +33,6 @@ import com.pronoiahealth.olhie.client.pages.AppSelectors;
 import com.pronoiahealth.olhie.client.pages.MenuSyncSecureAbstractPage;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
-import com.pronoiahealth.olhie.client.shared.events.BookListBookSelectedEvent;
-import com.pronoiahealth.olhie.client.shared.events.BookListBookSelectedResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.GetMyBookcaseEvent;
 import com.pronoiahealth.olhie.client.shared.events.GetMyBookcaseResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
@@ -74,16 +72,13 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 	@UiField
 	public TabLayoutPanel tabPanel;
 
-	private BookList3D bookList;
+	private BookList3D bookLst;
 
 	@Inject
 	private ClientUserToken clientToken;
 
 	@Inject
 	private Event<GetMyBookcaseEvent> getMyBookcaseEvent;
-
-	@Inject
-	private Event<BookListBookSelectedEvent> bookListBookSelectedEvent;
 
 	private BookSelectCallBack bookSelectCallBack;
 
@@ -105,8 +100,9 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 			@Override
 			public void onBookSelect(String bookId) {
 				if (bookId != null) {
-					bookListBookSelectedEvent
-							.fire(new BookListBookSelectedEvent(bookId));
+					Multimap<String, Object> map = ArrayListMultimap.create();
+					map.put("bookId", bookId);
+					nav.performTransition(NavEnum.NewBookPage.toString(), map);
 				}
 			}
 		};
@@ -170,7 +166,7 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 				.entrySet()) {
 			UserBookRelationshipEnum key = entry.getKey();
 			List<BookDisplay> lst = entry.getValue();
-			BookList3D bookLst = new BookList3D(lst, bookSelectCallBack);
+			bookLst = new BookList3D(lst, bookSelectCallBack);
 
 			switch (key) {
 			case CREATOR:
@@ -188,24 +184,6 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 				myCollectionTab.add(bookLst);
 				break;
 			}
-		}
-	}
-
-	/**
-	 * Looks for the BookListBookSelectedResponseEvent in order to tell where to
-	 * navigate to, the NewBookPage if the user is the author or co-author of
-	 * the book or the ReviewBookPage if not.
-	 * 
-	 * @param bookListBookSelectedResponseEvent
-	 */
-	protected void observersBookListBookSelectedResponseEvent(
-			@Observes BookListBookSelectedResponseEvent bookListBookSelectedResponseEvent) {
-		Multimap<String, Object> map = ArrayListMultimap.create();
-		map.put("bookId", bookListBookSelectedResponseEvent.getBookId());
-		if (bookListBookSelectedResponseEvent.isAuthorSelected() == true) {
-			nav.performTransition(NavEnum.NewBookPage.toString(), map);
-		} else {
-			nav.performTransition(NavEnum.BookReviewPage.toString(), map);
 		}
 	}
 }

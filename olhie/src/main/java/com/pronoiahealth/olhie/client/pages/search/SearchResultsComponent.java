@@ -17,20 +17,19 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.FluidRow;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
-import com.pronoiahealth.olhie.client.shared.events.BookListBookSelectedEvent;
+import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.events.BookSearchResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
-import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
-import com.pronoiahealth.olhie.client.shared.vo.BookCover;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
-import com.pronoiahealth.olhie.client.shared.vo.BookState;
-import com.pronoiahealth.olhie.client.widgets.booklist.BookListResultWidget;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.BookSelectCallBack;
 import com.watopi.chosen.client.gwt.ChosenListBox;
@@ -50,6 +49,9 @@ public class SearchResultsComponent extends AbstractComposite {
 
 	@Inject
 	UiBinder<Widget, SearchResultsComponent> binder;
+	
+	@Inject
+	private PageNavigator nav;
 
 	// @UiField
 	// public Pagination searchResultsPager;
@@ -84,33 +86,15 @@ public class SearchResultsComponent extends AbstractComposite {
 
 		// Set width of dropdown
 		resultListCnt.setWidth("100px");
-		
-		// Test add some books
-		/*
-		BookListResultWidget widget = new BookListResultWidget(new BookForDisplay("id", "Title 1", "John D", 4, "Test introduction",
-				"TOC", "06/26/1958", "400", "Book 1 Book2",
-				BookState.BOOK_STATE_INVISIBLE, new BookCategory("yellow", "Legal"),
-				new BookCover("Olhie/images/p1.png", "Paper")));
-		if (widget.getBook().getBookState() == BookState.BOOK_STATE_INVISIBLE) {
-			widget.getBookImagePanelWidget().setVisible(false);
-			searchResultsContainerList.add(widget);
-		}
-		*/
 
-		// create selector - This will fire the bookId to the server to see what
-		// the users relationship with the book is. If he's the author or
-		// co-author he will be directed to the NewBookPage to edit the book. If
-		// not he will be directed to the book review page.
+		// Navigate to the NewBookPage. The edit mode will be set by logic on
+		// that page.
 		bookSelectCallBack = new BookSelectCallBack() {
 			@Override
 			public void onBookSelect(String bookId) {
-				/*
-				//TODO: implement book select event
-				if (bookId != null) {
-					bookListBookSelectedEvent
-							.fire(new BookListBookSelectedEvent(bookId));
-				}
-				*/
+				Multimap<String, Object> map = ArrayListMultimap.create();
+				map.put("bookId", bookId);
+				nav.performTransition(NavEnum.NewBookPage.toString(), map);
 			}
 		};
 	}
@@ -124,21 +108,11 @@ public class SearchResultsComponent extends AbstractComposite {
 			@Observes BookSearchResponseEvent event) {
 
 		List<BookDisplay> lst = event.getBookDisplayList();
-		
+
 		BookList3D bookLst = new BookList3D(lst, bookSelectCallBack);
 
 		searchResultsContainerList.clear();
 		searchResultsContainerList.add(bookLst);
-		/*
-		 * TODO: replace with the booklist3d widget
-		for (BookDisplay bookDisplay : bookDisplayList) {
-			BookListResultWidget widget = new BookListResultWidget(bookDisplay);
-			if (widget.getBook().getBookState() == BookState.BOOK_STATE_INVISIBLE) {
-				widget.getBookImagePanelWidget().setVisible(false);
-				searchResultsContainerList.add(widget);
-			}
-		}
-		 */
 	}
 
 	/**

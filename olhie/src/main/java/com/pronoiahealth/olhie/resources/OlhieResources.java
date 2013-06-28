@@ -49,21 +49,9 @@ public interface OlhieResources extends ClientBundle {
 	@CssResource.NotStrict
 	CssResource bulletinboardcss();
 
-	@Source("com/pronoiahealth/olhie/resources/css/bookshelf_slider.css")
-	@CssResource.NotStrict
-	CssResource bookshelfslidercss();
-
-	@Source("com/pronoiahealth/olhie/resources/css/bookcase.css")
-	@CssResource.NotStrict
-	CssResource bookcasecss();
-
 	@Source("com/pronoiahealth/olhie/resources/css/cbg_button.css")
 	@CssResource.NotStrict
 	CssResource cbgbuttoncss();
-
-	@Source("com/pronoiahealth/olhie/resources/css/bookreview.css")
-	@CssResource.NotStrict
-	CssResource bookreviewcss();
 
 	@Source("com/pronoiahealth/olhie/resources/css/ioscheckbox.css")
 	@CssResource.NotStrict
@@ -93,6 +81,10 @@ public interface OlhieResources extends ClientBundle {
 	@CssResource.NotStrict
 	CssResource newbookcss();
 	
+	@Source("com/pronoiahealth/olhie/resources/css/bookcase.css")
+	@CssResource.NotStrict
+	CssResource bookcasecss();
+	
 	@Source("com/pronoiahealth/olhie/resources/css/booklist3d.css")
 	@CssResource.NotStrict
 	CssResource booklist3dcss();
@@ -101,12 +93,6 @@ public interface OlhieResources extends ClientBundle {
 	@CssResource.NotStrict
 	CssResource viewbookassetcss();
 
-	@Source("com/pronoiahealth/olhie/resources/js/jquery.bookshelfslider.js")
-	TextResource jquerybookshelfsliderjs();
-
-	@Source("com/pronoiahealth/olhie/resources/js/jquery.easing.1.3.js")
-	TextResource jqueryeasing13js();
-
-	@Source("com/pronoiahealth/olhie/resources/js/jquery-1.7.2.min.js")
-	TextResource jquery172minjs();
+	//@Source("com/pronoiahealth/olhie/resources/js/jquery.bookshelfslider.js")
+	//TextResource jquerybookshelfsliderjs();
 }

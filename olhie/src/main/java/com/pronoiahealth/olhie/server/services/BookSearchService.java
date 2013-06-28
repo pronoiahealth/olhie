@@ -42,9 +42,17 @@ import com.pronoiahealth.olhie.server.security.SecureAccess;
  * Responsibilities:<br/>
  * 1. Use to return a book based on a search query<br/>
  * 
+ * <p>
+ * Book should not be returned from this service unless they are active.
+ * </p>
+ * 
  * @author Alex Roman
  * @version 1.0
  * @since Jun 25, 2013
+ * 
+ *        <p>
+ *        Changes: Added code to only return active books - 6/27/13 - jjd<br/>
+ *        </p>
  * 
  */
 @RequestScoped
@@ -77,29 +85,22 @@ public class BookSearchService {
 	 * 
 	 * @param bookFindByIdEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.ANONYMOUS })
 	protected void observesBookSearchEvent(
 			@Observes BookSearchEvent bookSearchEvent) {
 		try {
 			String searchText = bookSearchEvent.getSearchText();
-			
-			log.log(Level.SEVERE, "observesBookSearchEvent: " + searchText);
-			
 			List<BookDisplay> bookDisplayList = new ArrayList<BookDisplay>();
 
 			// Find Book
 			OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
-					"select from Book where bookTitle like :title");
+					"select from Book where bookTitle like :title and active = true");
 			HashMap<String, String> bparams = new HashMap<String, String>();
 			bparams.put("title", "%" + searchText + "%");
 			List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
 
 			for (Book book : bResult) {
-				log.log(Level.SEVERE, book.getBookTitle());
-
-				//Book book = ooDbTx.detach(bookAttached, true);
-
-				log.log(Level.SEVERE, "Find Author");
 				// Find author
 				OSQLSynchQuery<User> uQuery = new OSQLSynchQuery<User>(
 						"select from User where userId = :uId");
@@ -107,14 +108,13 @@ public class BookSearchService {
 				uparams.put("uId", book.getAuthorId());
 				List<User> uResult = ooDbTx.command(uQuery).execute(uparams);
 				User user = uResult.get(0);
-				String authorName = user.getFirstName() + " " + user.getLastName();
+				String authorName = user.getFirstName() + " "
+						+ user.getLastName();
 
-				log.log(Level.SEVERE, "Find Cover and Category");
 				// Find the cover and the category
 				BookCover cover = holder.getCoverByName(book.getCoverName());
 				BookCategory cat = holder.getCategoryByName(book.getCategory());
 
-				log.log(Level.SEVERE, "Find Book asset descriptions");
 				// Get a list of Bookassetdescriptions
 				OSQLSynchQuery<Bookassetdescription> baQuery = new OSQLSynchQuery<Bookassetdescription>(
 						"select from Bookassetdescription where bookId = :bId");
@@ -123,7 +123,9 @@ public class BookSearchService {
 				List<Bookassetdescription> baResult = ooDbTx.command(baQuery)
 						.execute(baparams);
 				List<Bookassetdescription> retBaResults = new ArrayList<Bookassetdescription>();
-				// Need to detach them. We don't want to pull back the entire object
+				// Need to detach them. We don't want to pull back the
+				// entire
+				// object
 				// tree
 				if (baResult != null) {
 					for (Bookassetdescription bad : baResult) {
@@ -146,14 +148,14 @@ public class BookSearchService {
 					}
 				}
 
-				log.log(Level.SEVERE, "create book display");
-				BookDisplay bookDisplay = new BookDisplay(book, cat, cover, authorName, retBaResults);
-				
+				BookDisplay bookDisplay = new BookDisplay(book, cat, cover,
+						authorName, retBaResults);
 				bookDisplayList.add(bookDisplay);
 			}
 
 			// Fire the event
-			bookSearchResponseEvent.fire(new BookSearchResponseEvent(bookDisplayList));
+			bookSearchResponseEvent.fire(new BookSearchResponseEvent(
+					bookDisplayList));
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);

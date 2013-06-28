@@ -253,7 +253,9 @@ public class NewBookDialog extends Composite {
 	 */
 	protected void observesBookCategoryListResponseEvent(
 			@Observes BookCategoryListResponseEvent bookCategoryListResponseEvent) {
-		catagoryDropDown.setText("Select a category");
+		if (mode.equals(ModeEnum.NEW)) {
+			catagoryDropDown.setText("Select a category");
+		}
 		catagoryDropDown.getMenuWiget().clear();
 		List<BookCategory> bookCategories = bookCategoryListResponseEvent
 				.getBokkCategories();
@@ -279,7 +281,9 @@ public class NewBookDialog extends Composite {
 	 */
 	protected void observesBookCoverListResponseEvent(
 			@Observes BookCoverListResponseEvent bookCoverListResponseEvent) {
-		bookCoverDropDown.setText("Select a book cover");
+		if (mode.equals(ModeEnum.NEW)) {
+			bookCoverDropDown.setText("Select a book cover");
+		}
 		bookCoverDropDown.getMenuWiget().clear();
 		List<BookCover> bookCovers = bookCoverListResponseEvent.getBookCover();
 		if (bookCovers != null) {

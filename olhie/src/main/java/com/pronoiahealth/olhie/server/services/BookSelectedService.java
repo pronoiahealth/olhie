@@ -84,24 +84,30 @@ public class BookSelectedService {
 			BookListBookSelectedResponseEvent retEvt = new BookListBookSelectedResponseEvent(
 					bookId, false);
 
-			// Get UserBookRelatioship
-			OSQLSynchQuery<UserBookRelationship> bQuery = new OSQLSynchQuery<UserBookRelationship>(
-					"select from UserBookRelationship where bookId = :bId");
-			HashMap<String, String> bparams = new HashMap<String, String>();
-			bparams.put("bId", bookId);
-			List<UserBookRelationship> bResult = ooDbTx.command(bQuery)
-					.execute(bparams);
-			if (bResult != null && bResult.size() > 0) {
-				for (UserBookRelationship r : bResult) {
-					if (r.getUserId().endsWith(userId)) {
-						String relationship = r.getUserRelationship();
-						if (relationship
-								.equals(UserBookRelationshipEnum.CREATOR.name())
-								|| relationship
-										.equals(UserBookRelationshipEnum.COAUTHOR
-												.name())) {
-							retEvt.setAuthorSelected(true);
-							break;
+			// If the user has logged in and has a user if check the
+			// relationship. Otherwise he is an anonymous user and has no
+			// relationship
+			if (userId != null && userId.length() > 0) {
+				// Get UserBookRelatioship
+				OSQLSynchQuery<UserBookRelationship> bQuery = new OSQLSynchQuery<UserBookRelationship>(
+						"select from UserBookRelationship where bookId = :bId");
+				HashMap<String, String> bparams = new HashMap<String, String>();
+				bparams.put("bId", bookId);
+				List<UserBookRelationship> bResult = ooDbTx.command(bQuery)
+						.execute(bparams);
+				if (bResult != null && bResult.size() > 0) {
+					for (UserBookRelationship r : bResult) {
+						if (r.getUserId().equals(userId)) {
+							String relationship = r.getUserRelationship();
+							if (relationship
+									.equals(UserBookRelationshipEnum.CREATOR
+											.name())
+									|| relationship
+											.equals(UserBookRelationshipEnum.COAUTHOR
+													.name())) {
+								retEvt.setAuthorSelected(true);
+								break;
+							}
 						}
 					}
 				}
