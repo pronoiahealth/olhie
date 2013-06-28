@@ -95,9 +95,9 @@ public class BookSearchService {
 
 			// Find Book
 			OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
-					"select from Book where bookTitle like :title and active = true");
+					"select from Book where bookTitle.toLowerCase() like :title and active = true");
 			HashMap<String, String> bparams = new HashMap<String, String>();
-			bparams.put("title", "%" + searchText + "%");
+			bparams.put("title", "%" + searchText.toLowerCase() + "%");
 			List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
 
 			for (Book book : bResult) {
