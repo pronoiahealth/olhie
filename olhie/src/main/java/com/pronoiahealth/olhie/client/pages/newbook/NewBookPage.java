@@ -57,6 +57,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.BookContentUpdatedEven
 import com.pronoiahealth.olhie.client.shared.events.local.DownloadBookAssetEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowAddLogoModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewAssetModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewBookModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowViewBookassetDialogEvent;
@@ -108,6 +109,9 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 
 	@UiField
 	public Button editBookButton;
+
+	@UiField
+	public Button logoBookButton;
 
 	@PageState
 	private String bookId;
@@ -172,6 +176,9 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 
 	@Inject
 	private Event<ShowNewBookModalEvent> showNewBookModalEvent;
+
+	@Inject
+	private Event<ShowAddLogoModalEvent> showAddLogoModalEvent;
 
 	@Inject
 	private Event<BookListBookSelectedEvent> bookListBookSelectedEvent;
@@ -330,10 +337,13 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 			this.editMode = ModeEnum.EDIT;
 			tocAddElementContainer.setVisible(true);
 			editBookButton.setVisible(true);
+			logoBookButton.setVisible(true);
+
 		} else {
 			this.editMode = ModeEnum.VIEW;
 			tocAddElementContainer.setVisible(false);
 			editBookButton.setVisible(false);
+			logoBookButton.setVisible(false);
 		}
 	}
 
@@ -514,6 +524,14 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 		if (editMode == ModeEnum.EDIT) {
 			showNewBookModalEvent.fire(new ShowNewBookModalEvent(ModeEnum.EDIT,
 					this.currentBook));
+		}
+	}
+
+	@UiHandler("logoBookButton")
+	public void editLogoButtonClicked(ClickEvent event) {
+		if (editMode == ModeEnum.EDIT) {
+			showAddLogoModalEvent.fire(new ShowAddLogoModalEvent(
+					this.currentBook.getId()));
 		}
 	}
 }

@@ -1,0 +1,25 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
+	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base'>
+
+	<b:Modal ui:field="addLogoModal" title="What logo do you want to use?"
+		backdrop="STATIC" keyboard="true" animation="true">
+
+		<b:FluidContainer>
+			<b:WellForm ui:field="addlogoForm">
+				<b:ControlLabel>Save logo</b:ControlLabel>
+				<g:HorizontalPanel ui:field="uploadContainer">
+				</g:HorizontalPanel>
+				<g:Label ui:field="noFileToUploadErr"
+					styleName="ph-NewBook-AddFileDialog-NoFileToUploadErr"></g:Label>
+			</b:WellForm>
+		</b:FluidContainer>
+
+		<b:ModalFooter>
+			<b:Button ui:field="uploadButton" icon="CLOUD_UPLOAD" type="PRIMARY">Upload</b:Button>
+		</b:ModalFooter>
+
+	</b:Modal>
+
+</ui:UiBinder>

@@ -70,13 +70,14 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 	@Path("/book/{uniqueNumb}/{assetId}/DOWNLOAD")
 	// @Produces({"application/pdf", "application/octet-stream", "text/html"})
 	@Produces({ "application/octet-stream" })
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.ANONYMOUS })
 	public InputStream downloadAsset(@Context HttpServletRequest request,
 			@Context HttpServletResponse response,
 			@PathParam("assetId") String assetId,
 			@Context ServletContext context) throws ServletException,
 			IOException, FileDownloadException {
-		
+
 		DataInputStream in = null;
 		try {
 			// Get the file contents
@@ -135,7 +136,8 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 	@GET
 	@Path("/book/{uniqueNumb}/{assetId}/PDF")
 	@Produces({ "application/pdf" })
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+		SecurityRoleEnum.ANONYMOUS })
 	public InputStream viewPDFAsset(@Context HttpServletRequest request,
 			@Context HttpServletResponse response,
 			@PathParam("assetId") String assetId,
@@ -189,12 +191,13 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 			}
 		}
 	}
-	
+
 	@Override
 	@GET
 	@Path("/book/{uniqueNumb}/{assetId}/TEXT")
 	@Produces({ "text/plain" })
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+		SecurityRoleEnum.ANONYMOUS })
 	public InputStream viewTestAsset(@Context HttpServletRequest request,
 			@Context HttpServletResponse response,
 			@PathParam("assetId") String assetId,
@@ -248,12 +251,13 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 			}
 		}
 	}
-	
+
 	@Override
 	@GET
 	@Path("/book/{uniqueNumb}/{assetId}/HTML")
 	@Produces({ "text/html" })
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+		SecurityRoleEnum.ANONYMOUS })
 	public InputStream viewHTMLAsset(@Context HttpServletRequest request,
 			@Context HttpServletResponse response,
 			@PathParam("assetId") String assetId,

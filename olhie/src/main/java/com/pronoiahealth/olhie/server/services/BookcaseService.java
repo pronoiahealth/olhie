@@ -173,6 +173,12 @@ public class BookcaseService {
 					retBook.setIntroduction(currentBook.getIntroduction());
 					retBook.setId(currentBook.getId());
 
+					// Logo?
+					String logoFileName = currentBook.getLogoFileName();
+					retDisplay
+							.setBookLogo((logoFileName != null && logoFileName
+									.length() > 0) ? true : false);
+
 					// Add to the list
 					books.add(retDisplay);
 				}

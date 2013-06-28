@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.widgets.booklist3d;
 
 import static com.google.gwt.query.client.GQuery.$;
+import static gwtquery.plugins.ratings.client.Ratings.Ratings;
 
 import java.util.List;
 
@@ -19,6 +20,8 @@ import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.HeadingElement;
+import com.google.gwt.dom.client.ImageElement;
+import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.LIElement;
 import com.google.gwt.dom.client.ParagraphElement;
 import com.google.gwt.dom.client.SpanElement;
@@ -31,15 +34,23 @@ import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
+import com.pronoiahealth.olhie.client.utils.Utils;
 
 public class BookList3D extends Widget {
-	// private List<DivElement> bookLst;
 	private BookSelectCallBack bookSelectCallBack;
 
-	public BookList3D(List<BookDisplay> books, BookSelectCallBack bookSelectCallBack) {
+	/**
+	 * Some components that use this class will be ApplicationScoped. We don't
+	 * want to do a re-bind of gQuery events on every call to this methods
+	 * onLoad handler. We only want to do it once.
+	 */
+	private boolean hasBeenAttached = false;
+
+	public BookList3D(List<BookDisplay> books,
+			BookSelectCallBack bookSelectCallBack) {
 		super();
 		this.bookSelectCallBack = bookSelectCallBack;
-		
+
 		// bookLst = new ArrayList<DivElement>();
 		Document doc = Document.get();
 		UListElement ulElem = doc.createULElement();
@@ -48,7 +59,9 @@ public class BookList3D extends Widget {
 		this.setElement(ulElem);
 		ulElem.setId("bk-list");
 		ulElem.setClassName("bk-list clearfix");
+		int cnt = 0;
 		for (BookDisplay bookDisplay : books) {
+			cnt++;
 			Book book = bookDisplay.getBook();
 			String bookCoverUrl = bookDisplay.getBookCover().getImgUrl();
 			String catColor = bookDisplay.getBookCategory().getColor();
@@ -58,11 +71,12 @@ public class BookList3D extends Widget {
 			ulElem.appendChild(li);
 
 			// Add the main book div
+			String bookId = book.getId();
 			DivElement bookDiv = doc.createDivElement();
 			li.appendChild(bookDiv);
 			bookDiv.setClassName("bk-book book-1 bk-bookdefault");
 			// Set the book id
-			bookDiv.setAttribute("bookId", book.getId());
+			bookDiv.setAttribute("bookId", bookId);
 
 			// Add the front and cover
 			DivElement bookFrontDiv = doc.createDivElement();
@@ -76,6 +90,24 @@ public class BookList3D extends Widget {
 			// Set the book cover image
 			bookCoverDiv.setAttribute("style", "background-image: url('"
 					+ bookCoverUrl + "'); overflow:auto;");
+			// Set the logo
+			DivElement bookCoverlogoDiv = doc.createDivElement();
+			bookCoverDiv.appendChild(bookCoverlogoDiv);
+			bookCoverlogoDiv
+					.setAttribute("style",
+							"padding-top: 20px; padding-left: 25px; background: transparent;");
+
+			// Logo image
+			ImageElement bookCoverLogoImageElement = doc.createImageElement();
+			bookCoverlogoDiv.appendChild(bookCoverLogoImageElement);
+			if (bookDisplay.isBookLogo() == true) {
+				bookCoverLogoImageElement.setSrc(Utils
+						.buildRestServiceForLogoDownloadLink(bookId));
+			}
+			bookCoverLogoImageElement.setAttribute("style",
+					"max-height: 100px; max-width: 200px;");
+
+			// Heading element for Author and title
 			HeadingElement h2AuthorTitleElement = doc.createHElement(2);
 			bookCoverDiv.appendChild(h2AuthorTitleElement);
 			// Author
@@ -176,6 +208,31 @@ public class BookList3D extends Widget {
 			bookInfoElem.appendChild(lookInsideButtonElem);
 			lookInsideButtonElem.addClassName("bk-bookview");
 			lookInsideButtonElem.setInnerText("Look Inside");
+			// Star rating
+			// HeadingElement ratingElem = doc.createHElement(3);
+			// bookInfoElem.appendChild(ratingElem);
+			DivElement rateContainerElem = doc.createDivElement();
+			bookInfoElem.appendChild(rateContainerElem);
+			rateContainerElem.setAttribute("style", "margin-top: 15px;");
+			DivElement rateContainerTextElem = doc.createDivElement();
+			rateContainerElem.appendChild(rateContainerTextElem);
+			rateContainerTextElem.setInnerHTML("<b>Rating: </b>");
+			rateContainerTextElem.setAttribute("style",
+					"float: left; padding-right: 10px;");
+			DivElement ratingStarContainerElem = doc.createDivElement();
+			rateContainerElem.appendChild(ratingStarContainerElem);
+			// Put the rating in here
+			for (int i = 0; i < 5; i++) {
+				InputElement cInputElem = doc
+						.createRadioInputElement("starRating" + cnt);
+				ratingStarContainerElem.appendChild(cInputElem);
+				cInputElem.setClassName("star");
+				cInputElem.setAttribute("style", "");
+				cInputElem.setAttribute("disabled", "disabled");
+				if (i == 2) {
+					cInputElem.setAttribute("checked", "checked");
+				}
+			}
 		}
 	}
 
@@ -183,128 +240,137 @@ public class BookList3D extends Widget {
 	protected void onAttach() {
 		super.onAttach();
 
-		final GQuery books = $("#bk-list > li > div.bk-book");
-		final int booksCount = books.length();
-		books.each(new Function() {
-			@Override
-			public void f(Element e) {
-				final GQuery book = $(e);
-				final GQuery other = books.not(book);
-				final GQuery parent = book.parent();
-				final GQuery page = book.children("div.bk-page");
-				final GQuery bookview = parent.find("button.bk-bookview");
-				final GQuery content = page.children("div.bk-content");
-				final IntHolder current = new IntHolder();
+		if (this.hasBeenAttached == false) {
+			final GQuery books = $("#bk-list > li > div.bk-book");
+			final int booksCount = books.length();
+			books.each(new Function() {
+				@Override
+				public void f(Element e) {
+					final GQuery book = $(e);
+					final GQuery other = books.not(book);
+					final GQuery parent = book.parent();
+					final GQuery ratings = parent.children("div.bk-info").find(
+							"input.star");
+					final GQuery page = book.children("div.bk-page");
+					final GQuery bookview = parent.find("button.bk-bookview");
+					final GQuery content = page.children("div.bk-content");
+					final IntHolder current = new IntHolder();
 
-				// Bind the call back
-				book.bind(Event.ONCLICK, new Function() {
-					@Override
-					public boolean f(Event e) {
-						String bookId = book.attr("bookId");
-						bookSelectCallBack.onBookSelect(bookId);
-						return true;
-					}
-				});
-				
-				
-				GQuery flipAction = parent.find("button.bk-bookback");
-				flipAction.bind(Event.ONCLICK, new Function() {
-					@Override
-					public boolean f(Event e) {
-						bookview.removeClass("bk-active");
-						boolean flipVal = false;
-						Object flipObj = book.data("flip");
-						if (flipObj != null) {
-							flipVal = (Boolean) flipObj;
-						}
-						if (flipVal == true) {
-							book.data("opened", false).data("flip", false);
-							book.removeClass("bk-viewback");
-							book.addClass("bk-bookdefault");
-						} else {
-							book.data("opened", false).data("flip", true);
-							book.removeClass("bk-viewinside").removeClass(
-									"bk-bookdefault");
-							book.addClass("bk-viewback");
-						}
-						return true;
-					}
-				});
+					// Star rating
+					ratings.as(Ratings).rate();
 
-				bookview.bind(Event.ONCLICK, new Function() {
-					@Override
-					public boolean f(Event e) {
-						GQuery thisPt = $(e);
-						other.data("opened", false);
-						other.removeClass("bk-viewinside");
-						GQuery otherParent = other.parent().css(
-								CSS.ZINDEX.with(0));
-						otherParent.find("button.bk-bookview").removeClass(
-								"bk-active");
-
-						if (!other.hasClass("bk-viewback")) {
-							other.addClass("bk-bookdefault");
-						}
-
-						boolean openedVal = false;
-						Object openedObj = book.data("opened");
-						if (openedObj != null) {
-							openedVal = (Boolean) openedObj;
-						}
-						if (openedVal == true) {
-							thisPt.removeClass("bk-active");
-							book.data("opened", false).data("flip", false);
-							book.removeClass("bk-viewinside");
-							book.addClass("bk-bookdefault");
-						} else {
-							thisPt.addClass("bk-active");
-							book.data("opened", true).data("flip", false);
-							book.removeClass("bk-viewback").removeClass(
-									"bk-bookdefault");
-							book.addClass("bk-viewinside");
-							parent.css(CSS.ZINDEX.with(booksCount));
-							current.setIntVal(0);
-							content.removeClass("bk-content-current")
-									.eq(current.getIntVal())
-									.addClass("bk-content-current");
-						}
-						return true;
-					}
-				});
-
-				if (content.length() > 1) {
-					GQuery navPrev = $("<span class=\"bk-page-prev\">&lt;</span>");
-					GQuery navNext = $("<span class=\"bk-page-next\">&gt;</span>");
-					page.append($("<nav></nav>").append(navPrev)
-							.append(navNext));
-
-					navPrev.bind(Event.ONCLICK, new Function() {
+					// Bind the call back
+					book.bind(Event.ONCLICK, new Function() {
 						@Override
 						public boolean f(Event e) {
-							if (current.getIntVal() > 0) {
-								current.subOne();
+							String bookId = book.attr("bookId");
+							bookSelectCallBack.onBookSelect(bookId);
+							return true;
+						}
+					});
+
+					GQuery flipAction = parent.find("button.bk-bookback");
+					flipAction.bind(Event.ONCLICK, new Function() {
+						@Override
+						public boolean f(Event e) {
+							bookview.removeClass("bk-active");
+							boolean flipVal = false;
+							Object flipObj = book.data("flip");
+							if (flipObj != null) {
+								flipVal = (Boolean) flipObj;
+							}
+							if (flipVal == true) {
+								book.data("opened", false).data("flip", false);
+								book.removeClass("bk-viewback");
+								book.addClass("bk-bookdefault");
+							} else {
+								book.data("opened", false).data("flip", true);
+								book.removeClass("bk-viewinside").removeClass(
+										"bk-bookdefault");
+								book.addClass("bk-viewback");
+							}
+							return true;
+						}
+					});
+
+					bookview.bind(Event.ONCLICK, new Function() {
+						@Override
+						public boolean f(Event e) {
+							GQuery thisPt = $(e);
+							other.data("opened", false);
+							other.removeClass("bk-viewinside");
+							GQuery otherParent = other.parent().css(
+									CSS.ZINDEX.with(0));
+							otherParent.find("button.bk-bookview").removeClass(
+									"bk-active");
+
+							if (!other.hasClass("bk-viewback")) {
+								other.addClass("bk-bookdefault");
+							}
+
+							boolean openedVal = false;
+							Object openedObj = book.data("opened");
+							if (openedObj != null) {
+								openedVal = (Boolean) openedObj;
+							}
+							if (openedVal == true) {
+								thisPt.removeClass("bk-active");
+								book.data("opened", false).data("flip", false);
+								book.removeClass("bk-viewinside");
+								book.addClass("bk-bookdefault");
+							} else {
+								thisPt.addClass("bk-active");
+								book.data("opened", true).data("flip", false);
+								book.removeClass("bk-viewback").removeClass(
+										"bk-bookdefault");
+								book.addClass("bk-viewinside");
+								parent.css(CSS.ZINDEX.with(booksCount));
+								current.setIntVal(0);
 								content.removeClass("bk-content-current")
 										.eq(current.getIntVal())
 										.addClass("bk-content-current");
 							}
-							return false;
+							return true;
 						}
 					});
 
-					navNext.bind(Event.ONCLICK, new Function() {
-						@Override
-						public boolean f(Event e) {
-							if (current.getIntVal() < content.length() - 1) {
-								current.plusOne();
-								content.removeClass("bk-content-current")
-										.eq(current.getIntVal())
-										.addClass("bk-content-current");
+					if (content.length() > 1) {
+						GQuery navPrev = $("<span class=\"bk-page-prev\">&lt;</span>");
+						GQuery navNext = $("<span class=\"bk-page-next\">&gt;</span>");
+						page.append($("<nav></nav>").append(navPrev).append(
+								navNext));
+
+						navPrev.bind(Event.ONCLICK, new Function() {
+							@Override
+							public boolean f(Event e) {
+								if (current.getIntVal() > 0) {
+									current.subOne();
+									content.removeClass("bk-content-current")
+											.eq(current.getIntVal())
+											.addClass("bk-content-current");
+								}
+								return false;
 							}
-							return false;
-						}
-					});
+						});
+
+						navNext.bind(Event.ONCLICK, new Function() {
+							@Override
+							public boolean f(Event e) {
+								if (current.getIntVal() < content.length() - 1) {
+									current.plusOne();
+									content.removeClass("bk-content-current")
+											.eq(current.getIntVal())
+											.addClass("bk-content-current");
+								}
+								return false;
+							}
+						});
+					}
 				}
-			}
-		});
+			});
+
+			// Did it the first time mark it as done
+			this.hasBeenAttached = true;
+		}
 	}
 }

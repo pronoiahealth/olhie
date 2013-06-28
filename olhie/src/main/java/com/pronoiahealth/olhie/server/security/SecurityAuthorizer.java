@@ -55,7 +55,7 @@ public class SecurityAuthorizer {
 		// If the user has the appropriate role and is logged in then proceed
 		// allowAccess = false;
 		if (allowAccess == true) {
-			if (SecurityRoleEnum.ANONYMOUS.getName()
+			if (SecurityRoleEnum.ANONYMOUS.toString()
 					.equals(userToken.getRole())) {
 				return true;
 			} else {

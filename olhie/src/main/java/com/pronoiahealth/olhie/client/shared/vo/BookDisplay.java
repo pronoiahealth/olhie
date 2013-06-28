@@ -26,19 +26,20 @@ import org.jboss.errai.common.client.api.annotations.Portable;
  */
 @Portable
 public class BookDisplay {
-	
+
 	private Book book;
 	private BookCategory bookCategory;
 	private BookCover bookCover;
 	private String authorFullName;
+	private boolean bookLogo;
 	private List<Bookassetdescription> bookAssetDescriptions;
-	
+
 	/**
 	 * 
 	 */
-	public BookDisplay(){
+	public BookDisplay() {
 	}
-	
+
 	/**
 	 * @param book
 	 * @param bookCategory
@@ -49,54 +50,69 @@ public class BookDisplay {
 	public BookDisplay(Book book, BookCategory bookCategory,
 			BookCover bookCover, String authorFullName,
 			List<Bookassetdescription> bookAssetDescriptions) {
+		this(book, bookCategory, bookCover, authorFullName,
+				bookAssetDescriptions, false);
+	}
+
+	public BookDisplay(Book book, BookCategory bookCategory,
+			BookCover bookCover, String authorFullName,
+			List<Bookassetdescription> bookAssetDescriptions, boolean bookLogo) {
 		super();
 		this.book = book;
 		this.bookCategory = bookCategory;
 		this.bookCover = bookCover;
 		this.authorFullName = authorFullName;
+		this.bookLogo = bookLogo;
 		this.bookAssetDescriptions = bookAssetDescriptions;
+		this.bookLogo = bookLogo;
 	}
 
 	public Book getBook() {
 		return book;
 	}
-	
+
 	public void setBook(Book book) {
 		this.book = book;
 	}
-	
+
 	public BookCategory getBookCategory() {
 		return bookCategory;
 	}
-	
+
 	public void setBookCategory(BookCategory bookCategory) {
 		this.bookCategory = bookCategory;
 	}
-	
+
 	public BookCover getBookCover() {
 		return bookCover;
 	}
-	
+
 	public void setBookCover(BookCover bookCover) {
 		this.bookCover = bookCover;
 	}
-	
+
 	public String getAuthorFullName() {
 		return authorFullName;
 	}
-	
+
 	public void setAuthorFullName(String authorFullName) {
 		this.authorFullName = authorFullName;
 	}
-	
+
 	public List<Bookassetdescription> getBookAssetDescriptions() {
 		return bookAssetDescriptions;
 	}
-	
+
 	public void setBookAssetDescriptions(
 			List<Bookassetdescription> bookAssetDescriptions) {
 		this.bookAssetDescriptions = bookAssetDescriptions;
 	}
 
-	
+	public boolean isBookLogo() {
+		return bookLogo;
+	}
+
+	public void setBookLogo(boolean bookLogo) {
+		this.bookLogo = bookLogo;
+	}
 }

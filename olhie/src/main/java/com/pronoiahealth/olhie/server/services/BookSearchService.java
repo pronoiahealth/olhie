@@ -101,6 +101,13 @@ public class BookSearchService {
 			List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
 
 			for (Book book : bResult) {
+				// Get the title into the object
+				// Remember that Orient lazy loads the object attributes so call
+				// for the attributes you want to return or detach the whole
+				// thing.
+				book.getBookTitle();
+				book.getIntroduction();
+
 				// Find author
 				OSQLSynchQuery<User> uQuery = new OSQLSynchQuery<User>(
 						"select from User where userId = :uId");
@@ -148,8 +155,15 @@ public class BookSearchService {
 					}
 				}
 
-				BookDisplay bookDisplay = new BookDisplay(book, cat, cover,
-						authorName, retBaResults);
+				String logoFileName = book.getLogoFileName();
+				BookDisplay bookDisplay = new BookDisplay(
+						book,
+						cat,
+						cover,
+						authorName,
+						retBaResults,
+						(logoFileName != null && logoFileName.length() > 0) ? true
+								: false);
 				bookDisplayList.add(bookDisplay);
 			}
 

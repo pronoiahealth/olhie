@@ -40,6 +40,7 @@ import com.pronoiahealth.olhie.client.pages.comments.CommentsDialog;
 import com.pronoiahealth.olhie.client.pages.error.ErrorDisplayDialog;
 import com.pronoiahealth.olhie.client.pages.login.LoginDialog;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddFileDialog;
+import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddLogoDialog;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.NewAssetDialog;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.NewBookDialog;
 import com.pronoiahealth.olhie.client.pages.register.RegisterDialog;
@@ -123,6 +124,9 @@ public class MainPage extends AbstractComposite {
 
 	@Inject
 	ViewBookassetDialog viewBookassetDialog;
+	
+	@Inject
+	AddLogoDialog addLogoDialog;
 
 	@Inject
 	DownloadFrame downloadFrame;
@@ -153,6 +157,9 @@ public class MainPage extends AbstractComposite {
 
 	@UiField
 	public HTMLPanel downloadFramePlaceHolder;
+	
+	@UiField
+	public HTMLPanel addLogoDialogModalPlaceHolder;
 
 	/*
 	 * Used to time things on screen such as when a key is pressed.
@@ -341,6 +348,7 @@ public class MainPage extends AbstractComposite {
 		addFileModalPlaceHolder.add(addFileDialog);
 		viewBookassetModalPlaceHolder.add(viewBookassetDialog);
 		downloadFramePlaceHolder.add(downloadFrame);
+		addLogoDialogModalPlaceHolder.add(addLogoDialog);
 	}
 
 	/**

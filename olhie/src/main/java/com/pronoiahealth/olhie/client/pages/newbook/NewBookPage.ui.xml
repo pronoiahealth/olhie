@@ -9,10 +9,16 @@
 			<b:FluidRow>
 				<b:PageHeader ui:field="bookTitle"></b:PageHeader>
 				<g:HTMLPanel styleName="ph-NewBook-EditCurrentBook-Button-Container">
-					<b:Tooltip text="Edit the Book details">
-						<b:Button ui:field="editBookButton" icon="EDIT" type="PRIMARY"
-							size="SMALL"></b:Button>
-					</b:Tooltip>
+					<b:ButtonGroup>
+						<b:Tooltip text="Add a Logo image">
+							<b:Button ui:field="logoBookButton" icon="PICTURE" type="PRIMARY"
+								size="SMALL"></b:Button>
+						</b:Tooltip>
+						<b:Tooltip text="Edit the Book details">
+							<b:Button ui:field="editBookButton" icon="EDIT" type="PRIMARY"
+								size="SMALL"></b:Button>
+						</b:Tooltip>
+					</b:ButtonGroup>
 				</g:HTMLPanel>
 			</b:FluidRow>
 			<b:FluidRow ui:field="createdPublishedCategoryRow">

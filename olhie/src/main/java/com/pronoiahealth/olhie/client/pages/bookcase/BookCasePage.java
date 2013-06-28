@@ -166,21 +166,23 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 				.entrySet()) {
 			UserBookRelationshipEnum key = entry.getKey();
 			List<BookDisplay> lst = entry.getValue();
-			bookLst = new BookList3D(lst, bookSelectCallBack);
 
 			switch (key) {
 			case CREATOR:
 				myBooksTab.clear();
+				bookLst = new BookList3D(lst, bookSelectCallBack);
 				myBooksTab.add(bookLst);
 				break;
 
 			case COAUTHOR:
 				myCoBooksTab.clear();
+				bookLst = new BookList3D(lst, bookSelectCallBack);
 				myCoBooksTab.add(bookLst);
 				break;
 
 			case MYCOLLECTION:
 				myCollectionTab.clear();
+				bookLst = new BookList3D(lst, bookSelectCallBack);
 				myCollectionTab.add(bookLst);
 				break;
 			}

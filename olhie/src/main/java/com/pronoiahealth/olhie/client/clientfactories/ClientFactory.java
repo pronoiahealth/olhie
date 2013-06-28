@@ -10,16 +10,15 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.clientfactories;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
+import javax.inject.Singleton;
 
 import org.jboss.errai.ui.nav.client.local.DefaultPage;
 import org.jboss.errai.ui.nav.client.local.Navigation;
@@ -93,6 +92,7 @@ public class ClientFactory {
 	 */
 	@Produces
 	@PageRoleMap
+	@Singleton
 	public Map<String, Set<String>> getPageRolesMap(Navigation nav) {
 		// Return object
 		Map<String, Set<String>> pageRolesMap = new HashMap<String, Set<String>>();

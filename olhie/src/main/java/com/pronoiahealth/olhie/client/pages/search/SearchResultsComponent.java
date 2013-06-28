@@ -49,7 +49,7 @@ public class SearchResultsComponent extends AbstractComposite {
 
 	@Inject
 	UiBinder<Widget, SearchResultsComponent> binder;
-	
+
 	@Inject
 	private PageNavigator nav;
 

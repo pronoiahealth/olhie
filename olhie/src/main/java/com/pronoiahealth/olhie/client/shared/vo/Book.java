@@ -71,6 +71,11 @@ public class Book {
 	@NotNull
 	@Size(min = 6, max = 20, message = "Must be between 6 and 20 characters")
 	private String authorId;
+	
+	private String base64LogoData;
+	
+	@Size(max = 250, message = "File names can only be 250 characters long.")
+	private String logoFileName;
 
 	private List<Bookassetdescription> bookDescriptions;
 
@@ -187,5 +192,21 @@ public class Book {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getBase64LogoData() {
+		return base64LogoData;
+	}
+
+	public void setBase64LogoData(String base64LogoData) {
+		this.base64LogoData = base64LogoData;
+	}
+
+	public String getLogoFileName() {
+		return logoFileName;
+	}
+
+	public void setLogoFileName(String logoFileName) {
+		this.logoFileName = logoFileName;
 	}
 }

@@ -59,6 +59,7 @@
 
 .ph-SearchResults-ResultList-Container {
 	overflow: auto;
+	padding-top: 40px;
 }
 
 .ph-SearchResults-BookListResult {

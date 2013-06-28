@@ -60,5 +60,20 @@ public class Utils {
 			urlStr.append(viewType);
 		return urlStr.toString();
 	}
-
+	
+	/**
+	 * Build a URI for file download
+	 * 
+	 * @param assetId
+	 * @param forDownload
+	 * @return
+	 */
+	public static String buildRestServiceForLogoDownloadLink(String bookId) {
+		StringBuilder urlStr = new StringBuilder();
+		urlStr.append("rest/logo_download/logo/");
+		urlStr.append(Random.nextInt(100000));
+		urlStr.append("/");
+		urlStr.append(URL.encodeQueryString(bookId));
+		return urlStr.toString();
+	}
 }
