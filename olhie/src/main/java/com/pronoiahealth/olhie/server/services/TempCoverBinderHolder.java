@@ -16,8 +16,8 @@ public class TempCoverBinderHolder {
 	public TempCoverBinderHolder() {
 		// Categories
 		this.bookCategories = new ArrayList<BookCategory>();
-		bookCategories.add(new BookCategory("black", "Interface"));
-		bookCategories.add(new BookCategory("yellow", "Legal"));
+		bookCategories.add(new BookCategory("black", "Interface", "white"));
+		bookCategories.add(new BookCategory("yellow", "Legal", "purple"));
 
 		// Covers
 		this.bookCovers = new ArrayList<BookCover>();

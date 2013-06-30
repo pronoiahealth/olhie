@@ -12,6 +12,7 @@ package com.pronoiahealth.olhie.server.services;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,13 +23,17 @@ import javax.inject.Inject;
 
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.events.BookListBookSelectedEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookListBookSelectedResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
+import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
+import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
+import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
 
 /**
  * BookSelectedService.java<br/>
@@ -49,6 +54,9 @@ public class BookSelectedService {
 
 	@Inject
 	private ServerUserToken serverToken;
+
+	@Inject
+	private TempCoverBinderHolder holder;
 
 	@Inject
 	private Event<BookListBookSelectedResponseEvent> bookListBookSelectedResponseEvent;
@@ -74,19 +82,18 @@ public class BookSelectedService {
 	 * 
 	 * @param bookListBookSelectedEvent
 	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.ANONYMOUS })
 	protected void observesBookListBookSelectedEvent(
 			@Observes BookListBookSelectedEvent bookListBookSelectedEvent) {
 		try {
 			String bookId = bookListBookSelectedEvent.getBookId();
 			String userId = serverToken.getUserId();
 
-			// Return event
-			BookListBookSelectedResponseEvent retEvt = new BookListBookSelectedResponseEvent(
-					bookId, false);
-
-			// If the user has logged in and has a user if check the
+			// If the user has logged in and has a user check the
 			// relationship. Otherwise he is an anonymous user and has no
 			// relationship
+			boolean authorSelected = false;
 			if (userId != null && userId.length() > 0) {
 				// Get UserBookRelatioship
 				OSQLSynchQuery<UserBookRelationship> bQuery = new OSQLSynchQuery<UserBookRelationship>(
@@ -105,7 +112,7 @@ public class BookSelectedService {
 									|| relationship
 											.equals(UserBookRelationshipEnum.COAUTHOR
 													.name())) {
-								retEvt.setAuthorSelected(true);
+								authorSelected = true;
 								break;
 							}
 						}
@@ -113,8 +120,19 @@ public class BookSelectedService {
 				}
 			}
 
+			// Get the Book
+			BookDisplay bookDisplay = BookDAO.getBookDisplayById(bookId,
+					ooDbTx, userId, holder);
+
+			// Get User Book relationships
+			Set<UserBookRelationshipEnum> rels = BookDAO
+					.getActiveBookRealtionshipForUser(userId,
+							serverToken.getLoggedIn(), bookId, ooDbTx);
+
 			// Fire the event
-			bookListBookSelectedResponseEvent.fire(retEvt);
+			bookListBookSelectedResponseEvent
+					.fire(new BookListBookSelectedResponseEvent(bookId,
+							authorSelected, bookDisplay, rels));
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);

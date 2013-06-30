@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.shared.vo;
 
+import java.util.Date;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -54,6 +56,11 @@ public class UserBookRelationship {
 	
 	@NotNull
 	private User theUser;
+	
+	@NotNull
+	private Date effectiveDate;
+	
+	private Date inactiveDate;
 
 	/**
 	 * Constructor
@@ -112,5 +119,21 @@ public class UserBookRelationship {
 
 	public void setTheUser(User theUser) {
 		this.theUser = theUser;
+	}
+
+	public Date getEffectiveDate() {
+		return effectiveDate;
+	}
+
+	public void setEffectiveDate(Date effectiveDate) {
+		this.effectiveDate = effectiveDate;
+	}
+
+	public Date getInactiveDate() {
+		return inactiveDate;
+	}
+
+	public void setInactiveDate(Date inactiveDate) {
+		this.inactiveDate = inactiveDate;
 	}
 }

@@ -19,6 +19,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.nav.client.local.Page;
+import org.jboss.errai.ui.nav.client.local.PageShowing;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -72,8 +73,6 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 	@UiField
 	public TabLayoutPanel tabPanel;
 
-	private BookList3D bookLst;
-
 	@Inject
 	private ClientUserToken clientToken;
 
@@ -81,6 +80,8 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 	private Event<GetMyBookcaseEvent> getMyBookcaseEvent;
 
 	private BookSelectCallBack bookSelectCallBack;
+
+	private boolean responseRet = false;
 
 	public BookCasePage() {
 	}
@@ -118,12 +119,21 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 	protected boolean whenPageShownCalled() {
 		boolean ret = super.whenPageShownCalled();
 		if (ret == true) {
-			getMyBookcaseEvent.fire(new GetMyBookcaseEvent(clientToken
-					.getUserId()));
+			// getMyBookcaseEvent.fire(new GetMyBookcaseEvent(clientToken
+			// .getUserId()));
 			return true;
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * Fire the get my bookcase event
+	 */
+	@PageShowing
+	protected void pageShowing() {
+		String clientId = clientToken.getUserId();
+		getMyBookcaseEvent.fire(new GetMyBookcaseEvent(clientId));
 	}
 
 	/**
@@ -161,31 +171,43 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 		Map<UserBookRelationshipEnum, List<BookDisplay>> bookMap = getMyBookcaseResponseEvent
 				.getDisplayMap();
 
-		// Get the data and put it in the tabs
-		for (Map.Entry<UserBookRelationshipEnum, List<BookDisplay>> entry : bookMap
-				.entrySet()) {
-			UserBookRelationshipEnum key = entry.getKey();
-			List<BookDisplay> lst = entry.getValue();
-
-			switch (key) {
-			case CREATOR:
-				myBooksTab.clear();
-				bookLst = new BookList3D(lst, bookSelectCallBack);
-				myBooksTab.add(bookLst);
-				break;
-
-			case COAUTHOR:
-				myCoBooksTab.clear();
-				bookLst = new BookList3D(lst, bookSelectCallBack);
-				myCoBooksTab.add(bookLst);
-				break;
-
-			case MYCOLLECTION:
-				myCollectionTab.clear();
-				bookLst = new BookList3D(lst, bookSelectCallBack);
-				myCollectionTab.add(bookLst);
-				break;
-			}
+		List<BookDisplay> books = null;
+		books = bookMap.get(UserBookRelationshipEnum.CREATOR);
+		if (books != null && books.size() > 0) {
+			myBooksTab.add(new BookList3D(books, bookSelectCallBack));
 		}
+
+		books = bookMap.get(UserBookRelationshipEnum.COAUTHOR);
+		if (books != null && books.size() > 0) {
+			myCoBooksTab.add(new BookList3D(books, bookSelectCallBack));
+		}
+
+		books = bookMap.get(UserBookRelationshipEnum.MYCOLLECTION);
+		if (books != null && books.size() > 0) {
+			myCollectionTab.add(new BookList3D(books, bookSelectCallBack));
+		}
+
+		// Get the data and put it in the tabs
+		/*
+		 * for (Map.Entry<UserBookRelationshipEnum, List<BookDisplay>> entry :
+		 * bookMap .entrySet()) { UserBookRelationshipEnum key = entry.getKey();
+		 * List<BookDisplay> lst = entry.getValue();
+		 * 
+		 * tabPanel.get
+		 * 
+		 * switch (key) { case CREATOR: tabPanel.
+		 * 
+		 * myBooksTab.clear(); bookLst = new BookList3D(lst,
+		 * bookSelectCallBack); myBooksTab.add(bookLst); break;
+		 * 
+		 * case COAUTHOR: myCoBooksTab.clear(); bookLst = new BookList3D(lst,
+		 * bookSelectCallBack); myCoBooksTab.add(bookLst); break;
+		 * 
+		 * case MYCOLLECTION: myCollectionTab.clear(); bookLst = new
+		 * BookList3D(lst, bookSelectCallBack); myCollectionTab.add(bookLst);
+		 * break; }
+		 * 
+		 * }
+		 */
 	}
 }

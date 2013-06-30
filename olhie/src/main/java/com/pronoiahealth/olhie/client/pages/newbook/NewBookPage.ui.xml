@@ -18,6 +18,14 @@
 							<b:Button ui:field="editBookButton" icon="EDIT" type="PRIMARY"
 								size="SMALL"></b:Button>
 						</b:Tooltip>
+						<b:Tooltip text="Add this book to my collection">
+							<b:Button ui:field="addToCollectionBookButton" icon="THUMBS_UP" type="PRIMARY"
+								size="SMALL"></b:Button>
+						</b:Tooltip>
+						<b:Tooltip text="Remove this book from my collection">
+							<b:Button ui:field="removeFromCollectionBookButton" icon="THUMBS_UP" type="DANGER"
+								size="SMALL"></b:Button>
+						</b:Tooltip>
 					</b:ButtonGroup>
 				</g:HTMLPanel>
 			</b:FluidRow>

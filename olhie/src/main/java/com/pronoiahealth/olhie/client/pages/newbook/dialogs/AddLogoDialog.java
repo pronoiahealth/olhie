@@ -116,6 +116,7 @@ public class AddLogoDialog extends Composite {
 				.setButtonCursor(Uploader.Cursor.HAND)
 				.setButtonAction(Uploader.ButtonAction.SELECT_FILE)
 				.setFileQueueLimit(1)
+				.setFileTypes("*.jpg;*.jpeg;*.png;*.gif")
 				.setFileQueuedHandler(new FileQueuedHandler() {
 					public boolean onFileQueued(
 							final FileQueuedEvent fileQueuedEvent) {

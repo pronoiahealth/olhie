@@ -11,8 +11,11 @@
 package com.pronoiahealth.olhie.client.shared.vo;
 
 import java.util.List;
+import java.util.Set;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
+
+import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 
 /**
  * Book.java<br/>
@@ -32,6 +35,7 @@ public class BookDisplay {
 	private BookCover bookCover;
 	private String authorFullName;
 	private boolean bookLogo;
+	private Set<UserBookRelationshipEnum> relEnums;
 	private List<Bookassetdescription> bookAssetDescriptions;
 
 	/**
@@ -114,5 +118,13 @@ public class BookDisplay {
 
 	public void setBookLogo(boolean bookLogo) {
 		this.bookLogo = bookLogo;
+	}
+
+	public Set<UserBookRelationshipEnum> getRelEnums() {
+		return relEnums;
+	}
+
+	public void setRelEnums(Set<UserBookRelationshipEnum> relEnums) {
+		this.relEnums = relEnums;
 	}
 }

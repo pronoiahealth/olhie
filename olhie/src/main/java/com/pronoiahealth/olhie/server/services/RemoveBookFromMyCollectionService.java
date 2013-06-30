@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services;
 
+import java.util.Date;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,36 +20,33 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
-import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
-import com.pronoiahealth.olhie.client.shared.events.BookFindByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookFindResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.RemoveBookFromMyCollectionEvent;
 import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
+import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
+import com.pronoiahealth.olhie.server.services.dbaccess.UserBookRelationshipDAO;
 
 /**
- * BookFindService.java<br/>
+ * RemoveBookFromMyCollectionService.java<br/>
  * Responsibilities:<br/>
- * 1. Use to return a book based on the books id<br/>
- * 
- * <p>
- * This class will enforce the rule that if the book is not yet published it may
- * only be returned to the creator of the book or a co-author.
- * </p>
+ * 1. Removes mycollection relationship<br/>
  * 
  * @author John DeStefano
  * @version 1.0
- * @since Jun 8, 2013
+ * @since Jun 30, 2013
  * 
  */
 @RequestScoped
-public class BookFindService {
+public class RemoveBookFromMyCollectionService {
 	@Inject
 	private Logger log;
 
@@ -72,22 +70,37 @@ public class BookFindService {
 	 * Constructor
 	 * 
 	 */
-	public BookFindService() {
+	public RemoveBookFromMyCollectionService() {
 	}
 
 	/**
-	 * Finds a book and then fires a response with the found book.
+	 * Watches for the remove event and inactivates the relationship. Will send
+	 * back a BookFindResponseEvent to resync the display
 	 * 
-	 * @param bookFindByIdEvent
+	 * @param emoveBookFromMyCollectionEvent
 	 */
 	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
 			SecurityRoleEnum.ANONYMOUS })
-	protected void observesBookNewFindByIdEvent(
-			@Observes @NewBook BookFindByIdEvent bookFindByIdEvent) {
+	protected void observesRemoveBookFromMyCollectionEvent(
+			@Observes RemoveBookFromMyCollectionEvent removeBookFromMyCollectionEvent) {
+
 		try {
-			String bookId = bookFindByIdEvent.getBookId();
 			String userId = userToken.getUserId();
-			
+			String bookId = removeBookFromMyCollectionEvent.getBookId();
+
+			// Inactivate the relationship if we can find it
+			ooDbTx.begin(TXTYPE.OPTIMISTIC);
+			UserBookRelationship rel = UserBookRelationshipDAO
+					.getBookForUserWithActiveMyCollectionRelationship(bookId,
+							userId, ooDbTx);
+			if (rel != null) {
+				rel.setActiveRelationship(false);
+				rel.setInactiveDate(new Date());
+				ooDbTx.save(rel);
+				ooDbTx.commit();
+			}
+
+			// Return a BookFindResponseEvent
 			// Get the book display
 			BookDisplay bookDisplay = BookDAO.getBookDisplayById(bookId,
 					ooDbTx, userId, holder);
@@ -98,13 +111,14 @@ public class BookFindService {
 							userToken.getLoggedIn(), bookId, ooDbTx);
 
 			// Fire the event
-			bookFindResponseEvent.fire(new BookFindResponseEvent(bookDisplay, rels));
+			bookFindResponseEvent.fire(new BookFindResponseEvent(bookDisplay,
+					rels));
+
 		} catch (Exception e) {
+			ooDbTx.rollback();
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);
 			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
 		}
-
 	}
-
 }

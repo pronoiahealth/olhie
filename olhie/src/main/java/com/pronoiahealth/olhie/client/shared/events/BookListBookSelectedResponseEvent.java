@@ -10,8 +10,13 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.shared.events;
 
+import java.util.Set;
+
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.enterprise.client.cdi.api.Conversational;
+
+import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
+import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 
 /**
  * BookListBookSelectedResponseEvent.java<br/>
@@ -22,26 +27,31 @@ import org.jboss.errai.enterprise.client.cdi.api.Conversational;
  * Fired By: BookSelectedService<br/>
  * Observed By: BookcasePage<br/>
  * </p>
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since Jun 26, 2013
- *
+ * 
  */
 @Portable
 @Conversational
 public class BookListBookSelectedResponseEvent {
 	private String bookId;
 	private boolean authorSelected;
+	private BookDisplay bookDisplay;
+	private Set<UserBookRelationshipEnum> rels;
 
 	public BookListBookSelectedResponseEvent() {
 	}
 
 	public BookListBookSelectedResponseEvent(String bookId,
-			boolean authorSelected) {
+			boolean authorSelected, BookDisplay bookDisplay,
+			Set<UserBookRelationshipEnum> rels) {
 		super();
 		this.bookId = bookId;
 		this.authorSelected = authorSelected;
+		this.bookDisplay = bookDisplay;
+		this.rels = rels;
 	}
 
 	public String getBookId() {
@@ -60,4 +70,19 @@ public class BookListBookSelectedResponseEvent {
 		this.authorSelected = authorSelected;
 	}
 
+	public BookDisplay getBookDisplay() {
+		return bookDisplay;
+	}
+
+	public void setBookDisplay(BookDisplay bookDisplay) {
+		this.bookDisplay = bookDisplay;
+	}
+
+	public Set<UserBookRelationshipEnum> getRels() {
+		return rels;
+	}
+
+	public void setRels(Set<UserBookRelationshipEnum> rels) {
+		this.rels = rels;
+	}
 }

@@ -35,7 +35,18 @@ import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 import com.pronoiahealth.olhie.client.utils.Utils;
+import com.pronoiahealth.olhie.client.widgets.rating.StarRating;
 
+/**
+ * BookList3D.java<br/>
+ * Responsibilities:<br/>
+ * 1.
+ * 
+ * @author John DeStefano
+ * @version 1.0
+ * @since Jun 29, 2013
+ * 
+ */
 public class BookList3D extends Widget {
 	private BookSelectCallBack bookSelectCallBack;
 
@@ -65,6 +76,7 @@ public class BookList3D extends Widget {
 			Book book = bookDisplay.getBook();
 			String bookCoverUrl = bookDisplay.getBookCover().getImgUrl();
 			String catColor = bookDisplay.getBookCategory().getColor();
+			String catColorTxt = bookDisplay.getBookCategory().getTextColor();
 
 			// Add the list element
 			LIElement li = doc.createLIElement();
@@ -175,6 +187,8 @@ public class BookList3D extends Widget {
 					+ ";");
 			HeadingElement h2AuthorTitleLeftElement = doc.createHElement(2);
 			bookLeftElem.appendChild(h2AuthorTitleLeftElement);
+			h2AuthorTitleLeftElement.setAttribute("style", "color: "
+					+ catColorTxt + ";");
 			// Author
 			SpanElement authorLeftSpan = doc.createSpanElement();
 			h2AuthorTitleLeftElement.appendChild(authorLeftSpan);
@@ -208,9 +222,8 @@ public class BookList3D extends Widget {
 			bookInfoElem.appendChild(lookInsideButtonElem);
 			lookInsideButtonElem.addClassName("bk-bookview");
 			lookInsideButtonElem.setInnerText("Look Inside");
+
 			// Star rating
-			// HeadingElement ratingElem = doc.createHElement(3);
-			// bookInfoElem.appendChild(ratingElem);
 			DivElement rateContainerElem = doc.createDivElement();
 			bookInfoElem.appendChild(rateContainerElem);
 			rateContainerElem.setAttribute("style", "margin-top: 15px;");
@@ -221,18 +234,22 @@ public class BookList3D extends Widget {
 					"float: left; padding-right: 10px;");
 			DivElement ratingStarContainerElem = doc.createDivElement();
 			rateContainerElem.appendChild(ratingStarContainerElem);
-			// Put the rating in here
-			for (int i = 0; i < 5; i++) {
-				InputElement cInputElem = doc
-						.createRadioInputElement("starRating" + cnt);
-				ratingStarContainerElem.appendChild(cInputElem);
-				cInputElem.setClassName("star");
-				cInputElem.setAttribute("style", "");
-				cInputElem.setAttribute("disabled", "disabled");
-				if (i == 2) {
-					cInputElem.setAttribute("checked", "checked");
-				}
-			}
+			StarRating sr = new StarRating(5, true);
+			sr.setRating(4);
+			Element starElement = sr.getElement();
+			starElement.setAttribute("style", "display: inline-block;");
+			ratingStarContainerElem.appendChild(starElement);
+
+			/*
+			 * // Put the rating in here for (int i = 0; i < 5; i++) {
+			 * InputElement cInputElem = doc
+			 * .createRadioInputElement("starRating" + cnt);
+			 * ratingStarContainerElem.appendChild(cInputElem);
+			 * cInputElem.setClassName("star"); cInputElem.setAttribute("style",
+			 * ""); cInputElem.setAttribute("disabled", "disabled");
+			 * cInputElem.setValue("" + (i+1)); if (i == 2) {
+			 * cInputElem.setAttribute("checked", "checked"); } }
+			 */
 		}
 	}
 
@@ -256,8 +273,7 @@ public class BookList3D extends Widget {
 					final GQuery content = page.children("div.bk-content");
 					final IntHolder current = new IntHolder();
 
-					// Star rating
-					ratings.as(Ratings).rate();
+					// ratings.as(Ratings).rate();
 
 					// Bind the call back
 					book.bind(Event.ONCLICK, new Function() {

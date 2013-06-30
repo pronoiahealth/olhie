@@ -10,9 +10,12 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.shared.events;
 
+import java.util.Set;
+
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
+import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 
 /**
@@ -33,8 +36,9 @@ import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 @Portable
 @Conversational
 public class BookFindResponseEvent {
-	
+
 	private BookDisplay bookDisplay;
+	private Set<UserBookRelationshipEnum> rels;
 
 	/**
 	 * Constructor
@@ -45,16 +49,18 @@ public class BookFindResponseEvent {
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param bookDisplay
 	 * @param bookCategory
 	 * @param bookCover
 	 * @param authorFullName
 	 * @param bookAssetDescriptions
 	 */
-	public BookFindResponseEvent(BookDisplay bookDisplay) {
+	public BookFindResponseEvent(BookDisplay bookDisplay,
+			Set<UserBookRelationshipEnum> rels) {
 		super();
 		this.bookDisplay = bookDisplay;
+		this.rels = rels;
 	}
 
 	/**
@@ -71,4 +77,11 @@ public class BookFindResponseEvent {
 		this.bookDisplay = bookDisplay;
 	}
 
+	public Set<UserBookRelationshipEnum> getRels() {
+		return rels;
+	}
+
+	public void setRels(Set<UserBookRelationshipEnum> rels) {
+		this.rels = rels;
+	}
 }

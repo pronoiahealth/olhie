@@ -36,6 +36,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
  * @since May 26, 2013
  *
  */
+@SuppressWarnings("cdi-ambiguous-dependency")
 @ApplicationScoped
 @Page(role={AnonymousRole.class})
 public class SearchPage extends MenuSyncSecureAbstractPage {

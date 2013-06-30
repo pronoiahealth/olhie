@@ -12,6 +12,7 @@ package com.pronoiahealth.olhie.client.pages.newbook;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
@@ -47,10 +48,13 @@ import com.pronoiahealth.olhie.client.pages.PageShownSecureAbstractPage;
 import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.constants.BookAssetDataType;
 import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
+import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
+import com.pronoiahealth.olhie.client.shared.events.AddBookToMyCollectionEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookFindByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookListBookSelectedEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookListBookSelectedResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.RemoveBookFromMyCollectionEvent;
 import com.pronoiahealth.olhie.client.shared.events.RemoveBookassetdescriptionEvent;
 import com.pronoiahealth.olhie.client.shared.events.RemoveBookassetdescriptionResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.BookContentUpdatedEvent;
@@ -63,8 +67,10 @@ import com.pronoiahealth.olhie.client.shared.events.local.ShowNewBookModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowViewBookassetDialogEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
+import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
+import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.widgets.DownloadBookassetButton;
 import com.pronoiahealth.olhie.client.widgets.FlexTableExt;
 import com.pronoiahealth.olhie.client.widgets.RemoveBookassetdescriptionButton;
@@ -95,6 +101,9 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 			.getFormat("MM/dd/yyyy");
 
 	@Inject
+	private ClientUserToken clientUser;
+
+	@Inject
 	@ViewableContentType
 	private Map<String, String> viewableContentType;
 
@@ -113,12 +122,18 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	@UiField
 	public Button logoBookButton;
 
+	@UiField
+	public Button addToCollectionBookButton;
+
+	@UiField
+	public Button removeFromCollectionBookButton;
+
 	@PageState
 	private String bookId;
 
 	private ModeEnum editMode;
 
-	private Book currentBook;
+	private BookDisplay currentBookDisplay;
 
 	@UiField
 	public Heading authorLbl;
@@ -182,6 +197,12 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 
 	@Inject
 	private Event<BookListBookSelectedEvent> bookListBookSelectedEvent;
+
+	@Inject
+	private Event<AddBookToMyCollectionEvent> addBookToMyCollectionEvent;
+
+	@Inject
+	private Event<RemoveBookFromMyCollectionEvent> removeBookFromMyCollectionEvent;
 
 	@Inject
 	@NewBook
@@ -313,18 +334,29 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	 * Looks for the BookListBookSelectedResponseEvent in order to tell if the
 	 * user is the author or co-author of the book. If author or co-author the
 	 * page is set to the edit mode. If not the page is set to the view mode.
-	 * After that the BookFindByIdEvent is fired.
+	 * Then sync the returned BookDisplay with the page view.
 	 * 
 	 * @param bookListBookSelectedResponseEvent
 	 */
-	protected void observersBookListBookSelectedResponseEvent(
+	protected void observesBookListBookSelectedResponseEvent(
 			@Observes BookListBookSelectedResponseEvent bookListBookSelectedResponseEvent) {
 		if (bookListBookSelectedResponseEvent.isAuthorSelected() == true) {
 			setState(ModeEnum.EDIT);
 		} else {
 			setState(ModeEnum.VIEW);
 		}
-		bookFindByIdEvent.fire(new BookFindByIdEvent(bookId));
+
+		// Set the book in display
+		setCurrentBookInDisplay(bookListBookSelectedResponseEvent
+				.getBookDisplay());
+
+		// Set the buttons for adding to my collection
+		if (editMode == ModeEnum.VIEW && clientUser.isLoggedIn()) {
+			setForAddToMyCollection(bookListBookSelectedResponseEvent.getRels());
+		} else {
+			setAddToCollectionBookButtonVisibility(false);
+			setRemoveFromMyCollectionBookButtonVisibility(false);
+		}
 	}
 
 	/**
@@ -338,7 +370,6 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 			tocAddElementContainer.setVisible(true);
 			editBookButton.setVisible(true);
 			logoBookButton.setVisible(true);
-
 		} else {
 			this.editMode = ModeEnum.VIEW;
 			tocAddElementContainer.setVisible(false);
@@ -348,12 +379,79 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	}
 
 	/**
+	 * Sets the addToCollectionBookButton visibility
+	 * 
+	 * @param rel
+	 */
+	private void setForAddToMyCollection(Set<UserBookRelationshipEnum> rels) {
+		// Edit mode means you are the author or co-author. The book is
+		// automatically in your collection
+		if (this.editMode == ModeEnum.EDIT) {
+			setAddToCollectionBookButtonVisibility(false);
+			setRemoveFromMyCollectionBookButtonVisibility(false);
+		} else {
+			if (clientUser.isLoggedIn()) {
+				// You have no relation and you are a logged in user
+				if (hasBookRelationship(rels) == true
+						&& rels.contains(UserBookRelationshipEnum.NONE)) {
+					setAddToCollectionBookButtonVisibility(true);
+					setRemoveFromMyCollectionBookButtonVisibility(false);
+				} else if (hasBookRelationship(rels) == true
+						&& rels.contains(UserBookRelationshipEnum.MYCOLLECTION)) {
+					// You are logged in and have a MYCOLLECTION relationship
+					setAddToCollectionBookButtonVisibility(false);
+					setRemoveFromMyCollectionBookButtonVisibility(true);
+				} else {
+					// Can't determine it, don't show anything
+					setAddToCollectionBookButtonVisibility(false);
+					setRemoveFromMyCollectionBookButtonVisibility(false);
+				}
+			} else {
+				setAddToCollectionBookButtonVisibility(false);
+				setRemoveFromMyCollectionBookButtonVisibility(false);
+			}
+		}
+	}
+
+	/**
+	 * Does the relationship set have any values
+	 * 
+	 * @param rels
+	 * @return
+	 */
+	private boolean hasBookRelationship(Set<UserBookRelationshipEnum> rels) {
+		if (rels != null && rels.size() > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Set button visibility
+	 * 
+	 * @param visible
+	 */
+	private void setAddToCollectionBookButtonVisibility(boolean visible) {
+		addToCollectionBookButton.setVisible(visible);
+	}
+
+	/**
+	 * Set button visibility
+	 * 
+	 * @param visible
+	 */
+	private void setRemoveFromMyCollectionBookButtonVisibility(boolean visible) {
+		removeFromCollectionBookButton.setVisible(visible);
+	}
+
+	/**
 	 * Watches for the book content update event. If the book id matchs the one
 	 * showing then asks for the new data.
 	 * 
 	 * @param bookContentUpdatedEvent
 	 */
-	protected void observersBookContentUpdatedEvent(
+	protected void observesBookContentUpdatedEvent(
 			@Observes BookContentUpdatedEvent bookContentUpdatedEvent) {
 		String id = bookContentUpdatedEvent.getBookId();
 		callBookFindById(id);
@@ -386,38 +484,56 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	}
 
 	/**
-	 * From the bookId a request is make for the book from the
+	 * From the bookId a request is made for the book from the
 	 * whenPageShownCalled method. The response is received here and processed.
+	 * If in the view mode the user-book relationship is checked to see if the
+	 * addToMycollections button should be made visible.
 	 * 
 	 * @param bookFindResponseEvent
 	 */
 	protected void observesBookFindResponse(
 			@Observes BookFindResponseEvent bookFindResponseEvent) {
 		// Set page background to the book cover background
-		setPageBackgroundStyle(bookFindResponseEvent.getBookDisplay()
-				.getBookCover().getImgUrl());
+		setCurrentBookInDisplay(bookFindResponseEvent.getBookDisplay());
+
+		// Set the buttons for adding to my collection
+		if (editMode == ModeEnum.VIEW && clientUser.isLoggedIn()) {
+			setForAddToMyCollection(bookFindResponseEvent.getRels());
+		} else {
+			setAddToCollectionBookButtonVisibility(false);
+		}
+	}
+
+	/**
+	 * Sync returned book and display
+	 * 
+	 * @param bookDisplay
+	 */
+	private void setCurrentBookInDisplay(BookDisplay bookDisplay) {
+		// Set page background to the book cover background
+		setPageBackgroundStyle(bookDisplay.getBookCover().getImgUrl());
 
 		// Set the fields
-		this.currentBook = bookFindResponseEvent.getBookDisplay().getBook();
-		bookTitle.setText(currentBook.getBookTitle());
-		authorLbl.setText("by "
-				+ bookFindResponseEvent.getBookDisplay().getAuthorFullName());
-		String createdDateFt = currentBook.getCreatedDate() != null ? dtf
-				.format(currentBook.getCreatedDate()) : "";
-		String publDateFt = currentBook.getActDate() != null ? dtf
-				.format(currentBook.getActDate()) : "Not yet published";
+		this.currentBookDisplay = bookDisplay;
+		Book book = currentBookDisplay.getBook();
+		bookTitle.setText(book.getBookTitle());
+		authorLbl.setText("by " + bookDisplay.getAuthorFullName());
+		String createdDateFt = book.getCreatedDate() != null ? dtf.format(book
+				.getCreatedDate()) : "";
+		String publDateFt = book.getActDate() != null ? dtf.format(book
+				.getActDate()) : "Not yet published";
 		createdPublishedCategoryLbl.setHTML(NewBookMessages.INSTANCE
 				.setCreatedPublishedCategoryLbl(createdDateFt, publDateFt,
-						currentBook.getCategory()));
+						book.getCategory()));
 		introductionTxt.setHTML(NewBookMessages.INSTANCE
-				.setIntroductionText(currentBook.getIntroduction()));
+				.setIntroductionText(book.getIntroduction()));
 
 		// TOC container elements
 		// Clear current values
 		addTOCElementContainer.clear();
 		tocTable = new FlexTableExt();
-		List<Bookassetdescription> descriptions = bookFindResponseEvent
-				.getBookDisplay().getBookAssetDescriptions();
+		List<Bookassetdescription> descriptions = bookDisplay
+				.getBookAssetDescriptions();
 		for (int i = 0; i < descriptions.size(); i++) {
 			Bookassetdescription bad = descriptions.get(i);
 			Object[] data = new Object[3];
@@ -523,7 +639,7 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	public void editBookButtonClicked(ClickEvent event) {
 		if (editMode == ModeEnum.EDIT) {
 			showNewBookModalEvent.fire(new ShowNewBookModalEvent(ModeEnum.EDIT,
-					this.currentBook));
+					this.currentBookDisplay.getBook()));
 		}
 	}
 
@@ -531,7 +647,24 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 	public void editLogoButtonClicked(ClickEvent event) {
 		if (editMode == ModeEnum.EDIT) {
 			showAddLogoModalEvent.fire(new ShowAddLogoModalEvent(
-					this.currentBook.getId()));
+					this.currentBookDisplay.getBook().getId()));
+		}
+	}
+
+	@UiHandler("addToCollectionBookButton")
+	public void addToCollectionBookButtonClicked(ClickEvent event) {
+		if (editMode == ModeEnum.VIEW) {
+			addBookToMyCollectionEvent.fire(new AddBookToMyCollectionEvent(
+					this.currentBookDisplay.getBook().getId()));
+		}
+	}
+
+	@UiHandler("removeFromCollectionBookButton")
+	public void removeFromCollectionBookButtonClicked(ClickEvent event) {
+		if (editMode == ModeEnum.VIEW) {
+			this.removeBookFromMyCollectionEvent
+					.fire(new RemoveBookFromMyCollectionEvent(
+							this.currentBookDisplay.getBook().getId()));
 		}
 	}
 }

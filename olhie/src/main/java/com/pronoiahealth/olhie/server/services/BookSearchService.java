@@ -28,14 +28,11 @@ import com.pronoiahealth.olhie.client.shared.events.BookSearchEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookSearchResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
-import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
-import com.pronoiahealth.olhie.client.shared.vo.BookCover;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
-import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
-import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
-import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
+import com.pronoiahealth.olhie.server.security.ServerUserToken;
+import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
 
 /**
  * BookSearchService.java<br/>
@@ -59,6 +56,9 @@ import com.pronoiahealth.olhie.server.security.SecureAccess;
 public class BookSearchService {
 	@Inject
 	private Logger log;
+
+	@Inject
+	private ServerUserToken userToken;
 
 	@Inject
 	private Event<BookSearchResponseEvent> bookSearchResponseEvent;
@@ -101,69 +101,50 @@ public class BookSearchService {
 			List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
 
 			for (Book book : bResult) {
-				// Get the title into the object
-				// Remember that Orient lazy loads the object attributes so call
-				// for the attributes you want to return or detach the whole
-				// thing.
-				book.getBookTitle();
-				book.getIntroduction();
+				BookDisplay bookDisplay = BookDAO.getBookDisplayById(
+						book.getId(), ooDbTx, userToken.getUserId(), holder);
 
-				// Find author
-				OSQLSynchQuery<User> uQuery = new OSQLSynchQuery<User>(
-						"select from User where userId = :uId");
-				HashMap<String, String> uparams = new HashMap<String, String>();
-				uparams.put("uId", book.getAuthorId());
-				List<User> uResult = ooDbTx.command(uQuery).execute(uparams);
-				User user = uResult.get(0);
-				String authorName = user.getFirstName() + " "
-						+ user.getLastName();
-
-				// Find the cover and the category
-				BookCover cover = holder.getCoverByName(book.getCoverName());
-				BookCategory cat = holder.getCategoryByName(book.getCategory());
-
-				// Get a list of Bookassetdescriptions
-				OSQLSynchQuery<Bookassetdescription> baQuery = new OSQLSynchQuery<Bookassetdescription>(
-						"select from Bookassetdescription where bookId = :bId");
-				HashMap<String, String> baparams = new HashMap<String, String>();
-				baparams.put("bId", book.getId());
-				List<Bookassetdescription> baResult = ooDbTx.command(baQuery)
-						.execute(baparams);
-				List<Bookassetdescription> retBaResults = new ArrayList<Bookassetdescription>();
-				// Need to detach them. We don't want to pull back the
-				// entire
-				// object
-				// tree
-				if (baResult != null) {
-					for (Bookassetdescription bad : baResult) {
-						if (bad.getRemoved().booleanValue() == false) {
-							Bookassetdescription retBad = new Bookassetdescription();
-							retBad.setBookId(bad.getBookId());
-							retBad.setCreatedDate(bad.getCreatedDate());
-							retBad.setDescription(bad.getDescription());
-							retBad.setId(bad.getId());
-							Bookasset ba = bad.getBookAssets().get(0);
-							Bookasset retBa = new Bookasset();
-							retBa.setId(ba.getId());
-							retBa.setContentType(ba.getContentType());
-							retBa.setItemType(ba.getItemType());
-							ArrayList<Bookasset> retbookAssets = new ArrayList<Bookasset>();
-							retbookAssets.add(retBa);
-							retBad.setBookAssets(retbookAssets);
-							retBaResults.add(retBad);
-						}
-					}
-				}
-
-				String logoFileName = book.getLogoFileName();
-				BookDisplay bookDisplay = new BookDisplay(
-						book,
-						cat,
-						cover,
-						authorName,
-						retBaResults,
-						(logoFileName != null && logoFileName.length() > 0) ? true
-								: false);
+				/*
+				 * // Get the title into the object // Remember that Orient lazy
+				 * loads the object attributes so call // for the attributes you
+				 * want to return or detach the whole // thing.
+				 * book.getBookTitle(); book.getIntroduction();
+				 * 
+				 * // Find author User user =
+				 * UserDAO.getUserByUserId(book.getAuthorId(), ooDbTx); String
+				 * authorName = user.getFirstName() + " " + user.getLastName();
+				 * 
+				 * // Find the cover and the category BookCover cover =
+				 * holder.getCoverByName(book.getCoverName()); BookCategory cat
+				 * = holder.getCategoryByName(book.getCategory());
+				 * 
+				 * // Get a list of Bookassetdescriptions
+				 * List<Bookassetdescription> baResult = BookDAO
+				 * .getBookassetdescriptionByBookId(book.getId(), ooDbTx);
+				 * List<Bookassetdescription> retBaResults = new
+				 * ArrayList<Bookassetdescription>(); // Need to detach them. We
+				 * don't want to pull back the // entire // object // tree if
+				 * (baResult != null) { for (Bookassetdescription bad :
+				 * baResult) { if (bad.getRemoved().booleanValue() == false) {
+				 * Bookassetdescription retBad = new Bookassetdescription();
+				 * retBad.setBookId(bad.getBookId());
+				 * retBad.setCreatedDate(bad.getCreatedDate());
+				 * retBad.setDescription(bad.getDescription());
+				 * retBad.setId(bad.getId()); Bookasset ba =
+				 * bad.getBookAssets().get(0); Bookasset retBa = new
+				 * Bookasset(); retBa.setId(ba.getId());
+				 * retBa.setContentType(ba.getContentType());
+				 * retBa.setItemType(ba.getItemType()); ArrayList<Bookasset>
+				 * retbookAssets = new ArrayList<Bookasset>();
+				 * retbookAssets.add(retBa);
+				 * retBad.setBookAssets(retbookAssets);
+				 * retBaResults.add(retBad); } } }
+				 * 
+				 * String logoFileName = book.getLogoFileName(); BookDisplay
+				 * bookDisplay = new BookDisplay( book, cat, cover, authorName,
+				 * retBaResults, (logoFileName != null && logoFileName.length()
+				 * > 0) ? true : false);
+				 */
 				bookDisplayList.add(bookDisplay);
 			}
 

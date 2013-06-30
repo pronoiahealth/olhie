@@ -10,8 +10,6 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
@@ -22,7 +20,6 @@ import javax.inject.Inject;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.BookCategoryListRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookCategoryListResponseEvent;
-import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 
 /**

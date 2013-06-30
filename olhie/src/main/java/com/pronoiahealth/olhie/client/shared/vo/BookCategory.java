@@ -47,6 +47,10 @@ public class BookCategory {
 	@Size(min=1, max=25, message="Catagory must be between 1 and 25 characters.")
 	private String catagory;
 	
+	@NotNull
+	@Size(min=1, max=25, message="Catagory must be between 1 and 25 characters.")
+	private String textColor;
+	
 	/**
 	 * Constructor
 	 *
@@ -60,9 +64,10 @@ public class BookCategory {
 	 *
 	 * @param color
 	 */
-	public BookCategory(String color, String catagory) {
+	public BookCategory(String color, String catagory, String textColor) {
 		this.color = color;
 		this.catagory = catagory;
+		this.textColor = textColor;
 	}
 
 	public String getColor() {
@@ -79,5 +84,13 @@ public class BookCategory {
 
 	public void setCatagory(String catagory) {
 		this.catagory = catagory;
+	}
+
+	public String getTextColor() {
+		return textColor;
+	}
+
+	public void setTextColor(String textColor) {
+		this.textColor = textColor;
 	}
 }

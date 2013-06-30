@@ -15,12 +15,9 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.nav.client.local.Navigation;
-import org.jboss.errai.ui.nav.client.local.NavigationEvent;
-import org.jboss.errai.ui.nav.client.local.PageRequest;
 import org.jboss.errai.ui.nav.client.local.TransitionTo;
 
 import com.google.common.collect.Multimap;
@@ -180,12 +177,5 @@ public class PageNavigator {
 			return pageRolesMap.get(SecurityRoleEnum.ANONYMOUS.getName())
 					.contains(currentPageName);
 		}
-	}
-	
-	protected void observesNavigationEvent(
-			@Observes NavigationEvent navigationEvent) {
-		PageRequest pReq = navigationEvent.getPageRequest();
-		String pgName = pReq.getPageName();
-		pgName.length();
 	}
 }

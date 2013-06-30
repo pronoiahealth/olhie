@@ -24,7 +24,8 @@ import org.jboss.errai.common.client.api.annotations.Portable;
  */
 @Portable
 public enum UserBookRelationshipEnum {
-	CREATOR("My Books"), COAUTHOR("My Books"), MYCOLLECTION("My Collection");
+	CREATOR("My Books"), COAUTHOR("My Books"), MYCOLLECTION("My Collection"), NONE(
+			"No Relationship"), NONLOGGEDINUSER ("User not logged in.");
 
 	private String description;
 

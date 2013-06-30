@@ -37,6 +37,7 @@ import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
+import com.pronoiahealth.olhie.server.services.dbaccess.UserDAO;
 
 /**
  * BookUpdateService.java<br/>
@@ -89,19 +90,7 @@ public class BookUpdateService {
 			// Find the user. The user sending this request should be the same
 			// one in the session
 			String sessionUserId = userToken.getUserId();
-			OSQLSynchQuery<User> uQuery = new OSQLSynchQuery<User>(
-					"select from User where userId = :uId");
-			HashMap<String, String> uparams = new HashMap<String, String>();
-			uparams.put("uId", sessionUserId);
-			List<User> uResult = ooDbTx.command(uQuery).execute(uparams);
-			User currentUser = null;
-			if (uResult != null && uResult.size() == 1) {
-				// Got the user
-				currentUser = uResult.get(0);
-			} else {
-				throw new Exception(
-						"Can't find the book creator in the database.");
-			}
+			User currentUser = UserDAO.getUserByUserId(sessionUserId, ooDbTx);
 
 			// Compare the session user and the one sending the request
 			String currentUserId = currentUser.getUserId();
@@ -190,6 +179,7 @@ public class BookUpdateService {
 			ubRel.setUserId(currentUserId);
 			ubRel.setUserRelationship(UserBookRelationshipEnum.CREATOR
 					.toString());
+			ubRel.setEffectiveDate(now);
 			ooDbTx.save(ubRel);
 			ooDbTx.commit();
 
