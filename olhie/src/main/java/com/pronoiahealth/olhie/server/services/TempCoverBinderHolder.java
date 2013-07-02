@@ -27,6 +27,16 @@ public class TempCoverBinderHolder {
 		bookCovers.add(new BookCover("Olhie/images/bookcover-brown1.png", "Brown 1"));
 		bookCovers.add(new BookCover("Olhie/images/bookcover-mauve1.png", "Mauve 1"));
 		bookCovers.add(new BookCover("Olhie/images/wood1.png", "Wood 1"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover0.png", "Brown 2"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover2.png", "Brown 3"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover3.png", "Blue 1"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover4.png", "Grey 1"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover5.png", "Blue-Grey 1"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover6.png", "Green 4"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover7.png", "Grey Designed"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover8.png", "Brown Designed"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover9.png", "Light Brown Designed"));
+		bookCovers.add(new BookCover("Olhie/images/bookcoverX.png", "Orange Designed"));
 	}
 	
 	public List<BookCategory> getCategories() {

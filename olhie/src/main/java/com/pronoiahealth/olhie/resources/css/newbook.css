@@ -180,3 +180,8 @@
 	margin-right: 15px;
 	margin-top: 6px;
 }
+
+.ph-NewBook-BookCover-SplitButton {
+	overflow-y: auto;
+	height: 200px;
+}

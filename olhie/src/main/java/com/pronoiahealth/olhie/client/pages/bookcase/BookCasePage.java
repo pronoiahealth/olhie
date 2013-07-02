@@ -19,10 +19,12 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.nav.client.local.Page;
-import org.jboss.errai.ui.nav.client.local.PageShowing;
 
+import com.github.gwtbootstrap.client.ui.Button;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.query.client.GQuery;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -108,6 +110,13 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 			}
 		};
 
+		// Bind tab panel selection event
+		// tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
+		// @Override
+		// public void onSelection(SelectionEvent<Integer> event) {
+		// }
+		// });
+
 	}
 
 	/**
@@ -119,21 +128,12 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 	protected boolean whenPageShownCalled() {
 		boolean ret = super.whenPageShownCalled();
 		if (ret == true) {
-			// getMyBookcaseEvent.fire(new GetMyBookcaseEvent(clientToken
-			// .getUserId()));
+			getMyBookcaseEvent.fire(new GetMyBookcaseEvent(clientToken
+					.getUserId()));
 			return true;
 		} else {
 			return false;
 		}
-	}
-
-	/**
-	 * Fire the get my bookcase event
-	 */
-	@PageShowing
-	protected void pageShowing() {
-		String clientId = clientToken.getUserId();
-		getMyBookcaseEvent.fire(new GetMyBookcaseEvent(clientId));
 	}
 
 	/**
@@ -186,28 +186,5 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 		if (books != null && books.size() > 0) {
 			myCollectionTab.add(new BookList3D(books, bookSelectCallBack));
 		}
-
-		// Get the data and put it in the tabs
-		/*
-		 * for (Map.Entry<UserBookRelationshipEnum, List<BookDisplay>> entry :
-		 * bookMap .entrySet()) { UserBookRelationshipEnum key = entry.getKey();
-		 * List<BookDisplay> lst = entry.getValue();
-		 * 
-		 * tabPanel.get
-		 * 
-		 * switch (key) { case CREATOR: tabPanel.
-		 * 
-		 * myBooksTab.clear(); bookLst = new BookList3D(lst,
-		 * bookSelectCallBack); myBooksTab.add(bookLst); break;
-		 * 
-		 * case COAUTHOR: myCoBooksTab.clear(); bookLst = new BookList3D(lst,
-		 * bookSelectCallBack); myCoBooksTab.add(bookLst); break;
-		 * 
-		 * case MYCOLLECTION: myCollectionTab.clear(); bookLst = new
-		 * BookList3D(lst, bookSelectCallBack); myCollectionTab.add(bookLst);
-		 * break; }
-		 * 
-		 * }
-		 */
 	}
 }

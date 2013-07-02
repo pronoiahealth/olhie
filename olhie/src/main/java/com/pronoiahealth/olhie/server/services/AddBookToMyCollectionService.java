@@ -24,8 +24,10 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.events.AddBookToMyCollectionEvent;
+import com.pronoiahealth.olhie.client.shared.events.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
+import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
@@ -55,7 +57,13 @@ public class AddBookToMyCollectionService {
 	private Logger log;
 
 	@Inject
-	private ServerUserToken userSessionToken;
+	private ServerUserToken userToken;
+	
+	@Inject
+	private TempCoverBinderHolder holder;
+
+	@Inject
+	private Event<BookFindResponseEvent> bookFindResponseEvent;
 
 	@Inject
 	private Event<ServiceErrorEvent> serviceErrorEvent;
@@ -83,9 +91,9 @@ public class AddBookToMyCollectionService {
 
 		try {
 			// What is the session users current role?
-			String role = userSessionToken.getRole();
-			String userId = userSessionToken.getUserId();
-			boolean loggedIn = userSessionToken.getLoggedIn();
+			String role = userToken.getRole();
+			String userId = userToken.getUserId();
+			boolean loggedIn = userToken.getLoggedIn();
 			String bookId = addBookToMyCollectionEvent.getBookId();
 
 			if (!role.equals(SecurityRoleEnum.ANONYMOUS.toString())
@@ -100,9 +108,10 @@ public class AddBookToMyCollectionService {
 				// Get UserBookRelatioship
 				Set<UserBookRelationshipEnum> rResult = UserBookRelationshipDAO
 						.getUserBookRelationshipByUserIdBookId(bookId, userId,
-								false, ooDbTx);
+								true, ooDbTx);
 
-				// If the user already has an active relationship of the following
+				// If the user already has an active relationship of the
+				// following
 				// types don't add it.
 				boolean addRelationship = true;
 				if (rResult.contains(UserBookRelationshipEnum.CREATOR)
@@ -127,6 +136,20 @@ public class AddBookToMyCollectionService {
 					ooDbTx.save(rel);
 				}
 			}
+
+			// Return a BookFindResponseEvent
+			// Get the book display
+			BookDisplay bookDisplay = BookDAO.getBookDisplayById(bookId,
+					ooDbTx, userId, holder);
+
+			// Get the user relations
+			Set<UserBookRelationshipEnum> rels = BookDAO
+					.getActiveBookRealtionshipForUser(userId,
+							userToken.getLoggedIn(), bookId, ooDbTx);
+
+			// Fire the event
+			bookFindResponseEvent.fire(new BookFindResponseEvent(bookDisplay,
+					rels));
 
 		} catch (Exception e) {
 			String errMsg = e.getMessage();

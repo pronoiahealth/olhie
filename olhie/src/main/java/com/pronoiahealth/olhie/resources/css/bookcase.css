@@ -6,7 +6,7 @@
 }
 
 .ph-Bookcase-Background {
-	background: #93643a url(Olhie/images/dark_wood.jpg) repeat;
+	background: #93643a url(Olhie/images/wood.jpg) repeat;
 	background-color: black;
 }
 
@@ -24,34 +24,66 @@
 	margin-bottom: 0px;
 }
 
-.ph-Bookcase-Marker .gwt-TabLayoutPanelContentContainer {
-    border-width: 0px;
-    margin-top: 40px;
-    marging-left:30px;
+.ph-Bookcase-Marker .gwt-TabLayoutPanel {
+}
+
+.ph-Bookcase-Marker .gwt-TabLayoutPanelTabs {
+}
+
+.ph-Bookcase-Marker .gwt-TabLayoutPanelTabs {
 }
 
 .ph-Bookcase-Marker .gwt-TabLayoutPanelContent {
-	margin-left: 40px;
-	margin-top: 20px;
 	overflow-y: auto;
+}
+
+.ph-Bookcase-Marker .gwt-TabLayoutPanelContentContainer {
+	border-width: 0px;
 }
 
 .ph-Bookcase-Marker .gwt-TabLayoutPanelTab {
 	margin-left: 5px;
 	margin-right: 5px;
-}
-
-.ph-Bookcase-Marker .gwt-TabLayoutPanelTabInner {
-	background: #ccc;
-	padding: 6px;
+	margin-left: 6px;
 	cursor: pointer;
+	cursor: hand;
+	color: black;
+	font-size: 1.2em;
+	color: #8bc53d;
+	text-align: center;
+	background: #458818;
 }
 
 .ph-Bookcase-Marker .gwt-TabLayoutPanelTab-selected {
+	cursor: default;
+	background: #8bc53d;
+	font-size: 1.2em;
+	color: #FFFFFF;
 }
 
 .ph-Bookcase-BookTab-NoResults-HTML {
 	font-size: x-large;
 	font-style: italic;
 	font-weight: bold;
+}
+
+.ph-Bookcase-MyBooksTab {
+	background: white;
+	background-image: url("Olhie/images/myBooksBg.png");
+	background-repeat: repeat;
+	padding-top: 30px;
+}
+
+.ph-Bookcase-CoAuthorTab {
+	background: white;
+	background-image: url("Olhie/images/coAuthorBg.png");
+	background-repeat: repeat;
+	padding-top: 30px;
+}
+
+.ph-Bookcase-MyCollectionTab {
+	background: white;
+	background-image: url("Olhie/images/myCollectionBg.png");
+	background-repeat: repeat;
+	padding-top: 30px;
 }

@@ -90,7 +90,7 @@ public class BookSelectedService {
 			String bookId = bookListBookSelectedEvent.getBookId();
 			String userId = serverToken.getUserId();
 
-			// If the user has logged in and has a user check the
+			// If the user has logged in
 			// relationship. Otherwise he is an anonymous user and has no
 			// relationship
 			boolean authorSelected = false;

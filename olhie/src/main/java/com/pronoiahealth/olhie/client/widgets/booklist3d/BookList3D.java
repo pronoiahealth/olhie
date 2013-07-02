@@ -11,7 +11,6 @@
 package com.pronoiahealth.olhie.client.widgets.booklist3d;
 
 import static com.google.gwt.query.client.GQuery.$;
-import static gwtquery.plugins.ratings.client.Ratings.Ratings;
 
 import java.util.List;
 
@@ -21,7 +20,6 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.HeadingElement;
 import com.google.gwt.dom.client.ImageElement;
-import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.LIElement;
 import com.google.gwt.dom.client.ParagraphElement;
 import com.google.gwt.dom.client.SpanElement;
@@ -57,17 +55,24 @@ public class BookList3D extends Widget {
 	 */
 	private boolean hasBeenAttached = false;
 
+	/**
+	 * Root element
+	 */
+	private DivElement rootDiv;
+
 	public BookList3D(List<BookDisplay> books,
 			BookSelectCallBack bookSelectCallBack) {
 		super();
 		this.bookSelectCallBack = bookSelectCallBack;
 
-		// bookLst = new ArrayList<DivElement>();
+		// Create root div
 		Document doc = Document.get();
-		UListElement ulElem = doc.createULElement();
+		this.rootDiv = doc.createDivElement();
+		this.setElement(rootDiv);
 
-		// Create the booklist element
-		this.setElement(ulElem);
+		// Create the list
+		UListElement ulElem = doc.createULElement();
+		rootDiv.appendChild(ulElem);
 		ulElem.setId("bk-list");
 		ulElem.setClassName("bk-list clearfix");
 		int cnt = 0;
@@ -99,6 +104,14 @@ public class BookList3D extends Widget {
 			DivElement bookCoverDiv = doc.createDivElement();
 			bookFrontDiv.appendChild(bookCoverDiv);
 			bookCoverDiv.setClassName("bk-cover");
+
+			// Set thin category image
+			DivElement catCoverDiv = doc.createDivElement();
+			bookCoverDiv.appendChild(catCoverDiv);
+			catCoverDiv.setAttribute("style",
+					"float: left; height: 100%; width: 2px; background-color: "
+							+ catColor + ";");
+
 			// Set the book cover image
 			bookCoverDiv.setAttribute("style", "background-image: url('"
 					+ bookCoverUrl + "'); overflow:auto;");
@@ -107,7 +120,7 @@ public class BookList3D extends Widget {
 			bookCoverDiv.appendChild(bookCoverlogoDiv);
 			bookCoverlogoDiv
 					.setAttribute("style",
-							"padding-top: 20px; padding-left: 25px; background: transparent;");
+							"padding-top: 25px; padding-left: 30px; background: transparent;");
 
 			// Logo image
 			ImageElement bookCoverLogoImageElement = doc.createImageElement();
@@ -239,17 +252,6 @@ public class BookList3D extends Widget {
 			Element starElement = sr.getElement();
 			starElement.setAttribute("style", "display: inline-block;");
 			ratingStarContainerElem.appendChild(starElement);
-
-			/*
-			 * // Put the rating in here for (int i = 0; i < 5; i++) {
-			 * InputElement cInputElem = doc
-			 * .createRadioInputElement("starRating" + cnt);
-			 * ratingStarContainerElem.appendChild(cInputElem);
-			 * cInputElem.setClassName("star"); cInputElem.setAttribute("style",
-			 * ""); cInputElem.setAttribute("disabled", "disabled");
-			 * cInputElem.setValue("" + (i+1)); if (i == 2) {
-			 * cInputElem.setAttribute("checked", "checked"); } }
-			 */
 		}
 	}
 
@@ -258,7 +260,7 @@ public class BookList3D extends Widget {
 		super.onAttach();
 
 		if (this.hasBeenAttached == false) {
-			final GQuery books = $("#bk-list > li > div.bk-book");
+			final GQuery books = $("#bk-list > li > div.bk-book", rootDiv);
 			final int booksCount = books.length();
 			books.each(new Function() {
 				@Override
@@ -266,8 +268,9 @@ public class BookList3D extends Widget {
 					final GQuery book = $(e);
 					final GQuery other = books.not(book);
 					final GQuery parent = book.parent();
-					final GQuery ratings = parent.children("div.bk-info").find(
-							"input.star");
+					// final GQuery ratings =
+					// parent.children("div.bk-info").find(
+					// "input.star");
 					final GQuery page = book.children("div.bk-page");
 					final GQuery bookview = parent.find("button.bk-bookview");
 					final GQuery content = page.children("div.bk-content");

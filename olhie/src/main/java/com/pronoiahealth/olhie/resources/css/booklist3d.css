@@ -354,7 +354,7 @@
 .book-1 .bk-cover {
 	/*background-image: url(../images/1.png);*/	
 	background-repeat: repeat;
-	background-position: 10px 40px;
+	/* background-position: 10px 40px; */
 }
 
 .book-1 .bk-cover h2 {

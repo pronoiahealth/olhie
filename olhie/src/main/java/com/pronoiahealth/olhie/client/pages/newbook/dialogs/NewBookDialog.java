@@ -35,6 +35,7 @@ import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.WellForm;
 import com.github.gwtbootstrap.client.ui.base.IconAnchor;
+import com.github.gwtbootstrap.client.ui.base.UnorderedList;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -187,6 +188,8 @@ public class NewBookDialog extends Composite {
 		newBookModal.setStyleName("ph-NewBook-Modal-Size", true);
 		bookDesignCol.getElement().setAttribute("style", "margin-left: 60px;");
 		publishCB.setStyleName("ph-NewBook-Published-CB", true);
+		bookCoverDropDown.getMenuWiget().setStyleName(
+				"ph-NewBook-BookCover-SplitButton", true);
 
 		// Set up click events
 		// When the user clicks one of the categories then set the text of the

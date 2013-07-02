@@ -11,24 +11,24 @@
 				<g:customHeader size='7'>
 					<g:Label>Books I've Authored</g:Label>
 				</g:customHeader>
-				<g:HTMLPanel ui:field="myBooksTab" height="100%">
-					<g:HTML styleName="ph-Bookcase-BookTab-NoResults-HTML">No books in this section.</g:HTML>
+				<g:HTMLPanel ui:field="myBooksTab" styleName="ph-Bookcase-MyBooksTab"
+					height="100%">
 				</g:HTMLPanel>
 			</g:tab>
 			<g:tab>
 				<g:customHeader size='7'>
 					<g:Label>Books I've Co-Authored</g:Label>
 				</g:customHeader>
-				<g:HTMLPanel ui:field="myCoBooksTab" height="100%">
-					<g:HTML styleName="ph-Bookcase-BookTab-NoResults-HTML">No books in this section.</g:HTML>
+				<g:HTMLPanel ui:field="myCoBooksTab" styleName="ph-Bookcase-CoAuthorTab"
+					height="100%">
 				</g:HTMLPanel>
 			</g:tab>
 			<g:tab>
 				<g:customHeader size='7'>
 					<g:Label>My Collection</g:Label>
 				</g:customHeader>
-				<g:HTMLPanel ui:field="myCollectionTab" height="100%">
-					<g:HTML styleName="ph-Bookcase-BookTab-NoResults-HTML">No books in this section.</g:HTML>
+				<g:HTMLPanel ui:field="myCollectionTab" styleName="ph-Bookcase-MyCollectionTab"
+					height="100%">
 				</g:HTMLPanel>
 			</g:tab>
 		</g:TabLayoutPanel>
