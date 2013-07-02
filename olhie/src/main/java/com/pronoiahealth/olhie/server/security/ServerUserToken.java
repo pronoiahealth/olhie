@@ -58,7 +58,7 @@ public class ServerUserToken implements Serializable {
 		this.userId = "";
 		this.userLastName = "";
 		this.userFirstName = "";
-		this.role = SecurityRoleEnum.ANONYMOUS.getName();
+		this.role = SecurityRoleEnum.ANONYMOUS.toString();
 		this.loggedIn = false;
 	}
 

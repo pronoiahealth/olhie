@@ -73,7 +73,7 @@ public class LogoutService {
 			@Observes LogoutRequestEvent logoutRequestEvent) {
 		try {
 			if (userToken.getLoggedIn() == true) {
-				userToken.setLoggedIn(false);
+				userToken.clearToken();
 				logoutResponseEvent.fire(new LogoutResponseEvent());
 			}
 			String erraiSessionId = EventConversationContext.get()

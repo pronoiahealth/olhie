@@ -27,6 +27,7 @@ import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.events.BookSearchResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
@@ -133,6 +134,16 @@ public class SearchResultsComponent extends AbstractComposite {
 	 */
 	public void observesWindowResizeEvent(@Observes WindowResizeEvent event) {
 		adjustSize();
+	}
+
+	/**
+	 * Client is logging out so clear the returned books
+	 * 
+	 * @param clientLogoutRequestEvent
+	 */
+	protected void observesClientLogoutRequestEvent(
+			@Observes ClientLogoutRequestEvent clientLogoutRequestEvent) {
+		searchResultsContainerList.clear();
 	}
 
 	private void adjustSize() {
