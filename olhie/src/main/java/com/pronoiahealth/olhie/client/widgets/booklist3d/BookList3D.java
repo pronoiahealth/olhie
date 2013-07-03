@@ -248,7 +248,7 @@ public class BookList3D extends Widget {
 			DivElement ratingStarContainerElem = doc.createDivElement();
 			rateContainerElem.appendChild(ratingStarContainerElem);
 			StarRating sr = new StarRating(5, true);
-			sr.setRating(4);
+			sr.setRating(bookDisplay.getBookRating());
 			Element starElement = sr.getElement();
 			starElement.setAttribute("style", "display: inline-block;");
 			ratingStarContainerElem.appendChild(starElement);

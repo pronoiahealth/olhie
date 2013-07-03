@@ -31,6 +31,7 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.pronoiahealth.olhie.client.pages.main.MainPage;
 import com.pronoiahealth.olhie.client.shared.events.ClientErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
 import com.pronoiahealth.olhie.resources.OlhieResourceInjector;
 
 /**
@@ -85,18 +86,21 @@ public class Olhie {
 		cBus.addTransportErrorHandler(new TransportErrorHandler() {
 			@Override
 			public void onError(TransportError error) {
+				// Log the error
+				int statusCode = error.getStatusCode();
+				String errorString = error.getErrorMessage();
+				String errMsg = "A communication problem has occured:" + errorString
+						+ " with code " + statusCode;
+
 				if (Log.isWarnEnabled()) {
-					Log.warn("Errai transport error:", error.getException()
-							+ " with code " + error.getStatusCode());
+					Log.warn(errMsg);
+
 				}
-				// if (error.isHTTP() == true) {
-				// if (error.getStatusCode() == 404) {
-				// clientLogoutRequestEvent
-				// .fire(new ClientLogoutRequestEvent());
+
+				clientErrorEvent.fire(new ClientErrorEvent(errMsg));
 				// cBus.stop(true);
 				// cBus.init();
-				// }
-				// }
+
 			}
 		});
 
@@ -112,13 +116,11 @@ public class Olhie {
 						} catch (TransportIOException e) {
 							String errStr = e.getErrorMessage();
 							if (Log.isWarnEnabled()) {
-								Log.warn(
-										"Errai transport error:",
-										errStr + " with code "
-												+ e.errorCode());
+								Log.warn("Errai transport error:", errStr
+										+ " with code " + e.errorCode());
 							}
 							clientErrorEvent.fire(new ClientErrorEvent(errStr));
-							
+
 						} catch (Throwable throwable) {
 							String errStr = throwable.getMessage();
 							if (Log.isWarnEnabled()) {

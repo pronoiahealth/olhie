@@ -36,6 +36,8 @@ public class BookDisplay {
 	private String authorFullName;
 	private boolean bookLogo;
 	private Set<UserBookRelationshipEnum> relEnums;
+	private int bookRating;
+	private int userBookRating;
 	private List<Bookassetdescription> bookAssetDescriptions;
 
 	/**
@@ -53,14 +55,15 @@ public class BookDisplay {
 	 */
 	public BookDisplay(Book book, BookCategory bookCategory,
 			BookCover bookCover, String authorFullName,
-			List<Bookassetdescription> bookAssetDescriptions) {
+			List<Bookassetdescription> bookAssetDescriptions, int bookRating, int userBookRating) {
 		this(book, bookCategory, bookCover, authorFullName,
-				bookAssetDescriptions, false);
+				bookAssetDescriptions, false, bookRating, userBookRating);
 	}
 
 	public BookDisplay(Book book, BookCategory bookCategory,
 			BookCover bookCover, String authorFullName,
-			List<Bookassetdescription> bookAssetDescriptions, boolean bookLogo) {
+			List<Bookassetdescription> bookAssetDescriptions, boolean bookLogo,
+			int bookRating, int userBookRating) {
 		super();
 		this.book = book;
 		this.bookCategory = bookCategory;
@@ -69,6 +72,8 @@ public class BookDisplay {
 		this.bookLogo = bookLogo;
 		this.bookAssetDescriptions = bookAssetDescriptions;
 		this.bookLogo = bookLogo;
+		this.bookRating = bookRating;
+		this.userBookRating = userBookRating;
 	}
 
 	public Book getBook() {
@@ -127,4 +132,21 @@ public class BookDisplay {
 	public void setRelEnums(Set<UserBookRelationshipEnum> relEnums) {
 		this.relEnums = relEnums;
 	}
+
+	public int getBookRating() {
+		return bookRating;
+	}
+
+	public void setBookRating(int bookRating) {
+		this.bookRating = bookRating;
+	}
+
+	public int getUserBookRating() {
+		return userBookRating;
+	}
+
+	public void setUserBookRating(int userBookRating) {
+		this.userBookRating = userBookRating;
+	}
+	
 }

@@ -9,24 +9,35 @@
 			<b:FluidRow>
 				<b:PageHeader ui:field="bookTitle"></b:PageHeader>
 				<g:HTMLPanel styleName="ph-NewBook-EditCurrentBook-Button-Container">
-					<b:ButtonGroup>
-						<b:Tooltip text="Add a Logo image">
-							<b:Button ui:field="logoBookButton" icon="PICTURE" type="PRIMARY"
-								size="SMALL"></b:Button>
-						</b:Tooltip>
-						<b:Tooltip text="Edit the Book details">
-							<b:Button ui:field="editBookButton" icon="EDIT" type="PRIMARY"
-								size="SMALL"></b:Button>
-						</b:Tooltip>
-						<b:Tooltip text="Add this book to my collection" placement="LEFT">
-							<b:Button ui:field="addToCollectionBookButton" icon="THUMBS_UP" type="PRIMARY"
-								size="SMALL"></b:Button>
-						</b:Tooltip>
-						<b:Tooltip text="Remove this book from my collection" placement="LEFT">
-							<b:Button ui:field="removeFromCollectionBookButton" icon="THUMBS_UP" type="DANGER"
-								size="SMALL"></b:Button>
-						</b:Tooltip>
-					</b:ButtonGroup>
+					<g:HTMLPanel ui:field="ratingWidgetContainer" styleName="ph-NewBook-EditCurrentBook-Rating-Container">
+						<g:HTMLPanel styleName="ph-NewBook-RatingLabel-Container">
+							<g:Label>Rating: </g:Label>
+						</g:HTMLPanel>
+						<g:HTMLPanel ui:field="starRatingPanel" styleName="ph-NewBook-RatingWidget-Container">
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="ph-NewBook-EditCurrentBook-Button-Container">
+						<b:ButtonGroup>
+							<b:Tooltip text="Add a Logo image">
+								<b:Button ui:field="logoBookButton" icon="PICTURE"
+									type="PRIMARY" size="SMALL"></b:Button>
+							</b:Tooltip>
+							<b:Tooltip text="Edit the Book details">
+								<b:Button ui:field="editBookButton" icon="EDIT" type="PRIMARY"
+									size="SMALL"></b:Button>
+							</b:Tooltip>
+							<b:Tooltip text="Add this book to my collection"
+								placement="LEFT">
+								<b:Button ui:field="addToCollectionBookButton" icon="THUMBS_UP"
+									type="PRIMARY" size="SMALL"></b:Button>
+							</b:Tooltip>
+							<b:Tooltip text="Remove this book from my collection"
+								placement="LEFT">
+								<b:Button ui:field="removeFromCollectionBookButton"
+									icon="THUMBS_UP" type="DANGER" size="SMALL"></b:Button>
+							</b:Tooltip>
+						</b:ButtonGroup>
+					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</b:FluidRow>
 			<b:FluidRow ui:field="createdPublishedCategoryRow">

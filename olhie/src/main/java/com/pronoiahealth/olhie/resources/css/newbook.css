@@ -181,7 +181,24 @@
 	margin-top: 6px;
 }
 
+.ph-NewBook-EditCurrentBook-Rating-Container {
+	float: left;
+	margin-right: 20px;
+	margin-top: 6px;
+}
+
 .ph-NewBook-BookCover-SplitButton {
 	overflow-y: auto;
 	height: 200px;
+}
+
+.ph-NewBook-RatingLabel-Container {
+	float: left;
+	padding-right: 5px;
+}
+
+.ph-NewBook-RatingWidget-Container {
+	float: right;
+	padding-right: 5px;
+	padding-top: 4px;
 }

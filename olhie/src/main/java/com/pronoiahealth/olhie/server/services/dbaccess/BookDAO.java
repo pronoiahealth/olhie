@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2013 Pronoia Health LLC.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Pronoia Health LLC - initial API and implementation
+ *******************************************************************************/
 package com.pronoiahealth.olhie.server.services.dbaccess;
 
 import java.util.ArrayList;
@@ -112,14 +122,20 @@ public class BookDAO {
 			}
 		}
 
+		// Get book rating and user book rating
+		int bookRating = BookRatingDAO.getAvgBookRating(bookId, ooDbTx);
+		int userBookRating = BookRatingDAO.getUserBookRating(userId, bookId,
+				ooDbTx);
+
+		// Create BookDisplay
 		BookDisplay bookDisplay = new BookDisplay(book, cat, cover, authorName,
-				retBaResults);
-		
+				retBaResults, bookRating, userBookRating);
+
 		// Logo?
 		String logoFileName = book.getLogoFileName();
 		bookDisplay
-				.setBookLogo((logoFileName != null && logoFileName
-						.length() > 0) ? true : false);
+				.setBookLogo((logoFileName != null && logoFileName.length() > 0) ? true
+						: false);
 
 		// Return the display
 		return bookDisplay;

@@ -143,13 +143,9 @@ public class StarRating extends Widget {
 	 */
 	private Integer ratedObjectId = null;
 
-	/**
-	 * Indicates whether a transfer of the currently selected rating to
-	 * server-side via RPC is currently underway.
-	 */
-	private boolean transferInProgress = false;
-
 	private boolean readOnly;
+
+	private StarRatingStarClickedHandler starClickedHandler;
 
 	/**
 	 * Creates a new StarRating-Object, sets the id and type fields but doesn't
@@ -164,7 +160,7 @@ public class StarRating extends Widget {
 	 */
 	public StarRating(final int theNumberOfStars,
 			final Integer theRatedObjectId, final String theRatedObjectType,
-			boolean readOnly) {
+			boolean readOnly, StarRatingStarClickedHandler starClickedHandler) {
 		super();
 		this.readOnly = readOnly;
 		setRatedObjectId(theRatedObjectId);
@@ -174,6 +170,8 @@ public class StarRating extends Widget {
 		if (readOnly == false) {
 			doEventCapture();
 		}
+		this.starClickedHandler = starClickedHandler;
+
 	}
 
 	/**
@@ -184,7 +182,12 @@ public class StarRating extends Widget {
 	 *            The number of stars the control will show.
 	 */
 	public StarRating(final int theNumberOfStars, boolean readOnly) {
-		this(theNumberOfStars, null, null, readOnly);
+		this(theNumberOfStars, null, null, readOnly, null);
+	}
+
+	public StarRating(final int theNumberOfStars, boolean readOnly,
+			StarRatingStarClickedHandler starClickedHandler) {
+		this(theNumberOfStars, null, null, readOnly, starClickedHandler);
 	}
 
 	/**
@@ -210,10 +213,11 @@ public class StarRating extends Widget {
 	}
 
 	/**
-	 * Set read only and activate or in-activate events 
+	 * Set read only and activate or in-activate events
 	 * 
 	 * @param changeReadOnly
 	 */
+	/*
 	public void setReadOnly(boolean changeReadOnly) {
 		if (this.readOnly == true && changeReadOnly == false) {
 			this.readOnly = changeReadOnly;
@@ -222,7 +226,16 @@ public class StarRating extends Widget {
 			this.readOnly = changeReadOnly;
 			doEventCapture();
 		}
-
+	}
+	*/
+	public void setReadOnly(boolean changeReadOnly) {
+		if (changeReadOnly == true) {
+			this.readOnly = changeReadOnly;
+			doEventUnCapture();
+		} else {
+			this.readOnly = changeReadOnly;
+			doEventCapture();
+		}
 	}
 
 	/**
@@ -247,7 +260,6 @@ public class StarRating extends Widget {
 		imgProgress.setStyleName("starrating-indicator");
 		add(imgProgress);
 
-		setTransferInProgress(false);
 		updateDisplay();
 	}
 
@@ -319,17 +331,18 @@ public class StarRating extends Widget {
 	public final void onBrowserEvent(final Event event) {
 		switch (DOM.eventGetType(event)) {
 		case Event.ONMOUSEOVER:
-			if (!isTransferInProgress()) {
-				starHovered(getStarNumber(DOM.eventGetTarget(event)));
-			}
+			starHovered(getStarNumber(DOM.eventGetTarget(event)));
 			break;
 		case Event.ONMOUSEOUT:
 			starHovered(0);
 			break;
 		case Event.ONCLICK:
-			if (!isTransferInProgress()) {
-				starClicked(getStarNumber(DOM.eventGetTarget(event)));
+			int starInt = getStarNumber(DOM.eventGetTarget(event));
+			starClicked(starInt);
+			if (starClickedHandler != null) {
+				starClickedHandler.startClicked(starInt);
 			}
+
 			break;
 		default:
 			super.onBrowserEvent(event);
@@ -359,15 +372,6 @@ public class StarRating extends Widget {
 
 	public void setRatedObjectType(String ratedObjectType) {
 		this.ratedObjectType = ratedObjectType;
-	}
-
-	public boolean isTransferInProgress() {
-		return transferInProgress;
-	}
-
-	public void setTransferInProgress(boolean transferInProgress) {
-		this.transferInProgress = transferInProgress;
-		imgProgress.setVisible(transferInProgress);
 	}
 
 	public int getRating() {

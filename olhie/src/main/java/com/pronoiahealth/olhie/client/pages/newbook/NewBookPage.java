@@ -38,6 +38,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -75,6 +76,8 @@ import com.pronoiahealth.olhie.client.widgets.DownloadBookassetButton;
 import com.pronoiahealth.olhie.client.widgets.FlexTableExt;
 import com.pronoiahealth.olhie.client.widgets.RemoveBookassetdescriptionButton;
 import com.pronoiahealth.olhie.client.widgets.ViewBookassetButton;
+import com.pronoiahealth.olhie.client.widgets.rating.StarRating;
+import com.pronoiahealth.olhie.client.widgets.rating.StarRatingStarClickedHandler;
 
 /**
  * NewBookPage.java<br/>
@@ -112,6 +115,12 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 
 	@UiField
 	public HTMLPanel newBookContainer;
+
+	@UiField
+	public HTMLPanel ratingWidgetContainer;
+
+	@UiField
+	public HTMLPanel starRatingPanel;
 
 	@UiField
 	public PageHeader bookTitle;
@@ -216,6 +225,8 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 
 	private FlexTableExt tocTable;
 
+	private StarRating starRating;
+
 	/**
 	 * Default Constructor
 	 * 
@@ -242,6 +253,20 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 		tocHeader.setStyleName("ph-NewBook-Introduction-Hero-TOC-Header", true);
 		tocAddElementContainer.setStyleName("ph-NewBook-TOC-Element-Container",
 				true);
+
+		// Create star rating
+		starRating = new StarRating(5, false,
+				new StarRatingStarClickedHandler() {
+					@Override
+					public void startClicked(int star) {
+						// Add event to save data here
+					}
+				});
+		// Irritating Chrome issue fix
+		starRating.getElement().setAttribute("style", "display: inline-block;");
+
+		// Add it to the display
+		starRatingPanel.add(starRating);
 
 		this.downloadClickHandler = new ClickHandler() {
 			@Override
@@ -357,6 +382,9 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 			setAddToCollectionBookButtonVisibility(false);
 			setRemoveFromMyCollectionBookButtonVisibility(false);
 		}
+
+		// Set the rating widget state
+		setRatingWidgetState(bookListBookSelectedResponseEvent.getRels());
 	}
 
 	/**
@@ -375,6 +403,30 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 			tocAddElementContainer.setVisible(false);
 			editBookButton.setVisible(false);
 			logoBookButton.setVisible(false);
+		}
+	}
+
+	private void setRatingWidgetState(Set<UserBookRelationshipEnum> rels) {
+		// In the edit mode the widget is only displayed
+		// When in the edit mode you are logged in
+		if (this.editMode == ModeEnum.EDIT) {
+			ratingWidgetContainer.setVisible(true);
+			starRating.setReadOnly(true);
+		} else {
+			if (clientUser.isLoggedIn() == true) {
+				if (hasBookRelationship(rels) == true
+						&& (rels.contains(UserBookRelationshipEnum.COAUTHOR) || rels
+								.contains(UserBookRelationshipEnum.CREATOR))) {
+					ratingWidgetContainer.setVisible(true);
+					starRating.setReadOnly(true);
+				} else {
+					// You are logged in and have a MYCOLLECTION relationship
+					ratingWidgetContainer.setVisible(true);
+					starRating.setReadOnly(false);
+				}
+			} else {
+				ratingWidgetContainer.setVisible(false);
+			}
 		}
 	}
 
@@ -502,6 +554,9 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 		} else {
 			setAddToCollectionBookButtonVisibility(false);
 		}
+
+		// Set the rating widget state
+		setRatingWidgetState(bookFindResponseEvent.getRels());
 	}
 
 	/**
@@ -552,6 +607,11 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 					NewBookMessages.INSTANCE.setCreatedDateText(createdDt), 0);
 		}
 		addTOCElementContainer.add(tocTable);
+
+		// Set star rating here
+		starRating.setRating(3);
+
+		// Adjust display size
 		adjustSize();
 	}
 

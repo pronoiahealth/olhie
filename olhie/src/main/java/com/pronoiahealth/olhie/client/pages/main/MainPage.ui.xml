@@ -14,29 +14,6 @@
 		</g:south>
 		<g:east size="180">
 			<g:HTMLPanel ui:field="newsDisplayPlaceHolder" styleName="east-background">
-				<!-- div class="section sidebar">
-					<div class="widget">
-						<div class="widget-title">
-							<h3>Latest News</h3>
-						</div>
-						<div>
-							<ul class="listing clearfix">
-								<li class="clearfix">
-									<h4 class="title">
-										<a href="#">OLHIE has arrived</a>
-									</h4>
-									<p>Take a look</p>
-								</li>
-								<li class="clearfix">
-									<h4 class="title">
-										<a href="#">OLHIE will be beamed to astronauts on board the ISS</a>
-									</h4>
-									<p>Story at 6</p>
-								</li>
-							</ul>
-						</div>
-					</div>
-				</div -->
 			</g:HTMLPanel>
 		</g:east>
 		<g:west size="90">
@@ -51,13 +28,13 @@
 				<g:HTMLPanel ui:field="loginModalPlaceHolder"></g:HTMLPanel>
 				<g:HTMLPanel ui:field="commentsModalPlaceHolder"></g:HTMLPanel>
 				<g:HTMLPanel ui:field="registerModalPlaceHolder"></g:HTMLPanel>
-				<g:HTMLPanel ui:field="errorModalPlaceHolder"></g:HTMLPanel>
 				<g:HTMLPanel ui:field="newBookModalPlaceHolder"></g:HTMLPanel>
 				<g:HTMLPanel ui:field="newAssetModalPlaceHolder"></g:HTMLPanel>
 				<g:HTMLPanel ui:field="addFileModalPlaceHolder"></g:HTMLPanel>
 				<g:HTMLPanel ui:field="downloadFramePlaceHolder"></g:HTMLPanel>
 				<g:HTMLPanel ui:field="viewBookassetModalPlaceHolder"></g:HTMLPanel>
 				<g:HTMLPanel ui:field="addLogoDialogModalPlaceHolder"></g:HTMLPanel>
+				<g:HTMLPanel ui:field="errorModalPlaceHolder"></g:HTMLPanel>
 				<g:HTMLPanel ui:field="navContent" styleName="center-background"
 					width="100%" height="100%">
 				</g:HTMLPanel>
