@@ -132,8 +132,10 @@ public class SessionTracker {
 	 * @param userId
 	 * @param erraiSessionId
 	 */
-	public void trackUserSession(String userId, String erraiSessionId) {
-		UserSessionToken user = new UserSessionToken(userId, erraiSessionId);
+	public void trackUserSession(String userId, String userLastName,
+			String userFirstName, String erraiSessionId) {
+		UserSessionToken user = new UserSessionToken(userId, userLastName,
+				userFirstName, erraiSessionId);
 
 		// Add an active session
 		activeSessions.put(erraiSessionId, user);

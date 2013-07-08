@@ -10,7 +10,6 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services;
 
-
 /**
  * UserSessionToken.java<br/>
  * Responsibilities:<br/>
@@ -31,6 +30,8 @@ public class UserSessionToken {
 	private final static long TIMEOUT = 1000 * 60;
 	private String userId;
 	private String erraiSessionId;
+	private String userLastName;
+	private String userFirstName;
 	private long lastActivity = System.currentTimeMillis();
 
 	/**
@@ -46,10 +47,13 @@ public class UserSessionToken {
 	 * @param userId
 	 * @param erraiSessionId
 	 */
-	public UserSessionToken(String userId, String erraiSessionId) {
+	public UserSessionToken(String userId, String userLastName,
+			String userFirstName, String erraiSessionId) {
 		super();
 		this.userId = userId;
 		this.erraiSessionId = erraiSessionId;
+		this.userLastName = userLastName;
+		this.userFirstName = userFirstName;
 	}
 
 	public String getUserId() {
@@ -66,6 +70,22 @@ public class UserSessionToken {
 
 	public void setErraiSessionId(String erraiSessionId) {
 		this.erraiSessionId = erraiSessionId;
+	}
+
+	public String getUserLastName() {
+		return userLastName;
+	}
+
+	public void setUserLastName(String userLastName) {
+		this.userLastName = userLastName;
+	}
+
+	public String getUserFirstName() {
+		return userFirstName;
+	}
+
+	public void setUserFirstName(String userFirstName) {
+		this.userFirstName = userFirstName;
 	}
 
 	public void activity() {

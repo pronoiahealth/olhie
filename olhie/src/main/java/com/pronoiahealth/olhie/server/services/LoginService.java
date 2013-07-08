@@ -112,9 +112,11 @@ public class LoginService {
 				loginErrorEvent.fire(new LoginErrorEvent(
 						"Password does not match."));
 			} else {
+				String firstName = user.getFirstName();
+				String lastName = user.getLastName();
 				// Set up token
-				userToken.setUserFirstName(user.getFirstName());
-				userToken.setUserLastName(user.getLastName());
+				userToken.setUserFirstName(firstName);
+				userToken.setUserLastName(lastName);
 				userToken.setLoggedIn(true);
 				userToken.setUserId(user.getUserId());
 				userToken.setRole(user.getRole());
@@ -122,7 +124,8 @@ public class LoginService {
 				// Update the sessionTracker
 				String sessionId = EventConversationContext.get()
 						.getSessionId();
-				sessionTracker.trackUserSession(user.getUserId(), sessionId);
+				sessionTracker.trackUserSession(user.getUserId(), lastName,
+						firstName, sessionId);
 
 				// Fire a positive response
 				loginResponseEvent.fire(new LoginResponseEvent(user));
