@@ -38,7 +38,6 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -55,6 +54,7 @@ import com.pronoiahealth.olhie.client.shared.events.BookFindByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookListBookSelectedEvent;
 import com.pronoiahealth.olhie.client.shared.events.BookListBookSelectedResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.NewStarRatingEvent;
 import com.pronoiahealth.olhie.client.shared.events.RemoveBookFromMyCollectionEvent;
 import com.pronoiahealth.olhie.client.shared.events.RemoveBookassetdescriptionEvent;
 import com.pronoiahealth.olhie.client.shared.events.RemoveBookassetdescriptionResponseEvent;
@@ -212,6 +212,9 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 
 	@Inject
 	private Event<RemoveBookFromMyCollectionEvent> removeBookFromMyCollectionEvent;
+	
+	@Inject
+	private Event<NewStarRatingEvent> newStarRatingEvent;
 
 	@Inject
 	@NewBook
@@ -260,6 +263,7 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 					@Override
 					public void startClicked(int star) {
 						// Add event to save data here
+						newStarRatingEvent.fire(new NewStarRatingEvent(star, bookId));
 					}
 				});
 		// Irritating Chrome issue fix
