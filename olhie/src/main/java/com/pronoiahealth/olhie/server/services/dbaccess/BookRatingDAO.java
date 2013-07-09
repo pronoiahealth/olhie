@@ -67,7 +67,7 @@ public class BookRatingDAO {
 		
 		if (resultList != null && resultList.size() > 0) {
 			for (Bookstarrating bookstarrating : resultList) {
-				stars =+ bookstarrating.getStars();
+				stars += bookstarrating.getStars();
 			}
 			return Math.round(stars/resultList.size());
 		} else {

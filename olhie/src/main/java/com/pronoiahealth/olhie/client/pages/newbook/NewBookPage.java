@@ -613,7 +613,7 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 		addTOCElementContainer.add(tocTable);
 
 		// Set star rating here
-		starRating.setRating(3);
+		starRating.setRating(bookDisplay.getUserBookRating());
 
 		// Adjust display size
 		adjustSize();
