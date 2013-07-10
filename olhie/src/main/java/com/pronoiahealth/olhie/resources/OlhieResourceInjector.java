@@ -65,6 +65,8 @@ public class OlhieResourceInjector {
 		OlhieResources.INSTANCE.newbookcss().ensureInjected();
 		OlhieResources.INSTANCE.booklist3dcss().ensureInjected();
 		OlhieResources.INSTANCE.viewbookassetcss().ensureInjected();
+		OlhieResources.INSTANCE.lookupuserdialogcss().ensureInjected();
+		OlhieResources.INSTANCE.chatdialogcss().ensureInjected();
 		/*injectResourceCssAsFile("gwt_overrides.css");*/
 	}
 

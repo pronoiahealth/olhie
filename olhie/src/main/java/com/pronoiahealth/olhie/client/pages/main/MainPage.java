@@ -39,6 +39,7 @@ import com.pronoiahealth.olhie.client.pages.AbstractComposite;
 import com.pronoiahealth.olhie.client.pages.comments.CommentsDialog;
 import com.pronoiahealth.olhie.client.pages.error.ErrorDisplayDialog;
 import com.pronoiahealth.olhie.client.pages.login.LoginDialog;
+import com.pronoiahealth.olhie.client.pages.lookupuser.LookupUserDialog;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddFileDialog;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddLogoDialog;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.NewAssetDialog;
@@ -124,9 +125,12 @@ public class MainPage extends AbstractComposite {
 
 	@Inject
 	ViewBookassetDialog viewBookassetDialog;
-	
+
 	@Inject
 	AddLogoDialog addLogoDialog;
+
+	@Inject
+	LookupUserDialog lookupUserDialog;
 
 	@Inject
 	DownloadFrame downloadFrame;
@@ -157,9 +161,12 @@ public class MainPage extends AbstractComposite {
 
 	@UiField
 	public HTMLPanel downloadFramePlaceHolder;
-	
+
 	@UiField
 	public HTMLPanel addLogoDialogModalPlaceHolder;
+
+	@UiField
+	public HTMLPanel lookupUserModalPlaceHolder;
 
 	/*
 	 * Used to time things on screen such as when a key is pressed.
@@ -348,6 +355,7 @@ public class MainPage extends AbstractComposite {
 		addFileModalPlaceHolder.add(addFileDialog);
 		viewBookassetModalPlaceHolder.add(viewBookassetDialog);
 		downloadFramePlaceHolder.add(downloadFrame);
+		lookupUserModalPlaceHolder.add(lookupUserDialog);
 		addLogoDialogModalPlaceHolder.add(addLogoDialog);
 	}
 
@@ -374,7 +382,7 @@ public class MainPage extends AbstractComposite {
 	 * 
 	 * @param logoutResponseEvent
 	 */
-	//TODO: Do we need this method
+	// TODO: Do we need this method
 	protected void observesLogoutResponseEvent(
 			@Observes LogoutResponseEvent logoutResponseEvent) {
 	}
@@ -435,11 +443,11 @@ public class MainPage extends AbstractComposite {
 	private void ping() {
 		loggedInPingEvent.fire(new LoggedInPingEvent());
 	}
-	
+
 	private void cancelScreenTimer() {
 		screenTimer.cancel();
 	}
-	
+
 	private void startScreenTimer() {
 		screenTimer.scheduleRepeating(this.screenTimeout);
 	}
@@ -450,11 +458,13 @@ public class MainPage extends AbstractComposite {
 	private void hideEast() {
 		if (newsDisplayPlaceHolder != null) {
 			int currentWidgetWidth = newsDisplayPlaceHolder.getOffsetWidth();
-			dockLayoutPanel.setWidgetSize(newsDisplayPlaceHolder,
-					currentWidgetWidth);
-			dockLayoutPanel.forceLayout();
-			dockLayoutPanel.setWidgetSize(newsDisplayPlaceHolder, 0);
-			dockLayoutPanel.animate(1000);
+			if (currentWidgetWidth != 0) {
+				dockLayoutPanel.setWidgetSize(newsDisplayPlaceHolder,
+						currentWidgetWidth);
+				dockLayoutPanel.forceLayout();
+				dockLayoutPanel.setWidgetSize(newsDisplayPlaceHolder, 0);
+				dockLayoutPanel.animate(1000);
+			}
 		}
 	}
 
@@ -464,14 +474,14 @@ public class MainPage extends AbstractComposite {
 	private void showEast() {
 		if (newsDisplayPlaceHolder != null) {
 			int currentWidth = newsDisplayPlaceHolder.getOffsetWidth();
-			if (currentWidth != EAST_PANEL_WIDTH) {
+			//if (currentWidth != EAST_PANEL_WIDTH) {
 				dockLayoutPanel.setWidgetSize(newsDisplayPlaceHolder,
 						currentWidth);
 				dockLayoutPanel.forceLayout();
 				dockLayoutPanel.setWidgetSize(newsDisplayPlaceHolder,
 						EAST_PANEL_WIDTH);
 				dockLayoutPanel.animate(1000);
-			}
+			//}
 		}
 	}
 }

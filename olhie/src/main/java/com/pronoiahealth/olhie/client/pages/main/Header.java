@@ -34,6 +34,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowCommentsModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowEditProfileModalEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowFindLoggedInUserEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowLoginModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewBookModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowRegisterModalEvent;
@@ -81,6 +82,9 @@ public class Header extends Composite {
 
 	@UiField
 	public NavLink editProfileMenuLink;
+	
+	@UiField
+	public NavLink findLoggedInUserMenuItemLink;
 
 	@UiField
 	public VerticalDivider regBookAddDivider;
@@ -111,6 +115,9 @@ public class Header extends Composite {
 
 	@Inject
 	private Event<ShowEditProfileModalEvent> showEditProfileEvent;
+	
+	@Inject
+	private Event<ShowFindLoggedInUserEvent> showFindLoggedInUserEvent; 
 
 	/**
 	 * Default Constructor
@@ -190,6 +197,11 @@ public class Header extends Composite {
 	public void editProfileMenuLinkClicked(ClickEvent event) {
 		showEditProfileEvent.fire(new ShowEditProfileModalEvent());
 	}
+	
+	@UiHandler("findLoggedInUserMenuItemLink")
+	public void findLoggedInUserMenuItemLinkClicked(ClickEvent event) {
+		showFindLoggedInUserEvent.fire(new ShowFindLoggedInUserEvent());
+	}
 
 	/**
 	 * Observes for the given event signaling that this component should hide
@@ -215,7 +227,7 @@ public class Header extends Composite {
 	protected void observesNewBookPageHidingEvent(
 			@Observes NewBookPageHidingEvent newBookPageHidingEvent) {
 		showAddBook();
-		showAddBookPersonDivider();
+		//showAddBookPersonDivider();
 	}
 
 	/**

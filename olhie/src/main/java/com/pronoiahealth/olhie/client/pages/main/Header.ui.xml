@@ -28,6 +28,8 @@
 						<b:NavLink ui:field="logoutMenuItemLink" icon="CIRCLE_ARROW_RIGHT">Logout</b:NavLink>
 						<b:NavLink ui:field="editProfileMenuLink" icon="EDIT">Edit
 							Profile</b:NavLink>
+						<b:Divider></b:Divider>
+						<b:NavLink ui:field="findLoggedInUserMenuItemLink" icon="COMMENT">Start a Chat</b:NavLink>
 					</b:Dropdown>
 				</b:NavPills>
 			</b:Nav>

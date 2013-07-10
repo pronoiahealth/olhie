@@ -10,7 +10,9 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,7 +48,7 @@ public class SessionTracker {
 			.newScheduledThreadPool(1);
 
 	/**
-	 * Tracks sessionId and the user assoiciated with them
+	 * Tracks sessionId and the user associated with them
 	 */
 	private final Map<String, UserSessionToken> activeSessions = new ConcurrentHashMap<String, UserSessionToken>();
 
@@ -76,9 +78,9 @@ public class SessionTracker {
 						UserSessionToken user = entryIterator.next();
 						if (user.isSessionTimedout()) {
 							// Remove user session
-							String userId = user.getUserId();
 							String sessionId = user.getErraiSessionId();
-							Set<String> userSessions = activeUsers.get(userId);
+							String userKey = getActiveUserKey(user);
+							Set<String> userSessions = activeUsers.get(userKey);
 							if (userSessions != null && userSessions.size() > 0) {
 								userSessions.remove(sessionId);
 							}
@@ -86,7 +88,7 @@ public class SessionTracker {
 							// If user has no session remove them from the
 							// active users map
 							if (userSessions.size() == 0) {
-								activeUsers.remove(userId);
+								activeUsers.remove(userKey);
 							}
 
 							// Remove the session from the active sessions map
@@ -141,10 +143,10 @@ public class SessionTracker {
 		activeSessions.put(erraiSessionId, user);
 
 		// Add a session the active users session
-		ConcurrentSkipListSet<String> sessions = activeUsers.get(userId);
+		ConcurrentSkipListSet<String> sessions = activeUsers.get(getActiveUserKey(user));
 		if (sessions == null) {
 			sessions = new ConcurrentSkipListSet<String>();
-			activeUsers.put(userId, sessions);
+			activeUsers.put(getActiveUserKey(user), sessions);
 		}
 		sessions.add(erraiSessionId);
 	}
@@ -157,11 +159,10 @@ public class SessionTracker {
 	public void stopTrackingUserSession(String erraiSessionId) {
 		// Remove from active session
 		UserSessionToken token = activeSessions.get(erraiSessionId);
-		String userId = token.getUserId();
 		activeSessions.remove(erraiSessionId);
 
 		// Remove from user sessions
-		ConcurrentSkipListSet<String> sessions = activeUsers.get(userId);
+		ConcurrentSkipListSet<String> sessions = activeUsers.get(getActiveUserKey(token));
 		if (sessions != null) {
 			sessions.remove(erraiSessionId);
 		}
@@ -169,8 +170,37 @@ public class SessionTracker {
 		// If the user has no more sessions remove the user from the user
 		// sessions
 		if (sessions.size() == 0) {
-			activeUsers.remove(userId);
+			activeUsers.remove(getActiveUserKey(token));
 		}
+	}
+
+	/**
+	 * Gets the key to use in the activeUsers map.
+	 * 
+	 * @param tok
+	 * @return
+	 */
+	private String getActiveUserKey(UserSessionToken tok) {
+		StringBuilder sb = new StringBuilder();
+		return sb.append(tok.getUserFirstName()).append(" ")
+				.append(tok.getUserLastName()).append(" (")
+				.append(tok.getUserId()).append(")").toString();
+	}
+
+	/**
+	 * Returns userKey from activeUsers if it starts with the qry string
+	 * 
+	 * @param qry
+	 * @return
+	 */
+	public List<String> getMatchingActiveUsers(String qry) {
+		List<String> retLst = new ArrayList<String>();
+		for (String userKey : activeUsers.keySet()) {
+			if (userKey.startsWith(qry)) {
+				retLst.add(userKey);
+			}
+		}
+		return retLst;
 	}
 
 }

@@ -1,0 +1,89 @@
+/*******************************************************************************
+ * Copyright (c) 2013 Pronoia Health LLC.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Pronoia Health LLC - initial API and implementation
+ *******************************************************************************/
+package com.pronoiahealth.olhie.server.services;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.jboss.errai.bus.server.annotations.Service;
+
+import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
+import com.pronoiahealth.olhie.client.shared.exceptions.GenericRPCException;
+import com.pronoiahealth.olhie.client.shared.services.ConnectedUserService;
+import com.pronoiahealth.olhie.client.shared.vo.ConnectedUser;
+import com.pronoiahealth.olhie.server.security.SecureAccess;
+import com.pronoiahealth.olhie.server.security.ServerUserToken;
+
+/**
+ * ConnectedUserService.java<br/>
+ * Responsibilities:<br/>
+ * 1. Return a list of connected users based on the query sent<br/>
+ * 
+ * @author John DeStefano
+ * @version 1.0
+ * @since Jul 8, 2013
+ * 
+ */
+@Service
+public class ConnectedUserServiceImpl implements ConnectedUserService {
+	@Inject
+	private SessionTracker sessionTracker;
+
+	@Inject
+	private ServerUserToken userToken;
+
+	/**
+	 * Constructor
+	 * 
+	 */
+	public ConnectedUserServiceImpl() {
+	}
+
+	/**
+	 * Returns a list of connected users who's name starts with the query string
+	 * 
+	 * @param qry
+	 * @return
+	 */
+	@Override
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.REGISTERED })
+	public List<ConnectedUser> getConnectedUsers(String qry) {
+		try {
+			List<ConnectedUser> retLst = new ArrayList<ConnectedUser>();
+			List<String> matchLst = sessionTracker.getMatchingActiveUsers(qry);
+			for (String str : matchLst) {
+				retLst.add(getConnectedUserFromUserKey(str));
+			}
+			return retLst;
+		} catch (Exception e) {
+			throw new GenericRPCException(e.getMessage());
+		}
+	}
+
+	/**
+	 * Interrogates the userKey returned from the SessionTracker to create a
+	 * ConnectedUser object.
+	 * 
+	 * @param userKey
+	 * @return
+	 */
+	private ConnectedUser getConnectedUserFromUserKey(String userKey) {
+		int userIdStart = userKey.lastIndexOf("(");
+		String userId = userKey
+				.substring(userIdStart + 1, userKey.length() - 1);
+		String name = userKey.substring(0, userIdStart - 1);
+		return new ConnectedUser(userId, name);
+	}
+
+}
