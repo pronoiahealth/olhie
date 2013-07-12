@@ -10,17 +10,28 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services.dbaccess;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
+import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
 
+/**
+ * UserBookRelationshipDAO.java<br/>
+ * Responsibilities:<br/>
+ * 1.
+ * 
+ * @author John DeStefano
+ * @version 1.0
+ * @since Jul 11, 2013
+ * 
+ */
 public class UserBookRelationshipDAO {
 
 	public static Set<UserBookRelationshipEnum> getUserBookRelationshipByUserIdBookId(
@@ -131,5 +142,86 @@ public class UserBookRelationshipDAO {
 		} else {
 			return null;
 		}
+	}
+
+	/**
+	 * Gets active relationships a user has with a book.
+	 * 
+	 * @param userId
+	 * @param bookId
+	 * @param ooDbTx
+	 * @return
+	 */
+	public static List<UserBookRelationship> getActiveUserBookRelationships(
+			String userId, String bookId, OObjectDatabaseTx ooDbTx) {
+		OSQLSynchQuery<UserBookRelationship> bQuery = new OSQLSynchQuery<UserBookRelationship>(
+				"select from UserBookRelationship where userId = :uId and bookId = :bId and activeRelationship = true");
+		HashMap<String, String> bparams = new HashMap<String, String>();
+		bparams.put("uId", userId);
+		bparams.put("bId", bookId);
+		return ooDbTx.command(bQuery).execute(bparams);
+	}
+
+	/**
+	 * Update the last viewed date on the user book relationship
+	 * 
+	 * @param userId
+	 * @param bookId
+	 * @param ooDbTx
+	 * @throws Exception
+	 */
+	public static void setLastViewedOnUserBookRelationship(String userId,
+			String bookId, Date now, OObjectDatabaseTx ooDbTx) throws Exception {
+		if (userId != null && userId.length() > 0 && bookId != null
+				&& bookId.length() > 0) {
+			try {
+				// Start transaction
+				ooDbTx.begin(TXTYPE.OPTIMISTIC);
+				List<UserBookRelationship> bResult = getActiveUserBookRelationships(
+						userId, bookId, ooDbTx);
+
+				// update records
+				if (bResult != null && bResult.size() > 0) {
+					for (UserBookRelationship r : bResult) {
+						r.setLastViewedDate(now);
+						ooDbTx.save(r);
+					}
+				}
+
+				// Commit changes
+				ooDbTx.commit();
+			} catch (Exception e) {
+				throw e;
+			}
+		}
+	}
+
+	public static List<UserBookRelationship> getUserBookRelationshipByBookId(
+			String bookId, OObjectDatabaseTx ooDbTx) {
+		// Get UserBookRelatioship
+		OSQLSynchQuery<UserBookRelationship> bQuery = new OSQLSynchQuery<UserBookRelationship>(
+				"select from UserBookRelationship where bookId = :bId");
+		HashMap<String, String> bparams = new HashMap<String, String>();
+		bparams.put("bId", bookId);
+		return ooDbTx.command(bQuery).execute(bparams);
+	}
+	
+	/**
+	 * Returns the relationships for a user and book.
+	 * 
+	 * @param bookId
+	 * @param userId
+	 * @param ooDbTx
+	 * @return
+	 */
+	public static List<UserBookRelationship> getUserBookRelationshipByUserIdBookId(
+			String bookId, String userId, OObjectDatabaseTx ooDbTx) {
+		// Get UserBookRelatioship
+		OSQLSynchQuery<UserBookRelationship> bQuery = new OSQLSynchQuery<UserBookRelationship>(
+				"select from UserBookRelationship where bookId = :bId and userId = :uId");
+		HashMap<String, String> bparams = new HashMap<String, String>();
+		bparams.put("bId", bookId);
+		bparams.put("uId", userId);
+		return ooDbTx.command(bQuery).execute(bparams);
 	}
 }

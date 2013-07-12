@@ -18,37 +18,43 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.Typeahead;
+import com.github.gwtbootstrap.client.ui.Typeahead.UpdaterCallback;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowFindLoggedInUserEvent;
+import com.pronoiahealth.olhie.client.shared.vo.ConnectedUser;
+import com.pronoiahealth.olhie.client.widgets.suggestoracle.GenericMultiWordSuggestion;
 
 public class LookupUserDialog extends Composite {
-	
+
 	@Inject
 	UiBinder<Widget, LookupUserDialog> binder;
-	
+
 	@UiField
 	public Modal lookupUserModal;
-	
+
 	@UiField
 	public Button submitButton;
-	
-	@UiField(provided=true)
+
+	@UiField(provided = true)
 	public Typeahead userNameTypeAhead;
-	
+
 	@UiField
 	public TextBox userNameTxtBox;
-	
+
 	@Inject
 	private LoggedInUsersSuggestOracle sOracle;
 
+	private String currentSelection;
+
 	public LookupUserDialog() {
 	}
-	
+
 	/**
 	 * Create the gui via uiBinder
 	 */
@@ -58,21 +64,29 @@ public class LookupUserDialog extends Composite {
 		userNameTypeAhead = new Typeahead(sOracle);
 		userNameTypeAhead.setDisplayItemCount(5);
 		userNameTypeAhead.setMinLength(2);
-		//userNameTxtBox = new TextBox();
-		//userNameTypeAhead.add(userNameTxtBox);
 		initWidget(binder.createAndBindUi(this));
 		sOracle.setSuggestWidget(userNameTxtBox);
+		userNameTypeAhead.setUpdaterCallback(new UpdaterCallback() {
+			@Override
+			public String onSelection(Suggestion selectedSuggestion) {
+				GenericMultiWordSuggestion<ConnectedUser> sug = (GenericMultiWordSuggestion<ConnectedUser>) selectedSuggestion;
+				ConnectedUser cu = (ConnectedUser) sug.getPojo();
+				currentSelection = cu.getUserId();
+				return sug.getDisplayString();
+			}
+		});
 		lookupUserModal.setStyleName("ph-LookupUser-Modal", true);
 		lookupUserModal.setStyleName("ph-LookupUser-Modal-Size", true);
 	}
-	
+
 	/**
 	 * Shows the modal dialog
 	 */
 	public void show() {
+		userNameTxtBox.setText("");
 		lookupUserModal.show();
 	}
-	
+
 	/**
 	 * Sends an offer to the selected user and fires the OpenChatDialogEvent.
 	 * 
@@ -80,7 +94,11 @@ public class LookupUserDialog extends Composite {
 	 */
 	@UiHandler("submitButton")
 	public void handleSubmitButtonClick(ClickEvent clickEvt) {
-		lookupUserModal.hide();
+		String txtBxSel = userNameTxtBox.getText();
+		if (txtBxSel != null && txtBxSel.length() > 0
+				&& currentSelection != null && currentSelection.length() > 0) {
+			lookupUserModal.hide();
+		}
 	}
 
 	/**

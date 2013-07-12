@@ -30,10 +30,10 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
-import com.pronoiahealth.olhie.client.shared.events.LoginErrorEvent;
-import com.pronoiahealth.olhie.client.shared.events.LoginRequestEvent;
-import com.pronoiahealth.olhie.client.shared.events.LoginResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowLoginModalEvent;
+import com.pronoiahealth.olhie.client.shared.events.loginout.LoginErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.loginout.LoginRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.loginout.LoginResponseEvent;
 
 /**
  * Modal Login Dialog<br/>

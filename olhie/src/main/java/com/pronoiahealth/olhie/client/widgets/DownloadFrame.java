@@ -22,7 +22,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.NamedFrame;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
-import com.pronoiahealth.olhie.client.shared.events.ClientErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.DownloadBookAssetEvent;
 import com.pronoiahealth.olhie.client.utils.Utils;
 

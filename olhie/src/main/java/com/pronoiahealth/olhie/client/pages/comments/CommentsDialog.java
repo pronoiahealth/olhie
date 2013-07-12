@@ -33,7 +33,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.shared.annotations.New;
 import com.pronoiahealth.olhie.client.shared.constants.MiscConstants;
-import com.pronoiahealth.olhie.client.shared.events.CommentEvent;
+import com.pronoiahealth.olhie.client.shared.events.comments.CommentEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowCommentsModalEvent;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.shared.vo.Comment;

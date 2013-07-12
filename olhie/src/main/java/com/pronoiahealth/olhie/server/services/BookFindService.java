@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services;
 
+import java.util.Date;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,14 +24,15 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
-import com.pronoiahealth.olhie.client.shared.events.BookFindByIdEvent;
-import com.pronoiahealth.olhie.client.shared.events.BookFindResponseEvent;
-import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.BookFindByIdEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.BookFindResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
+import com.pronoiahealth.olhie.server.services.dbaccess.UserBookRelationshipDAO;
 
 /**
  * BookFindService.java<br/>
@@ -76,7 +78,9 @@ public class BookFindService {
 	}
 
 	/**
-	 * Finds a book and then fires a response with the found book.
+	 * Finds a book and then fires a response with the found book. "Finding" a
+	 * book will bring it into view for the user. This means the
+	 * UserBookRelationship's lastViewedDT must be updated.
 	 * 
 	 * @param bookFindByIdEvent
 	 */
@@ -87,7 +91,7 @@ public class BookFindService {
 		try {
 			String bookId = bookFindByIdEvent.getBookId();
 			String userId = userToken.getUserId();
-			
+
 			// Get the book display
 			BookDisplay bookDisplay = BookDAO.getBookDisplayById(bookId,
 					ooDbTx, userId, holder);
@@ -97,8 +101,13 @@ public class BookFindService {
 					.getActiveBookRealtionshipForUser(userId,
 							userToken.getLoggedIn(), bookId, ooDbTx);
 
+			// Update the last viewed date on the user book relationship
+			UserBookRelationshipDAO.setLastViewedOnUserBookRelationship(userId,
+					bookId, new Date(), ooDbTx);
+
 			// Fire the event
-			bookFindResponseEvent.fire(new BookFindResponseEvent(bookDisplay, rels));
+			bookFindResponseEvent.fire(new BookFindResponseEvent(bookDisplay,
+					rels));
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);

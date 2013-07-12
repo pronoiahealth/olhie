@@ -25,13 +25,14 @@ import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
-import com.pronoiahealth.olhie.client.shared.events.RemoveBookassetdescriptionEvent;
-import com.pronoiahealth.olhie.client.shared.events.RemoveBookassetdescriptionResponseEvent;
-import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.RemoveBookassetdescriptionEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.RemoveBookassetdescriptionResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
+import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
 
 /**
  * RemoveBookassetdescriptionService.java<br/>
@@ -100,6 +101,9 @@ public class RemoveBookassetdescriptionService {
 						"Can't find the book asset description to remove.");
 			}
 
+			// Get bookId for later
+			String bookId = currentBad.getBookId();
+			
 			// Set it to removed and save it
 			currentBad.setRemoved(true);
 			currentBad.setRemovedDate(new Date());
@@ -108,6 +112,9 @@ public class RemoveBookassetdescriptionService {
 			// Now save it
 			currentBad = ooDbTx.save(currentBad);
 			ooDbTx.commit();
+			
+			// Update the last updated attribute of the book
+			BookDAO.setLastUpdatedDT(bookId, new Date(), ooDbTx);
 
 			// Return good result
 			removeBookassetdescriptionResponseEvent

@@ -62,6 +62,9 @@ public class Book {
 
 	@NotNull
 	private Date createdDate;
+	
+	@NotNull
+	private Date lastUpdated;
 
 	@NotNull
 	private boolean active;
@@ -208,5 +211,13 @@ public class Book {
 
 	public void setLogoFileName(String logoFileName) {
 		this.logoFileName = logoFileName;
+	}
+
+	public Date getLastUpdated() {
+		return lastUpdated;
+	}
+
+	public void setLastUpdated(Date lastUpdated) {
+		this.lastUpdated = lastUpdated;
 	}
 }

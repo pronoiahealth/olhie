@@ -72,6 +72,10 @@ body {
 	background-repeat: repeat;
 }
 
+.navbar.header-North-NavBar > .navbar-inner {
+	max-height: 41px;
+}
+
 .header-North-NavContainer {
 	border-bottom-color: black;
 	border-bottom: 1px;

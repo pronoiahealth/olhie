@@ -26,7 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
-import com.pronoiahealth.olhie.client.shared.events.BookSearchResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.BookSearchResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;

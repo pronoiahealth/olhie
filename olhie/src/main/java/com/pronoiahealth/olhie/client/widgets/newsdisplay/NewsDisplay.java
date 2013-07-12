@@ -36,7 +36,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.pronoiahealth.olhie.client.clientfactories.NewsFadeInterval;
-import com.pronoiahealth.olhie.client.shared.events.NewsItemsResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.news.NewsItemsResponseEvent;
 import com.pronoiahealth.olhie.client.shared.vo.NewsItem;
 
 /**

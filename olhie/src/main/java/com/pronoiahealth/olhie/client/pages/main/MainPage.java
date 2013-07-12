@@ -47,16 +47,16 @@ import com.pronoiahealth.olhie.client.pages.newbook.dialogs.NewBookDialog;
 import com.pronoiahealth.olhie.client.pages.register.RegisterDialog;
 import com.pronoiahealth.olhie.client.pages.viewbookasset.ViewBookassetDialog;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
-import com.pronoiahealth.olhie.client.shared.events.ClientErrorEvent;
-import com.pronoiahealth.olhie.client.shared.events.LoggedInPingEvent;
-import com.pronoiahealth.olhie.client.shared.events.LoginResponseEvent;
-import com.pronoiahealth.olhie.client.shared.events.LogoutResponseEvent;
-import com.pronoiahealth.olhie.client.shared.events.NewsItemsRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.BulletinBoardNavigationEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.BulletinBoardNavigationEvent.VisibleStateEnum;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientUserUpdatedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
+import com.pronoiahealth.olhie.client.shared.events.loginout.LoggedInPingEvent;
+import com.pronoiahealth.olhie.client.shared.events.loginout.LoginResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.loginout.LogoutResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.news.NewsItemsRequestEvent;
 import com.pronoiahealth.olhie.client.shared.rest.TestRest;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.shared.vo.User;
@@ -308,9 +308,9 @@ public class MainPage extends AbstractComposite {
 		newsItemsRequestEvent.fire(new NewsItemsRequestEvent());
 
 		// Test to see if we are on the BulletinBoardPage as the initial page
-		if (!navigator.isCurrentPage(NavEnum.BulletinboardPage.name())) {
-			hideEast();
-		}
+		// if (!navigator.isCurrentPage(NavEnum.BulletinboardPage.name())) {
+		//	hideEast();
+		//}
 	}
 
 	/**

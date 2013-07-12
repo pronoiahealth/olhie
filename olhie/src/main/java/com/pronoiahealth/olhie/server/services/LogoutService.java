@@ -21,9 +21,9 @@ import javax.inject.Inject;
 import org.jboss.errai.cdi.server.events.EventConversationContext;
 
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
-import com.pronoiahealth.olhie.client.shared.events.LogoutRequestEvent;
-import com.pronoiahealth.olhie.client.shared.events.LogoutResponseEvent;
-import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.loginout.LogoutRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.loginout.LogoutResponseEvent;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
 

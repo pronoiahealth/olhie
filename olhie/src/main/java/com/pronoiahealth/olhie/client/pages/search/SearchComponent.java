@@ -23,7 +23,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
-import com.pronoiahealth.olhie.client.shared.events.BookSearchEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.BookSearchEvent;
 
 /**
  * SearchComponent.java<br/>

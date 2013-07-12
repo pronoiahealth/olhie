@@ -4,7 +4,7 @@
 	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base' xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'>
 
 	<g:HTMLPanel>
-		<b:ResponsiveNavbar>
+		<b:ResponsiveNavbar styleName="navbar header-North-NavBar">
 			<b:Brand>Open Library of Health Information Exchange</b:Brand>
 			<b:Nav alignment="RIGHT">
 				<b:NavPills>

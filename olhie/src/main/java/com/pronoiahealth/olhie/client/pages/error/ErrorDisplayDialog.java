@@ -29,8 +29,8 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.pronoiahealth.olhie.client.shared.events.ClientErrorEvent;
-import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 
 /**
  * ErrorDisplayDialog.java<br/>

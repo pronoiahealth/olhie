@@ -22,9 +22,9 @@ import javax.inject.Inject;
 
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
-import com.pronoiahealth.olhie.client.shared.events.NewsItemsRequestEvent;
-import com.pronoiahealth.olhie.client.shared.events.NewsItemsResponseEvent;
-import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.news.NewsItemsRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.news.NewsItemsResponseEvent;
 import com.pronoiahealth.olhie.client.shared.vo.NewsItem;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
 

@@ -60,6 +60,9 @@ public class UserBookRelationship {
 	@NotNull
 	private Date effectiveDate;
 	
+	@NotNull
+	private Date lastViewedDate;
+	
 	private Date inactiveDate;
 
 	/**
@@ -135,5 +138,13 @@ public class UserBookRelationship {
 
 	public void setInactiveDate(Date inactiveDate) {
 		this.inactiveDate = inactiveDate;
+	}
+
+	public Date getLastViewedDate() {
+		return lastViewedDate;
+	}
+
+	public void setLastViewedDate(Date lastViewedDate) {
+		this.lastViewedDate = lastViewedDate;
 	}
 }

@@ -18,8 +18,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
-import com.pronoiahealth.olhie.client.shared.events.BookCategoryListRequestEvent;
-import com.pronoiahealth.olhie.client.shared.events.BookCategoryListResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.BookCategoryListRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.BookCategoryListResponseEvent;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 
 /**

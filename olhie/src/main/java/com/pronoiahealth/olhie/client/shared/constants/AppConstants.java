@@ -24,10 +24,10 @@ package com.pronoiahealth.olhie.client.shared.constants;
 // through producer method on server?
 public class AppConstants {
 	private static final String HOSTED = "?gwt.codesvr=127.0.0.1:9997";
-	public static String APP_URL = "http://localhost:8080/olhie/index.html"
+	public static final String APP_URL = "http://localhost:8080/olhie/index.html"
 			+ HOSTED;
-	public static String FRONT_PAGE = "http://localhost:8080/olhie/";
-	public static int SCREEN_TIMEOUT = 3600000;
-	public static int PING_FIRE_INTERVAL = 10000;
-	public static int NEWS_FADE_INTERVAL = 5000;
+	public static final String FRONT_PAGE = "http://localhost:8080/olhie/";
+	public static final int SCREEN_TIMEOUT = 3600000;
+	public static final int PING_FIRE_INTERVAL = 10000;
+	public static final int NEWS_FADE_INTERVAL = 5000;
 }

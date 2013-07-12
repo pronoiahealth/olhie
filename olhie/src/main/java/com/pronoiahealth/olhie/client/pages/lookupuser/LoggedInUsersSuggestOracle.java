@@ -10,7 +10,7 @@ import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 
-import com.pronoiahealth.olhie.client.shared.events.ClientErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.services.ConnectedUserService;
 import com.pronoiahealth.olhie.client.shared.vo.ConnectedUser;
 import com.pronoiahealth.olhie.client.widgets.suggestoracle.BlockingSuggestOracle;

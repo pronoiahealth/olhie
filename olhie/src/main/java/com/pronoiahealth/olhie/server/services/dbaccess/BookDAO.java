@@ -11,12 +11,14 @@
 package com.pronoiahealth.olhie.server.services.dbaccess;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
+import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
@@ -31,6 +33,17 @@ import com.pronoiahealth.olhie.server.services.TempCoverBinderHolder;
 
 public class BookDAO {
 
+	/**
+	 * Returns a BookDisplay. None published Books can only be viewed by the
+	 * books author.
+	 * 
+	 * @param bookId
+	 * @param ooDbTx
+	 * @param userId
+	 * @param holder
+	 * @return
+	 * @throws Exception
+	 */
 	public static BookDisplay getBookDisplayById(String bookId,
 			OObjectDatabaseTx ooDbTx, String userId,
 			TempCoverBinderHolder holder) throws Exception {
@@ -141,6 +154,14 @@ public class BookDAO {
 		return bookDisplay;
 	}
 
+	/**
+	 * Gets a Book entity by the book id.
+	 * 
+	 * @param bookId
+	 * @param ooDbTx
+	 * @return
+	 * @throws Exception
+	 */
 	public static Book getBookById(String bookId, OObjectDatabaseTx ooDbTx)
 			throws Exception {
 		OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
@@ -155,6 +176,14 @@ public class BookDAO {
 		}
 	}
 
+	/**
+	 * Gets the contents of a book.
+	 * 
+	 * @param bookId
+	 * @param ooDbTx
+	 * @return
+	 * @throws Exception
+	 */
 	public static List<Bookassetdescription> getBookassetdescriptionByBookId(
 			String bookId, OObjectDatabaseTx ooDbTx) throws Exception {
 		OSQLSynchQuery<Bookassetdescription> baQuery = new OSQLSynchQuery<Bookassetdescription>(
@@ -166,6 +195,16 @@ public class BookDAO {
 		return baResult;
 	}
 
+	/**
+	 * Gets the relationships a user has with a book.
+	 * 
+	 * @param userId
+	 * @param loggedIn
+	 * @param bookId
+	 * @param ooDbTx
+	 * @return
+	 * @throws Exception
+	 */
 	public static Set<UserBookRelationshipEnum> getActiveBookRealtionshipForUser(
 			String userId, boolean loggedIn, String bookId,
 			OObjectDatabaseTx ooDbTx) throws Exception {
@@ -173,13 +212,8 @@ public class BookDAO {
 
 		// relationship
 		if (userId != null && userId.length() > 0 && loggedIn == true) {
-			OSQLSynchQuery<UserBookRelationship> bQuery = new OSQLSynchQuery<UserBookRelationship>(
-					"select from UserBookRelationship where userId = :uId and bookId = :bId and activeRelationship = true");
-			HashMap<String, String> bparams = new HashMap<String, String>();
-			bparams.put("uId", userId);
-			bparams.put("bId", bookId);
-			List<UserBookRelationship> bResult = ooDbTx.command(bQuery)
-					.execute(bparams);
+			List<UserBookRelationship> bResult = UserBookRelationshipDAO
+					.getActiveUserBookRelationships(userId, bookId, ooDbTx);
 
 			// Set up return
 			if (bResult != null && bResult.size() > 0) {
@@ -198,4 +232,28 @@ public class BookDAO {
 		return rels;
 	}
 
+	/**
+	 * Update the lastUpdated attribute of a book.
+	 * 
+	 * @param bookId
+	 * @param updateDT
+	 * @param ooDbTx
+	 * @throws Exception
+	 */
+	public static void setLastUpdatedDT(String bookId, Date updateDT,
+			OObjectDatabaseTx ooDbTx) throws Exception {
+		if (bookId != null && bookId.length() > 0) {
+			try {
+				// Start transaction
+				ooDbTx.begin(TXTYPE.OPTIMISTIC);
+				Book book = getBookById(bookId, ooDbTx);
+				book.setLastUpdated(updateDT);
+				ooDbTx.save(book);
+				ooDbTx.commit();
+			} catch (Exception e) {
+				throw e;
+			}
+		}
+
+	}
 }

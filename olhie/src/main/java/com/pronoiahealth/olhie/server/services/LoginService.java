@@ -21,9 +21,9 @@ import javax.inject.Inject;
 import org.jboss.errai.cdi.server.events.EventConversationContext;
 
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
-import com.pronoiahealth.olhie.client.shared.events.LoginErrorEvent;
-import com.pronoiahealth.olhie.client.shared.events.LoginRequestEvent;
-import com.pronoiahealth.olhie.client.shared.events.LoginResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.loginout.LoginErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.loginout.LoginRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.loginout.LoginResponseEvent;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
 import com.pronoiahealth.olhie.server.dataaccess.vo.Password;

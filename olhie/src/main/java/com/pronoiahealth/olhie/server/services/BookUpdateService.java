@@ -28,9 +28,9 @@ import com.pronoiahealth.olhie.client.shared.annotations.New;
 import com.pronoiahealth.olhie.client.shared.annotations.Update;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
-import com.pronoiahealth.olhie.client.shared.events.BookUpdateCommittedEvent;
-import com.pronoiahealth.olhie.client.shared.events.BookUpdateEvent;
-import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.BookUpdateCommittedEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.BookUpdateEvent;
+import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
@@ -108,6 +108,7 @@ public class BookUpdateService {
 			} else {
 				book.setActDate(null);
 			}
+			book.setLastUpdated(now);
 			book = ooDbTx.save(book);
 			ooDbTx.commit();
 
@@ -161,6 +162,7 @@ public class BookUpdateService {
 			Date now = new Date();
 			Book book = bookUpdateEvent.getBook();
 			book.setCreatedDate(now);
+			book.setLastUpdated(now);
 			book.setAuthorId(userToken.getUserId());
 			if (book.getActive() == true) {
 				book.setActDate(now);
@@ -180,6 +182,7 @@ public class BookUpdateService {
 			ubRel.setUserRelationship(UserBookRelationshipEnum.CREATOR
 					.toString());
 			ubRel.setEffectiveDate(now);
+			ubRel.setLastViewedDate(now);
 			ooDbTx.save(ubRel);
 			ooDbTx.commit();
 

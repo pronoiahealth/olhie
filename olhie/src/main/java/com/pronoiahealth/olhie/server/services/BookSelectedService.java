@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services;
 
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -21,19 +21,19 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
-import com.pronoiahealth.olhie.client.shared.events.BookListBookSelectedEvent;
-import com.pronoiahealth.olhie.client.shared.events.BookListBookSelectedResponseEvent;
-import com.pronoiahealth.olhie.client.shared.events.ServiceErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
+import com.pronoiahealth.olhie.server.services.dbaccess.UserBookRelationshipDAO;
 
 /**
  * BookSelectedService.java<br/>
@@ -95,26 +95,20 @@ public class BookSelectedService {
 			// relationship
 			boolean authorSelected = false;
 			if (userId != null && userId.length() > 0) {
-				// Get UserBookRelatioship
-				OSQLSynchQuery<UserBookRelationship> bQuery = new OSQLSynchQuery<UserBookRelationship>(
-						"select from UserBookRelationship where bookId = :bId");
-				HashMap<String, String> bparams = new HashMap<String, String>();
-				bparams.put("bId", bookId);
-				List<UserBookRelationship> bResult = ooDbTx.command(bQuery)
-						.execute(bparams);
+				// Get UserBookRelatioships
+				List<UserBookRelationship> bResult = UserBookRelationshipDAO
+						.getUserBookRelationshipByUserIdBookId(bookId, userId,
+								ooDbTx);
 				if (bResult != null && bResult.size() > 0) {
 					for (UserBookRelationship r : bResult) {
-						if (r.getUserId().equals(userId)) {
-							String relationship = r.getUserRelationship();
-							if (relationship
-									.equals(UserBookRelationshipEnum.CREATOR
-											.name())
-									|| relationship
-											.equals(UserBookRelationshipEnum.COAUTHOR
-													.name())) {
-								authorSelected = true;
-								break;
-							}
+						String relationship = r.getUserRelationship();
+						if (relationship
+								.equals(UserBookRelationshipEnum.CREATOR.name())
+								|| relationship
+										.equals(UserBookRelationshipEnum.COAUTHOR
+												.name())) {
+							authorSelected = true;
+							break;
 						}
 					}
 				}
@@ -128,6 +122,10 @@ public class BookSelectedService {
 			Set<UserBookRelationshipEnum> rels = BookDAO
 					.getActiveBookRealtionshipForUser(userId,
 							serverToken.getLoggedIn(), bookId, ooDbTx);
+
+			// Update the last viewed date in the UserBookRelationship
+			UserBookRelationshipDAO.setLastViewedOnUserBookRelationship(userId,
+					bookId, new Date(), ooDbTx);
 
 			// Fire the event
 			bookListBookSelectedResponseEvent

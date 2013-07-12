@@ -24,11 +24,14 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 
 import org.jboss.errai.cdi.server.events.EventConversationContext;
 
-import com.pronoiahealth.olhie.client.shared.events.LoggedInPingEvent;
+import com.pronoiahealth.olhie.client.shared.events.loginout.LoggedInPingEvent;
+import com.pronoiahealth.olhie.client.shared.events.offers.ExpireOffersEvent;
 
 /**
  * SessionTracker.java<br/>
@@ -43,6 +46,9 @@ import com.pronoiahealth.olhie.client.shared.events.LoggedInPingEvent;
  */
 @ApplicationScoped
 public class SessionTracker {
+
+	@Inject
+	private Event<ExpireOffersEvent> expireOffersEvent;
 
 	private final ScheduledExecutorService service = Executors
 			.newScheduledThreadPool(1);
@@ -79,6 +85,7 @@ public class SessionTracker {
 						if (user.isSessionTimedout()) {
 							// Remove user session
 							String sessionId = user.getErraiSessionId();
+							String userId = user.getUserId();
 							String userKey = getActiveUserKey(user);
 							Set<String> userSessions = activeUsers.get(userKey);
 							if (userSessions != null && userSessions.size() > 0) {
@@ -89,6 +96,10 @@ public class SessionTracker {
 							// active users map
 							if (userSessions.size() == 0) {
 								activeUsers.remove(userKey);
+
+								// Close any outstanding offers
+								expireOffersEvent.fire(new ExpireOffersEvent(
+										userId));
 							}
 
 							// Remove the session from the active sessions map
@@ -143,7 +154,8 @@ public class SessionTracker {
 		activeSessions.put(erraiSessionId, user);
 
 		// Add a session the active users session
-		ConcurrentSkipListSet<String> sessions = activeUsers.get(getActiveUserKey(user));
+		ConcurrentSkipListSet<String> sessions = activeUsers
+				.get(getActiveUserKey(user));
 		if (sessions == null) {
 			sessions = new ConcurrentSkipListSet<String>();
 			activeUsers.put(getActiveUserKey(user), sessions);
@@ -159,10 +171,12 @@ public class SessionTracker {
 	public void stopTrackingUserSession(String erraiSessionId) {
 		// Remove from active session
 		UserSessionToken token = activeSessions.get(erraiSessionId);
+		String userId = token.getUserId();
 		activeSessions.remove(erraiSessionId);
 
 		// Remove from user sessions
-		ConcurrentSkipListSet<String> sessions = activeUsers.get(getActiveUserKey(token));
+		ConcurrentSkipListSet<String> sessions = activeUsers
+				.get(getActiveUserKey(token));
 		if (sessions != null) {
 			sessions.remove(erraiSessionId);
 		}
@@ -171,6 +185,9 @@ public class SessionTracker {
 		// sessions
 		if (sessions.size() == 0) {
 			activeUsers.remove(getActiveUserKey(token));
+
+			// Close any outstanding offers
+			expireOffersEvent.fire(new ExpireOffersEvent(userId));
 		}
 	}
 
@@ -199,6 +216,21 @@ public class SessionTracker {
 			if (userKey.startsWith(qry)) {
 				retLst.add(userKey);
 			}
+		}
+		return retLst;
+	}
+
+	/**
+	 * Returns the list of session ids for the user with the given key.
+	 * 
+	 * @param userKey
+	 * @return
+	 */
+	public List<String> getActiveUserSessionId(String userKey) {
+		ConcurrentSkipListSet<String> sessions = activeUsers.get(userKey);
+		List<String> retLst = new ArrayList<String>();
+		if (sessions != null) {
+			retLst.addAll(sessions);
 		}
 		return retLst;
 	}

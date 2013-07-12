@@ -18,7 +18,9 @@ import javax.inject.Inject;
 import com.github.gwtbootstrap.client.ui.Dropdown;
 import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.NavWidget;
+import com.github.gwtbootstrap.client.ui.ResponsiveNavbar;
 import com.github.gwtbootstrap.client.ui.VerticalDivider;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -27,7 +29,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
-import com.pronoiahealth.olhie.client.shared.events.LogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientUserUpdatedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent;
@@ -38,6 +39,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.ShowFindLoggedInUserEv
 import com.pronoiahealth.olhie.client.shared.events.local.ShowLoginModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewBookModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowRegisterModalEvent;
+import com.pronoiahealth.olhie.client.shared.events.loginout.LogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 
 /**
@@ -82,7 +84,7 @@ public class Header extends Composite {
 
 	@UiField
 	public NavLink editProfileMenuLink;
-	
+
 	@UiField
 	public NavLink findLoggedInUserMenuItemLink;
 
@@ -115,9 +117,9 @@ public class Header extends Composite {
 
 	@Inject
 	private Event<ShowEditProfileModalEvent> showEditProfileEvent;
-	
+
 	@Inject
-	private Event<ShowFindLoggedInUserEvent> showFindLoggedInUserEvent; 
+	private Event<ShowFindLoggedInUserEvent> showFindLoggedInUserEvent;
 
 	/**
 	 * Default Constructor
@@ -197,7 +199,7 @@ public class Header extends Composite {
 	public void editProfileMenuLinkClicked(ClickEvent event) {
 		showEditProfileEvent.fire(new ShowEditProfileModalEvent());
 	}
-	
+
 	@UiHandler("findLoggedInUserMenuItemLink")
 	public void findLoggedInUserMenuItemLinkClicked(ClickEvent event) {
 		showFindLoggedInUserEvent.fire(new ShowFindLoggedInUserEvent());
@@ -227,7 +229,7 @@ public class Header extends Composite {
 	protected void observesNewBookPageHidingEvent(
 			@Observes NewBookPageHidingEvent newBookPageHidingEvent) {
 		showAddBook();
-		//showAddBookPersonDivider();
+		// showAddBookPersonDivider();
 	}
 
 	/**

@@ -17,8 +17,26 @@ import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 
+/**
+ * UserDAO.java<br/>
+ * Responsibilities:<br/>
+ * 1.
+ *
+ * @author John DeStefano
+ * @version 1.0
+ * @since Jul 11, 2013
+ *
+ */
 public class UserDAO {
 
+	/**
+	 * Gets the user by there Id
+	 * 
+	 * @param userId
+	 * @param ooDbTx
+	 * @return
+	 * @throws Exception
+	 */
 	public static User getUserByUserId(String userId, OObjectDatabaseTx ooDbTx)
 			throws Exception {
 		OSQLSynchQuery<User> uQuery = new OSQLSynchQuery<User>(
