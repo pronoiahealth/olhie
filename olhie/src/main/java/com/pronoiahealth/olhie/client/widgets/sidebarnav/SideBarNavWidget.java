@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.widgets.sidebarnav;
 
+import com.gargoylesoftware.htmlunit.javascript.host.Event;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
@@ -82,6 +83,7 @@ public class SideBarNavWidget extends ListItemWidget {
 		spanTag.setInnerText(navName);
 		link.getElement().getChild(0).appendChild(spanTag);
 		this.securityRole = securityRole;
+		this.sinkEvents(Event.CLICK);
 	}
 
 	private void createElements() {

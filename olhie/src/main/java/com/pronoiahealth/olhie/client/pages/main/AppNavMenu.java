@@ -25,8 +25,8 @@ import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientUserUpdatedEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.MenuPageVisibleEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.SyncMenuWithViewEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.SyncPageToMenuEvent;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.widgets.sidebarnav.SideBarNavWidget;
 import com.pronoiahealth.olhie.client.widgets.sidebarnav.UnorderedListWidget;
@@ -150,6 +150,8 @@ public class AppNavMenu extends UnorderedListWidget {
 	private void removeAllButAnonymousItems() {
 		for (SideBarNavWidget w : sWidgetLst) {
 			if (w.getSecurityRole() != SecurityRoleEnum.ANONYMOUS) {
+				HandlerRegistration reg = w.getClickHandlerReg();
+				reg.removeHandler();
 				this.removeSideBarNavWidget(w);
 			}
 		}
@@ -187,8 +189,8 @@ public class AppNavMenu extends UnorderedListWidget {
 	 * 
 	 * @param event
 	 */
-	public void observesMenuPageVisibleEvent(
-			@Observes MenuPageVisibleEvent event) {
+	public void observesSyncPageToMenuEvent(
+			@Observes SyncPageToMenuEvent event) {
 		currentPage = event.getPageName();
 
 		SideBarNavWidget cWidget = this

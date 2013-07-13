@@ -15,9 +15,12 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.nav.client.local.Navigation;
+import org.jboss.errai.ui.nav.client.local.NavigationEvent;
 import org.jboss.errai.ui.nav.client.local.TransitionTo;
 
 import com.google.common.collect.Multimap;
@@ -30,6 +33,7 @@ import com.pronoiahealth.olhie.client.pages.newbook.NewBookPage;
 import com.pronoiahealth.olhie.client.pages.search.SearchPage;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
+import com.pronoiahealth.olhie.client.shared.events.local.SyncPageToMenuEvent;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 
 /**
@@ -37,6 +41,7 @@ import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
  * Responsibilities:<br/>
  * 1. Handle "Page" navigations<br/>
  * 2. Shows Login, Comments, and Register dialogs<br/>
+ * 3. Central control of page security<br/>
  * 
  * @author John DeStefano
  * @version 1.0
@@ -71,6 +76,9 @@ public class PageNavigator {
 
 	@Inject
 	private TransitionTo<NewBookPage> showNewBookPage;
+	
+	@Inject
+	private Event<SyncPageToMenuEvent> syncPageToMenuEvent; 
 
 	@Inject
 	public PageNavigator() {
@@ -151,6 +159,34 @@ public class PageNavigator {
 	 */
 	public void showDefaultPage() {
 		nav.goTo(defAppPageName);
+	}
+
+	protected void observesNavigationEvent(
+			@Observes NavigationEvent navigationEvent) {
+		String pageName = navigationEvent.getHistoryToken().getPageName();
+		if (pageName.length() > 0) {
+			// Check Can navigate to the page security
+			boolean canNavTo = false;
+			if (clientUserToken.isLoggedIn()) {
+				canNavTo = pageRolesMap.get(
+						SecurityRoleEnum.valueOf(clientUserToken.getRole())
+								.getName()).contains(pageName);
+			} else {
+				// Only show anonymous pages
+				canNavTo = pageRolesMap.get(
+						SecurityRoleEnum.ANONYMOUS.getName())
+						.contains(pageName);
+			}
+
+			if (canNavTo == false) {
+				showDefaultPage();
+			}
+			
+			// Fire SyncPageToMenuEvent
+			syncPageToMenuEvent.fire(new SyncPageToMenuEvent(pageName));
+			
+			// Tell the main page
+		}
 	}
 
 	/**

@@ -10,24 +10,34 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.shared.events.local;
 
+import org.jboss.errai.bus.client.api.Local;
+import org.jboss.errai.common.client.api.annotations.NonPortable;
+
 /**
- * Fired when a page is being shown<br/>
- *
+ * SyncPageToMenuEvent.java<br/>
+ * Responsibilities:<br/>
+ * 1.
+ * 
+ * <p>
+ * Fired By: <br/>
+ * Observed By: <br/>
+ * </p>
+ * 
  * @author John DeStefano
  * @version 1.0
- * @since May 17, 2013
- *
+ * @since Jul 12, 2013
+ * 
  */
-public class PageVisibleEvent {
-
+@Local
+@NonPortable
+public class SyncPageToMenuEvent {
 	private String pageName;
 
-	/**
-	 * Constructor
-	 *
-	 * @param pageName
-	 */
-	public PageVisibleEvent(String pageName) {
+	public SyncPageToMenuEvent() {
+	}
+
+	public SyncPageToMenuEvent(String pageName) {
+		super();
 		this.pageName = pageName;
 	}
 
@@ -38,5 +48,4 @@ public class PageVisibleEvent {
 	public void setPageName(String pageName) {
 		this.pageName = pageName;
 	}
-
 }

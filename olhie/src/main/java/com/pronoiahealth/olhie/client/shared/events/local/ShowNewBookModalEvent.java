@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.shared.events.local;
 
 import org.jboss.errai.bus.client.api.Local;
+import org.jboss.errai.common.client.api.annotations.NonPortable;
 
 import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
@@ -31,12 +32,13 @@ import com.pronoiahealth.olhie.client.shared.vo.Book;
  *
  */
 @Local
+@NonPortable
 public class ShowNewBookModalEvent {
 	private ModeEnum mode;
 	private Book editBook;
 
-	//public ShowNewBookModalEvent() {
-	//}
+	public ShowNewBookModalEvent() {
+	}
 
 	public ShowNewBookModalEvent(ModeEnum mode, Book editBook) {
 		super();

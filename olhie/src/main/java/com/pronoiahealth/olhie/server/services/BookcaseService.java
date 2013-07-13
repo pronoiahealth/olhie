@@ -91,43 +91,47 @@ public class BookcaseService {
 			// Check user id against session
 			String userId = getMyBookcaseEvent.getUserId();
 			String sessionId = userSessionToken.getUserId();
-			if (!userId.equals(sessionId)) {
-				throw new Exception(
-						"The provided user does not match the logged in user.");
-			}
 
 			// Create return type
 			Map<UserBookRelationshipEnum, List<BookDisplay>> retMap = new HashMap<UserBookRelationshipEnum, List<BookDisplay>>();
 
-			// Must have an active relationship
-			List<UserBookRelationship> bResult = UserBookRelationshipDAO
-					.getUserBooksRelationshipLstByUserId(userId, true, ooDbTx);
-			for (UserBookRelationship rel : bResult) {
-				// Get the relationship
-				String userRel = rel.getUserRelationship();
-				UserBookRelationshipEnum catEnum = UserBookRelationshipEnum
-						.valueOf(userRel);
+			// If this is not the case the return an empty list
+			if (userId != null && userId.equals(sessionId)
+					&& userSessionToken.getLoggedIn() == true) {
 
-				Book currentBook = rel.getTheBook();
+				// Must have an active relationship
+				List<UserBookRelationship> bResult = UserBookRelationshipDAO
+						.getUserBooksRelationshipLstByUserId(userId, true,
+								ooDbTx);
+				for (UserBookRelationship rel : bResult) {
+					// Get the relationship
+					String userRel = rel.getUserRelationship();
+					UserBookRelationshipEnum catEnum = UserBookRelationshipEnum
+							.valueOf(userRel);
 
-				// is the book active or is the user the creator or co-author or
-				if (currentBook.getActive() == true
-						|| catEnum.equals(UserBookRelationshipEnum.COAUTHOR)
-						|| catEnum.equals(UserBookRelationshipEnum.CREATOR)) {
+					Book currentBook = rel.getTheBook();
 
-					// See if its in the list, if not add it
-					List<BookDisplay> books = retMap.get(catEnum);
-					if (books == null) {
-						books = new ArrayList<BookDisplay>();
-						retMap.put(catEnum, books);
+					// is the book active or is the user the creator or
+					// co-author or
+					if (currentBook.getActive() == true
+							|| catEnum
+									.equals(UserBookRelationshipEnum.COAUTHOR)
+							|| catEnum.equals(UserBookRelationshipEnum.CREATOR)) {
+
+						// See if its in the list, if not add it
+						List<BookDisplay> books = retMap.get(catEnum);
+						if (books == null) {
+							books = new ArrayList<BookDisplay>();
+							retMap.put(catEnum, books);
+						}
+
+						BookDisplay retDisplay = BookDAO.getBookDisplayById(
+								currentBook.getId(), ooDbTx,
+								currentBook.getAuthorId(), holder);
+
+						// Add to the list
+						books.add(retDisplay);
 					}
-
-					BookDisplay retDisplay = BookDAO.getBookDisplayById(
-							currentBook.getId(), ooDbTx,
-							currentBook.getAuthorId(), holder);
-
-					// Add to the list
-					books.add(retDisplay);
 				}
 			}
 

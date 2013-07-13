@@ -11,21 +11,16 @@
 package com.pronoiahealth.olhie.client.pages.bulletinboard;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.nav.client.local.DefaultPage;
 import org.jboss.errai.ui.nav.client.local.Page;
-import org.jboss.errai.ui.nav.client.local.PageHiding;
-import org.jboss.errai.ui.nav.client.local.PageShowing;
 
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import com.pronoiahealth.olhie.client.pages.MenuSyncSecureAbstractPage;
-import com.pronoiahealth.olhie.client.shared.events.local.BulletinBoardNavigationEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.BulletinBoardNavigationEvent.VisibleStateEnum;
+import com.pronoiahealth.olhie.client.pages.AbstractPage;
 
 /**
  * BulletinboardPage.java<br/>
@@ -38,16 +33,13 @@ import com.pronoiahealth.olhie.client.shared.events.local.BulletinBoardNavigatio
  * 
  */
 @Page(role = { DefaultPage.class })
-public class BulletinboardPage extends MenuSyncSecureAbstractPage {
+public class BulletinboardPage extends AbstractPage {
 
 	@Inject
 	UiBinder<Widget, BulletinboardPage> binder;
 
 	@UiField
 	public Label test;
-
-	@Inject
-	private Event<BulletinBoardNavigationEvent> bulletinBoardNavigationEvent;
 
 	public BulletinboardPage() {
 	}
@@ -64,23 +56,5 @@ public class BulletinboardPage extends MenuSyncSecureAbstractPage {
 	protected void onLoad() {
 		super.onLoad();
 		setPageBackgroundClass("ph-BulletinBoard-Background");
-	}
-
-	/**
-	 * Tell the MainPage where showing, this will adjust the east panel
-	 */
-	@PageShowing
-	private void onPageShowing() {
-		bulletinBoardNavigationEvent.fire(new BulletinBoardNavigationEvent(
-				VisibleStateEnum.SHOWING));
-	}
-
-	/**
-	 * Tell the MainPage where showing, this will adjust the east panel
-	 */
-	@PageHiding
-	private void onPageHiding() {
-		bulletinBoardNavigationEvent.fire(new BulletinBoardNavigationEvent(
-				VisibleStateEnum.HIDING));
 	}
 }

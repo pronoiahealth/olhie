@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.shared.events.local;
 
 import org.jboss.errai.bus.client.api.Local;
+import org.jboss.errai.common.client.api.annotations.NonPortable;
 
 /**
  * ClientUserUpdatedEvent.java<br/>
@@ -24,6 +25,7 @@ import org.jboss.errai.bus.client.api.Local;
  * 
  */
 @Local
+@NonPortable
 public class ClientUserUpdatedEvent {
 
 	public ClientUserUpdatedEvent() {

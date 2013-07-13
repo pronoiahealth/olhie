@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.shared.events.local;
 
 import org.jboss.errai.bus.client.api.Local;
+import org.jboss.errai.common.client.api.annotations.NonPortable;
 
 import com.pronoiahealth.olhie.client.shared.constants.OfferTypeEnum;
 
@@ -25,6 +26,7 @@ import com.pronoiahealth.olhie.client.shared.constants.OfferTypeEnum;
  *
  */
 @Local
+@NonPortable
 public class OfferReceivedEvent {
 	private String channelId;
 	private OfferTypeEnum offerType;

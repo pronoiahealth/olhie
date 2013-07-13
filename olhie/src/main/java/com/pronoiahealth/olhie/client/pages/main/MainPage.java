@@ -48,10 +48,9 @@ import com.pronoiahealth.olhie.client.pages.register.RegisterDialog;
 import com.pronoiahealth.olhie.client.pages.viewbookasset.ViewBookassetDialog;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.BulletinBoardNavigationEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.BulletinBoardNavigationEvent.VisibleStateEnum;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientUserUpdatedEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.SyncPageToMenuEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LoggedInPingEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LoginResponseEvent;
@@ -309,8 +308,8 @@ public class MainPage extends AbstractComposite {
 
 		// Test to see if we are on the BulletinBoardPage as the initial page
 		// if (!navigator.isCurrentPage(NavEnum.BulletinboardPage.name())) {
-		//	hideEast();
-		//}
+		// hideEast();
+		// }
 	}
 
 	/**
@@ -406,13 +405,13 @@ public class MainPage extends AbstractComposite {
 		startScreenTimer();
 	}
 
-	protected void observesBulletinBoardNavigationEvent(
-			@Observes BulletinBoardNavigationEvent bulletinBoardNavigationEvent) {
-		if (bulletinBoardNavigationEvent.getVisibleState().equals(
-				VisibleStateEnum.HIDING)) {
-			hideEast();
-		} else {
+	protected void observesSyncPageToMenuEvent(
+			@Observes SyncPageToMenuEvent syncPageToMenuEvent) {
+		if (syncPageToMenuEvent.getPageName().equals(
+				NavEnum.BulletinboardPage.toString())) {
 			showEast();
+		} else {
+			hideEast();
 		}
 	}
 
@@ -474,14 +473,14 @@ public class MainPage extends AbstractComposite {
 	private void showEast() {
 		if (newsDisplayPlaceHolder != null) {
 			int currentWidth = newsDisplayPlaceHolder.getOffsetWidth();
-			//if (currentWidth != EAST_PANEL_WIDTH) {
+			if (currentWidth != EAST_PANEL_WIDTH) {
 				dockLayoutPanel.setWidgetSize(newsDisplayPlaceHolder,
 						currentWidth);
 				dockLayoutPanel.forceLayout();
 				dockLayoutPanel.setWidgetSize(newsDisplayPlaceHolder,
 						EAST_PANEL_WIDTH);
 				dockLayoutPanel.animate(1000);
-			//}
+			}
 		}
 	}
 }

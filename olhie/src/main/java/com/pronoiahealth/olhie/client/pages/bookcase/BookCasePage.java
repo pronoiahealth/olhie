@@ -19,12 +19,10 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.nav.client.local.Page;
+import org.jboss.errai.ui.nav.client.local.PageShowing;
 
-import com.github.gwtbootstrap.client.ui.Button;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.query.client.GQuery;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -32,8 +30,8 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.RegisteredRole;
+import com.pronoiahealth.olhie.client.pages.AbstractPage;
 import com.pronoiahealth.olhie.client.pages.AppSelectors;
-import com.pronoiahealth.olhie.client.pages.MenuSyncSecureAbstractPage;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.GetMyBookcaseEvent;
@@ -55,7 +53,7 @@ import com.pronoiahealth.olhie.client.widgets.booklist3d.BookSelectCallBack;
  * 
  */
 @Page(role = { RegisteredRole.class })
-public class BookCasePage extends MenuSyncSecureAbstractPage {
+public class BookCasePage extends AbstractPage {
 
 	@Inject
 	UiBinder<Widget, BookCasePage> binder;
@@ -124,16 +122,10 @@ public class BookCasePage extends MenuSyncSecureAbstractPage {
 	 * 
 	 * @see com.pronoiahealth.olhie.client.pages.MenuSyncSecureAbstractPage#whenPageShownCalled()
 	 */
-	@Override
-	protected boolean whenPageShownCalled() {
-		boolean ret = super.whenPageShownCalled();
-		if (ret == true) {
-			getMyBookcaseEvent.fire(new GetMyBookcaseEvent(clientToken
-					.getUserId()));
-			return true;
-		} else {
-			return false;
-		}
+	@PageShowing
+	protected void pageShowing() {
+		getMyBookcaseEvent
+				.fire(new GetMyBookcaseEvent(clientToken.getUserId()));
 	}
 
 	/**

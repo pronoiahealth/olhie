@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.nav.client.local.PageHiding;
 import org.jboss.errai.ui.nav.client.local.PageShowing;
+import org.jboss.errai.ui.nav.client.local.PageShown;
 import org.jboss.errai.ui.nav.client.local.PageState;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -44,7 +45,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.clientfactories.ViewableContentType;
 import com.pronoiahealth.olhie.client.navigation.AnonymousRole;
-import com.pronoiahealth.olhie.client.pages.PageShownSecureAbstractPage;
+import com.pronoiahealth.olhie.client.pages.AbstractPage;
 import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.constants.BookAssetDataType;
 import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
@@ -98,7 +99,7 @@ import com.pronoiahealth.olhie.client.widgets.rating.StarRatingStarClickedHandle
  * 
  */
 @Page(role = { AnonymousRole.class })
-public class NewBookPage extends PageShownSecureAbstractPage {
+public class NewBookPage extends AbstractPage {
 
 	private static final DateTimeFormat dtf = DateTimeFormat
 			.getFormat("MM/dd/yyyy");
@@ -212,7 +213,7 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 
 	@Inject
 	private Event<RemoveBookFromMyCollectionEvent> removeBookFromMyCollectionEvent;
-	
+
 	@Inject
 	private Event<NewStarRatingEvent> newStarRatingEvent;
 
@@ -263,7 +264,8 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 					@Override
 					public void startClicked(int star) {
 						// Add event to save data here
-						newStarRatingEvent.fire(new NewStarRatingEvent(star, bookId));
+						newStarRatingEvent.fire(new NewStarRatingEvent(star,
+								bookId));
 					}
 				});
 		// Irritating Chrome issue fix
@@ -337,26 +339,12 @@ public class NewBookPage extends PageShownSecureAbstractPage {
 		newBookPageShowingEvent.fire(new NewBookPageShowingEvent());
 	}
 
-	/**
-	 * Called when the page is shown. Sub class annotates the method that this
-	 * method is invoked from with the @PageShown annotation. The size of the
-	 * Heros are adjusted here also. The method asks the server for the role of
-	 * the user in order to set the mode (edit/view) for the page.
-	 * 
-	 * @see com.pronoiahealth.olhie.client.pages.PageShownSecureAbstractPage#whenPageShownCalled()
-	 */
-	@Override
-	protected boolean whenPageShownCalled() {
-		if (super.whenPageShownCalled() == true) {
-			// Put the page components in view only state until the users role
-			// with the book is determined
-			setState(ModeEnum.VIEW);
-			bookListBookSelectedEvent
-					.fire(new BookListBookSelectedEvent(bookId));
-			return true;
-		} else {
-			return false;
-		}
+	@PageShown
+	protected void pageShown() {
+		// Put the page components in view only state until the users role
+		// with the book is determined
+		setState(ModeEnum.VIEW);
+		bookListBookSelectedEvent.fire(new BookListBookSelectedEvent(bookId));
 	}
 
 	/**

@@ -10,15 +10,10 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages;
 
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
-
-import org.jboss.errai.ui.nav.client.local.PageShown;
 
 import com.google.gwt.query.client.GQuery;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
-import com.pronoiahealth.olhie.client.shared.events.local.PageVisibleEvent;
-import com.pronoiahealth.olhie.client.utils.Utils;
 
 /**
  * AbstractPage - Extends AbstractComposite<br/>
@@ -32,9 +27,6 @@ import com.pronoiahealth.olhie.client.utils.Utils;
  * 
  */
 public abstract class AbstractPage extends AbstractComposite {
-
-	@Inject
-	protected Event<PageVisibleEvent> pageVisibleEvent;
 
 	@Inject
 	protected PageNavigator nav;
@@ -70,30 +62,5 @@ public abstract class AbstractPage extends AbstractComposite {
 		GQuery gObj = AppSelectors.INSTANCE.getCenterBackground();
 		gObj.attr("style", "background: white; " + "background-image: url(\""
 				+ backgroundImage + "\"); " + "background-repeat: repeat;");
-	}
-
-	/**
-	 * What to do when the @PageShown method is called. Subclasses can do
-	 * security checks and menu synchronization, for example by implementing
-	 * this method.
-	 */
-	protected abstract boolean whenPageShownCalled();
-
-	/**
-	 * Called by classes that are annotated with the @Page annotation when the
-	 * page is shown. Subclasses can add logic to do security checks and menu
-	 * synchronizations.
-	 */
-	@PageShown
-	private void pageShown() {
-		whenPageShownCalled();
-	}
-
-	/**
-	 * Fire a PageVisibleEvent if required when the @PageShown method is called.
-	 */
-	protected void pageVisibleEvent() {
-		pageVisibleEvent.fire(new PageVisibleEvent(Utils
-				.parseClassSimpleName(this.getClass())));
 	}
 }

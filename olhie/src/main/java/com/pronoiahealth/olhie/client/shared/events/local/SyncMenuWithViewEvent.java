@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.shared.events.local;
 
 import org.jboss.errai.bus.client.api.Local;
+import org.jboss.errai.common.client.api.annotations.NonPortable;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -28,6 +29,7 @@ import com.pronoiahealth.olhie.client.widgets.sidebarnav.SideBarNavWidget;
  * 
  */
 @Local
+@NonPortable
 public class SyncMenuWithViewEvent {
 
 	private SideBarNavWidget widget;

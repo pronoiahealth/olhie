@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.shared.events.local;
 
 import org.jboss.errai.bus.client.api.Local;
+import org.jboss.errai.common.client.api.annotations.NonPortable;
 
 /**
  * Used for event where a page is being shown and the 
@@ -32,6 +33,7 @@ import org.jboss.errai.bus.client.api.Local;
  *
  */
 @Local
+@NonPortable
 public class MenuPageVisibleEvent {
 
 	private String pageName;

@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.shared.events.local;
 
 import org.jboss.errai.bus.client.api.Local;
+import org.jboss.errai.common.client.api.annotations.NonPortable;
 
 /**
  * Generated from the MainPage class. Can be used to make adjustments to
@@ -27,6 +28,7 @@ import org.jboss.errai.bus.client.api.Local;
  * 
  */
 @Local
+@NonPortable
 public class WindowResizeEvent {
 
 	/**

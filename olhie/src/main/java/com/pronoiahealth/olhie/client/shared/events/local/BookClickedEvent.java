@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.shared.events.local;
 
 import org.jboss.errai.bus.client.api.Local;
+import org.jboss.errai.common.client.api.annotations.NonPortable;
 
 /**
  * Fired when a book is clicked. Carries the given id.
@@ -26,6 +27,7 @@ import org.jboss.errai.bus.client.api.Local;
  * 
  */
 @Local
+@NonPortable
 public class BookClickedEvent {
 	String bookId;
 

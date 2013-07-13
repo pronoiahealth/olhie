@@ -22,7 +22,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.AnonymousRole;
-import com.pronoiahealth.olhie.client.pages.MenuSyncSecureAbstractPage;
+import com.pronoiahealth.olhie.client.pages.AbstractPage;
 import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 
 /**
@@ -39,7 +39,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 @SuppressWarnings("cdi-ambiguous-dependency")
 @ApplicationScoped
 @Page(role={AnonymousRole.class})
-public class SearchPage extends MenuSyncSecureAbstractPage {
+public class SearchPage extends AbstractPage {
 
 	@Inject
 	UiBinder<Widget, SearchPage> binder;
