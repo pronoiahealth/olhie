@@ -14,5 +14,5 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
 public enum OfferEnum {
-	CLIENT_OFFER_LISTENER, CHANNEL_ID, OFFER_ROLE, OFFERER_NAME, OFFER_TYPE, OFFER_ACTION;
+	CLIENT_OFFER_LISTENER, CHANNEL_ID, OFFER_ROLE, NAME, OFFER_TYPE, OFFER_ACTION;
 }

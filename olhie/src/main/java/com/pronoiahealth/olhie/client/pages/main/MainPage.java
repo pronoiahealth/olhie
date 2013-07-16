@@ -14,9 +14,12 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
+import org.jboss.errai.ioc.client.container.IOC;
+import org.jboss.errai.ioc.client.container.IOCBeanDef;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
@@ -82,6 +85,9 @@ public class MainPage extends AbstractComposite {
 
 	@Inject
 	UiBinder<Widget, MainPage> binder;
+
+	@Inject
+	private OfferHandler offerHandler;
 
 	@Inject
 	public AppNavMenu sidebarMenu;

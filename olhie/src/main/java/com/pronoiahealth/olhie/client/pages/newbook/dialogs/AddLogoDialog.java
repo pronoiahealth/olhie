@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.pages.newbook.dialogs;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -47,6 +48,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.pages.newbook.NewBookConstants;
+import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowAddLogoModalEvent;
 import com.pronoiahealth.olhie.client.widgets.progressbar.ProgressBar;
 
@@ -84,6 +86,9 @@ public class AddLogoDialog extends Composite {
 	private Image cancelButton;
 
 	private String currentBookId;
+
+	@Inject
+	private Event<BookListBookSelectedEvent> bookListBookSelectedEvent;
 
 	/**
 	 * Constructor
@@ -169,6 +174,9 @@ public class AddLogoDialog extends Composite {
 							UploadSuccessEvent uploadSuccessEvent) {
 						cancelButton.removeFromParent();
 						addLogoModal.hide();
+						bookListBookSelectedEvent
+						.fire(new BookListBookSelectedEvent(
+								currentBookId));
 						clearErrors();
 						clearFields();
 						return true;
@@ -290,8 +298,8 @@ public class AddLogoDialog extends Composite {
 	}
 
 	/**
-	 * Will display the dialog when the class receives the
-	 * ShowAddLogoModalEvent event.
+	 * Will display the dialog when the class receives the ShowAddLogoModalEvent
+	 * event.
 	 * 
 	 * @param showAddLogoModalEvent
 	 */

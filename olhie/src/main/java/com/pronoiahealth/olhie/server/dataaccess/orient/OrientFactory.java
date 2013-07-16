@@ -101,6 +101,7 @@ public class OrientFactory {
 			OObjectDatabaseTx db = OObjectDatabasePool.global().acquire(
 					dbConStr, dbUserName, dbPwd);
 			for (String str : dbValObjs) {
+				str = str.trim();
 				Class clazz = Thread.currentThread().getContextClassLoader()
 						.loadClass(str);
 				db.getEntityManager().registerEntityClass(clazz);

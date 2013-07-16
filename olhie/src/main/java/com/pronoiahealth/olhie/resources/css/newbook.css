@@ -202,3 +202,10 @@
 	padding-right: 5px;
 	padding-top: 4px;
 }
+
+.ph-NewBook-Hero {
+	padding-top: 20px !important;
+	padding-bottom: 20px !important;
+	padding-left: 20px !important;
+	padding-right: 20px !important;
+}

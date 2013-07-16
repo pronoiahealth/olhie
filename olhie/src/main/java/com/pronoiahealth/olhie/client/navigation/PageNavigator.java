@@ -104,15 +104,11 @@ public class PageNavigator {
 	}
 
 	/**
-	 * Creates the pageRolesMap. This will be used in the @PageShown annotated
-	 * method to test that the page should be made visible for this user with a
-	 * specific role.
+	 * Performs various transitions to pages.
+	 * 
+	 * @param navToPage
+	 * @param state
 	 */
-	@PostConstruct
-	// TODO: Need to find a better way to do this
-	private void initPageRolesMap() {
-	}
-
 	public void performTransition(String navToPage, Multimap state) {
 		NavEnum page = NavEnum.valueOf(navToPage);
 		switch (page) {

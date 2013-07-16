@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.shared.constants;
 
+import org.jboss.errai.common.client.api.annotations.Portable;
+
 /**
  * SecurityRoleEnum.java<br/>
  * Responsibilities:<br/>
@@ -20,6 +22,7 @@ package com.pronoiahealth.olhie.client.shared.constants;
  * @since May 26, 2013
  *
  */
+@Portable
 public enum SecurityRoleEnum {
 	ADMIN("ADMIN", 4), AUTHOR("AUTHOR", 3), REGISTERED("REGISTERED", 2), ANONYMOUS("ANONYMOUS", 1);
 	

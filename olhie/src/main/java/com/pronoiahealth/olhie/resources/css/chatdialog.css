@@ -1,0 +1,33 @@
+.ph-ChatDialog-Txt {
+	border-width: 1px;
+	border-color: black;
+	border-style: solid;
+	margin: 5px;
+	padding: 3px;
+	height: 380px;
+	min-height: 380px;
+	overflow-y: auto;
+}
+
+.ph-ChatDialog-TxtBox {
+	margin: 5px;
+	width: 175px;
+}
+
+.ph-ChatDialog-BoxShade-Me {
+	opacity: 0.8;
+	background-color: yellow;
+	width: 100%;
+	margin-bottom: 5px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+.ph-ChatDialog-BoxShade-Peer {
+	opacity: 0.8;
+	background-color: green;
+	width: 100%;
+	margin-bottom: 5px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}

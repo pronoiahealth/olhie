@@ -205,16 +205,20 @@ public class SessionTracker {
 	}
 
 	/**
-	 * Returns userKey from activeUsers if it starts with the qry string
+	 * Returns userKey from activeUsers if it starts with the qry string. All
+	 * searches are done in lower case.
 	 * 
 	 * @param qry
 	 * @return
 	 */
 	public List<String> getMatchingActiveUsers(String qry) {
 		List<String> retLst = new ArrayList<String>();
-		for (String userKey : activeUsers.keySet()) {
-			if (userKey.startsWith(qry)) {
-				retLst.add(userKey);
+		if (qry != null && qry.length() > 0) {
+			String srchStr = qry.toLowerCase();
+			for (String userKey : activeUsers.keySet()) {
+				if (userKey.toLowerCase().startsWith(srchStr)) {
+					retLst.add(userKey);
+				}
 			}
 		}
 		return retLst;

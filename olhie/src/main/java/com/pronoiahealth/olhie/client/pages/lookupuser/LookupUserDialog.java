@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.pages.lookupuser;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -26,7 +27,9 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.Widget;
+import com.pronoiahealth.olhie.client.shared.constants.OfferTypeEnum;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowFindLoggedInUserEvent;
+import com.pronoiahealth.olhie.client.shared.events.offers.CreateOfferEvent;
 import com.pronoiahealth.olhie.client.shared.vo.ConnectedUser;
 import com.pronoiahealth.olhie.client.widgets.suggestoracle.GenericMultiWordSuggestion;
 
@@ -50,7 +53,10 @@ public class LookupUserDialog extends Composite {
 	@Inject
 	private LoggedInUsersSuggestOracle sOracle;
 
-	private String currentSelection;
+	@Inject
+	private Event<CreateOfferEvent> createOfferEvent;
+
+	private ConnectedUser currentSelection;
 
 	public LookupUserDialog() {
 	}
@@ -70,8 +76,7 @@ public class LookupUserDialog extends Composite {
 			@Override
 			public String onSelection(Suggestion selectedSuggestion) {
 				GenericMultiWordSuggestion<ConnectedUser> sug = (GenericMultiWordSuggestion<ConnectedUser>) selectedSuggestion;
-				ConnectedUser cu = (ConnectedUser) sug.getPojo();
-				currentSelection = cu.getUserId();
+				currentSelection = (ConnectedUser) sug.getPojo();
 				return sug.getDisplayString();
 			}
 		});
@@ -96,8 +101,12 @@ public class LookupUserDialog extends Composite {
 	public void handleSubmitButtonClick(ClickEvent clickEvt) {
 		String txtBxSel = userNameTxtBox.getText();
 		if (txtBxSel != null && txtBxSel.length() > 0
-				&& currentSelection != null && currentSelection.length() > 0) {
+				&& currentSelection != null
+				&& currentSelection.getUserName().length() > 0) {
 			lookupUserModal.hide();
+			createOfferEvent.fire(new CreateOfferEvent(currentSelection
+					.getUserId(), currentSelection.getUserName(),
+					OfferTypeEnum.CHAT));
 		}
 	}
 

@@ -30,6 +30,7 @@ import com.github.gwtbootstrap.client.ui.ButtonGroup;
 import com.github.gwtbootstrap.client.ui.FluidRow;
 import com.github.gwtbootstrap.client.ui.Heading;
 import com.github.gwtbootstrap.client.ui.Hero;
+import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.NavPills;
 import com.github.gwtbootstrap.client.ui.PageHeader;
@@ -73,6 +74,7 @@ import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
+import com.pronoiahealth.olhie.client.utils.Utils;
 import com.pronoiahealth.olhie.client.widgets.DownloadBookassetButton;
 import com.pronoiahealth.olhie.client.widgets.FlexTableExt;
 import com.pronoiahealth.olhie.client.widgets.RemoveBookassetdescriptionButton;
@@ -159,6 +161,12 @@ public class NewBookPage extends AbstractPage {
 
 	@UiField
 	public Hero introductionHero;
+	
+	@UiField
+	public HTMLPanel logoImageDisplayDiv;
+	
+	@UiField
+	public Image logoImageDisplay;
 
 	@UiField
 	public ScrollPanel introductionPanel;
@@ -257,6 +265,14 @@ public class NewBookPage extends AbstractPage {
 		tocHeader.setStyleName("ph-NewBook-Introduction-Hero-TOC-Header", true);
 		tocAddElementContainer.setStyleName("ph-NewBook-TOC-Element-Container",
 				true);
+		
+		// Intro Hero
+		introductionHero.setStyleName("ph-NewBook-Hero", true);
+		tocHero.setStyleName("ph-NewBook-Hero", true);
+		
+		// logo display
+		logoImageDisplay.getElement().setAttribute("style",
+				"max-height: 50px; max-width: 100px;");
 
 		// Create star rating
 		starRating = new StarRating(5, false,
@@ -421,6 +437,10 @@ public class NewBookPage extends AbstractPage {
 			}
 		}
 	}
+	
+	private void setLogoDisplay() {
+		
+	}
 
 	/**
 	 * Sets the addToCollectionBookButton visibility
@@ -572,6 +592,16 @@ public class NewBookPage extends AbstractPage {
 		createdPublishedCategoryLbl.setHTML(NewBookMessages.INSTANCE
 				.setCreatedPublishedCategoryLbl(createdDateFt, publDateFt,
 						book.getCategory()));
+		
+		// Set the logo if there
+		if (bookDisplay.isBookLogo() == true) {
+			logoImageDisplay.setUrl(Utils
+					.buildRestServiceForLogoDownloadLink(bookId));
+		} else {
+			logoImageDisplay.setUrl("");
+		}
+		
+		// Introduction text
 		introductionTxt.setHTML(NewBookMessages.INSTANCE
 				.setIntroductionText(book.getIntroduction()));
 
@@ -660,14 +690,14 @@ public class NewBookPage extends AbstractPage {
 			int wndHeight = this.getPageContainerHeight();
 
 			// 145 at top + footer at bottom
-			if (wndHeight <= 322) {
-				wndHeight = 322;
+			if (wndHeight <= 242) {
+				wndHeight = 242;
 			}
-			int newHeroHeight = wndHeight - 322;
+			int newHeroHeight = wndHeight - 242;
 
 			// Introduction
 			introductionHero.setHeight("" + newHeroHeight + "px");
-			introductionPanel.setHeight("" + (newHeroHeight - 40) + "px");
+			introductionPanel.setHeight("" + (newHeroHeight - 90) + "px");
 
 			// TOC
 			tocHero.setHeight("" + newHeroHeight + "px");

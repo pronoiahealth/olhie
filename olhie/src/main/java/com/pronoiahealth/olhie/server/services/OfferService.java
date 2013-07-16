@@ -173,8 +173,8 @@ public class OfferService {
 	 * 
 	 * @param expireOffersEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
-			SecurityRoleEnum.REGISTERED })
+	// @SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+	// SecurityRoleEnum.REGISTERED })
 	protected void observesExpireOffersEvent(
 			@Observes ExpireOffersEvent expireOffersEvent) {
 		try {
@@ -184,7 +184,7 @@ public class OfferService {
 			String userId = expireOffersEvent.getUserId();
 
 			// Expire by userId
-			OfferDAO.expireOfferByUserId(userId, ooDbTx);
+			OfferDAO.expireOfferByUserId(userId, ooDbTx, false);
 
 			// Commit Changes
 			ooDbTx.commit();
@@ -215,28 +215,33 @@ public class OfferService {
 			String peerId = createOfferEvent.getPeerId();
 			OfferTypeEnum offerType = createOfferEvent.getOfferType();
 			String peerName = createOfferEvent.getPeerName();
+			String userId = userToken.getUserId();
 
 			// Create offer in DB and get back a channelId
 			// Handle transaction in this class
-			String channelId = OfferDAO.createNewOffer(userToken.getUserId(),
-					peerId, offerType, ooDbTx, false);
+			String channelId = OfferDAO.createNewOffer(userId, peerId,
+					offerType, ooDbTx, false);
 
 			// Get the offerer sessionid
 			String sessionId = EventConversationContext.get().getSessionId();
 			try {
 				// Tell the peer about it
 				forwardOffer(channelId, this.createNameFromCurrentUser(),
-						peerName, offerType.toString(),
-						OfferRoleEnum.PEER.toString(), OfferActionEnum.OFFER);
+						ceateSessionTrackerLookupKey(peerName, peerId),
+						offerType, OfferRoleEnum.PEER,
+						OfferActionEnum.OFFER);
 
 				// Tell the offerer about it
 				sendMessage(channelId, peerName, sessionId,
-						offerType.toString(), OfferRoleEnum.OFFERER.toString(),
+						offerType, OfferRoleEnum.OFFERER,
 						OfferActionEnum.CREATED);
 			} catch (PeerNotLoggedInException pe) {
+				// Clean up the database
+				OfferDAO.expireOffer(channelId, ooDbTx, false);
+
 				// Tell the offerer that the peer has disconnected
 				sendMessage(channelId, peerName, sessionId,
-						offerType.toString(), OfferRoleEnum.OFFERER.toString(),
+						offerType, OfferRoleEnum.OFFERER,
 						OfferActionEnum.PEER_DISCONNECTED);
 			}
 
@@ -275,8 +280,8 @@ public class OfferService {
 					// user who sent the message name, the lookup key for the
 					// offerer, the role of peer and the action accepted.
 					forwardOffer(channelId, createNameFromCurrentUser(),
-							offererKey, OfferTypeEnum.CHAT.toString(),
-							OfferRoleEnum.PEER.toString(),
+							offererKey, OfferTypeEnum.CHAT,
+							OfferRoleEnum.PEER,
 							OfferActionEnum.ACCEPTED);
 
 					// Fire the AcceptOfferResponseEvent back to the peer
@@ -332,7 +337,7 @@ public class OfferService {
 	 * @throws Exception
 	 */
 	private void forwardOffer(String channelId, String name, String key,
-			String offerType, String role, OfferActionEnum action)
+			OfferTypeEnum offerType, OfferRoleEnum role, OfferActionEnum action)
 			throws Exception {
 		List<String> sessions = sessionTracker.getActiveUserSessionId(key);
 		if (sessions != null && sessions.size() > 0) {
@@ -354,12 +359,12 @@ public class OfferService {
 	 * @param role
 	 */
 	private void sendMessage(String channelId, String name, String sessionId,
-			String offerType, String role, OfferActionEnum action) {
+			OfferTypeEnum offerType, OfferRoleEnum role, OfferActionEnum action) {
 		MessageBuilder.createMessage()
 				.toSubject(OfferEnum.CLIENT_OFFER_LISTENER.toString())
 				.signalling().with(MessageParts.SessionID, sessionId)
 				.with(OfferEnum.CHANNEL_ID, channelId)
-				.with(OfferEnum.OFFERER_NAME, name)
+				.with(OfferEnum.NAME, name)
 				.with(OfferEnum.OFFER_TYPE, offerType)
 				.with(OfferEnum.OFFER_ROLE, role)
 				.with(OfferEnum.OFFER_ACTION, action)
@@ -382,6 +387,19 @@ public class OfferService {
 		return sb.append(userToken.getUserFirstName()).append(" ")
 				.append(userToken.getUserLastName()).append(" (")
 				.append(userToken.getUserId()).append(")").toString();
+	}
+
+	/**
+	 * Create a lookup key
+	 * 
+	 * @param peerName
+	 * @param peerId
+	 * @return
+	 */
+	private String ceateSessionTrackerLookupKey(String peerName, String peerId) {
+		StringBuilder sb = new StringBuilder();
+		return sb.append(peerName).append(" (").append(peerId).append(")")
+				.toString();
 	}
 
 }

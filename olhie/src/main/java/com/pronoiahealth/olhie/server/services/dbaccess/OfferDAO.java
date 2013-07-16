@@ -145,12 +145,21 @@ public class OfferDAO {
 	 * @param ooDbTx
 	 * @throws Exception
 	 */
-	public static void expireOffer(String channelId, OObjectDatabaseTx ooDbTx)
-			throws Exception {
+	public static void expireOffer(String channelId, OObjectDatabaseTx ooDbTx,
+			boolean handleTransaction) throws Exception {
+
+		if (handleTransaction == true) {
+			ooDbTx.begin(TXTYPE.OPTIMISTIC);
+		}
+
 		Offer offer = getOfferByChannelId(channelId, ooDbTx);
 		if (offer.getRejectedDT() == null && offer.getClosedDT() == null) {
 			offer.setExpiredDT(new Date());
 			ooDbTx.save(offer);
+		}
+
+		if (handleTransaction == true) {
+			ooDbTx.commit();
 		}
 	}
 
@@ -163,13 +172,23 @@ public class OfferDAO {
 	 * @throws Exception
 	 */
 	public static void expireOfferByUserId(String userId,
-			OObjectDatabaseTx ooDbTx) throws Exception {
+			OObjectDatabaseTx ooDbTx, boolean handleTransaction)
+			throws Exception {
+
+		if (handleTransaction == true) {
+			ooDbTx.begin(TXTYPE.OPTIMISTIC);
+		}
+
 		List<Offer> offers = getUnacceptedOffersById(userId, ooDbTx);
 		if (offers != null && offers.size() > 0) {
 			for (Offer offer : offers) {
 				offer.setExpiredDT(new Date());
 				ooDbTx.save(offer);
 			}
+		}
+
+		if (handleTransaction == true) {
+			ooDbTx.commit();
 		}
 	}
 

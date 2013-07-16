@@ -8,11 +8,8 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.shared.constants;
+package com.pronoiahealth.olhie.client.pages.main;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
-
-@Portable
-public enum OfferActionEnum {
-	ACCEPTED, REJECTED, OFFER, PEER_DISCONNECTED, CREATED;
+public interface ChatDialogCloseHandler {
+	public void closeDialog(String channelId);
 }
