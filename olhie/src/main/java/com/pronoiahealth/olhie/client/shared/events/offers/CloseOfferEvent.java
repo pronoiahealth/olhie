@@ -31,13 +31,15 @@ import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 @Conversational
 public class CloseOfferEvent {
 	private String channelId;
+	private String partnerName;
 
 	public CloseOfferEvent() {
 	}
 
-	public CloseOfferEvent(String channelId) {
+	public CloseOfferEvent(String channelId, String partnerName) {
 		super();
 		this.channelId = channelId;
+		this.partnerName = partnerName;
 	}
 
 	public String getChannelId() {
@@ -46,5 +48,13 @@ public class CloseOfferEvent {
 
 	public void setChannelId(String channelId) {
 		this.channelId = channelId;
+	}
+
+	public String getPartnerName() {
+		return partnerName;
+	}
+
+	public void setPartnerName(String partnerName) {
+		this.partnerName = partnerName;
 	}
 }

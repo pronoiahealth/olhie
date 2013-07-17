@@ -33,12 +33,18 @@ import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.pronoiahealth.olhie.client.shared.constants.OfferActionEnum;
+import com.pronoiahealth.olhie.client.shared.constants.OfferEnum;
 import com.pronoiahealth.olhie.client.shared.events.offers.SendMessageEvent;
 
 /**
  * ChatDialog.java<br/>
  * Responsibilities:<br/>
- * 1.
+ * 1. When ChatDialog is created a new listener is created on the message bus
+ * tuned to the channelId. No communication can started until the channel has
+ * been accepted by the peer. When the other side disconnects or closes the
+ * dialog the bus listener is removed. At that time this chat is essentially
+ * non-functional.
  * 
  * @author John DeStefano
  * @version 1.0
@@ -48,7 +54,7 @@ import com.pronoiahealth.olhie.client.shared.events.offers.SendMessageEvent;
 @Dependent
 public class ChatDialog extends DialogBox {
 	public enum BoxShade {
-		ME, PEER
+		ME, PEER, SERVER
 	};
 
 	@Inject
@@ -60,7 +66,7 @@ public class ChatDialog extends DialogBox {
 	private TextBox txtBox;
 	private HTMLPanel chatTxtPanel;
 	private MessageBus bus = ErraiBus.get();
-	private boolean listenerConnected;
+	private boolean connectionAccepted;
 
 	@Inject
 	public ChatDialog() {
@@ -79,8 +85,6 @@ public class ChatDialog extends DialogBox {
 		vp.setHeight("450px");
 		vp.setWidth("250px");
 		vp.setSpacing(10);
-		// vp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		// vp.add(new Label("Test"));
 
 		// Build Chat widget
 		chatTxtPanel = new HTMLPanel((String) null);
@@ -108,6 +112,7 @@ public class ChatDialog extends DialogBox {
 		});
 		txtBox.setStyleName("ph-ChatDialog-TxtBox", true);
 		txtBox.setWidth("175px");
+		txtBox.setEnabled(false);
 
 		// Button
 		Button endBtn = new Button("End");
@@ -117,7 +122,7 @@ public class ChatDialog extends DialogBox {
 		endBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				dialogCloseHandler.closeDialog(dialogChannelId);
+				dialogCloseHandler.closeDialog(dialogChannelId, caption);
 			}
 		});
 		hp.add(endBtn);
@@ -139,6 +144,69 @@ public class ChatDialog extends DialogBox {
 		this.dialogCloseHandler = closeHandler;
 		this.caption = caption;
 		this.setText(caption);
+
+		// Create a listener
+		bus.subscribe(this.dialogChannelId, new MessageCallback() {
+			@Override
+			public void callback(Message message) {
+				OfferActionEnum action = message.get(OfferActionEnum.class,
+						OfferEnum.OFFER_ACTION);
+				String msg = message.get(String.class, OfferEnum.MSG);
+
+				switch (action) {
+				case CREATED:
+					// Doesn't handle
+					break;
+				case ACCEPTED:
+					handleAccept();
+					break;
+				case OFFER:
+					// Doesn't handle
+					break;
+				case PEER_DISCONNECTED:
+					handleDisconnect(msg);
+					break;
+				case REJECTED:
+					handleReject(msg);
+					break;
+				case NEW_MSG:
+					handleNewMsg(msg);
+					break;
+				default:
+					break;
+				}
+			}
+		});
+	}
+
+	/**
+	 * This can be called from a return message
+	 */
+	public void handleAccept() {
+		if (isConnectionAccepted() == false) {
+			connectionAccepted = true;
+			txtBox.setEnabled(true);
+			addPeerPanel("Request has been accepted.");
+		}
+	}
+
+	public void handleDisconnect(String msg) {
+		destroyListener();
+		txtBox.setEnabled(false);
+		addServerPanel(msg);
+	}
+
+	private void handleReject(String msg) {
+		destroyListener();
+		addPeerPanel("Can't chat right now.");
+		txtBox.setEnabled(false);
+		addServerPanel(msg);
+	}
+
+	private void handleNewMsg(String msg) {
+		if (isConnectionAccepted() == true) {
+			addPeerPanel(msg);
+		}
 	}
 
 	private void addMePanel(String txt) {
@@ -151,32 +219,31 @@ public class ChatDialog extends DialogBox {
 		chatTxtPanel.add(panel);
 	}
 
+	private void addServerPanel(String txt) {
+		HTMLPanel panel = this.createPanel(txt, BoxShade.SERVER);
+		chatTxtPanel.add(panel);
+	}
+
 	private HTMLPanel createPanel(String txt, BoxShade shade) {
 		HTMLPanel panel = new HTMLPanel(txt);
 		if (shade == BoxShade.ME) {
 			panel.setStyleName("ph-ChatDialog-BoxShade-Me", true);
-		} else {
+		} else if (shade == BoxShade.PEER) {
 			panel.setStyleName("ph-ChatDialog-BoxShade-Peer", true);
+		} else {
+			panel.setStyleName("ph-ChatDialog-BoxShade-Server", true);
 		}
 		return panel;
 	}
 
-	private void createListener() {
-		bus.subscribe(this.dialogChannelId, new MessageCallback() {
-			@Override
-			public void callback(Message message) {
-
-			}
-		});
-	}
-
 	public void destroyListener() {
-		if (isListenerConnected() == true) {
+		if (isConnectionAccepted() == true) {
 			bus.unsubscribeAll(this.dialogChannelId);
 		}
+		connectionAccepted = false;
 	}
 
-	public boolean isListenerConnected() {
-		return this.listenerConnected;
+	public boolean isConnectionAccepted() {
+		return this.connectionAccepted;
 	}
 }

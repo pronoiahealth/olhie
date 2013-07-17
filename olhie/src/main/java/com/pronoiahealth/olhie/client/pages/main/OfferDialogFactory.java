@@ -18,17 +18,26 @@ import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 
 @ApplicationScoped
-public class ChatDialogFactory {
+public class OfferDialogFactory {
 
-	public ChatDialogFactory() {
+	public OfferDialogFactory() {
 	}
 
 	public ChatDialog createChatDialog(String caption, String channelId,
 			ChatDialogCloseHandler closeHandler) {
-		IOCBeanDef<ChatDialog> cdd = IOC.getBeanManager()
-				.lookupBean(ChatDialog.class, (Annotation[]) null);
+		IOCBeanDef<ChatDialog> cdd = IOC.getBeanManager().lookupBean(
+				ChatDialog.class, (Annotation[]) null);
 		ChatDialog cd = cdd.newInstance();
 		cd.initDialog(caption, channelId, closeHandler);
+		return cd;
+	}
+
+	public AcceptOfferDialog createAcceptOfferDialog(String channelId,
+			String offererName, AcceptOfferDialogCloseHandler closeHandler) {
+		IOCBeanDef<AcceptOfferDialog> cdd = IOC.getBeanManager().lookupBean(
+				AcceptOfferDialog.class, (Annotation[]) null);
+		AcceptOfferDialog cd = cdd.newInstance();
+		cd.init(channelId, offererName, closeHandler);
 		return cd;
 	}
 

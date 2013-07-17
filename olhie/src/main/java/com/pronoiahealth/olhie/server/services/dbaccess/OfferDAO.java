@@ -44,9 +44,10 @@ public class OfferDAO {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String createNewOffer(String offererId, String peerId,
-			OfferTypeEnum offerType, OObjectDatabaseTx ooDbTx,
-			boolean handleTransaction) throws Exception {
+	public static String createNewOffer(String offererId,
+			String offererSessionId, String peerId, OfferTypeEnum offerType,
+			OObjectDatabaseTx ooDbTx, boolean handleTransaction)
+			throws Exception {
 
 		if (handleTransaction == true) {
 			ooDbTx.begin(TXTYPE.OPTIMISTIC);
@@ -60,6 +61,7 @@ public class OfferDAO {
 		offer.setChannelId(channelId);
 		offer.setPeerId(peerId);
 		offer.setOffererId(offererId);
+		offer.setOffererSessionId(offererSessionId);
 		offer.setCreatedDT(new Date());
 		offer.setOfferType(offerType.toString());
 		ooDbTx.save(offer);
@@ -80,13 +82,27 @@ public class OfferDAO {
 	 * @param ooDbTx
 	 * @throws Exception
 	 */
-	public static void acceptOffer(String channelId, OObjectDatabaseTx ooDbTx)
+	public static Offer acceptOffer(String channelId, String peerSessionId,
+			OObjectDatabaseTx ooDbTx, boolean handleTransaction)
 			throws Exception {
+
 		Offer offer = getOfferByChannelId(channelId, ooDbTx);
 		if (offer.getAcceptedDT() == null && offer.getRejectedDT() == null
 				&& offer.getClosedDT() == null && offer.getExpiredDT() == null) {
+			if (handleTransaction == true) {
+				ooDbTx.begin(TXTYPE.OPTIMISTIC);
+			}
+
 			offer.setAcceptedDT(new Date());
-			ooDbTx.save(offer);
+			offer.setPeerSessionId(peerSessionId);
+			offer = ooDbTx.save(offer);
+
+			if (handleTransaction == true) {
+				ooDbTx.commit();
+				offer = ooDbTx.detach(offer, true);
+			}
+
+			return offer;
 		} else {
 			throw new Exception(
 					"Can't accept and offer that has already been accepted, closed, expired, or rejected.");
@@ -101,14 +117,25 @@ public class OfferDAO {
 	 * @param ooDbTx
 	 * @throws Exception
 	 */
-	public static void rejectOffer(String channelId, OObjectDatabaseTx ooDbTx)
-			throws Exception {
+	public static Offer rejectOffer(String channelId, OObjectDatabaseTx ooDbTx,
+			boolean handleTransaction) throws Exception {
 		Offer offer = getOfferByChannelId(channelId, ooDbTx);
 		if (offer.getRejectedDT() == null && offer.getClosedDT() == null
 				&& offer.getAcceptedDT() == null
 				&& offer.getExpiredDT() == null) {
+			if (handleTransaction == true) {
+				ooDbTx.begin(TXTYPE.OPTIMISTIC);
+			}
+
 			offer.setRejectedDT(new Date());
-			ooDbTx.save(offer);
+			offer = ooDbTx.save(offer);
+
+			if (handleTransaction == true) {
+				ooDbTx.commit();
+				offer = ooDbTx.detach(offer, true);
+			}
+
+			return offer;
 		} else {
 			throw new Exception(
 					"Can't reject an offer that has already been rejected, is closed, or has been accepted.");
@@ -117,24 +144,33 @@ public class OfferDAO {
 
 	/**
 	 * Close a previously accepted offer. Can't close an offer that has already
-	 * been closed, rejected, expired, or has not been accepted.
+	 * been rejected, or expired.
 	 * 
 	 * @param channelId
 	 * @param ooDbTx
 	 * @throws Exception
 	 */
-	public static void closeOffer(String channelId, OObjectDatabaseTx ooDbTx)
-			throws Exception {
+	public static Offer closeOffer(String channelId, OObjectDatabaseTx ooDbTx,
+			boolean handleTransaction) throws Exception {
 		Offer offer = getOfferByChannelId(channelId, ooDbTx);
-		if (offer.getRejectedDT() == null && offer.getClosedDT() == null
-				&& offer.getAcceptedDT() != null
-				&& offer.getExpiredDT() == null) {
-			offer.setClosedDT(new Date());
-			ooDbTx.save(offer);
-		} else {
-			throw new Exception(
-					"Can't close an offer that has already been closed, rejected, expired or has not been accepted.");
+		if (offer.getClosedDT() == null) {
+			if (offer.getRejectedDT() == null && offer.getExpiredDT() == null) {
+
+				if (handleTransaction == true) {
+					ooDbTx.begin(TXTYPE.OPTIMISTIC);
+				}
+
+				offer.setClosedDT(new Date());
+				offer = ooDbTx.save(offer);
+
+				if (handleTransaction == true) {
+					ooDbTx.commit();
+					offer = ooDbTx.detach(offer, true);
+				}
+			}
 		}
+		
+		return offer;
 	}
 
 	/**
@@ -145,7 +181,7 @@ public class OfferDAO {
 	 * @param ooDbTx
 	 * @throws Exception
 	 */
-	public static void expireOffer(String channelId, OObjectDatabaseTx ooDbTx,
+	public static Offer expireOffer(String channelId, OObjectDatabaseTx ooDbTx,
 			boolean handleTransaction) throws Exception {
 
 		if (handleTransaction == true) {
@@ -155,12 +191,15 @@ public class OfferDAO {
 		Offer offer = getOfferByChannelId(channelId, ooDbTx);
 		if (offer.getRejectedDT() == null && offer.getClosedDT() == null) {
 			offer.setExpiredDT(new Date());
-			ooDbTx.save(offer);
+			offer = ooDbTx.save(offer);
 		}
 
 		if (handleTransaction == true) {
 			ooDbTx.commit();
+			offer = ooDbTx.detach(offer, true);
 		}
+
+		return offer;
 	}
 
 	/**
@@ -208,7 +247,8 @@ public class OfferDAO {
 		rparams.put("cId", channelId);
 		List<Offer> rResult = ooDbTx.command(rQuery).execute(rparams);
 		if (rResult != null && rResult.size() > 0) {
-			return rResult.get(0);
+			Offer offer = rResult.get(0);
+			return ooDbTx.detach(offer, true);
 		} else {
 			throw new Exception("Offer with given channel id (" + channelId
 					+ ") does not exist.");

@@ -74,9 +74,10 @@ public class CommentService {
 			ooDbTx.save(comment);
 			ooDbTx.commit();
 		} catch (Exception e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+			String errMsg = e.getMessage();
+			log.log(Level.SEVERE, errMsg, e);
 			ooDbTx.rollback();
-			serviceErrorEvent.fire(new ServiceErrorEvent(e.getMessage()));
+			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
 		}
 	}
 }

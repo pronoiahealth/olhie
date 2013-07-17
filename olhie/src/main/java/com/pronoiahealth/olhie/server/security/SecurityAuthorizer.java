@@ -13,7 +13,7 @@ package com.pronoiahealth.olhie.server.security;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.interceptor.InvocationContext;
 
@@ -32,7 +32,8 @@ import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
  * @since May 26, 2013
  * 
  */
-@ApplicationScoped
+//@ApplicationScoped
+@RequestScoped
 public class SecurityAuthorizer {
 
 	/**
@@ -40,6 +41,7 @@ public class SecurityAuthorizer {
 	 * 
 	 */
 	public SecurityAuthorizer() {
+		super();
 	}
 
 	@Secures
@@ -47,6 +49,7 @@ public class SecurityAuthorizer {
 	public boolean doSecuredCheck(InvocationContext ctx, BeanManager manager,
 			@AppServerUser ServerUserToken userToken) throws Exception {
 
+		String id = userToken.getUserId();
 		SecureAccess secure = getCustomSecurityBindingAnnotation(ctx
 				.getMethod());
 		SecurityRoleEnum[] allowedRoles = secure.value();

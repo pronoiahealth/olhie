@@ -239,4 +239,14 @@ public class SessionTracker {
 		return retLst;
 	}
 
+	/**
+	 * Is the sessionId still in the map;
+	 * 
+	 * @param sessionId
+	 * @return
+	 */
+	public boolean isSessionActive(String sessionId) {
+		return activeSessions.containsKey(sessionId);
+	}
+
 }

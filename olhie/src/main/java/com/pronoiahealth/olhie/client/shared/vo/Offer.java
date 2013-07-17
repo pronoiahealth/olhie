@@ -41,10 +41,17 @@ public class Offer {
 	@NotNull
 	@Size(min = 6, max = 20, message = "Must be between 6 and 20 characters")
 	private String offererId;
+	
+	@NotNull
+	@Size(min = 1, max = 255, message = "Must be between 1 and 255 characters")
+	private String offererSessionId;
 
 	@NotNull
 	@Size(min = 6, max = 20, message = "Must be between 6 and 20 characters")
 	private String peerId;
+	
+	@Size(min = 0, max = 255, message = "Must be between 0 and 255 characters")
+	private String peerSessionId;
 
 	@NotNull
 	private Date createdDT;
@@ -148,6 +155,22 @@ public class Offer {
 		this.expiredDT = expiredDT;
 	}
 
+	public String getOffererSessionId() {
+		return offererSessionId;
+	}
+
+	public void setOffererSessionId(String offererSessionId) {
+		this.offererSessionId = offererSessionId;
+	}
+
+	public String getPeerSessionId() {
+		return peerSessionId;
+	}
+
+	public void setPeerSessionId(String peerSessionId) {
+		this.peerSessionId = peerSessionId;
+	}
+
 	/**
 	 * Offers can be accepted if they are not rejected, closed, expired, or not
 	 * already accepted
@@ -157,6 +180,20 @@ public class Offer {
 	public boolean canAccept() {
 		if (this.rejectedDT == null && this.closedDT == null
 				&& this.expiredDT == null && this.acceptedDT == null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Can this offer be used to chat
+	 * 
+	 * @return
+	 */
+	public boolean canChat() {
+		if (this.rejectedDT == null && this.closedDT == null
+				&& this.expiredDT == null && this.acceptedDT != null && this.peerSessionId != null) {
 			return true;
 		} else {
 			return false;

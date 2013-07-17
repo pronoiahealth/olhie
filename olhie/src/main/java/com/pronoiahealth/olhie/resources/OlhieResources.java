@@ -100,6 +100,14 @@ public interface OlhieResources extends ClientBundle {
 	@Source("com/pronoiahealth/olhie/resources/css/chatdialog.css")
 	@CssResource.NotStrict
 	CssResource chatdialogcss();
+	
+	@Source("com/pronoiahealth/olhie/resources/css/bookcomment.css")
+	@CssResource.NotStrict
+	CssResource bookcommentcss();
+	
+	@Source("com/pronoiahealth/olhie/resources/css/bookcommentdisplay.css")
+	@CssResource.NotStrict
+	CssResource bookcommentdisplaycss();
 
 	//@Source("com/pronoiahealth/olhie/resources/js/jquery.bookshelfslider.js")
 	//TextResource jquerybookshelfsliderjs();

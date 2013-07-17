@@ -32,13 +32,15 @@ import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 @Conversational
 public class AcceptOfferResponseEvent {
 	String channelId;
+	String name;
 
 	public AcceptOfferResponseEvent() {
 	}
 
-	public AcceptOfferResponseEvent(String channelId) {
+	public AcceptOfferResponseEvent(String channelId, String name) {
 		super();
 		this.channelId = channelId;
+		this.name = name;
 	}
 
 	public String getChannelId() {
@@ -48,4 +50,13 @@ public class AcceptOfferResponseEvent {
 	public void setChannelId(String channelId) {
 		this.channelId = channelId;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 }

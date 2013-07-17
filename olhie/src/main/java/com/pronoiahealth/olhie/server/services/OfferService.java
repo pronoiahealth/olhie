@@ -110,13 +110,12 @@ import com.pronoiahealth.olhie.server.services.dbaccess.OfferDAO;
  * </p>
  * 
  * <p>
- * Once the offer has been accepted a user may end the conversation on the
- * client by closing the chatdialog. This will cause the CloseOfferEvent to be
- * fired. This event is observed for in this class. The observing method will
- * update the database. It will then check to see if the paired chatter (the one
- * that did not close the window) is still online. If so the message bus will be
- * used to send a message to the channel indicating that the other party has
- * closed the channel.
+ * At any time the user may end the conversation on the client by closing the
+ * chatdialog. This will cause the CloseOfferEvent to be fired. This event is
+ * observed for in this class. The observing method will update the database. It
+ * will then check to see if the paired chatter (the one that did not close the
+ * window) is still online. If so the message bus will be used to send a message
+ * to the channel indicating that the other party has closed the channel.
  * </p>
  * 
  * <p>
@@ -216,32 +215,31 @@ public class OfferService {
 			OfferTypeEnum offerType = createOfferEvent.getOfferType();
 			String peerName = createOfferEvent.getPeerName();
 			String userId = userToken.getUserId();
+			String sessionId = EventConversationContext.get().getSessionId();
 
 			// Create offer in DB and get back a channelId
 			// Handle transaction in this class
-			String channelId = OfferDAO.createNewOffer(userId, peerId,
-					offerType, ooDbTx, false);
+			String channelId = OfferDAO.createNewOffer(userId, sessionId,
+					peerId, offerType, ooDbTx, false);
 
-			// Get the offerer sessionid
-			String sessionId = EventConversationContext.get().getSessionId();
 			try {
 				// Tell the peer about it
-				forwardOffer(channelId, this.createNameFromCurrentUser(),
+				forwardOffer(channelId, createNameFromCurrentUser(),
 						ceateSessionTrackerLookupKey(peerName, peerId),
-						offerType, OfferRoleEnum.PEER,
-						OfferActionEnum.OFFER);
+						offerType, OfferRoleEnum.PEER, OfferActionEnum.OFFER);
 
 				// Tell the offerer about it
-				sendMessage(channelId, peerName, sessionId,
-						offerType, OfferRoleEnum.OFFERER,
-						OfferActionEnum.CREATED);
+				sendMessage(OfferEnum.CLIENT_OFFER_LISTENER.toString(),
+						channelId, peerName, sessionId, offerType,
+						OfferRoleEnum.OFFERER, OfferActionEnum.CREATED);
 			} catch (PeerNotLoggedInException pe) {
 				// Clean up the database
 				OfferDAO.expireOffer(channelId, ooDbTx, false);
 
 				// Tell the offerer that the peer has disconnected
-				sendMessage(channelId, peerName, sessionId,
-						offerType, OfferRoleEnum.OFFERER,
+				sendMessage(OfferEnum.CLIENT_OFFER_LISTENER.toString(),
+						channelId, peerName, sessionId, offerType,
+						OfferRoleEnum.OFFERER,
 						OfferActionEnum.PEER_DISCONNECTED);
 			}
 
@@ -268,6 +266,7 @@ public class OfferService {
 		try {
 			String channelId = acceptOfferEvent.getChannelId();
 			String offererKey = acceptOfferEvent.getOffererKey();
+			String sessionId = EventConversationContext.get().getSessionId();
 
 			try {
 				// Get the offer
@@ -279,21 +278,23 @@ public class OfferService {
 					// For this situation the method takes the channelId, the
 					// user who sent the message name, the lookup key for the
 					// offerer, the role of peer and the action accepted.
-					forwardOffer(channelId, createNameFromCurrentUser(),
-							offererKey, OfferTypeEnum.CHAT,
-							OfferRoleEnum.PEER,
-							OfferActionEnum.ACCEPTED);
+					sendMessage(channelId, channelId, "",
+							offer.getOffererSessionId(), OfferTypeEnum.CHAT,
+							OfferRoleEnum.PEER, OfferActionEnum.ACCEPTED);
 
 					// Fire the AcceptOfferResponseEvent back to the peer
 					acceptOfferResponseEvent.fire(new AcceptOfferResponseEvent(
-							channelId));
+							channelId, offererKey));
 
 					// Update the database
-					OfferDAO.acceptOffer(channelId, ooDbTx);
+					OfferDAO.acceptOffer(channelId, sessionId, ooDbTx, true);
 				}
 			} catch (Exception e) {
 				acceptOfferResponseErrorEvent
 						.fire(new AcceptOfferResponseErrorEvent(channelId));
+
+				// Need to clean up db if required
+				throw e;
 			}
 		} catch (Exception e) {
 			String msg = e.getMessage();
@@ -306,6 +307,18 @@ public class OfferService {
 	protected void observesRejectOfferEvent(
 			@Observes RejectOfferEvent rejectOfferEvent) {
 		try {
+			// Args
+			String channelId = rejectOfferEvent.getChannelId();
+			String sessionId = EventConversationContext.get().getSessionId();
+
+			// Find the offer and mark it rejected
+			Offer offer = OfferDAO.rejectOffer(channelId, ooDbTx, true);
+
+			// Tell the Offerer about it
+			// The offerer will be tuned into the already set up channelId
+			sendMessage(channelId, channelId, "", offer.getOffererSessionId(),
+					OfferTypeEnum.CHAT, OfferRoleEnum.PEER,
+					OfferActionEnum.REJECTED);
 
 		} catch (Exception e) {
 			String msg = e.getMessage();
@@ -315,9 +328,52 @@ public class OfferService {
 		}
 	}
 
+	/**
+	 * Always tell the OfferHandler about the close event
+	 * 
+	 * @param closeOfferEvent
+	 */
 	protected void observesCloseOfferEvent(
 			@Observes CloseOfferEvent closeOfferEvent) {
 		try {
+			String sendingUserSessionId = EventConversationContext.get()
+					.getSessionId();
+			String channelId = closeOfferEvent.getChannelId();
+			String partnerName = closeOfferEvent.getPartnerName();
+			Offer offer = OfferDAO.closeOffer(channelId, ooDbTx, true);
+
+			// If the offerer is closing the conversation tell the peer
+			// else tell the offerer
+			String peerSessionId = offer.getPeerSessionId();
+			if (peerSessionId != null && peerSessionId.length() > 0) {
+				String sendToSessionId = null;
+				if (offer.getOffererSessionId().equals(sendingUserSessionId)) {
+					sendToSessionId = sessionTracker
+							.isSessionActive(peerSessionId) == true ? peerSessionId
+							: null;
+				} else {
+					// Tell offerer
+					sendToSessionId = sessionTracker.isSessionActive(offer
+							.getOffererSessionId()) == true ? offer
+							.getOffererSessionId() : null;
+				}
+
+				if (sendToSessionId != null) {
+					sendMessage(OfferEnum.CLIENT_OFFER_LISTENER.toString(),
+							channelId, "", sendToSessionId, OfferTypeEnum.CHAT,
+							OfferRoleEnum.PEER, OfferActionEnum.CLOSE);
+				}
+			} else {
+				// Appears the peer has not yet connected.
+				// Try to send a message out to any connected user sessions with
+				// the peer id.
+				String userKey = ceateSessionTrackerLookupKey(partnerName,
+						offer.getPeerId());
+				forwardOffer(channelId, partnerName, userKey,
+						OfferTypeEnum.CHAT, OfferRoleEnum.PEER,
+						OfferActionEnum.CLOSE);
+
+			}
 
 		} catch (Exception e) {
 			String msg = e.getMessage();
@@ -342,7 +398,8 @@ public class OfferService {
 		List<String> sessions = sessionTracker.getActiveUserSessionId(key);
 		if (sessions != null && sessions.size() > 0) {
 			for (String sessionId : sessions) {
-				sendMessage(channelId, name, sessionId, offerType, role, action);
+				sendMessage(OfferEnum.CLIENT_OFFER_LISTENER.toString(),
+						channelId, name, sessionId, offerType, role, action);
 			}
 		} else {
 			throw new PeerNotLoggedInException();
@@ -358,11 +415,11 @@ public class OfferService {
 	 * @param offerType
 	 * @param role
 	 */
-	private void sendMessage(String channelId, String name, String sessionId,
-			OfferTypeEnum offerType, OfferRoleEnum role, OfferActionEnum action) {
-		MessageBuilder.createMessage()
-				.toSubject(OfferEnum.CLIENT_OFFER_LISTENER.toString())
-				.signalling().with(MessageParts.SessionID, sessionId)
+	private void sendMessage(String toSubject, String channelId, String name,
+			String sessionId, OfferTypeEnum offerType, OfferRoleEnum role,
+			OfferActionEnum action) {
+		MessageBuilder.createMessage().toSubject(toSubject).signalling()
+				.with(MessageParts.SessionID, sessionId)
 				.with(OfferEnum.CHANNEL_ID, channelId)
 				.with(OfferEnum.NAME, name)
 				.with(OfferEnum.OFFER_TYPE, offerType)

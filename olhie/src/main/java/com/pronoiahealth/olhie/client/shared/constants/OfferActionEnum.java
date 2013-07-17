@@ -14,5 +14,5 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
 public enum OfferActionEnum {
-	ACCEPTED, REJECTED, OFFER, PEER_DISCONNECTED, CREATED;
+	ACCEPTED, REJECTED, OFFER, PEER_DISCONNECTED, CREATED, NEW_MSG, CLOSE;
 }

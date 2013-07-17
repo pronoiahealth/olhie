@@ -1,0 +1,11 @@
+.ph-BookComment-Modal {
+	/* background-image: url("Olhie/images/error_paper.png"); */
+	/* background-repeat: repeat; */
+}
+
+.ph-BookComment-Modal-Size {
+	width: 900px; /* SET THE WIDTH OF THE MODAL */
+	margin-left: -450px;
+	/* CHANGE MARGINS TO ACCOMODATE THE NEW WIDTH (original = margin: -250px 0 0 -280px;) */
+	max-height: 800px;
+}

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -28,7 +29,10 @@ import com.pronoiahealth.olhie.client.shared.constants.OfferRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.OfferTypeEnum;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientUserUpdatedEvent;
+import com.pronoiahealth.olhie.client.shared.events.offers.AcceptOfferEvent;
 import com.pronoiahealth.olhie.client.shared.events.offers.AcceptOfferResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.offers.CloseOfferEvent;
+import com.pronoiahealth.olhie.client.shared.events.offers.RejectOfferEvent;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 
 /**
@@ -50,13 +54,26 @@ public class OfferHandler {
 	private ClientUserToken userToken;
 
 	@Inject
-	private ChatDialogFactory cdFactory;
+	private OfferDialogFactory cdFactory;
 
 	private Map<String, ChatDialog> chats;
+
+	private Map<String, AcceptOfferDialog> acceptOffers;
 
 	private boolean listenerActive;
 
 	private ChatDialogCloseHandler closeHandler;
+
+	private AcceptOfferDialogCloseHandler acceptCloseHandler;
+
+	@Inject
+	private Event<RejectOfferEvent> rejectOfferEvent;
+
+	@Inject
+	private Event<AcceptOfferEvent> acceptOfferEvent;
+
+	@Inject
+	private Event<CloseOfferEvent> closeOfferEvent;
 
 	public OfferHandler() {
 	}
@@ -64,6 +81,7 @@ public class OfferHandler {
 	@PostConstruct
 	private void postConstruct() {
 		chats = new HashMap<String, ChatDialog>();
+		acceptOffers = new HashMap<String, AcceptOfferDialog>();
 	}
 
 	/**
@@ -98,10 +116,14 @@ public class OfferHandler {
 								// handled by event observation
 								break;
 							case OFFER:
+								handleOfferAction(channelId, name, role);
 								break;
 							case PEER_DISCONNECTED:
 								break;
 							case REJECTED:
+								break;
+							case CLOSE:
+								handleClose(channelId);
 								break;
 							default:
 								break;
@@ -114,20 +136,68 @@ public class OfferHandler {
 			// Close handler
 			closeHandler = new ChatDialogCloseHandler() {
 				@Override
-				public void closeDialog(String channelId) {
-					ChatDialog chatDlg = chats.get(channelId);
-					removeChatDlg(chatDlg);
+				public void closeDialog(String channelId, String partnerName) {
+					closeOfferEvent.fire(new CloseOfferEvent(channelId, partnerName));
+					removeChatDlg(channelId);
+				}
+			};
+
+			// Accept close handler
+			acceptCloseHandler = new AcceptOfferDialogCloseHandler() {
+				@Override
+				public void close(String channelId, String offererName,
+						boolean accepted) {
+					// Send response to server
+					if (accepted == true) {
+						acceptOfferEvent.fire(new AcceptOfferEvent(channelId,
+								offererName));
+					} else {
+						rejectOfferEvent.fire(new RejectOfferEvent(channelId));
+					}
+
+					// Clean up dialog
+					removeAcceptDlg(channelId);
 				}
 			};
 		}
 	}
 
+	/**
+	 * Messages received on this subject for a peer disconnect come from the
+	 * OfferService observesCloseOfferEvent method. This happens when an offerer
+	 * close the dialog before the peer has had a chance to response. The
+	 * AcceptOfferDialog will be destroyed.
+	 * 
+	 * @param channelId
+	 */
+	private void handleClose(String channelId) {
+		boolean acceptDlgShowing = removeAcceptDlg(channelId);
+
+		// No accept dialog, look for a ChatDialog
+		if (acceptDlgShowing == false) {
+			ChatDialog cd = chats.get(channelId);
+			cd.handleDisconnect("Other side has disconnected.");
+		}
+	}
+
 	private void handleCreatedAction(String channelId, String name,
 			OfferRoleEnum role) {
-		ChatDialog cd = cdFactory.createChatDialog(name, channelId,
-				closeHandler);
-		chats.put(channelId, cd);
-		cd.center();
+		if (role == OfferRoleEnum.OFFERER) {
+			ChatDialog cd = cdFactory.createChatDialog(name, channelId,
+					closeHandler);
+			chats.put(channelId, cd);
+			cd.center();
+		}
+	}
+
+	private void handleOfferAction(String channelId, String name,
+			OfferRoleEnum role) {
+		if (role == OfferRoleEnum.PEER) {
+			AcceptOfferDialog ad = cdFactory.createAcceptOfferDialog(channelId,
+					name, acceptCloseHandler);
+			acceptOffers.put(channelId, ad);
+			ad.center();
+		}
 	}
 
 	/**
@@ -144,23 +214,77 @@ public class OfferHandler {
 
 		// Destroy dialog boxes
 		if (chats.size() > 0) {
-			for (ChatDialog chat : chats.values()) {
-				removeChatDlg(chat);
+			for (String key : chats.keySet()) {
+				removeChatDlg(key);
 			}
+			chats.clear();
+		}
+
+		if (acceptOffers.size() > 0) {
+			for (String key : acceptOffers.keySet()) {
+				removeAcceptDlg(key);
+			}
+			acceptOffers.clear();
 		}
 	}
 
-	private void removeChatDlg(ChatDialog chat) {
+	/**
+	 * Destroy the chat dialog. Return true if found in chats
+	 * 
+	 * @param channelId
+	 * @return
+	 */
+	private boolean removeChatDlg(String channelId) {
+		boolean ret = false;
+		ChatDialog chat = chats.get(channelId);
 		if (chat != null) {
+			ret = true;
 			chat.hide();
 			chat.removeFromParent();
 			chat = null;
 		}
+		chats.remove(channelId);
+
+		return ret;
 	}
 
+	/**
+	 * Destroy the accept dialog. Return true if in acceptOffers map.
+	 * 
+	 * @param channelId
+	 * @return
+	 */
+	private boolean removeAcceptDlg(String channelId) {
+		boolean ret = false;
+		AcceptOfferDialog dlg = acceptOffers.get(channelId);
+		if (dlg != null) {
+			ret = true;
+			dlg.hide();
+			dlg.removeFromParent();
+			dlg = null;
+		}
+		acceptOffers.remove(channelId);
+
+		return ret;
+	}
+
+	/**
+	 * The client sends an AcceptOfferEvent to the server (OfferService). The
+	 * server will inform the Offerer that the offer has been accepted. It will
+	 * then fire the AcceptOfferResponseEvent. This will create the chat dialog.
+	 * It will also set the dialog to the offer accepted state. After that the
+	 * dialig will be added to the chats map and shown, centered on the screen.
+	 * 
+	 * @param acceptOfferResponseEvent
+	 */
 	protected void observesAcceptOfferResponseEvent(
 			@Observes AcceptOfferResponseEvent acceptOfferResponseEvent) {
-
+		String channelId = acceptOfferResponseEvent.getChannelId();
+		String name = acceptOfferResponseEvent.getName();
+		ChatDialog cd = cdFactory.createChatDialog(name, channelId,
+				closeHandler);
+		cd.handleAccept();
+		chats.put(channelId, cd);
+		cd.center();
 	}
-
 }

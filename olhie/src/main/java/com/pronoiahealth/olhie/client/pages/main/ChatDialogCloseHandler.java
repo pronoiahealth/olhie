@@ -11,5 +11,5 @@
 package com.pronoiahealth.olhie.client.pages.main;
 
 public interface ChatDialogCloseHandler {
-	public void closeDialog(String channelId);
+	public void closeDialog(String channelId, String partnerName);
 }
