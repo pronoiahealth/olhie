@@ -92,13 +92,17 @@ public class BooklogoDownloadServiceImpl implements BooklogoDownloadService {
 						"Could not find Book for id %s", bookId));
 			}
 
-			// If this service gets called its assumed the logo exists
+			byte[] fileBytes = null;
 			String fileContents = book.getBase64LogoData();
-			String fileName = book.getLogoFileName();
-			String mimetype = context.getMimeType(fileName);
-			byte[] fileBytes = Base64.decode(fileContents);
-			response.setContentType((mimetype != null) ? mimetype
-					: "application/octet-stream");
+			if (fileContents != null && fileContents.length() > 0) {
+				String fileName = book.getLogoFileName();
+				String mimetype = context.getMimeType(fileName);
+				fileBytes = Base64.decode(fileContents);
+				response.setContentType((mimetype != null) ? mimetype
+						: "application/octet-stream");
+			} else {
+				fileBytes = new byte[0];
+			}
 
 			// No image caching
 			response.setHeader("Pragma", "No-cache");
@@ -121,5 +125,4 @@ public class BooklogoDownloadServiceImpl implements BooklogoDownloadService {
 			}
 		}
 	}
-
 }

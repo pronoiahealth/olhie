@@ -437,10 +437,6 @@ public class NewBookPage extends AbstractPage {
 			}
 		}
 	}
-	
-	private void setLogoDisplay() {
-		
-	}
 
 	/**
 	 * Sets the addToCollectionBookButton visibility

@@ -85,6 +85,21 @@ public class LoginService {
 			@Observes LoginRequestEvent loginRequestEvent) {
 		User user = null;
 		try {
+			// Session check
+			// User info is kept at the session level. We are using cookie
+			// tracking for session token exchange. A user may try to log in
+			// from the same browser more that once. As the cookie is at the
+			// browser level this will mess up state tracking in the
+			// application. Therefore, we only allow one log in per session (in
+			// this case browser).
+			boolean alreadyLoggedIn = userToken.getLoggedIn();
+			if (alreadyLoggedIn == true) {
+				loginErrorEvent.fire(new LoginErrorEvent(
+						"Already logged in on this browser as "
+								+ userToken.getUserId() + "."));
+				return;
+			}
+
 			// User check
 			// 1. Look up user
 			try {
@@ -93,6 +108,7 @@ public class LoginService {
 			} catch (Exception e) {
 				loginErrorEvent
 						.fire(new LoginErrorEvent("User ID is not valid"));
+				return;
 			}
 
 			// Password check
@@ -105,6 +121,7 @@ public class LoginService {
 				loginErrorEvent
 						.fire(new LoginErrorEvent(
 								"Could not find a password for you. Please contact the administrator."));
+				return;
 			}
 
 			if (SecurityUtils.validatePassword(loginRequestEvent.getPwd(),

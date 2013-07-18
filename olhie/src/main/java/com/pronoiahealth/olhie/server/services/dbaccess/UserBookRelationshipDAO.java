@@ -218,7 +218,7 @@ public class UserBookRelationshipDAO {
 			String bookId, String userId, OObjectDatabaseTx ooDbTx) {
 		// Get UserBookRelatioship
 		OSQLSynchQuery<UserBookRelationship> bQuery = new OSQLSynchQuery<UserBookRelationship>(
-				"select from UserBookRelationship where bookId = :bId and userId = :uId");
+				"select from UserBookRelationship where userId = :uId and bookId = :bId");
 		HashMap<String, String> bparams = new HashMap<String, String>();
 		bparams.put("bId", bookId);
 		bparams.put("uId", userId);

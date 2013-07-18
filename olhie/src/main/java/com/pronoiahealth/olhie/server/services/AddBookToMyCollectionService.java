@@ -124,6 +124,7 @@ public class AddBookToMyCollectionService {
 				// Add the relationship if the user doesn't currently have an
 				// active appropriate relationship
 				if (addRelationship == true) {
+					Date now = new Date();
 					UserBookRelationship rel = new UserBookRelationship();
 					rel.setActiveRelationship(true);
 					rel.setUserRelationship(UserBookRelationshipEnum.MYCOLLECTION
@@ -132,7 +133,8 @@ public class AddBookToMyCollectionService {
 					rel.setTheBook(book);
 					rel.setTheUser(user);
 					rel.setUserId(userId);
-					rel.setEffectiveDate(new Date());
+					rel.setEffectiveDate(now);
+					rel.setLastViewedDate(now);
 					ooDbTx.save(rel);
 				}
 			}
