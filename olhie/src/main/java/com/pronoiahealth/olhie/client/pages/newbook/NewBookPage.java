@@ -161,10 +161,10 @@ public class NewBookPage extends AbstractPage {
 
 	@UiField
 	public Hero introductionHero;
-	
+
 	@UiField
 	public HTMLPanel logoImageDisplayDiv;
-	
+
 	@UiField
 	public Image logoImageDisplay;
 
@@ -265,11 +265,11 @@ public class NewBookPage extends AbstractPage {
 		tocHeader.setStyleName("ph-NewBook-Introduction-Hero-TOC-Header", true);
 		tocAddElementContainer.setStyleName("ph-NewBook-TOC-Element-Container",
 				true);
-		
+
 		// Intro Hero
 		introductionHero.setStyleName("ph-NewBook-Hero", true);
 		tocHero.setStyleName("ph-NewBook-Hero", true);
-		
+
 		// logo display
 		logoImageDisplay.getElement().setAttribute("style",
 				"max-height: 50px; max-width: 100px;");
@@ -373,15 +373,18 @@ public class NewBookPage extends AbstractPage {
 	 */
 	protected void observesBookListBookSelectedResponseEvent(
 			@Observes BookListBookSelectedResponseEvent bookListBookSelectedResponseEvent) {
-		if (bookListBookSelectedResponseEvent.isAuthorSelected() == true) {
+		boolean isAuthorSelected = bookListBookSelectedResponseEvent
+				.isAuthorSelected();
+		if (isAuthorSelected == true) {
 			setState(ModeEnum.EDIT);
 		} else {
 			setState(ModeEnum.VIEW);
 		}
 
 		// Set the book in display
-		setCurrentBookInDisplay(bookListBookSelectedResponseEvent
-				.getBookDisplay());
+		setCurrentBookInDisplay(
+				bookListBookSelectedResponseEvent.getBookDisplay(),
+				isAuthorSelected);
 
 		// Set the buttons for adding to my collection
 		if (editMode == ModeEnum.VIEW && clientUser.isLoggedIn()) {
@@ -554,7 +557,8 @@ public class NewBookPage extends AbstractPage {
 	protected void observesBookFindResponse(
 			@Observes BookFindResponseEvent bookFindResponseEvent) {
 		// Set page background to the book cover background
-		setCurrentBookInDisplay(bookFindResponseEvent.getBookDisplay());
+		setCurrentBookInDisplay(bookFindResponseEvent.getBookDisplay(),
+				bookFindResponseEvent.isAuthorSelected());
 
 		// Set the buttons for adding to my collection
 		if (editMode == ModeEnum.VIEW && clientUser.isLoggedIn()) {
@@ -572,7 +576,8 @@ public class NewBookPage extends AbstractPage {
 	 * 
 	 * @param bookDisplay
 	 */
-	private void setCurrentBookInDisplay(BookDisplay bookDisplay) {
+	private void setCurrentBookInDisplay(BookDisplay bookDisplay,
+			boolean isAuthorCoauthorViewing) {
 		// Set page background to the book cover background
 		setPageBackgroundStyle(bookDisplay.getBookCover().getImgUrl());
 
@@ -588,7 +593,7 @@ public class NewBookPage extends AbstractPage {
 		createdPublishedCategoryLbl.setHTML(NewBookMessages.INSTANCE
 				.setCreatedPublishedCategoryLbl(createdDateFt, publDateFt,
 						book.getCategory()));
-		
+
 		// Set the logo if there
 		if (bookDisplay.isBookLogo() == true) {
 			logoImageDisplay.setUrl(Utils
@@ -596,7 +601,7 @@ public class NewBookPage extends AbstractPage {
 		} else {
 			logoImageDisplay.setUrl("");
 		}
-		
+
 		// Introduction text
 		introductionTxt.setHTML(NewBookMessages.INSTANCE
 				.setIntroductionText(book.getIntroduction()));
@@ -627,7 +632,11 @@ public class NewBookPage extends AbstractPage {
 		addTOCElementContainer.add(tocTable);
 
 		// Set star rating here
-		starRating.setRating(bookDisplay.getUserBookRating());
+		if (isAuthorCoauthorViewing == true) {
+			starRating.setRating(bookDisplay.getBookRating());
+		} else {
+			starRating.setRating(bookDisplay.getUserBookRating());
+		}
 
 		// Adjust display size
 		adjustSize();

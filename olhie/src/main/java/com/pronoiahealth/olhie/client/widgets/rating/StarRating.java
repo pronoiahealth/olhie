@@ -256,8 +256,8 @@ public class StarRating extends Widget {
 		add(lblRating);
 		lblRating.setStyleName("starrating-label");
 
-		imgProgress = new Image("Ohlie/images/star_indicator.gif");
-		imgProgress.setStyleName("starrating-indicator");
+		imgProgress = new Image("Olhie/images/star_indicator_20px.gif");
+		imgProgress.setStyleName("starrating-indicator-hidden");
 		add(imgProgress);
 
 		updateDisplay();

@@ -39,6 +39,7 @@ public class BookFindResponseEvent {
 
 	private BookDisplay bookDisplay;
 	private Set<UserBookRelationshipEnum> rels;
+	private boolean authorSelected;
 
 	/**
 	 * Constructor
@@ -47,20 +48,12 @@ public class BookFindResponseEvent {
 	public BookFindResponseEvent() {
 	}
 
-	/**
-	 * Constructor
-	 * 
-	 * @param bookDisplay
-	 * @param bookCategory
-	 * @param bookCover
-	 * @param authorFullName
-	 * @param bookAssetDescriptions
-	 */
 	public BookFindResponseEvent(BookDisplay bookDisplay,
-			Set<UserBookRelationshipEnum> rels) {
+			Set<UserBookRelationshipEnum> rels, boolean authorSelected) {
 		super();
 		this.bookDisplay = bookDisplay;
 		this.rels = rels;
+		this.authorSelected = authorSelected;
 	}
 
 	/**
@@ -83,5 +76,13 @@ public class BookFindResponseEvent {
 
 	public void setRels(Set<UserBookRelationshipEnum> rels) {
 		this.rels = rels;
+	}
+
+	public boolean isAuthorSelected() {
+		return authorSelected;
+	}
+
+	public void setAuthorSelected(boolean authorSelected) {
+		this.authorSelected = authorSelected;
 	}
 }

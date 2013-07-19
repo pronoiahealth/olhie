@@ -93,26 +93,8 @@ public class BookSelectedService {
 			// If the user has logged in
 			// relationship. Otherwise he is an anonymous user and has no
 			// relationship
-			boolean authorSelected = false;
-			if (userId != null && userId.length() > 0) {
-				// Get UserBookRelatioships
-				List<UserBookRelationship> bResult = UserBookRelationshipDAO
-						.getUserBookRelationshipByUserIdBookId(bookId, userId,
-								ooDbTx);
-				if (bResult != null && bResult.size() > 0) {
-					for (UserBookRelationship r : bResult) {
-						String relationship = r.getUserRelationship();
-						if (relationship
-								.equals(UserBookRelationshipEnum.CREATOR.name())
-								|| relationship
-										.equals(UserBookRelationshipEnum.COAUTHOR
-												.name())) {
-							authorSelected = true;
-							break;
-						}
-					}
-				}
-			}
+			boolean authorSelected = BookDAO.isAuthorSelected(userId, bookId,
+					ooDbTx);
 
 			// Get the Book
 			BookDisplay bookDisplay = BookDAO.getBookDisplayById(bookId,

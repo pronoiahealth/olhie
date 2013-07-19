@@ -105,9 +105,14 @@ public class BookFindService {
 			UserBookRelationshipDAO.setLastViewedOnUserBookRelationship(userId,
 					bookId, new Date(), ooDbTx);
 
+			// Is the user asking for the book the author or co-author
+			boolean authorSelected = BookDAO.isAuthorSelected(userId, bookId,
+					ooDbTx);
+
 			// Fire the event
 			bookFindResponseEvent.fire(new BookFindResponseEvent(bookDisplay,
-					rels));
+					rels, authorSelected));
+			
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);

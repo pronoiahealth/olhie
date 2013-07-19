@@ -24,6 +24,9 @@ import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -95,6 +98,22 @@ public class LoginDialog extends Composite {
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
 		loginModal.setStyleName("ph-Login-Modal", true);
+
+		// When user presses enter in userName or Password try to submit form
+		KeyUpHandler keyUpHandler = new KeyUpHandler() {
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				String unTxt = username.getText();
+				String pwdTxt = password.getText();
+				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER
+						&& unTxt != null && !unTxt.trim().equals("")
+						&& pwdTxt != null && pwdTxt.trim().equals("")) {
+					onLoginClick(null);
+				}
+			}
+		};
+		username.addKeyUpHandler(keyUpHandler);
+		password.addKeyUpHandler(keyUpHandler);
 	}
 
 	/**

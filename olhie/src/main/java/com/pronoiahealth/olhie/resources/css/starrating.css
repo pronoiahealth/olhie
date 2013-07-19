@@ -1,21 +1,21 @@
 .starrating-active-unmarked {
-	background: url('Olhie/images/star_active.gif') no-repeat;
+	background: url('Olhie/images/star_active_20px.gif') no-repeat;
 }
 
 .starrating-active-marked {
-	background: url('Olhie/images/star_active_marked.gif') no-repeat;
+	background: url('Olhie/images/star_active_marked_20px.gif') no-repeat;
 }
 
 .starrating-inactive-unmarked {
-	background: url('Olhie/images/star_grey.gif') no-repeat;
+	background: url('Olhie/images/star_grey_20px.gif') no-repeat;
 }
 
 .starrating-inactive-marked {
-	background: url('Olhie/images/star_grey_marked.gif') no-repeat;
+	background: url('Olhie/images/star_grey_marked_20px.gif') no-repeat;
 }
 
 .starrating {
-	height: 13px;
+	height: 20px;
 	padding: 0px;
 	margin: 0px;
 	white-space: nowrap;
@@ -23,10 +23,10 @@
 }
 
 .starrating span {
-	width: 13px;
-	height: 13px;
+	width: 20px;
+	height: 20px;
 	vertical-align: top;
-	padding-left: 13px; /* prevent firefox from shrinking to 0px */
+	padding-left: 20px; /* prevent firefox from shrinking to 0px */
 }
 
 .starrating-label {
@@ -38,8 +38,16 @@
 	padding: 0px;
 }
 
-.starrating-indicator {
-	width: 16px;
-	height: 16px;
+.starrating-indicator-show {
+	width: 20px;
+	height: 20px;
 	display: inline;
+	visibility: visible;
+}
+
+.starrating-indicator-hidden {
+	width: 20px;
+	height: 20px;
+	display: inline;
+	visibility: hidden;
 }

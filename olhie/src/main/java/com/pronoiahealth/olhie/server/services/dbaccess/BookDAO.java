@@ -256,4 +256,39 @@ public class BookDAO {
 		}
 
 	}
+
+	/**
+	 * Determines if the userId is the book author or co-author
+	 * 
+	 * @param userId
+	 * @param ooDbTx
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean isAuthorSelected(String userId, String bookId,
+			OObjectDatabaseTx ooDbTx) throws Exception {
+
+		boolean authorSelected = false;
+		if (userId != null && userId.length() > 0) {
+			// Get UserBookRelatioships
+			List<UserBookRelationship> bResult = UserBookRelationshipDAO
+					.getUserBookRelationshipByUserIdBookId(bookId, userId,
+							ooDbTx);
+			if (bResult != null && bResult.size() > 0) {
+				for (UserBookRelationship r : bResult) {
+					String relationship = r.getUserRelationship();
+					if (relationship.equals(UserBookRelationshipEnum.CREATOR
+							.name())
+							|| relationship
+									.equals(UserBookRelationshipEnum.COAUTHOR
+											.name())) {
+						authorSelected = true;
+						break;
+					}
+				}
+			}
+		}
+
+		return authorSelected;
+	}
 }
