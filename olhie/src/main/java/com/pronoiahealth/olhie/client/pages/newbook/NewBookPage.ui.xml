@@ -9,11 +9,13 @@
 			<b:FluidRow>
 				<b:PageHeader ui:field="bookTitle"></b:PageHeader>
 				<g:HTMLPanel styleName="ph-NewBook-EditCurrentBook-Button-Container">
-					<g:HTMLPanel ui:field="ratingWidgetContainer" styleName="ph-NewBook-EditCurrentBook-Rating-Container">
+					<g:HTMLPanel ui:field="ratingWidgetContainer"
+						styleName="ph-NewBook-EditCurrentBook-Rating-Container">
 						<g:HTMLPanel styleName="ph-NewBook-RatingLabel-Container">
 							<g:Label>Rating: </g:Label>
 						</g:HTMLPanel>
-						<g:HTMLPanel ui:field="starRatingPanel" styleName="ph-NewBook-RatingWidget-Container">
+						<g:HTMLPanel ui:field="starRatingPanel"
+							styleName="ph-NewBook-RatingWidget-Container">
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="ph-NewBook-EditCurrentBook-Button-Container">
@@ -24,6 +26,10 @@
 							</b:Tooltip>
 							<b:Tooltip text="Edit the Book details">
 								<b:Button ui:field="editBookButton" icon="EDIT" type="PRIMARY"
+									size="SMALL"></b:Button>
+							</b:Tooltip>
+							<b:Tooltip text="Add a comment for this book">
+								<b:Button ui:field="commentBookButton" icon="PENCIL" type="PRIMARY"
 									size="SMALL"></b:Button>
 							</b:Tooltip>
 							<b:Tooltip text="Add this book to my collection"

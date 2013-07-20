@@ -1,0 +1,19 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
+	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base'>
+
+	<b:Modal ui:field="viewCommentModal" title="Comments"
+		backdrop="STATIC" keyboard="true" animation="true">
+
+		<b:FluidContainer>
+		</b:FluidContainer>
+
+		<b:ModalFooter>
+			<b:Button ui:field="closeButton" icon="CIRCLE_ARROW_RIGHT"
+				type="PRIMARY">Close</b:Button>
+		</b:ModalFooter>
+
+	</b:Modal>
+
+</ui:UiBinder>

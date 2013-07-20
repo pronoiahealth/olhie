@@ -1,4 +1,4 @@
-package com.pronoiahealth.olhie.client.pages.main;
+package com.pronoiahealth.olhie.client.widgets.chat;
 
 import javax.enterprise.context.Dependent;
 

@@ -21,24 +21,39 @@
 	margin-bottom: 5px;
 	padding-top: 3px;
 	padding-bottom: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	border-radius: 3px;
+	box-shadow: 2px 2px 2px #888888;
 }
 
 .ph-ChatDialog-BoxShade-Peer {
 	opacity: 0.8;
-	background-color: green;
+	background-color: #00FF00;
 	width: 100%;
 	margin-bottom: 5px;
 	padding-top: 3px;
 	padding-bottom: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	border-radius: 3px;
+	box-shadow: 2px 2px 2px #888888;
 }
 
 .ph-ChatDialog-BoxShade-Server {
 	opacity: 0.8;
-	background-color: red;
+	background-color: #E68585;
 	width: 100%;
 	margin-bottom: 5px;
 	padding-top: 3px;
 	padding-bottom: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	border-radius: 3px;
+	box-shadow: 2px 2px 2px #888888;
 }
 
 .ph-ChatDialog-AcceptDialog-Btns {

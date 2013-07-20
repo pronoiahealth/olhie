@@ -8,7 +8,7 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.pages.main;
+package com.pronoiahealth.olhie.client.widgets.chat;
 
 public interface ChatDialogCloseHandler {
 	public void closeDialog(String channelId, String partnerName);

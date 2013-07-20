@@ -34,6 +34,10 @@ import com.pronoiahealth.olhie.client.shared.events.offers.AcceptOfferResponseEv
 import com.pronoiahealth.olhie.client.shared.events.offers.CloseOfferEvent;
 import com.pronoiahealth.olhie.client.shared.events.offers.RejectOfferEvent;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
+import com.pronoiahealth.olhie.client.widgets.chat.AcceptOfferDialog;
+import com.pronoiahealth.olhie.client.widgets.chat.AcceptOfferDialogCloseHandler;
+import com.pronoiahealth.olhie.client.widgets.chat.ChatDialog;
+import com.pronoiahealth.olhie.client.widgets.chat.ChatDialogCloseHandler;
 
 /**
  * OfferHandler.java<br/>

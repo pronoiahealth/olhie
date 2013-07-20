@@ -133,6 +133,9 @@ public class NewBookPage extends AbstractPage {
 
 	@UiField
 	public Button logoBookButton;
+	
+	@UiField
+	public Button commentBookButton;
 
 	@UiField
 	public Button addToCollectionBookButton;
@@ -735,6 +738,13 @@ public class NewBookPage extends AbstractPage {
 		if (editMode == ModeEnum.EDIT) {
 			showAddLogoModalEvent.fire(new ShowAddLogoModalEvent(
 					this.currentBookDisplay.getBook().getId()));
+		}
+	}
+	
+	@UiHandler("commentBookButton")
+	public void commentBookButtonClicked(ClickEvent event) {
+		if (editMode == ModeEnum.VIEW) {
+			
 		}
 	}
 

@@ -195,6 +195,7 @@
 .ph-NewBook-RatingLabel-Container {
 	float: left;
 	padding-right: 5px;
+	padding-top: 4px;
 }
 
 .ph-NewBook-RatingWidget-Container {

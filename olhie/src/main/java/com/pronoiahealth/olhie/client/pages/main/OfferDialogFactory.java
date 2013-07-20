@@ -17,6 +17,11 @@ import javax.enterprise.context.ApplicationScoped;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 
+import com.pronoiahealth.olhie.client.widgets.chat.AcceptOfferDialog;
+import com.pronoiahealth.olhie.client.widgets.chat.AcceptOfferDialogCloseHandler;
+import com.pronoiahealth.olhie.client.widgets.chat.ChatDialog;
+import com.pronoiahealth.olhie.client.widgets.chat.ChatDialogCloseHandler;
+
 @ApplicationScoped
 public class OfferDialogFactory {
 

@@ -8,7 +8,7 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.pages.viewbookasset;
+package com.pronoiahealth.olhie.client.pages.newbook.dialogs;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
