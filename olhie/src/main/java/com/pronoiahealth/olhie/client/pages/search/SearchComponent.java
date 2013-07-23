@@ -18,6 +18,9 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.WellForm;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -66,6 +69,18 @@ public class SearchComponent extends AbstractComposite {
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
 		searchForm.setStyleName("ph-SearchComponent-Form", true);
+		
+		// Add an enter key handler
+		searchQryBox.addKeyDownHandler(new KeyDownHandler() {
+			@Override
+			public void onKeyDown(KeyDownEvent event) {
+				String qry = searchQryBox.getText();
+				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER
+						&& qry != null && !qry.trim().equals("")) {
+					handleFindButtonClick(null);
+				}
+			}
+		});
 	}
 
 	/**

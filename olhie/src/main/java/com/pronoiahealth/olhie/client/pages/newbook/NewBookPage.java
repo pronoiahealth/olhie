@@ -12,7 +12,6 @@ package com.pronoiahealth.olhie.client.pages.newbook;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
@@ -34,6 +33,11 @@ import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.NavPills;
 import com.github.gwtbootstrap.client.ui.PageHeader;
+import com.github.gwtbootstrap.client.ui.Tooltip;
+import com.github.gwtbootstrap.client.ui.constants.ButtonType;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.github.gwtbootstrap.client.ui.constants.Placement;
+import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -65,6 +69,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.DownloadBookAssetEvent
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowAddLogoModalEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowBookCommentModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewAssetModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewBookModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowViewBookassetDialogEvent;
@@ -103,6 +108,12 @@ import com.pronoiahealth.olhie.client.widgets.rating.StarRatingStarClickedHandle
 @Page(role = { AnonymousRole.class })
 public class NewBookPage extends AbstractPage {
 
+	public enum NewBookPageStateEnum {
+		AUTHOR_STATE, LOGGED_IN_MY_COLLECTION_STATE, LOGGED_IN_NOT_IN_MY_COLLECTION_STATE, NOT_LOGGED_IN
+	}
+
+	private NewBookPageStateEnum pageState;
+
 	private static final DateTimeFormat dtf = DateTimeFormat
 			.getFormat("MM/dd/yyyy");
 
@@ -128,25 +139,8 @@ public class NewBookPage extends AbstractPage {
 	@UiField
 	public PageHeader bookTitle;
 
-	@UiField
-	public Button editBookButton;
-
-	@UiField
-	public Button logoBookButton;
-	
-	@UiField
-	public Button commentBookButton;
-
-	@UiField
-	public Button addToCollectionBookButton;
-
-	@UiField
-	public Button removeFromCollectionBookButton;
-
 	@PageState
 	private String bookId;
-
-	private ModeEnum editMode;
 
 	private BookDisplay currentBookDisplay;
 
@@ -217,6 +211,9 @@ public class NewBookPage extends AbstractPage {
 	private Event<ShowAddLogoModalEvent> showAddLogoModalEvent;
 
 	@Inject
+	private Event<ShowBookCommentModalEvent> showBookCommentModalEvent;
+
+	@Inject
 	private Event<BookListBookSelectedEvent> bookListBookSelectedEvent;
 
 	@Inject
@@ -231,6 +228,29 @@ public class NewBookPage extends AbstractPage {
 	@Inject
 	@NewBook
 	private Event<BookFindByIdEvent> bookFindByIdEvent;
+
+	@UiField
+	public HTMLPanel buttonGrpHolder;
+
+	private ButtonGroup authorBtns;
+
+	private ButtonGroup loggedInMyCollectBtns;
+
+	private ButtonGroup loggedInNotMyCollectBtns;
+
+	private ButtonGroup notLoggedInBtns;
+
+	public Button editBookButton;
+
+	public Button logoBookButton;
+
+	public Button addCommentBookButton;
+	
+	public Button addCommentBookButton1;
+
+	public Button addToCollectionBookButton;
+
+	public Button removeFromCollectionBookButton;
 
 	private ClickHandler downloadClickHandler;
 
@@ -254,6 +274,7 @@ public class NewBookPage extends AbstractPage {
 	 */
 	@PostConstruct
 	private void postConstruct() {
+		// Initialize the composite
 		initWidget(binder.createAndBindUi(this));
 		bookTitle.setStyleName("ph-NewBook-BookTitle", true);
 		authorLbl.setStyleName("ph-NewBook-Author", true);
@@ -277,6 +298,9 @@ public class NewBookPage extends AbstractPage {
 		logoImageDisplay.getElement().setAttribute("style",
 				"max-height: 50px; max-width: 100px;");
 
+		// Build button groups
+		buildBtnGrps();
+
 		// Create star rating
 		starRating = new StarRating(5, false,
 				new StarRatingStarClickedHandler() {
@@ -287,6 +311,7 @@ public class NewBookPage extends AbstractPage {
 								bookId));
 					}
 				});
+
 		// Irritating Chrome issue fix
 		starRating.getElement().setAttribute("style", "display: inline-block;");
 
@@ -341,6 +366,129 @@ public class NewBookPage extends AbstractPage {
 	}
 
 	/**
+	 * 
+	 */
+	private void buildBtnGrps() {
+		// Buttons for author or co-author
+		authorBtns = new ButtonGroup();
+		logoBookButton = createButton("", IconType.PICTURE, ButtonType.PRIMARY,
+				ButtonSize.SMALL);
+		logoBookButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				editLogoButtonClicked(event);
+			}
+		});
+		createTooltip(logoBookButton, "Add a Logo image", Placement.TOP);
+		authorBtns.add(logoBookButton);
+		editBookButton = createButton("", IconType.EDIT, ButtonType.PRIMARY,
+				ButtonSize.SMALL);
+		editBookButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				editBookButtonClicked(event);
+			}
+		});
+		createTooltip(editBookButton, "Edit the Book details", Placement.TOP);
+		authorBtns.add(editBookButton);
+
+		// Logged in and the book is in my collection
+		loggedInMyCollectBtns = new ButtonGroup();
+		removeFromCollectionBookButton = createButton("", IconType.THUMBS_UP,
+				ButtonType.DANGER, ButtonSize.SMALL);
+		removeFromCollectionBookButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				removeFromCollectionBookButtonClicked(event);
+			}
+		});
+		createTooltip(removeFromCollectionBookButton,
+				"Remove this book from my collection", Placement.LEFT);
+		addCommentBookButton = createButton("", IconType.PENCIL,
+				ButtonType.PRIMARY, ButtonSize.SMALL);
+		addCommentBookButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				commentBookButtonClicked(event);
+			}
+		});
+		createTooltip(addCommentBookButton, "Add a comment for this book",
+				Placement.TOP);
+		loggedInMyCollectBtns.add(addCommentBookButton);
+		loggedInMyCollectBtns.add(removeFromCollectionBookButton);
+
+		// Logged in but the book isn't currently in my collection
+		loggedInNotMyCollectBtns = new ButtonGroup();
+		addToCollectionBookButton = createButton("", IconType.THUMBS_UP,
+				ButtonType.PRIMARY, ButtonSize.SMALL);
+		addToCollectionBookButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				addToCollectionBookButtonClicked(event);
+			}
+		});
+		createTooltip(addToCollectionBookButton,
+				"Add this book to my collection", Placement.LEFT);
+		// Comment button 1
+		addCommentBookButton1 = createButton("", IconType.PENCIL,
+				ButtonType.PRIMARY, ButtonSize.SMALL);
+		addCommentBookButton1.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				commentBookButtonClicked(event);
+			}
+		});
+		createTooltip(addCommentBookButton1, "Add a comment for this book",
+				Placement.TOP);
+		loggedInNotMyCollectBtns.add(addCommentBookButton1);
+		loggedInNotMyCollectBtns.add(addToCollectionBookButton);
+
+		// Not logged In - Just a blank invisible button
+		notLoggedInBtns = new ButtonGroup();
+		Button blankBtn = new Button("Blank");
+		blankBtn.setVisible(false);
+		notLoggedInBtns.add(blankBtn);
+	}
+
+	/**
+	 * Create a button
+	 * 
+	 * @param caption
+	 * @param iType
+	 * @param bType
+	 * @param bSize
+	 * @return
+	 */
+	private Button createButton(String caption, IconType iType,
+			ButtonType bType, ButtonSize bSize) {
+		Button btn = null;
+		if (caption != null && caption.length() > 0) {
+			btn = new Button(caption);
+		} else {
+			btn = new Button();
+		}
+		btn.setIcon(iType);
+		btn.setType(bType);
+		btn.setSize(bSize);
+		return btn;
+	}
+
+	/**
+	 * Set a tool tip on a widget
+	 * 
+	 * @param w
+	 * @param message
+	 * @param placement
+	 */
+	private void createTooltip(Widget w, String message, Placement placement) {
+		Tooltip tooltip = new Tooltip();
+		tooltip.setWidget(w);
+		tooltip.setText(message);
+		tooltip.setPlacement(placement);
+		tooltip.reconfigure();
+	}
+
+	/**
 	 * When the page is hiding tell the Header so it can add the new book button
 	 * back to the menu.
 	 */
@@ -362,7 +510,6 @@ public class NewBookPage extends AbstractPage {
 	protected void pageShown() {
 		// Put the page components in view only state until the users role
 		// with the book is determined
-		setState(ModeEnum.VIEW);
 		bookListBookSelectedEvent.fire(new BookListBookSelectedEvent(bookId));
 	}
 
@@ -376,139 +523,23 @@ public class NewBookPage extends AbstractPage {
 	 */
 	protected void observesBookListBookSelectedResponseEvent(
 			@Observes BookListBookSelectedResponseEvent bookListBookSelectedResponseEvent) {
-		boolean isAuthorSelected = bookListBookSelectedResponseEvent
-				.isAuthorSelected();
-		if (isAuthorSelected == true) {
-			setState(ModeEnum.EDIT);
-		} else {
-			setState(ModeEnum.VIEW);
-		}
+		boolean isAuthor = bookListBookSelectedResponseEvent.isAuthorSelected();
+		boolean isLoggedIn = clientUser.isLoggedIn();
+		boolean isInMyCollection = bookListBookSelectedResponseEvent.getRels()
+				.contains(UserBookRelationshipEnum.MYCOLLECTION);
+		boolean isCoAuthor = bookListBookSelectedResponseEvent.getRels()
+				.contains(UserBookRelationshipEnum.COAUTHOR);
 
-		// Set the book in display
-		setCurrentBookInDisplay(
-				bookListBookSelectedResponseEvent.getBookDisplay(),
-				isAuthorSelected);
-
-		// Set the buttons for adding to my collection
-		if (editMode == ModeEnum.VIEW && clientUser.isLoggedIn()) {
-			setForAddToMyCollection(bookListBookSelectedResponseEvent.getRels());
-		} else {
-			setAddToCollectionBookButtonVisibility(false);
-			setRemoveFromMyCollectionBookButtonVisibility(false);
-		}
+		// Set the edit state
+		pageState = setDisplyState(isAuthor, isCoAuthor, isInMyCollection,
+				isLoggedIn);
 
 		// Set the rating widget state
-		setRatingWidgetState(bookListBookSelectedResponseEvent.getRels());
-	}
+		setRatingWidgetState(pageState);
 
-	/**
-	 * Set page components to match the editMode
-	 * 
-	 * @param mode
-	 */
-	private void setState(ModeEnum mode) {
-		if (mode == ModeEnum.EDIT) {
-			this.editMode = ModeEnum.EDIT;
-			tocAddElementContainer.setVisible(true);
-			editBookButton.setVisible(true);
-			logoBookButton.setVisible(true);
-		} else {
-			this.editMode = ModeEnum.VIEW;
-			tocAddElementContainer.setVisible(false);
-			editBookButton.setVisible(false);
-			logoBookButton.setVisible(false);
-		}
-	}
-
-	private void setRatingWidgetState(Set<UserBookRelationshipEnum> rels) {
-		// In the edit mode the widget is only displayed
-		// When in the edit mode you are logged in
-		if (this.editMode == ModeEnum.EDIT) {
-			ratingWidgetContainer.setVisible(true);
-			starRating.setReadOnly(true);
-		} else {
-			if (clientUser.isLoggedIn() == true) {
-				if (hasBookRelationship(rels) == true
-						&& (rels.contains(UserBookRelationshipEnum.COAUTHOR) || rels
-								.contains(UserBookRelationshipEnum.CREATOR))) {
-					ratingWidgetContainer.setVisible(true);
-					starRating.setReadOnly(true);
-				} else {
-					// You are logged in and have a MYCOLLECTION relationship
-					ratingWidgetContainer.setVisible(true);
-					starRating.setReadOnly(false);
-				}
-			} else {
-				ratingWidgetContainer.setVisible(false);
-			}
-		}
-	}
-
-	/**
-	 * Sets the addToCollectionBookButton visibility
-	 * 
-	 * @param rel
-	 */
-	private void setForAddToMyCollection(Set<UserBookRelationshipEnum> rels) {
-		// Edit mode means you are the author or co-author. The book is
-		// automatically in your collection
-		if (this.editMode == ModeEnum.EDIT) {
-			setAddToCollectionBookButtonVisibility(false);
-			setRemoveFromMyCollectionBookButtonVisibility(false);
-		} else {
-			if (clientUser.isLoggedIn()) {
-				// You have no relation and you are a logged in user
-				if (hasBookRelationship(rels) == true
-						&& rels.contains(UserBookRelationshipEnum.NONE)) {
-					setAddToCollectionBookButtonVisibility(true);
-					setRemoveFromMyCollectionBookButtonVisibility(false);
-				} else if (hasBookRelationship(rels) == true
-						&& rels.contains(UserBookRelationshipEnum.MYCOLLECTION)) {
-					// You are logged in and have a MYCOLLECTION relationship
-					setAddToCollectionBookButtonVisibility(false);
-					setRemoveFromMyCollectionBookButtonVisibility(true);
-				} else {
-					// Can't determine it, don't show anything
-					setAddToCollectionBookButtonVisibility(false);
-					setRemoveFromMyCollectionBookButtonVisibility(false);
-				}
-			} else {
-				setAddToCollectionBookButtonVisibility(false);
-				setRemoveFromMyCollectionBookButtonVisibility(false);
-			}
-		}
-	}
-
-	/**
-	 * Does the relationship set have any values
-	 * 
-	 * @param rels
-	 * @return
-	 */
-	private boolean hasBookRelationship(Set<UserBookRelationshipEnum> rels) {
-		if (rels != null && rels.size() > 0) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * Set button visibility
-	 * 
-	 * @param visible
-	 */
-	private void setAddToCollectionBookButtonVisibility(boolean visible) {
-		addToCollectionBookButton.setVisible(visible);
-	}
-
-	/**
-	 * Set button visibility
-	 * 
-	 * @param visible
-	 */
-	private void setRemoveFromMyCollectionBookButtonVisibility(boolean visible) {
-		removeFromCollectionBookButton.setVisible(visible);
+		// Set the book in display
+		setCurrentBookInDisplay(bookListBookSelectedResponseEvent
+				.getBookDisplay());
 	}
 
 	/**
@@ -559,19 +590,22 @@ public class NewBookPage extends AbstractPage {
 	 */
 	protected void observesBookFindResponse(
 			@Observes BookFindResponseEvent bookFindResponseEvent) {
-		// Set page background to the book cover background
-		setCurrentBookInDisplay(bookFindResponseEvent.getBookDisplay(),
-				bookFindResponseEvent.isAuthorSelected());
+		boolean isAuthor = bookFindResponseEvent.isAuthorSelected();
+		boolean isLoggedIn = clientUser.isLoggedIn();
+		boolean isInMyCollection = bookFindResponseEvent.getRels().contains(
+				UserBookRelationshipEnum.MYCOLLECTION);
+		boolean isCoAuthor = bookFindResponseEvent.getRels().contains(
+				UserBookRelationshipEnum.COAUTHOR);
 
-		// Set the buttons for adding to my collection
-		if (editMode == ModeEnum.VIEW && clientUser.isLoggedIn()) {
-			setForAddToMyCollection(bookFindResponseEvent.getRels());
-		} else {
-			setAddToCollectionBookButtonVisibility(false);
-		}
+		// Set the edit state
+		pageState = setDisplyState(isAuthor, isCoAuthor, isInMyCollection,
+				isLoggedIn);
 
 		// Set the rating widget state
-		setRatingWidgetState(bookFindResponseEvent.getRels());
+		setRatingWidgetState(pageState);
+
+		// Set page background to the book cover background
+		setCurrentBookInDisplay(bookFindResponseEvent.getBookDisplay());
 	}
 
 	/**
@@ -579,8 +613,7 @@ public class NewBookPage extends AbstractPage {
 	 * 
 	 * @param bookDisplay
 	 */
-	private void setCurrentBookInDisplay(BookDisplay bookDisplay,
-			boolean isAuthorCoauthorViewing) {
+	private void setCurrentBookInDisplay(BookDisplay bookDisplay) {
 		// Set page background to the book cover background
 		setPageBackgroundStyle(bookDisplay.getBookCover().getImgUrl());
 
@@ -635,7 +668,7 @@ public class NewBookPage extends AbstractPage {
 		addTOCElementContainer.add(tocTable);
 
 		// Set star rating here
-		if (isAuthorCoauthorViewing == true) {
+		if (pageState == NewBookPageStateEnum.AUTHOR_STATE) {
 			starRating.setRating(bookDisplay.getBookRating());
 		} else {
 			starRating.setRating(bookDisplay.getUserBookRating());
@@ -671,7 +704,7 @@ public class NewBookPage extends AbstractPage {
 		}
 
 		// Always add remove when editing
-		if (editMode == ModeEnum.EDIT) {
+		if (pageState == NewBookPageStateEnum.AUTHOR_STATE) {
 			btns.add(new RemoveBookassetdescriptionButton(removeClickHandler,
 					badId));
 		}
@@ -720,48 +753,156 @@ public class NewBookPage extends AbstractPage {
 	 */
 	@UiHandler("tocAddElement")
 	public void tocAddElementClicked(ClickEvent event) {
-		if (editMode == ModeEnum.EDIT) {
+		if (pageState == NewBookPageStateEnum.AUTHOR_STATE) {
 			showNewAssetModalEvent.fire(new ShowNewAssetModalEvent(bookId));
 		}
 	}
 
-	@UiHandler("editBookButton")
+	/**
+	 * Shows the edit dialog
+	 * 
+	 * @param event
+	 */
 	public void editBookButtonClicked(ClickEvent event) {
-		if (editMode == ModeEnum.EDIT) {
+		if (pageState == NewBookPageStateEnum.AUTHOR_STATE) {
 			showNewBookModalEvent.fire(new ShowNewBookModalEvent(ModeEnum.EDIT,
 					this.currentBookDisplay.getBook()));
 		}
 	}
 
-	@UiHandler("logoBookButton")
+	/**
+	 * Edit or add a logo
+	 * 
+	 * @param event
+	 */
 	public void editLogoButtonClicked(ClickEvent event) {
-		if (editMode == ModeEnum.EDIT) {
+		if (pageState == NewBookPageStateEnum.AUTHOR_STATE) {
 			showAddLogoModalEvent.fire(new ShowAddLogoModalEvent(
 					this.currentBookDisplay.getBook().getId()));
 		}
 	}
-	
-	@UiHandler("commentBookButton")
+
+	/**
+	 * Add a comment to the book. Only visible to non-authors
+	 * 
+	 * @param event
+	 */
 	public void commentBookButtonClicked(ClickEvent event) {
-		if (editMode == ModeEnum.VIEW) {
-			
+		if (pageState == NewBookPageStateEnum.LOGGED_IN_MY_COLLECTION_STATE
+				|| pageState == NewBookPageStateEnum.LOGGED_IN_NOT_IN_MY_COLLECTION_STATE) {
+			this.showBookCommentModalEvent.fire(new ShowBookCommentModalEvent(
+					bookId));
 		}
 	}
 
-	@UiHandler("addToCollectionBookButton")
 	public void addToCollectionBookButtonClicked(ClickEvent event) {
-		if (editMode == ModeEnum.VIEW) {
+		if (pageState == NewBookPageStateEnum.LOGGED_IN_NOT_IN_MY_COLLECTION_STATE) {
 			addBookToMyCollectionEvent.fire(new AddBookToMyCollectionEvent(
 					this.currentBookDisplay.getBook().getId()));
 		}
 	}
 
-	@UiHandler("removeFromCollectionBookButton")
 	public void removeFromCollectionBookButtonClicked(ClickEvent event) {
-		if (editMode == ModeEnum.VIEW) {
+		if (pageState == NewBookPageStateEnum.LOGGED_IN_MY_COLLECTION_STATE) {
 			this.removeBookFromMyCollectionEvent
 					.fire(new RemoveBookFromMyCollectionEvent(
 							this.currentBookDisplay.getBook().getId()));
+		}
+	}
+
+	/**
+	 * Sets the buttons to match to display state
+	 * 
+	 * @param isAuthor
+	 * @param isInMyCollection
+	 * @param isLoggedIn
+	 */
+	private NewBookPageStateEnum setDisplyState(boolean isAuthor,
+			boolean isCoAuthor, boolean isInMyCollection, boolean isLoggedIn) {
+		return setDisplayButtonGroup(getDisplayState(isAuthor, isCoAuthor,
+				isInMyCollection, isLoggedIn));
+	}
+
+	/**
+	 * Sets the correct button group
+	 * 
+	 * @param displayState
+	 */
+	private NewBookPageStateEnum setDisplayButtonGroup(
+			NewBookPageStateEnum displayState) {
+		NewBookPageStateEnum retState = null;
+		switch (displayState) {
+		case AUTHOR_STATE:
+			setButtonGrpHolder(authorBtns);
+			retState = NewBookPageStateEnum.AUTHOR_STATE;
+			break;
+		case LOGGED_IN_MY_COLLECTION_STATE:
+			setButtonGrpHolder(loggedInMyCollectBtns);
+			retState = NewBookPageStateEnum.LOGGED_IN_MY_COLLECTION_STATE;
+			break;
+		case LOGGED_IN_NOT_IN_MY_COLLECTION_STATE:
+			setButtonGrpHolder(loggedInNotMyCollectBtns);
+			retState = NewBookPageStateEnum.LOGGED_IN_NOT_IN_MY_COLLECTION_STATE;
+			break;
+		case NOT_LOGGED_IN:
+			setButtonGrpHolder(notLoggedInBtns);
+			retState = NewBookPageStateEnum.NOT_LOGGED_IN;
+			break;
+		}
+
+		return retState;
+	}
+
+	/**
+	 * Set a button group for display
+	 * 
+	 * @param grp
+	 */
+	private void setButtonGrpHolder(ButtonGroup grp) {
+		// remove the old widget
+		if (buttonGrpHolder.getWidgetCount() > 0) {
+			buttonGrpHolder.remove(0);
+		}
+
+		// Replace with a new one
+		buttonGrpHolder.add(grp);
+	}
+
+	/**
+	 * Determine what display state to put the form in.
+	 * 
+	 * @param isAuthor
+	 * @param isInMyCollection
+	 * @param isLoggedIn
+	 * @return
+	 */
+	private NewBookPageStateEnum getDisplayState(boolean isAuthor,
+			boolean isCoAuthor, boolean isInMyCollection, boolean isLoggedIn) {
+		if (isAuthor == true || isCoAuthor == true) {
+			return NewBookPageStateEnum.AUTHOR_STATE;
+		} else if (isLoggedIn == true && isInMyCollection == true) {
+			return NewBookPageStateEnum.LOGGED_IN_MY_COLLECTION_STATE;
+		} else if (isLoggedIn == true && isInMyCollection == false) {
+			return NewBookPageStateEnum.LOGGED_IN_NOT_IN_MY_COLLECTION_STATE;
+		} else {
+			return NewBookPageStateEnum.NOT_LOGGED_IN;
+		}
+	}
+
+	/**
+	 * Set the edit and visible state of the rating widget
+	 */
+	private void setRatingWidgetState(NewBookPageStateEnum state) {
+		// In the edit mode the widget is only displayed
+		// When in the edit mode you are logged in
+		if (state == NewBookPageStateEnum.AUTHOR_STATE
+				|| state == NewBookPageStateEnum.NOT_LOGGED_IN) {
+			ratingWidgetContainer.setVisible(true);
+			starRating.setReadOnly(true);
+		} else if (state == NewBookPageStateEnum.LOGGED_IN_MY_COLLECTION_STATE
+				|| state == NewBookPageStateEnum.LOGGED_IN_NOT_IN_MY_COLLECTION_STATE) {
+			ratingWidgetContainer.setVisible(true);
+			starRating.setReadOnly(false);
 		}
 	}
 }

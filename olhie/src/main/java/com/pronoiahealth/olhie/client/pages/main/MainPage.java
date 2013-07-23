@@ -14,12 +14,9 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
-import org.jboss.errai.ioc.client.container.IOC;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
@@ -43,6 +40,7 @@ import com.pronoiahealth.olhie.client.pages.comments.CommentsDialog;
 import com.pronoiahealth.olhie.client.pages.error.ErrorDisplayDialog;
 import com.pronoiahealth.olhie.client.pages.login.LoginDialog;
 import com.pronoiahealth.olhie.client.pages.lookupuser.LookupUserDialog;
+import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddBookCommentDialog;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddFileDialog;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddLogoDialog;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.NewAssetDialog;
@@ -140,6 +138,9 @@ public class MainPage extends AbstractComposite {
 	@Inject
 	DownloadFrame downloadFrame;
 
+	@Inject
+	AddBookCommentDialog addBookCommentDialog;
+
 	@UiField
 	public HTMLPanel loginModalPlaceHolder;
 
@@ -172,6 +173,9 @@ public class MainPage extends AbstractComposite {
 
 	@UiField
 	public HTMLPanel lookupUserModalPlaceHolder;
+
+	@UiField
+	public HTMLPanel addBookCommentPlaceHolder;
 
 	/*
 	 * Used to time things on screen such as when a key is pressed.
@@ -362,6 +366,7 @@ public class MainPage extends AbstractComposite {
 		downloadFramePlaceHolder.add(downloadFrame);
 		lookupUserModalPlaceHolder.add(lookupUserDialog);
 		addLogoDialogModalPlaceHolder.add(addLogoDialog);
+		addBookCommentPlaceHolder.add(addBookCommentDialog);
 	}
 
 	/**

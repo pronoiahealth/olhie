@@ -6,15 +6,19 @@
 	<b:Modal ui:field="commentModal" title="Add a comment"
 		backdrop="STATIC" keyboard="true" animation="true">
 
-		<b:FluidContainer>
-			<b:WellForm ui:field="commentForm">
-				<b:ControlLabel>Comment (1-500 characters):</b:ControlLabel>
+		<b:Form ui:field="commentForm" type="HORIZONTAL">
+			<b:Fieldset ui:field="controlFieldset">
+				<b:Legend></b:Legend>
 				<b:ControlGroup ui:field="commentCG">
-					<b:TextArea ui:field="comment" placeholder="Between 1 and 500 characters"
-						maxLength="500" width="400px"></b:TextArea>
+					<b:ControlLabel for="comment">Comment:</b:ControlLabel>
+					<b:Controls>
+						<b:TextArea ui:field="comment" placeholder="Comment"
+							controlGroup="{commentCG}" errorLabel="{commentErrors}" />
+						<b:HelpInline ui:field="commentErrors"></b:HelpInline>
+					</b:Controls>
 				</b:ControlGroup>
-			</b:WellForm>
-		</b:FluidContainer>
+			</b:Fieldset>
+		</b:Form>
 
 		<b:ModalFooter>
 			<b:Button ui:field="saveButton" icon="SAVE" type="PRIMARY">Save</b:Button>
