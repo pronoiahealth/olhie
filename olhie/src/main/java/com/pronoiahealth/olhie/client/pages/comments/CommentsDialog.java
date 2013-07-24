@@ -25,6 +25,8 @@ import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
+import com.github.gwtbootstrap.client.ui.event.ShownEvent;
+import com.github.gwtbootstrap.client.ui.event.ShownHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -111,6 +113,14 @@ public class CommentsDialog extends Composite {
 
 		// Add custom style
 		commentModal.setStyleName("ph-Comment-Modal", true);
+
+		// Set focus when shown
+		commentModal.addShownHandler(new ShownHandler() {
+			@Override
+			public void onShown(ShownEvent shownEvent) {
+				comment.getElement().focus();
+			}
+		});
 	}
 
 	/**
@@ -119,7 +129,7 @@ public class CommentsDialog extends Composite {
 	public void show() {
 		clearErrors();
 		commentForm.reset();
-		commentModal.show();
+		comment.setFocus(true);
 	}
 
 	/**

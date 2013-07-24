@@ -17,12 +17,16 @@ import javax.inject.Inject;
 
 import org.jboss.errai.bus.server.annotations.Service;
 
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.exceptions.GenericRPCException;
 import com.pronoiahealth.olhie.client.shared.services.ConnectedUserService;
 import com.pronoiahealth.olhie.client.shared.vo.ConnectedUser;
+import com.pronoiahealth.olhie.client.shared.vo.LoggedInSession;
+import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
+import com.pronoiahealth.olhie.server.services.dbaccess.LoggedInSessionDAO;
 
 /**
  * ConnectedUserService.java<br/>
@@ -41,6 +45,10 @@ public class ConnectedUserServiceImpl implements ConnectedUserService {
 
 	@Inject
 	private ServerUserToken userToken;
+
+	@Inject
+	@OODbTx
+	private OObjectDatabaseTx ooDbTx;
 
 	/**
 	 * Constructor
@@ -61,10 +69,23 @@ public class ConnectedUserServiceImpl implements ConnectedUserService {
 	public List<ConnectedUser> getConnectedUsers(String qry) {
 		try {
 			List<ConnectedUser> retLst = new ArrayList<ConnectedUser>();
-			List<String> matchLst = sessionTracker.getMatchingActiveUsers(qry);
-			for (String str : matchLst) {
-				retLst.add(getConnectedUserFromUserKey(str));
+			// List<String> matchLst =
+			// sessionTracker.getMatchingActiveUsers(qry);
+			List<LoggedInSession> sesses = LoggedInSessionDAO
+					.getActiveSessionsByLookupNameQry(qry,
+							userToken.getUserId(), ooDbTx);
+			// for (String str : matchLst) {
+			// retLst.add(getConnectedUserFromUserKey(str));
+			// }
+
+			if (sesses != null && sesses.size() > 0) {
+				for (LoggedInSession sess : sesses) {
+					ConnectedUser user = new ConnectedUser(sess.getUserId(),
+							sess.getLookupName());
+					retLst.add(user);
+				}
 			}
+
 			return retLst;
 		} catch (Exception e) {
 			throw new GenericRPCException(e.getMessage());
@@ -78,12 +99,12 @@ public class ConnectedUserServiceImpl implements ConnectedUserService {
 	 * @param userKey
 	 * @return
 	 */
-	private ConnectedUser getConnectedUserFromUserKey(String userKey) {
-		int userIdStart = userKey.lastIndexOf("(");
-		String userId = userKey
-				.substring(userIdStart + 1, userKey.length() - 1);
-		String name = userKey.substring(0, userIdStart - 1);
-		return new ConnectedUser(userId, name);
-	}
+	/*
+	 * private ConnectedUser getConnectedUserFromUserKey(String userKey) { int
+	 * userIdStart = userKey.lastIndexOf("("); String userId = userKey
+	 * .substring(userIdStart + 1, userKey.length() - 1); String name =
+	 * userKey.substring(0, userIdStart - 1); return new ConnectedUser(userId,
+	 * name); }
+	 */
 
 }

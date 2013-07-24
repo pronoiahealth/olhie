@@ -32,32 +32,32 @@ import com.pronoiahealth.olhie.client.shared.events.book.BookSearchEvent;
  * SearchComponent.java<br/>
  * Responsibilities:<br/>
  * 1. Displays the search form on the Search screen<br/>
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since May 26, 2013
- *
+ * 
  */
 public class SearchComponent extends AbstractComposite {
 
 	@Inject
 	UiBinder<Widget, SearchComponent> binder;
-	
+
 	@UiField
 	public WellForm searchForm;
-	
+
 	@UiField
 	public TextBox searchQryBox;
 
 	@UiField
 	public Button findButton;
-	
+
 	@Inject
 	private Event<BookSearchEvent> newBookSearchEvent;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 */
 	public SearchComponent() {
 	}
@@ -69,7 +69,7 @@ public class SearchComponent extends AbstractComposite {
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
 		searchForm.setStyleName("ph-SearchComponent-Form", true);
-		
+
 		// Add an enter key handler
 		searchQryBox.addKeyDownHandler(new KeyDownHandler() {
 			@Override
@@ -84,8 +84,7 @@ public class SearchComponent extends AbstractComposite {
 	}
 
 	/**
-	 * Validates the form and fires a BookSearchEvent with the validated
-	 * data.
+	 * Validates the form and fires a BookSearchEvent with the validated data.
 	 * 
 	 * @param clickEvt
 	 */
@@ -96,12 +95,13 @@ public class SearchComponent extends AbstractComposite {
 			String searchText = searchQryBox.getText();
 
 			boolean isValid = validateSearchText(searchText);
-			
+
 			if (isValid) {
-				// Fire event and send the results to the SearchResultsComponent.
+				// Fire event and send the results to the
+				// SearchResultsComponent.
 				newBookSearchEvent.fire(new BookSearchEvent(searchText));
 			}
-			
+
 		} catch (Exception e) {
 			// Intentionally blank. The Form will post error
 			// messages to the form during the validation process
@@ -112,10 +112,13 @@ public class SearchComponent extends AbstractComposite {
 	 * @param _searchText
 	 * @return
 	 */
-	public boolean validateSearchText(String _searchText)
-	{
+	public boolean validateSearchText(String _searchText) {
 		return true;
-		//TODO: write a validation handler
+		// TODO: write a validation handler
+	}
+	
+	public void setFocusOnSearchQryBox() {
+		searchQryBox.setFocus(true);
 	}
 
 }

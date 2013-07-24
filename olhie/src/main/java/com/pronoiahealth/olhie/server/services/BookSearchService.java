@@ -104,47 +104,6 @@ public class BookSearchService {
 				BookDisplay bookDisplay = BookDAO.getBookDisplayById(
 						book.getId(), ooDbTx, userToken.getUserId(), holder);
 
-				/*
-				 * // Get the title into the object // Remember that Orient lazy
-				 * loads the object attributes so call // for the attributes you
-				 * want to return or detach the whole // thing.
-				 * book.getBookTitle(); book.getIntroduction();
-				 * 
-				 * // Find author User user =
-				 * UserDAO.getUserByUserId(book.getAuthorId(), ooDbTx); String
-				 * authorName = user.getFirstName() + " " + user.getLastName();
-				 * 
-				 * // Find the cover and the category BookCover cover =
-				 * holder.getCoverByName(book.getCoverName()); BookCategory cat
-				 * = holder.getCategoryByName(book.getCategory());
-				 * 
-				 * // Get a list of Bookassetdescriptions
-				 * List<Bookassetdescription> baResult = BookDAO
-				 * .getBookassetdescriptionByBookId(book.getId(), ooDbTx);
-				 * List<Bookassetdescription> retBaResults = new
-				 * ArrayList<Bookassetdescription>(); // Need to detach them. We
-				 * don't want to pull back the // entire // object // tree if
-				 * (baResult != null) { for (Bookassetdescription bad :
-				 * baResult) { if (bad.getRemoved().booleanValue() == false) {
-				 * Bookassetdescription retBad = new Bookassetdescription();
-				 * retBad.setBookId(bad.getBookId());
-				 * retBad.setCreatedDate(bad.getCreatedDate());
-				 * retBad.setDescription(bad.getDescription());
-				 * retBad.setId(bad.getId()); Bookasset ba =
-				 * bad.getBookAssets().get(0); Bookasset retBa = new
-				 * Bookasset(); retBa.setId(ba.getId());
-				 * retBa.setContentType(ba.getContentType());
-				 * retBa.setItemType(ba.getItemType()); ArrayList<Bookasset>
-				 * retbookAssets = new ArrayList<Bookasset>();
-				 * retbookAssets.add(retBa);
-				 * retBad.setBookAssets(retbookAssets);
-				 * retBaResults.add(retBad); } } }
-				 * 
-				 * String logoFileName = book.getLogoFileName(); BookDisplay
-				 * bookDisplay = new BookDisplay( book, cat, cover, authorName,
-				 * retBaResults, (logoFileName != null && logoFileName.length()
-				 * > 0) ? true : false);
-				 */
 				bookDisplayList.add(bookDisplay);
 			}
 

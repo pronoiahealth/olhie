@@ -8,62 +8,56 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.server.services;
+package com.pronoiahealth.olhie.client.shared.events.loggedinsession;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
+import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
 /**
- * UserSessionToken.java<br/>
+ * UserLogginEvent.java<br/>
  * Responsibilities:<br/>
- * 1. Holds a logged in user session info.<br/>
- * 2. Tracks the timeout of a user.<br/>
+ * 1.
+ *
+ * <p>
+ * Fired By: <br/>
+ * Observed By: <br/>
+ * </p>
  * 
  * @author John DeStefano
  * @version 1.0
- * @since Jun 1, 2013
- * 
+ * @since Jul 23, 2013
+ *
  */
-public class UserSessionToken {
-	/**
-	 * After 60 seconds with no LoggedInPingEvent from the user we assume the
-	 * user has closed the browser.
-	 */
-	// TODO: Make this a configurable variable
-	private final static long TIMEOUT = 1000 * 60;
-	private String userId;
+@Portable
+@Conversational
+public class UserLogginEvent {
 	private String erraiSessionId;
-	private String userLastName;
+	private String userId;
 	private String userFirstName;
-	private long lastActivity = System.currentTimeMillis();
+	private String userLastName;
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 */
-	public UserSessionToken() {
+	public UserLogginEvent() {
 	}
 
 	/**
 	 * Constructor
-	 * 
-	 * @param userId
+	 *
 	 * @param erraiSessionId
+	 * @param userId
+	 * @param userFirstName
+	 * @param userLastName
 	 */
-	public UserSessionToken(String userId, String userLastName,
-			String userFirstName, String erraiSessionId) {
+	public UserLogginEvent(String erraiSessionId, String userId,
+			String userFirstName, String userLastName) {
 		super();
-		this.userId = userId;
 		this.erraiSessionId = erraiSessionId;
-		this.userLastName = userLastName;
-		this.userFirstName = userFirstName;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
 		this.userId = userId;
+		this.userFirstName = userFirstName;
+		this.userLastName = userLastName;
 	}
 
 	public String getErraiSessionId() {
@@ -74,12 +68,12 @@ public class UserSessionToken {
 		this.erraiSessionId = erraiSessionId;
 	}
 
-	public String getUserLastName() {
-		return userLastName;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setUserLastName(String userLastName) {
-		this.userLastName = userLastName;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	public String getUserFirstName() {
@@ -90,11 +84,11 @@ public class UserSessionToken {
 		this.userFirstName = userFirstName;
 	}
 
-	public void activity() {
-		lastActivity = System.currentTimeMillis();
+	public String getUserLastName() {
+		return userLastName;
 	}
 
-	public boolean isSessionTimedout() {
-		return (System.currentTimeMillis() - lastActivity) > TIMEOUT;
+	public void setUserLastName(String userLastName) {
+		this.userLastName = userLastName;
 	}
 }

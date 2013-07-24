@@ -169,7 +169,7 @@ public class OfferDAO {
 				}
 			}
 		}
-		
+
 		return offer;
 	}
 
@@ -232,6 +232,38 @@ public class OfferDAO {
 	}
 
 	/**
+	 * Set the closed date on the offer. This will occur if an offer has not
+	 * been rejected and not been closed but the users session has ended.
+	 * 
+	 * @param channelId
+	 * @param ooDbTx
+	 * @throws Exception
+	 */
+	public static void closeOfferByUserId(String userId, String erraiSessionId,
+			OObjectDatabaseTx ooDbTx, boolean handleTransaction)
+			throws Exception {
+
+		if (handleTransaction == true) {
+			ooDbTx.begin(TXTYPE.OPTIMISTIC);
+		}
+
+		List<Offer> offers = getUnacceptedOffersById(userId, ooDbTx);
+		if (offers != null && offers.size() > 0) {
+			for (Offer offer : offers) {
+				if (offer.getOffererSessionId().equals(erraiSessionId)
+						|| offer.getPeerSessionId().equals(erraiSessionId)) {
+					offer.setClosedDT(new Date());
+					ooDbTx.save(offer);
+				}
+			}
+		}
+
+		if (handleTransaction == true) {
+			ooDbTx.commit();
+		}
+	}
+
+	/**
 	 * Return the Offer associated with the channel
 	 * 
 	 * @param channelId
@@ -273,5 +305,4 @@ public class OfferDAO {
 		rparams.put("ofId", userId);
 		return ooDbTx.command(rQuery).execute(rparams);
 	}
-
 }

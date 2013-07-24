@@ -17,6 +17,8 @@ import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.event.ShownEvent;
+import com.github.gwtbootstrap.client.ui.event.ShownHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -102,6 +104,14 @@ public class RegisterDialog extends Composite {
 		initWidget(binder.createAndBindUi(this));
 		registerModal.setStyleName("ph-Register-Modal", true);
 		registerModal.setStyleName("ph-Register-Modal-Size", true);
+		
+		// Set focus
+		registerModal.addShownHandler(new ShownHandler() {
+			@Override
+			public void onShown(ShownEvent shownEvent) {
+				regForm.setFocusOnFirstName();
+			}
+		});
 
 		// Add the RegisterForm to the form holder
 		regFormHolder.add(regForm);
@@ -209,6 +219,7 @@ public class RegisterDialog extends Composite {
 		updateState = true;
 		regForm.populateForm();
 		regForm.prepareEdit();
+		regForm.setFocusOnFirstName();
 		registerModal.show();
 	}
 

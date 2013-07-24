@@ -23,6 +23,8 @@ import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
+import com.github.gwtbootstrap.client.ui.event.ShownEvent;
+import com.github.gwtbootstrap.client.ui.event.ShownHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -98,6 +100,13 @@ public class LoginDialog extends Composite {
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
 		loginModal.setStyleName("ph-Login-Modal", true);
+
+		loginModal.addShownHandler(new ShownHandler() {
+			@Override
+			public void onShown(ShownEvent shownEvent) {
+				username.getElement().focus();
+			}
+		});
 
 		// When user presses enter in userName or Password try to submit form
 		KeyDownHandler keyDownHandler = new KeyDownHandler() {

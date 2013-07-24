@@ -81,5 +81,6 @@ public class SearchPage extends AbstractPage {
 		super.onLoad();
 		setPageBackgroundClass("ph-SearchPage-Background");
 		searchPageLoadedEvent.fire(new SearchPageLoadedEvent());
+		searchComponent.setFocusOnSearchQryBox();
 	}
 }

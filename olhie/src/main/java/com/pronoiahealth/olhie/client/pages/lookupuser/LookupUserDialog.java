@@ -20,6 +20,8 @@ import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.Typeahead;
 import com.github.gwtbootstrap.client.ui.Typeahead.UpdaterCallback;
+import com.github.gwtbootstrap.client.ui.event.ShownEvent;
+import com.github.gwtbootstrap.client.ui.event.ShownHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -82,6 +84,14 @@ public class LookupUserDialog extends Composite {
 		});
 		lookupUserModal.setStyleName("ph-LookupUser-Modal", true);
 		lookupUserModal.setStyleName("ph-LookupUser-Modal-Size", true);
+		
+		// Set focus
+		lookupUserModal.addShownHandler(new ShownHandler() {
+			@Override
+			public void onShown(ShownEvent shownEvent) {
+				userNameTxtBox.setFocus(true);
+			}
+		});
 	}
 
 	/**

@@ -14,9 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -24,14 +22,15 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.jboss.errai.bus.client.api.base.MessageBuilder;
+import org.jboss.errai.bus.client.api.messaging.RequestDispatcher;
 import org.jboss.errai.cdi.server.events.EventConversationContext;
 
 import com.pronoiahealth.olhie.client.shared.events.loginout.LoggedInPingEvent;
-import com.pronoiahealth.olhie.client.shared.events.offers.ExpireOffersEvent;
+import com.pronoiahealth.olhie.client.shared.vo.UserSession;
 
 /**
  * SessionTracker.java<br/>
@@ -48,7 +47,9 @@ import com.pronoiahealth.olhie.client.shared.events.offers.ExpireOffersEvent;
 public class SessionTracker {
 
 	@Inject
-	private Event<ExpireOffersEvent> expireOffersEvent;
+	private RequestDispatcher dispatcher;
+
+	private static final String ExpireListener = "LoggedInHandleExpiredSessionsService";
 
 	private final ScheduledExecutorService service = Executors
 			.newScheduledThreadPool(1);
@@ -57,12 +58,6 @@ public class SessionTracker {
 	 * Tracks sessionId and the user associated with them
 	 */
 	private final Map<String, UserSessionToken> activeSessions = new ConcurrentHashMap<String, UserSessionToken>();
-
-	/**
-	 * Tracks users and the session they have, a user may have more than one
-	 * browser open.
-	 */
-	private final Map<String, ConcurrentSkipListSet<String>> activeUsers = new ConcurrentHashMap<String, ConcurrentSkipListSet<String>>();
 
 	public SessionTracker() {
 	}
@@ -78,6 +73,9 @@ public class SessionTracker {
 			@Override
 			public void run() {
 				if (activeSessions.size() > 0) {
+					// Create list of expired sessions
+					List<UserSession> eSess = new ArrayList<UserSession>();
+
 					Iterator<UserSessionToken> entryIterator = activeSessions
 							.values().iterator();
 					while (entryIterator.hasNext()) {
@@ -86,25 +84,18 @@ public class SessionTracker {
 							// Remove user session
 							String sessionId = user.getErraiSessionId();
 							String userId = user.getUserId();
-							String userKey = getActiveUserKey(user);
-							Set<String> userSessions = activeUsers.get(userKey);
-							if (userSessions != null && userSessions.size() > 0) {
-								userSessions.remove(sessionId);
-							}
 
-							// If user has no session remove them from the
-							// active users map
-							if (userSessions.size() == 0) {
-								activeUsers.remove(userKey);
-
-								// Close any outstanding offers
-								expireOffersEvent.fire(new ExpireOffersEvent(
-										userId));
-							}
+							// Add to list
+							eSess.add(new UserSession(userId, sessionId));
 
 							// Remove the session from the active sessions map
 							entryIterator.remove();
 						}
+					}
+
+					// Expire any collected sessions
+					if (eSess.size() > 0) {
+						expireSessions(eSess);
 					}
 				}
 			}
@@ -152,15 +143,6 @@ public class SessionTracker {
 
 		// Add an active session
 		activeSessions.put(erraiSessionId, user);
-
-		// Add a session the active users session
-		ConcurrentSkipListSet<String> sessions = activeUsers
-				.get(getActiveUserKey(user));
-		if (sessions == null) {
-			sessions = new ConcurrentSkipListSet<String>();
-			activeUsers.put(getActiveUserKey(user), sessions);
-		}
-		sessions.add(erraiSessionId);
 	}
 
 	/**
@@ -171,72 +153,11 @@ public class SessionTracker {
 	public void stopTrackingUserSession(String erraiSessionId) {
 		// Remove from active session
 		UserSessionToken token = activeSessions.get(erraiSessionId);
-		String userId = token.getUserId();
 		activeSessions.remove(erraiSessionId);
 
-		// Remove from user sessions
-		ConcurrentSkipListSet<String> sessions = activeUsers
-				.get(getActiveUserKey(token));
-		if (sessions != null) {
-			sessions.remove(erraiSessionId);
-		}
-
-		// If the user has no more sessions remove the user from the user
-		// sessions
-		if (sessions.size() == 0) {
-			activeUsers.remove(getActiveUserKey(token));
-
-			// Close any outstanding offers
-			expireOffersEvent.fire(new ExpireOffersEvent(userId));
-		}
-	}
-
-	/**
-	 * Gets the key to use in the activeUsers map.
-	 * 
-	 * @param tok
-	 * @return
-	 */
-	private String getActiveUserKey(UserSessionToken tok) {
-		StringBuilder sb = new StringBuilder();
-		return sb.append(tok.getUserFirstName()).append(" ")
-				.append(tok.getUserLastName()).append(" (")
-				.append(tok.getUserId()).append(")").toString();
-	}
-
-	/**
-	 * Returns userKey from activeUsers if it starts with the qry string. All
-	 * searches are done in lower case.
-	 * 
-	 * @param qry
-	 * @return
-	 */
-	public List<String> getMatchingActiveUsers(String qry) {
-		List<String> retLst = new ArrayList<String>();
-		if (qry != null && qry.length() > 0) {
-			String srchStr = qry.toLowerCase();
-			for (String userKey : activeUsers.keySet()) {
-				if (userKey.toLowerCase().startsWith(srchStr)) {
-					retLst.add(userKey);
-				}
-			}
-		}
-		return retLst;
-	}
-
-	/**
-	 * Returns the list of session ids for the user with the given key.
-	 * 
-	 * @param userKey
-	 * @return
-	 */
-	public List<String> getActiveUserSessionId(String userKey) {
-		ConcurrentSkipListSet<String> sessions = activeUsers.get(userKey);
-		List<String> retLst = new ArrayList<String>();
-		if (sessions != null) {
-			retLst.addAll(sessions);
-		}
-		return retLst;
+		// Expire the session
+		closeSession(new UserSession(token.getUserId(),
+				token.getErraiSessionId()));
 	}
 
 	/**
@@ -247,6 +168,24 @@ public class SessionTracker {
 	 */
 	public boolean isSessionActive(String sessionId) {
 		return activeSessions.containsKey(sessionId);
+	}
+
+	/**
+	 * Send the list of expired session to the
+	 * LoggedInHandleExpiredSessionsService
+	 * 
+	 * @param eSess
+	 */
+	private void expireSessions(List<UserSession> eSess) {
+		MessageBuilder.createMessage().toSubject(ExpireListener).signalling()
+				.with("ExpiredSessionsList", eSess).noErrorHandling()
+				.sendNowWith(dispatcher);
+	}
+
+	private void closeSession(UserSession sess) {
+		MessageBuilder.createMessage().toSubject(ExpireListener).signalling()
+				.with("CloseSession", sess).noErrorHandling()
+				.sendNowWith(dispatcher);
 	}
 
 }

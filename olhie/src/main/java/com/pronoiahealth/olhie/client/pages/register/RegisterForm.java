@@ -247,4 +247,8 @@ public class RegisterForm extends Composite {
 	public void setUserIdAlreadyInUse() {
 		userIdErr.setText("This userid is already in use.");
 	}
+	
+	public void setFocusOnFirstName() {
+		firstName.setFocus(true);
+	}
 }

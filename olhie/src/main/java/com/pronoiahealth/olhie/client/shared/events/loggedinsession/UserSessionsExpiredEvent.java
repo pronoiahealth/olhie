@@ -8,48 +8,55 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.shared.events.offers;
+package com.pronoiahealth.olhie.client.shared.events.loggedinsession;
+
+import java.util.List;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
 /**
- * ExpireOffersEvent.java<br/>
+ * UserSessionsExpiredEvent.java<br/>
  * Responsibilities:<br/>
  * 1.
  *
+ * <p>
+ * Fired By: <br/>
+ * Observed By: <br/>
+ * </p>
  * @author John DeStefano
  * @version 1.0
- * @since Jul 10, 2013
+ * @since Jul 23, 2013
  *
  */
 @Portable
 @Conversational
-public class ExpireOffersEvent {
-	private String userId;
+public class UserSessionsExpiredEvent {
+	
+	private List<String> erraiSessionIds;
 
 	/**
 	 * Constructor
 	 *
 	 */
-	public ExpireOffersEvent() {
+	public UserSessionsExpiredEvent() {
 	}
 
 	/**
 	 * Constructor
 	 *
-	 * @param userId
+	 * @param erraiSessionIds
 	 */
-	public ExpireOffersEvent(String userId) {
+	public UserSessionsExpiredEvent(List<String> erraiSessionIds) {
 		super();
-		this.userId = userId;
+		this.erraiSessionIds = erraiSessionIds;
 	}
 
-	public String getUserId() {
-		return userId;
+	public List<String> getErraiSessionIds() {
+		return erraiSessionIds;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setErraiSessionIds(List<String> erraiSessionIds) {
+		this.erraiSessionIds = erraiSessionIds;
 	}
 }

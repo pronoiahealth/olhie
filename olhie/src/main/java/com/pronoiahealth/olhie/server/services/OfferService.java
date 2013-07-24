@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services;
 
-import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,13 +38,13 @@ import com.pronoiahealth.olhie.client.shared.events.offers.AcceptOfferResponseEr
 import com.pronoiahealth.olhie.client.shared.events.offers.AcceptOfferResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.offers.CloseOfferEvent;
 import com.pronoiahealth.olhie.client.shared.events.offers.CreateOfferEvent;
-import com.pronoiahealth.olhie.client.shared.events.offers.ExpireOffersEvent;
 import com.pronoiahealth.olhie.client.shared.events.offers.RejectOfferEvent;
 import com.pronoiahealth.olhie.client.shared.exceptions.PeerNotLoggedInException;
 import com.pronoiahealth.olhie.client.shared.vo.Offer;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
+import com.pronoiahealth.olhie.server.services.dbaccess.LoggedInSessionDAO;
 import com.pronoiahealth.olhie.server.services.dbaccess.OfferDAO;
 
 /**
@@ -53,8 +53,7 @@ import com.pronoiahealth.olhie.server.services.dbaccess.OfferDAO;
  * 1. Observe for AcceptOfferEvent.<br/>
  * 2. Observe for CreateOfferEvent.<br/>
  * 3. Observe for CloseOfferEvent.<br/>
- * 4. Observe for ExpireOfferEvent.<br/>
- * 5. Observe for RejectOfferEvent.<br/>
+ * 4. Observe for RejectOfferEvent.<br/>
  * 
  * 
  * <p>
@@ -118,14 +117,6 @@ import com.pronoiahealth.olhie.server.services.dbaccess.OfferDAO;
  * to the channel indicating that the other party has closed the channel.
  * </p>
  * 
- * <p>
- * There will be times when a user closes the browser or logs out before ending
- * an accepted offer. This class responses to the ExpireOfferEvent by expiring
- * the offer in the database. Both the Offerer and the Peer will be informed of
- * this if they are still connected. The channel will be shut down on the client
- * side.At that point no further conversation can occur through the created
- * channel.
- * </p>
  * 
  * @author John DeStefano
  * @version 1.0
@@ -168,34 +159,6 @@ public class OfferService {
 	}
 
 	/**
-	 * Looks for offer expire messages and cleans up the database
-	 * 
-	 * @param expireOffersEvent
-	 */
-	// @SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
-	// SecurityRoleEnum.REGISTERED })
-	protected void observesExpireOffersEvent(
-			@Observes ExpireOffersEvent expireOffersEvent) {
-		try {
-			ooDbTx.begin(TXTYPE.OPTIMISTIC);
-
-			// Get the userId
-			String userId = expireOffersEvent.getUserId();
-
-			// Expire by userId
-			OfferDAO.expireOfferByUserId(userId, ooDbTx, false);
-
-			// Commit Changes
-			ooDbTx.commit();
-		} catch (Exception e) {
-			String msg = e.getMessage();
-			log.log(Level.SEVERE, msg, e);
-			ooDbTx.rollback();
-			serviceErrorEvent.fire(new ServiceErrorEvent(msg));
-		}
-	}
-
-	/**
 	 * When a CreateOfferEvent is observed an offer is created in the db. This
 	 * returns a channelId that will be used by the offerer and the peer. The
 	 * channelId is returned to the offerer. The channelId is sent to the peer
@@ -224,7 +187,7 @@ public class OfferService {
 
 			try {
 				// Tell the peer about it
-				forwardOffer(channelId, createNameFromCurrentUser(),
+				forwardOffer(channelId, userId, createNameFromCurrentUser(),
 						ceateSessionTrackerLookupKey(peerName, peerId),
 						offerType, OfferRoleEnum.PEER, OfferActionEnum.OFFER);
 
@@ -369,7 +332,7 @@ public class OfferService {
 				// the peer id.
 				String userKey = ceateSessionTrackerLookupKey(partnerName,
 						offer.getPeerId());
-				forwardOffer(channelId, partnerName, userKey,
+				forwardOffer(channelId, offer.getPeerId(), partnerName, userKey,
 						OfferTypeEnum.CHAT, OfferRoleEnum.PEER,
 						OfferActionEnum.CLOSE);
 
@@ -392,10 +355,11 @@ public class OfferService {
 	 * @param peerKey
 	 * @throws Exception
 	 */
-	private void forwardOffer(String channelId, String name, String key,
-			OfferTypeEnum offerType, OfferRoleEnum role, OfferActionEnum action)
-			throws Exception {
-		List<String> sessions = sessionTracker.getActiveUserSessionId(key);
+	private void forwardOffer(String channelId, String userId, String name,
+			String key, OfferTypeEnum offerType, OfferRoleEnum role,
+			OfferActionEnum action) throws Exception {
+		Set<String> sessions = LoggedInSessionDAO
+				.getSessionIdsForACtiveSessionsByUserId(userId, ooDbTx);
 		if (sessions != null && sessions.size() > 0) {
 			for (String sessionId : sessions) {
 				sendMessage(OfferEnum.CLIENT_OFFER_LISTENER.toString(),

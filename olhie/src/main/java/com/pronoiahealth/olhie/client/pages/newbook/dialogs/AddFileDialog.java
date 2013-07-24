@@ -36,6 +36,8 @@ import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
+import com.github.gwtbootstrap.client.ui.event.ShownEvent;
+import com.github.gwtbootstrap.client.ui.event.ShownHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -110,6 +112,14 @@ public class AddFileDialog extends Composite {
 	@PostConstruct
 	public void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
+		
+		// set focus
+		addFileModal.addShownHandler(new ShownHandler() {
+			@Override
+			public void onShown(ShownEvent shownEvent) {
+				description.setFocus(true);
+			}
+		});
 	}
 
 	/**
@@ -253,14 +263,14 @@ public class AddFileDialog extends Composite {
 		// Create a new one
 		initUploader();
 
-		// Show the dialog
-		addFileModal.show();
-
 		// Clear any left over error messages
 		clearErrors();
 
 		// Set the book Id
 		this.currentBookId = bookId;
+
+		// Show the dialog
+		addFileModal.show();
 	}
 
 	/**

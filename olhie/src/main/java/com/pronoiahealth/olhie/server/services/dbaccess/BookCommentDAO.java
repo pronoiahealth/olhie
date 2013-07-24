@@ -86,7 +86,7 @@ public class BookCommentDAO {
 	 * @return
 	 */
 	public static BookComment addBookComment(String bookId, String authorId,
-			String comment, OObjectDatabaseTx ooDbTx, boolean handleTransaction) {
+			String comment, OObjectDatabaseTx ooDbTx, boolean handleTransaction) throws Exception {
 
 		if (handleTransaction == true) {
 			ooDbTx.begin(TXTYPE.OPTIMISTIC);
