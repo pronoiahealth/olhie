@@ -3,6 +3,7 @@
 	overflow: auto;
 	width: 100%;
 	height: 100%;
+	padding-top: 10px;
 }
 
 .ph-Bookcase-Background {
@@ -42,23 +43,23 @@
 }
 
 .ph-Bookcase-Marker .gwt-TabLayoutPanelTab {
-	margin-left: 5px;
-	margin-right: 5px;
-	margin-left: 6px;
+	margin: 5px;
 	cursor: pointer;
 	cursor: hand;
 	color: black;
 	font-size: 1.2em;
-	color: #8bc53d;
+	/*color: #8bc53d;*/
 	text-align: center;
-	background: #458818;
+	/*background: #458818;*/
+	border: 2px solid black;
 }
 
 .ph-Bookcase-Marker .gwt-TabLayoutPanelTab-selected {
 	cursor: default;
-	background: #8bc53d;
+	/*background: #8bc53d;*/
 	font-size: 1.2em;
-	color: #FFFFFF;
+	/* color: #FFFFFF; */
+	border: 2px solid green;
 }
 
 .ph-Bookcase-BookTab-NoResults-HTML {
@@ -69,7 +70,7 @@
 
 .ph-Bookcase-MyBooksTab {
 	background: white;
-	background-image: url("Olhie/images/myBooksBg.png");
+	background-image: url("Olhie/images/BookShelf-backgrnd.png");
 	background-repeat: repeat;
 	padding-top: 30px;
 }

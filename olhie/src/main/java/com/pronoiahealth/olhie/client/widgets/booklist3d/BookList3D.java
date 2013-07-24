@@ -229,12 +229,13 @@ public class BookList3D extends Widget {
 			ButtonElement flipButtonElem = doc.createPushButtonElement();
 			bookInfoElem.appendChild(flipButtonElem);
 			flipButtonElem.addClassName("bk-bookback");
-			flipButtonElem.setInnerText("Back Cover");
+			//flipButtonElem.setInnerText("Back Cover");
+			
 			// Look inside button
 			ButtonElement lookInsideButtonElem = doc.createPushButtonElement();
 			bookInfoElem.appendChild(lookInsideButtonElem);
 			lookInsideButtonElem.addClassName("bk-bookview");
-			lookInsideButtonElem.setInnerText("Look Inside");
+			// lookInsideButtonElem.setInnerText("Look Inside");
 
 			// Star rating
 			DivElement rateContainerElem = doc.createDivElement();
@@ -292,6 +293,14 @@ public class BookList3D extends Widget {
 					flipAction.bind(Event.ONCLICK, new Function() {
 						@Override
 						public boolean f(Event e) {
+							// Toggle the button
+							GQuery fa = $(e);
+							if (fa.hasClass("bk-bookback-pressed") == true) {
+								fa.removeClass("bk-bookback-pressed");
+							} else {
+								fa.addClass("bk-bookback-pressed");
+							}
+							
 							bookview.removeClass("bk-active");
 							boolean flipVal = false;
 							Object flipObj = book.data("flip");

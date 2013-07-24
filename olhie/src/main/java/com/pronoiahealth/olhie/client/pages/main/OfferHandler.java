@@ -141,7 +141,8 @@ public class OfferHandler {
 			closeHandler = new ChatDialogCloseHandler() {
 				@Override
 				public void closeDialog(String channelId, String partnerName) {
-					closeOfferEvent.fire(new CloseOfferEvent(channelId, partnerName));
+					closeOfferEvent.fire(new CloseOfferEvent(channelId,
+							partnerName));
 					removeChatDlg(channelId);
 				}
 			};
@@ -180,7 +181,9 @@ public class OfferHandler {
 		// No accept dialog, look for a ChatDialog
 		if (acceptDlgShowing == false) {
 			ChatDialog cd = chats.get(channelId);
-			cd.handleDisconnect("Other side has disconnected.");
+			if (cd != null) {
+				cd.handleDisconnect("Other side has disconnected.");
+			}
 		}
 	}
 

@@ -1,24 +1,21 @@
 /* CSS for search screen components */
-/*
 .ph-SearchPage-Background {
 	background-image: url("Olhie/images/wood.jpg");
 	background-repeat: repeat;
 }
-*/
 
-.ph-SearchPage-Background {
+/*.ph-SearchPage-Background {
 	background: url("Olhie/images/search-orig-teal.png") no-repeat center center fixed;
-	/*webkit-background-size: cover;
+	webkit-background-size: cover;
 	moz-background-size: cover;
-	o-background-size: cover;*/
+	o-background-size: cover;
 	background-size: cover;
-	/*
 	filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Olhie/images/search-orig-teal.png',
 		sizingMethod='scale')";
 	-ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Olhie/images/search-orig-teal.png',
 		sizingMethod='scale')";
-	*/
 }
+*/
 
 .ph-SeachComponnet-Container {
 	float: right;

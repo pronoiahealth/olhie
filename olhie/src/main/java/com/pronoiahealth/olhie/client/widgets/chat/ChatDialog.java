@@ -143,7 +143,8 @@ public class ChatDialog extends DialogBox {
 		this.dialogChannelId = channelId;
 		this.dialogCloseHandler = closeHandler;
 		this.caption = caption;
-		this.setText(caption);
+		String html = "<div class='ph-ChatDialog-Caption'>" + caption + "</div>";
+		getCaption().setHTML(html);
 
 		// Create a listener
 		bus.subscribe(this.dialogChannelId, new MessageCallback() {

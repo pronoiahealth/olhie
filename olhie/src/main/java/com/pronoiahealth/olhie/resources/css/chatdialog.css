@@ -59,3 +59,7 @@
 .ph-ChatDialog-AcceptDialog-Btns {
 	margin: 5px;
 }
+
+.ph-ChatDialog-Caption {
+	opacity: 1.0;
+}
