@@ -50,6 +50,8 @@ public class SessionTracker {
 	private RequestDispatcher dispatcher;
 
 	private static final String ExpireListener = "LoggedInHandleExpiredSessionsService";
+	
+	private static final String CloseListener = "LoggedInHandlerCloseSessionService";
 
 	private final ScheduledExecutorService service = Executors
 			.newScheduledThreadPool(1);
@@ -182,8 +184,13 @@ public class SessionTracker {
 				.sendNowWith(dispatcher);
 	}
 
+	/**
+	 * Closes a LoggedInSession in the db
+	 * 
+	 * @param sess
+	 */
 	private void closeSession(UserSession sess) {
-		MessageBuilder.createMessage().toSubject(ExpireListener).signalling()
+		MessageBuilder.createMessage().toSubject(CloseListener).signalling()
 				.with("CloseSession", sess).noErrorHandling()
 				.sendNowWith(dispatcher);
 	}

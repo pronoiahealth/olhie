@@ -187,7 +187,7 @@ public class OfferService {
 
 			try {
 				// Tell the peer about it
-				forwardOffer(channelId, userId, createNameFromCurrentUser(),
+				forwardOffer(channelId, peerId, createNameFromCurrentUser(),
 						ceateSessionTrackerLookupKey(peerName, peerId),
 						offerType, OfferRoleEnum.PEER, OfferActionEnum.OFFER);
 

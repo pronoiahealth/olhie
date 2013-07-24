@@ -53,7 +53,7 @@ public class LogoutService {
 
 	@Inject
 	private Event<LogoutResponseEvent> logoutResponseEvent;
-	
+
 	@Inject
 	private Event<UserLogoutEvent> userLogoutEvent;
 
@@ -78,17 +78,15 @@ public class LogoutService {
 	public void observesLogoutRequestEvent(
 			@Observes LogoutRequestEvent logoutRequestEvent) {
 		try {
-			String userId = userToken.getUserId();
-			
 			if (userToken.getLoggedIn() == true) {
 				userToken.clearToken();
 				logoutResponseEvent.fire(new LogoutResponseEvent());
 			}
-			
-			//String erraiSessionId = EventConversationContext.get()
-			//		.getSessionId();
-			//sessionTracker.stopTrackingUserSession(erraiSessionId);
-			
+
+			// Stop tracking the session in the db (LoggedInSession
+			String erraiSessionId = EventConversationContext.get()
+					.getSessionId();
+			sessionTracker.stopTrackingUserSession(erraiSessionId);
 		} catch (Exception e) {
 			serviceErrorEvent.fire(new ServiceErrorEvent(e.getMessage()));
 		}

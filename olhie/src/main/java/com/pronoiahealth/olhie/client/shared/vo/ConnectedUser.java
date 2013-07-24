@@ -51,6 +51,6 @@ public class ConnectedUser {
 
 	@Override
 	public String toString() {
-		return userName + " (" + userId + ")";
+		return userName;
 	}
 }

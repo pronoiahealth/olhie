@@ -1,6 +1,3 @@
-package com.pronoiahealth.olhie.server.services;
-
-import java.util.logging.Level;
 /*******************************************************************************
  * Copyright (c) 2013 Pronoia Health LLC.
  * All rights reserved. This program and the accompanying materials
@@ -11,12 +8,15 @@ import java.util.logging.Level;
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
+package com.pronoiahealth.olhie.server.services;
+
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;

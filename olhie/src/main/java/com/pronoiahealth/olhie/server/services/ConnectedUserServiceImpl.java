@@ -69,14 +69,9 @@ public class ConnectedUserServiceImpl implements ConnectedUserService {
 	public List<ConnectedUser> getConnectedUsers(String qry) {
 		try {
 			List<ConnectedUser> retLst = new ArrayList<ConnectedUser>();
-			// List<String> matchLst =
-			// sessionTracker.getMatchingActiveUsers(qry);
 			List<LoggedInSession> sesses = LoggedInSessionDAO
 					.getActiveSessionsByLookupNameQry(qry,
 							userToken.getUserId(), ooDbTx);
-			// for (String str : matchLst) {
-			// retLst.add(getConnectedUserFromUserKey(str));
-			// }
 
 			if (sesses != null && sesses.size() > 0) {
 				for (LoggedInSession sess : sesses) {
@@ -91,20 +86,4 @@ public class ConnectedUserServiceImpl implements ConnectedUserService {
 			throw new GenericRPCException(e.getMessage());
 		}
 	}
-
-	/**
-	 * Interrogates the userKey returned from the SessionTracker to create a
-	 * ConnectedUser object.
-	 * 
-	 * @param userKey
-	 * @return
-	 */
-	/*
-	 * private ConnectedUser getConnectedUserFromUserKey(String userKey) { int
-	 * userIdStart = userKey.lastIndexOf("("); String userId = userKey
-	 * .substring(userIdStart + 1, userKey.length() - 1); String name =
-	 * userKey.substring(0, userIdStart - 1); return new ConnectedUser(userId,
-	 * name); }
-	 */
-
 }

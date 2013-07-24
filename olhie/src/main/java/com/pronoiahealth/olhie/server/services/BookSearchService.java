@@ -65,7 +65,7 @@ public class BookSearchService {
 
 	@Inject
 	private Event<ServiceErrorEvent> serviceErrorEvent;
-	
+
 	@Inject
 	private SolrSearchService solrSearchService;
 
@@ -96,21 +96,21 @@ public class BookSearchService {
 			String searchText = bookSearchEvent.getSearchText();
 			List<BookDisplay> bookDisplayList = new ArrayList<BookDisplay>();
 
-			List<String> bookIdList = solrSearchService.searchSolr(searchText);
-			
+			// List<String> bookIdList =
+			// solrSearchService.searchSolr(searchText);
+
 			// Find Book
-			OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
-					"select from Book where @rid in :idlist and active = true");
-			HashMap<String, Object> bparams = new HashMap<String, Object>();
-			bparams.put("idlist", bookIdList);
-			List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
-			/*
+			// OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
+			// "select from Book where @rid in :idlist and active = true");
+			// HashMap<String, Object> bparams = new HashMap<String, Object>();
+			// bparams.put("idlist", bookIdList);
+			// List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
+
 			OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
 					"select from Book where bookTitle.toLowerCase() like :title and active = true");
 			HashMap<String, String> bparams = new HashMap<String, String>();
 			bparams.put("title", "%" + searchText.toLowerCase() + "%");
 			List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
-			*/
 
 			for (Book book : bResult) {
 				BookDisplay bookDisplay = BookDAO.getBookDisplayById(
