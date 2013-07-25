@@ -1,20 +1,25 @@
+.ph-BulletinBoard-Background {
+	/*background: white;
+	background-image: url("Olhie/images/corkboard.jpg");
+	background-image: url("Olhie/images/Bulletinboardbackgrnd.png");
+	background-repeat: repeat;*/
+	background: url("Olhie/images/Bulletinboardbackgrnd.png") no-repeat center center fixed;
+	webkit-background-size: cover;
+	moz-background-size: cover;
+	o-background-size: cover;
+	background-size: cover;
+}
+
 /*
 .ph-BulletinBoard-Background {
-	background: white;
-	background-image: url("Olhie/images/corkboard.jpg");
-	background-repeat: repeat;
-}
-*/
-.ph-BulletinBoard-Background {
 	background: url("Olhie/images/bulletin-color.png") no-repeat center center fixed;
-	/*webkit-background-size: cover;
+	webkit-background-size: cover;
 	moz-background-size: cover;
-	o-background-size: cover;*/
+	o-background-size: cover;
 	background-size: cover;
-	/*
 	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Olhie/images/bulletin-color.png',
 		sizingMethod='scale');
 	-ms-filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Olhie/images/bulletin-color.png',
 		sizingMethod='scale');
-	*/
 }
+*/

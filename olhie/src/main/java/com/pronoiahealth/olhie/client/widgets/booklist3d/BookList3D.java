@@ -274,6 +274,7 @@ public class BookList3D extends Widget {
 					// "input.star");
 					final GQuery page = book.children("div.bk-page");
 					final GQuery bookview = parent.find("button.bk-bookview");
+					final GQuery flipAction = parent.find("button.bk-bookback");
 					final GQuery content = page.children("div.bk-content");
 					final IntHolder current = new IntHolder();
 
@@ -289,16 +290,15 @@ public class BookList3D extends Widget {
 						}
 					});
 
-					GQuery flipAction = parent.find("button.bk-bookback");
+					// GQuery flipAction = parent.find("button.bk-bookback");
 					flipAction.bind(Event.ONCLICK, new Function() {
 						@Override
 						public boolean f(Event e) {
 							// Toggle the button
-							GQuery fa = $(e);
-							if (fa.hasClass("bk-bookback-pressed") == true) {
-								fa.removeClass("bk-bookback-pressed");
+							if (flipAction.hasClass("bk-bookback-pressed") == true) {
+								flipAction.removeClass("bk-bookback-pressed");
 							} else {
-								fa.addClass("bk-bookback-pressed");
+								flipAction.addClass("bk-bookback-pressed");
 							}
 							
 							bookview.removeClass("bk-active");
@@ -324,6 +324,12 @@ public class BookList3D extends Widget {
 					bookview.bind(Event.ONCLICK, new Function() {
 						@Override
 						public boolean f(Event e) {
+							
+							// If the view back cover was pressed need to reset the button
+							if (flipAction.hasClass("bk-bookback-pressed") == true) {
+								flipAction.removeClass("bk-bookback-pressed");
+							}
+							
 							GQuery thisPt = $(e);
 							other.data("opened", false);
 							other.removeClass("bk-viewinside");

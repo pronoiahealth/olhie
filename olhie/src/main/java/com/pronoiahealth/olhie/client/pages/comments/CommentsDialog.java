@@ -129,7 +129,7 @@ public class CommentsDialog extends Composite {
 	public void show() {
 		clearErrors();
 		commentForm.reset();
-		comment.setFocus(true);
+		commentModal.show();
 	}
 
 	/**

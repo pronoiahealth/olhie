@@ -5,7 +5,7 @@
 
 	<g:HTMLPanel>
 		<b:ResponsiveNavbar styleName="navbar header-North-NavBar">
-			<b:Brand>Open Library of Health Information Exchange</b:Brand>
+			<b:Brand ui:field="navBarBrand">Open Library of Health Information Exchange</b:Brand>
 			<b:Nav alignment="RIGHT">
 				<b:NavPills>
 					<b:Tooltip text="Leave Comments for the Administrator"

@@ -19,30 +19,6 @@
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel ui:field="buttonGrpHolder" styleName="ph-NewBook-EditCurrentBook-Button-Container">
-						<!-- b:ButtonGroup>
-							<b:Tooltip text="Add a Logo image">
-								<b:Button ui:field="logoBookButton" icon="PICTURE"
-									type="PRIMARY" size="SMALL"></b:Button>
-							</b:Tooltip>
-							<b:Tooltip text="Edit the Book details">
-								<b:Button ui:field="editBookButton" icon="EDIT" type="PRIMARY"
-									size="SMALL"></b:Button>
-							</b:Tooltip>
-							<b:Tooltip text="Add a comment for this book">
-								<b:Button ui:field="addCommentBookButton" icon="PENCIL"
-									type="PRIMARY" size="SMALL"></b:Button>
-							</b:Tooltip>
-							<b:Tooltip text="Add this book to my collection"
-								placement="LEFT">
-								<b:Button ui:field="addToCollectionBookButton" icon="THUMBS_UP"
-									type="PRIMARY" size="SMALL"></b:Button>
-							</b:Tooltip>
-							<b:Tooltip text="Remove this book from my collection"
-								placement="LEFT">
-								<b:Button ui:field="removeFromCollectionBookButton"
-									icon="THUMBS_UP" type="DANGER" size="SMALL"></b:Button>
-							</b:Tooltip>
-						</b:ButtonGroup -->
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</b:FluidRow>

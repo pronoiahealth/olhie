@@ -15,12 +15,13 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.github.gwtbootstrap.client.ui.Brand;
 import com.github.gwtbootstrap.client.ui.Dropdown;
 import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.NavWidget;
-import com.github.gwtbootstrap.client.ui.ResponsiveNavbar;
 import com.github.gwtbootstrap.client.ui.VerticalDivider;
-import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -63,6 +64,9 @@ public class Header extends Composite {
 	 */
 	@Inject
 	private PageNavigator nav;
+	
+	@UiField
+	public Brand navBarBrand;
 
 	@UiField
 	public NavLink commentsLink;
@@ -138,6 +142,15 @@ public class Header extends Composite {
 		// Add formatting to Add link
 		addBookLink.getAnchor().getElement()
 				.setAttribute("style", "padding: 0px");
+		
+		// Set logo image in brand.
+		// Brand currently does not support this easily
+		ImageElement imgElem = Document.get().createImageElement();
+		imgElem.setSrc("Olhie/images/OLHIE.png");
+		imgElem.setWidth(28);
+		imgElem.setHeight(28);
+		imgElem.setAttribute("style", "margin-right: 10px;");
+		navBarBrand.getElement().insertFirst(imgElem);
 
 		// When built hide the dropdown
 		setNotLoggedIn();

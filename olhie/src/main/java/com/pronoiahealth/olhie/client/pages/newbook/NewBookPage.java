@@ -834,18 +834,22 @@ public class NewBookPage extends AbstractPage {
 		switch (displayState) {
 		case AUTHOR_STATE:
 			setButtonGrpHolder(authorBtns);
+			tocAddElement.setVisible(true);
 			retState = NewBookPageStateEnum.AUTHOR_STATE;
 			break;
 		case LOGGED_IN_MY_COLLECTION_STATE:
 			setButtonGrpHolder(loggedInMyCollectBtns);
+			tocAddElement.setVisible(false);
 			retState = NewBookPageStateEnum.LOGGED_IN_MY_COLLECTION_STATE;
 			break;
 		case LOGGED_IN_NOT_IN_MY_COLLECTION_STATE:
 			setButtonGrpHolder(loggedInNotMyCollectBtns);
+			tocAddElement.setVisible(false);
 			retState = NewBookPageStateEnum.LOGGED_IN_NOT_IN_MY_COLLECTION_STATE;
 			break;
 		case NOT_LOGGED_IN:
 			setButtonGrpHolder(notLoggedInBtns);
+			tocAddElement.setVisible(false);
 			retState = NewBookPageStateEnum.NOT_LOGGED_IN;
 			break;
 		}
