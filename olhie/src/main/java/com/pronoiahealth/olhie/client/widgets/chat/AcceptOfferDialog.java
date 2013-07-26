@@ -1,19 +1,26 @@
 package com.pronoiahealth.olhie.client.widgets.chat;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Observes;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.ImageElement;
+import com.google.gwt.dom.client.ParagraphElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 
 @Dependent
 public class AcceptOfferDialog extends DialogBox {
@@ -38,7 +45,7 @@ public class AcceptOfferDialog extends DialogBox {
 
 		// Set up the dialog box contents
 		VerticalPanel vp = new VerticalPanel();
-		vp.setHeight("200");
+		vp.setHeight("230");
 		vp.setWidth("150px");
 		vp.setSpacing(10);
 
@@ -46,6 +53,20 @@ public class AcceptOfferDialog extends DialogBox {
 		vp.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
 		this.msgPanel = new SimplePanel();
 		vp.add(msgPanel);
+
+		// Add the bell
+		SimplePanel bellPanel = new SimplePanel();
+		vp.add(bellPanel);
+		Document doc = Document.get();
+		ParagraphElement pElem = doc.createPElement();
+		bellPanel.getElement().appendChild(pElem);
+		pElem.setAttribute("style", "text-align: center; margin-bottom: 10px");
+		ImageElement iElem = doc.createImageElement();
+		pElem.appendChild(iElem);
+		iElem.setWidth(20);
+		iElem.setHeight(20);
+		iElem.setClassName("acceptChatBell");
+		iElem.setSrc("Olhie/images/bell.png");
 
 		// Button panel
 		HorizontalPanel hp = new HorizontalPanel();
@@ -81,7 +102,8 @@ public class AcceptOfferDialog extends DialogBox {
 		this.closeHandler = closeHandler;
 
 		// Set message panel text
-		msgPanel.add(new HTML(getUserFromUserKey(offererName) + " wants to chat?"));
+		msgPanel.add(new HTML(getUserFromUserKey(offererName)
+				+ " wants to chat?"));
 
 		// Add button handlers
 		yesBtn.addClickHandler(new ClickHandler() {
@@ -97,6 +119,48 @@ public class AcceptOfferDialog extends DialogBox {
 				closeHandler.close(channelId, offererName, false);
 			}
 		});
+	}
+
+	/**
+	 * The window can be dragged off the screen or the window can be resized
+	 * hidding the dialog. This method in conjunction with the monitoring window
+	 * rezie events prevents that from happening.
+	 * 
+	 * @see com.google.gwt.user.client.ui.DialogBox#endDragging(com.google.gwt.event.dom.client.MouseUpEvent)
+	 */
+	@Override
+	protected void endDragging(MouseUpEvent event) {
+		int genericMargin = 60;
+		int leftMargin = -(this.getOffsetWidth() - genericMargin);
+		int lowerMargin = Window.getClientHeight() - genericMargin;
+		int rightMargin = Window.getClientWidth() - genericMargin;
+		int upperMargin = 0;
+
+		if (this.getAbsoluteLeft() > rightMargin) {
+			this.setPopupPosition(rightMargin, this.getPopupTop());
+		}
+
+		if (this.getAbsoluteLeft() < leftMargin) {
+			this.setPopupPosition(leftMargin, this.getPopupTop());
+		}
+
+		if (this.getAbsoluteTop() > lowerMargin) {
+			this.setPopupPosition(this.getPopupLeft(), lowerMargin);
+		}
+
+		if (this.getAbsoluteTop() < upperMargin) {
+			this.setPopupPosition(this.getPopupLeft(), upperMargin);
+		}
+
+		super.endDragging(event);
+	}
+
+	/**
+	 * @param windowResizeEvent
+	 */
+	protected void observesWindowResizeEvent(
+			@Observes WindowResizeEvent windowResizeEvent) {
+		endDragging(null);
 	}
 
 	private String getUserFromUserKey(String userKey) {

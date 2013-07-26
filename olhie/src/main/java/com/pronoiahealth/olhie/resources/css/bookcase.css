@@ -69,10 +69,15 @@
 }
 
 .ph-Bookcase-MyBooksTab {
-	background: white;
+	/*background: white;
 	background-image: url("Olhie/images/BookShelf-backgrnd.png");
 	background-repeat: repeat;
-	padding-top: 30px;
+	padding-top: 30px;*/
+	background: url("Olhie/images/libraryBackground.png") no-repeat center center fixed;
+	webkit-background-size: cover;
+	moz-background-size: cover;
+	o-background-size: cover;
+	background-size: cover;
 }
 
 .ph-Bookcase-CoAuthorTab {
@@ -83,8 +88,13 @@
 }
 
 .ph-Bookcase-MyCollectionTab {
-	background: white;
+	/*background: white;
 	background-image: url("Olhie/images/myCollectionBg.png");
-	background-repeat: repeat;
+	background-repeat: repeat;*/
+	background: url("Olhie/images/MyCollection-background.png") no-repeat center center fixed;
+	webkit-background-size: cover;
+	moz-background-size: cover;
+	o-background-size: cover;
+	background-size: cover;
 	padding-top: 30px;
 }

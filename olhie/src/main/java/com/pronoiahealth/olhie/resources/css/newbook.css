@@ -16,7 +16,8 @@
 
 .ph-NewBook-BookTitle {
 	text-align: center;
-	font-family: "Swanky and Moo Moo", cursive;
+	font-family: 'Source Code Pro';
+	/*font-family: "Swanky and Moo Moo", cursive;*/
 	font-size: 28px;
 	font-weight: bold;
 	margin-top: 0px;
@@ -26,7 +27,8 @@
 
 .ph-NewBook-Author {
 	text-align: center;
-	font-family: "Swanky and Moo Moo", cursive;
+	font-family: 'Source Code Pro';
+	/*font-family: "Swanky and Moo Moo", cursive;*/
 	font-size: 18px;
 	font-weight: bold;
 	color: white;
@@ -38,19 +40,22 @@
 
 .ph-NewBook-Created-Published-Category {
 	text-align: center;
-	font-family: "Swanky and Moo Moo", cursive;
+	font-family: 'Source Code Pro';
+	/*font-family: "Swanky and Moo Moo", cursive;*/
 	font-size: 18px;
 	font-weight: bold;
 	color: white;
 }
 
 .ph-NewBook-Introduction-Hero-Introduction-Header {
-	font-family: "Swanky and Moo Moo", cursive;
+	font-family: 'Source Code Pro';
+	/*font-family: "Swanky and Moo Moo", cursive;*/
 	font-size: 24px;
 }
 
 .ph-NewBook-Introduction-Hero-TOC-Header {
-	font-family: "Swanky and Moo Moo", cursive;
+	font-family: 'Source Code Pro';
+	/*font-family: "Swanky and Moo Moo", cursive;*/
 	font-size: 24px;
 }
 
@@ -89,7 +94,8 @@
 }
 
 .ph-NewBook-Introduction-Hero-IntroductionTxt {
-	font-family: "Swanky and Moo Moo", cursive;
+	font-family: 'Source Code Pro';
+	/*font-family: "Swanky and Moo Moo", cursive;*/
 	font-size: 16px;
 }
 

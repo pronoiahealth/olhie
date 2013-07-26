@@ -12,6 +12,7 @@ package com.pronoiahealth.olhie.client.widgets.chat;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.jboss.errai.bus.client.ErraiBus;
@@ -29,12 +30,15 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.pronoiahealth.olhie.client.shared.constants.OfferActionEnum;
 import com.pronoiahealth.olhie.client.shared.constants.OfferEnum;
+import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.events.offers.SendMessageEvent;
 
 /**
@@ -143,7 +147,8 @@ public class ChatDialog extends DialogBox {
 		this.dialogChannelId = channelId;
 		this.dialogCloseHandler = closeHandler;
 		this.caption = caption;
-		String html = "<div class='ph-ChatDialog-Caption'>" + caption + "</div>";
+		String html = "<div class='ph-ChatDialog-Caption'>" + caption
+				+ "</div>";
 		getCaption().setHTML(html);
 
 		// Create a listener
@@ -178,6 +183,48 @@ public class ChatDialog extends DialogBox {
 				}
 			}
 		});
+	}
+
+	/**
+	 * The window can be dragged off the screen or the window can be resized
+	 * hidding the dialog. This method in conjunction with the monitoring window
+	 * rezie events prevents that from happening.
+	 * 
+	 * @see com.google.gwt.user.client.ui.DialogBox#endDragging(com.google.gwt.event.dom.client.MouseUpEvent)
+	 */
+	@Override
+	protected void endDragging(MouseUpEvent event) {
+		int genericMargin = 60;
+		int leftMargin = -(this.getOffsetWidth() - genericMargin);
+		int lowerMargin = Window.getClientHeight() - genericMargin;
+		int rightMargin = Window.getClientWidth() - genericMargin;
+		int upperMargin = 0;
+
+		if (this.getAbsoluteLeft() > rightMargin) {
+			this.setPopupPosition(rightMargin, this.getPopupTop());
+		}
+
+		if (this.getAbsoluteLeft() < leftMargin) {
+			this.setPopupPosition(leftMargin, this.getPopupTop());
+		}
+
+		if (this.getAbsoluteTop() > lowerMargin) {
+			this.setPopupPosition(this.getPopupLeft(), lowerMargin);
+		}
+
+		if (this.getAbsoluteTop() < upperMargin) {
+			this.setPopupPosition(this.getPopupLeft(), upperMargin);
+		}
+
+		super.endDragging(event);
+	}
+
+	/**
+	 * @param windowResizeEvent
+	 */
+	protected void observesWindowResizeEvent(
+			@Observes WindowResizeEvent windowResizeEvent) {
+		endDragging(null);
 	}
 
 	/**

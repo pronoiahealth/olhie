@@ -31,6 +31,7 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.query.client.Function;
 import com.google.gwt.query.client.GQuery;
+import com.google.gwt.query.client.Properties;
 import com.google.gwt.query.client.plugins.Effects;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Anchor;
@@ -134,6 +135,7 @@ public class NewsDisplay extends Composite {
 			// Load the element
 			NewsItem item = newsItems.get(currentNewsItem);
 			newsTitle.setText(item.getTitle());
+			newsTitle.setHref(item.getHref());
 			newsStory.setText(item.getStory());
 		}
 	}
@@ -152,7 +154,7 @@ public class NewsDisplay extends Composite {
 	private void stopFadeAnimation() {
 		fadeTimer.cancel();
 		GQuery elem = $("#fadeNewsDisplay").stop();
-		elem.show();
+		elem.css(Properties.create("opacity: 1.0;"));
 	}
 
 	/**

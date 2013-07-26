@@ -23,6 +23,7 @@ import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.bus.client.api.messaging.MessageBus;
 import org.jboss.errai.bus.client.api.messaging.MessageCallback;
 
+import com.pronoiahealth.olhie.client.OfferDialogFactory;
 import com.pronoiahealth.olhie.client.shared.constants.OfferActionEnum;
 import com.pronoiahealth.olhie.client.shared.constants.OfferEnum;
 import com.pronoiahealth.olhie.client.shared.constants.OfferRoleEnum;

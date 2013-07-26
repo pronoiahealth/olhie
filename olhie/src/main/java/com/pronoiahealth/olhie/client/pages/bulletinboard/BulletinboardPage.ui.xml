@@ -5,7 +5,6 @@
 	xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'>
 	
 	<g:HTMLPanel styleName="ph-BulletinBoard">
-		<g:Label ui:field="test">Desktop</g:Label>
 	</g:HTMLPanel>
 	
 </ui:UiBinder>

@@ -38,9 +38,6 @@ public class BulletinboardPage extends AbstractPage {
 	@Inject
 	UiBinder<Widget, BulletinboardPage> binder;
 
-	@UiField
-	public Label test;
-
 	public BulletinboardPage() {
 	}
 

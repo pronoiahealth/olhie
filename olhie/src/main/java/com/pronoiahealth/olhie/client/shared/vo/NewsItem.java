@@ -51,6 +51,10 @@ public class NewsItem {
 	@NotNull
 	@Size(min = 1, max = 500, message = "Between 1 and 500 characters.")
 	private String story;
+	
+	@NotNull
+	@Size(min = 6, max = 2, message = "Between 6 and 20 characters.")
+	private String authorId;
 
 	@NotNull
 	private Boolean active;
@@ -75,13 +79,14 @@ public class NewsItem {
 	 * @param datePublished
 	 */
 	public NewsItem(String title, String href, String story, boolean active,
-			Date datePublished) {
+			Date datePublished, String authorId) {
 		super();
 		this.title = title;
 		this.href = href;
 		this.story = story;
 		this.active = Boolean.valueOf(active);
 		this.datePublished = datePublished;
+		this.authorId = authorId;
 	}
 
 	public String getId() {
@@ -126,5 +131,13 @@ public class NewsItem {
 
 	public void setDatePublished(Date datePublished) {
 		this.datePublished = datePublished;
+	}
+
+	public String getAuthorId() {
+		return authorId;
+	}
+
+	public void setAuthorId(String authorId) {
+		this.authorId = authorId;
 	}
 }
