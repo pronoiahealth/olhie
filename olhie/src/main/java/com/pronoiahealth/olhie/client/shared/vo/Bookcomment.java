@@ -31,7 +31,7 @@ import com.orientechnologies.orient.core.annotation.OVersion;
  *
  */
 @Portable
-public class BookComment {
+public class Bookcomment {
 	
 	@OId
 	private String id;
@@ -51,7 +51,7 @@ public class BookComment {
 	@NotNull
 	private String comment;
 
-	public BookComment() {
+	public Bookcomment() {
 	}
 
 	public String getBookId() {

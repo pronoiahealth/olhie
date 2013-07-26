@@ -68,8 +68,9 @@ import com.pronoiahealth.olhie.client.shared.events.local.BookContentUpdatedEven
 import com.pronoiahealth.olhie.client.shared.events.local.DownloadBookAssetEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowAddBookCommentModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowAddLogoModalEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.ShowBookCommentModalEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowBookCommentsModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewAssetModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewBookModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowViewBookassetDialogEvent;
@@ -95,8 +96,9 @@ import com.pronoiahealth.olhie.client.widgets.rating.StarRatingStarClickedHandle
  * 3. Handle the viewing of a books contents<br/>
  * 
  * <p>
- * This page will set the view mode (edit or view) based on the relationship
- * between the book (from bookId) and the user who is currently logged in.
+ * This page uses a page state enum to set the view elements for the user and
+ * there relationship to the book being viewed. Buttons are grouped according to
+ * the state and are built dynamically.
  * </p>
  * 
  * 
@@ -211,7 +213,10 @@ public class NewBookPage extends AbstractPage {
 	private Event<ShowAddLogoModalEvent> showAddLogoModalEvent;
 
 	@Inject
-	private Event<ShowBookCommentModalEvent> showBookCommentModalEvent;
+	private Event<ShowBookCommentsModalEvent> showBookCommentsModalEvent;
+
+	@Inject
+	private Event<ShowAddBookCommentModalEvent> showAddBookCommentModalEvent;
 
 	@Inject
 	private Event<BookListBookSelectedEvent> bookListBookSelectedEvent;
@@ -242,10 +247,18 @@ public class NewBookPage extends AbstractPage {
 
 	public Button editBookButton;
 
+	public Button authorViewCommentsButton;
+
+	public Button loggedInMyCollViewCommentsButton;
+
+	public Button loggedInNotMyCollViewCommentsButton;
+
+	public Button notLoggedInViewCommentsButton;
+
 	public Button logoBookButton;
 
 	public Button addCommentBookButton;
-	
+
 	public Button addCommentBookButton1;
 
 	public Button addToCollectionBookButton;
@@ -366,11 +379,22 @@ public class NewBookPage extends AbstractPage {
 	}
 
 	/**
-	 * 
+	 * Build button groups
 	 */
 	private void buildBtnGrps() {
+		buildAuthorButtons();
+		buildLoggedInAndInMyCollection();
+		buildLoggedInNotInMyCollectionButtons();
+		buildNotLoggedInButtons();
+	}
+
+	/**
+	 * Author buttons
+	 */
+	private void buildAuthorButtons() {
 		// Buttons for author or co-author
 		authorBtns = new ButtonGroup();
+		// logo
 		logoBookButton = createButton("", IconType.PICTURE, ButtonType.PRIMARY,
 				ButtonSize.SMALL);
 		logoBookButton.addClickHandler(new ClickHandler() {
@@ -381,6 +405,21 @@ public class NewBookPage extends AbstractPage {
 		});
 		createTooltip(logoBookButton, "Add a Logo image", Placement.TOP);
 		authorBtns.add(logoBookButton);
+
+		// comments
+		authorViewCommentsButton = createButton("", IconType.COMMENTS,
+				ButtonType.PRIMARY, ButtonSize.SMALL);
+		authorViewCommentsButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				viewCommentsButtonClicked(null);
+			}
+		});
+		createTooltip(authorViewCommentsButton, "View book comments",
+				Placement.TOP);
+		authorBtns.add(authorViewCommentsButton);
+
+		// Edit
 		editBookButton = createButton("", IconType.EDIT, ButtonType.PRIMARY,
 				ButtonSize.SMALL);
 		editBookButton.addClickHandler(new ClickHandler() {
@@ -391,9 +430,15 @@ public class NewBookPage extends AbstractPage {
 		});
 		createTooltip(editBookButton, "Edit the Book details", Placement.TOP);
 		authorBtns.add(editBookButton);
+	}
 
+	/**
+	 * Logged in and in my collection buttons
+	 */
+	private void buildLoggedInAndInMyCollection() {
 		// Logged in and the book is in my collection
 		loggedInMyCollectBtns = new ButtonGroup();
+		// Remove button
 		removeFromCollectionBookButton = createButton("", IconType.THUMBS_UP,
 				ButtonType.DANGER, ButtonSize.SMALL);
 		removeFromCollectionBookButton.addClickHandler(new ClickHandler() {
@@ -404,6 +449,20 @@ public class NewBookPage extends AbstractPage {
 		});
 		createTooltip(removeFromCollectionBookButton,
 				"Remove this book from my collection", Placement.LEFT);
+
+		// View comments
+		loggedInMyCollViewCommentsButton = createButton("", IconType.COMMENTS,
+				ButtonType.PRIMARY, ButtonSize.SMALL);
+		loggedInMyCollViewCommentsButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				viewCommentsButtonClicked(null);
+			}
+		});
+		createTooltip(loggedInMyCollViewCommentsButton, "View book comments",
+				Placement.TOP);
+
+		// Add comment
 		addCommentBookButton = createButton("", IconType.PENCIL,
 				ButtonType.PRIMARY, ButtonSize.SMALL);
 		addCommentBookButton.addClickHandler(new ClickHandler() {
@@ -415,8 +474,14 @@ public class NewBookPage extends AbstractPage {
 		createTooltip(addCommentBookButton, "Add a comment for this book",
 				Placement.TOP);
 		loggedInMyCollectBtns.add(addCommentBookButton);
+		loggedInMyCollectBtns.add(loggedInMyCollViewCommentsButton);
 		loggedInMyCollectBtns.add(removeFromCollectionBookButton);
+	}
 
+	/**
+	 * Logged in and not in my collection buttons
+	 */
+	private void buildLoggedInNotInMyCollectionButtons() {
 		// Logged in but the book isn't currently in my collection
 		loggedInNotMyCollectBtns = new ButtonGroup();
 		addToCollectionBookButton = createButton("", IconType.THUMBS_UP,
@@ -429,6 +494,19 @@ public class NewBookPage extends AbstractPage {
 		});
 		createTooltip(addToCollectionBookButton,
 				"Add this book to my collection", Placement.LEFT);
+
+		// View comments
+		loggedInNotMyCollViewCommentsButton = createButton("",
+				IconType.COMMENTS, ButtonType.PRIMARY, ButtonSize.SMALL);
+		loggedInNotMyCollViewCommentsButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				viewCommentsButtonClicked(null);
+			}
+		});
+		createTooltip(loggedInNotMyCollViewCommentsButton,
+				"View book comments", Placement.TOP);
+
 		// Comment button 1
 		addCommentBookButton1 = createButton("", IconType.PENCIL,
 				ButtonType.PRIMARY, ButtonSize.SMALL);
@@ -441,13 +519,27 @@ public class NewBookPage extends AbstractPage {
 		createTooltip(addCommentBookButton1, "Add a comment for this book",
 				Placement.TOP);
 		loggedInNotMyCollectBtns.add(addCommentBookButton1);
+		loggedInNotMyCollectBtns.add(loggedInNotMyCollViewCommentsButton);
 		loggedInNotMyCollectBtns.add(addToCollectionBookButton);
+	}
 
-		// Not logged In - Just a blank invisible button
+	/**
+	 * Not logged in button group
+	 */
+	private void buildNotLoggedInButtons() {
+		// Not logged In
 		notLoggedInBtns = new ButtonGroup();
-		Button blankBtn = new Button("Blank");
-		blankBtn.setVisible(false);
-		notLoggedInBtns.add(blankBtn);
+		notLoggedInViewCommentsButton = createButton("", IconType.COMMENTS,
+				ButtonType.PRIMARY, ButtonSize.SMALL);
+		notLoggedInViewCommentsButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				viewCommentsButtonClicked(null);
+			}
+		});
+		createTooltip(notLoggedInViewCommentsButton, "View book comments",
+				Placement.TOP);
+		notLoggedInBtns.add(notLoggedInViewCommentsButton);
 	}
 
 	/**
@@ -670,9 +762,17 @@ public class NewBookPage extends AbstractPage {
 		// Set star rating here
 		if (pageState == NewBookPageStateEnum.AUTHOR_STATE) {
 			starRating.setRating(bookDisplay.getBookRating());
+			if (bookDisplay.isHasComments() == true) {
+				authorViewCommentsButton.setEnabled(true);
+			} else {
+				authorViewCommentsButton.setEnabled(false);
+			}
 		} else {
 			starRating.setRating(bookDisplay.getUserBookRating());
 		}
+
+		// view comments state
+		setViewCommentsForCurrentState(pageState, bookDisplay.isHasComments());
 
 		// Adjust display size
 		adjustSize();
@@ -790,11 +890,16 @@ public class NewBookPage extends AbstractPage {
 	public void commentBookButtonClicked(ClickEvent event) {
 		if (pageState == NewBookPageStateEnum.LOGGED_IN_MY_COLLECTION_STATE
 				|| pageState == NewBookPageStateEnum.LOGGED_IN_NOT_IN_MY_COLLECTION_STATE) {
-			this.showBookCommentModalEvent.fire(new ShowBookCommentModalEvent(
-					bookId));
+			this.showAddBookCommentModalEvent
+					.fire(new ShowAddBookCommentModalEvent(bookId));
 		}
 	}
 
+	/**
+	 * Adds the current book to the logged in users collection
+	 * 
+	 * @param event
+	 */
 	public void addToCollectionBookButtonClicked(ClickEvent event) {
 		if (pageState == NewBookPageStateEnum.LOGGED_IN_NOT_IN_MY_COLLECTION_STATE) {
 			addBookToMyCollectionEvent.fire(new AddBookToMyCollectionEvent(
@@ -802,12 +907,28 @@ public class NewBookPage extends AbstractPage {
 		}
 	}
 
+	/**
+	 * Removes the book from the current users collection. This can only happen
+	 * if the book is already in their collection.
+	 * 
+	 * @param event
+	 */
 	public void removeFromCollectionBookButtonClicked(ClickEvent event) {
 		if (pageState == NewBookPageStateEnum.LOGGED_IN_MY_COLLECTION_STATE) {
 			this.removeBookFromMyCollectionEvent
 					.fire(new RemoveBookFromMyCollectionEvent(
-							this.currentBookDisplay.getBook().getId()));
+							currentBookDisplay.getBook().getId()));
 		}
+	}
+
+	/**
+	 * View the comments on a book. Comments are viewable by any user.
+	 * 
+	 * @param event
+	 */
+	public void viewCommentsButtonClicked(ClickEvent event) {
+		showBookCommentsModalEvent.fire(new ShowBookCommentsModalEvent(
+				currentBookDisplay.getBook().getId()));
 	}
 
 	/**
@@ -855,6 +976,45 @@ public class NewBookPage extends AbstractPage {
 		}
 
 		return retState;
+	}
+
+	/**
+	 * Sets the display state of the view comments button for the current
+	 * NewBookPageStateEnum state
+	 * 
+	 * @param displayState
+	 * @param booHasComments
+	 */
+	private void setViewCommentsForCurrentState(
+			NewBookPageStateEnum displayState, boolean booHasComments) {
+		switch (displayState) {
+		case AUTHOR_STATE:
+			setViewCommentsButtonEnabled(authorViewCommentsButton,
+					booHasComments);
+			break;
+		case LOGGED_IN_MY_COLLECTION_STATE:
+			setViewCommentsButtonEnabled(loggedInMyCollViewCommentsButton,
+					booHasComments);
+			break;
+		case LOGGED_IN_NOT_IN_MY_COLLECTION_STATE:
+			setViewCommentsButtonEnabled(loggedInNotMyCollViewCommentsButton,
+					booHasComments);
+			break;
+		case NOT_LOGGED_IN:
+			setViewCommentsButtonEnabled(notLoggedInViewCommentsButton,
+					booHasComments);
+			break;
+		}
+	}
+
+	/**
+	 * Set the enabled state of the button
+	 * 
+	 * @param button
+	 * @param enabled
+	 */
+	private void setViewCommentsButtonEnabled(Button button, boolean enabled) {
+		button.setEnabled(enabled);
 	}
 
 	/**

@@ -3,11 +3,12 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
 	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base'>
 
-	<b:Modal ui:field="viewCommentModal" title="Comments"
-		backdrop="STATIC" keyboard="true" animation="true">
+	<b:Modal ui:field="viewCommentModal" title="Comments" backdrop="STATIC"
+		keyboard="true" animation="true">
 
-		<b:FluidContainer>
-		</b:FluidContainer>
+		<g:HTMLPanel ui:field="commentsContainer"
+			styleName="ph-NewBook-ViewComments-CommentsContainer">
+		</g:HTMLPanel>
 
 		<b:ModalFooter>
 			<b:Button ui:field="closeButton" icon="CIRCLE_ARROW_RIGHT"

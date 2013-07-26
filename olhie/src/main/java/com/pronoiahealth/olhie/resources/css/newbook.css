@@ -216,3 +216,21 @@
 	padding-left: 20px !important;
 	padding-right: 20px !important;
 }
+
+.ph-NewBook-ViewComments-CommentsContainer {
+	height: 350px;
+	overflow-y: auto; 
+}
+
+.ph-NewBook-ViewComments-BoxShade {
+	background-color: yellow;
+	width: 95%;
+	margin-bottom: 5px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	border-radius: 3px;
+	box-shadow: 2px 2px 2px #888888;
+}

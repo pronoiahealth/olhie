@@ -18,7 +18,7 @@ import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
-import com.pronoiahealth.olhie.client.shared.vo.BookComment;
+import com.pronoiahealth.olhie.client.shared.vo.Bookcomment;
 
 /**
  * BookCommentDAO.java<br/>
@@ -43,13 +43,13 @@ public class BookCommentDAO {
 	 * @return
 	 * @throws Exception
 	 */
-	public static List<BookComment> getBookCommentsByBookId(String bookId,
+	public static List<Bookcomment> getBookCommentsByBookId(String bookId,
 			OObjectDatabaseTx ooDbTx) throws Exception {
 		OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
-				"select from BookComment where bookId = :bId");
+				"select from BookComment where bookId = :bId order by createDT desc");
 		HashMap<String, String> bparams = new HashMap<String, String>();
 		bparams.put("bId", bookId);
-		List<BookComment> bResult = ooDbTx.command(bQuery).execute(bparams);
+		List<Bookcomment> bResult = ooDbTx.command(bQuery).execute(bparams);
 		return bResult;
 	}
 
@@ -63,7 +63,7 @@ public class BookCommentDAO {
 	 * @return
 	 * @throws Exception
 	 */
-	public static List<BookComment> getBookCommentsByBookIdUserId(
+	public static List<Bookcomment> getBookCommentsByBookIdUserId(
 			String bookId, String authorId, OObjectDatabaseTx ooDbTx)
 			throws Exception {
 		OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
@@ -71,7 +71,7 @@ public class BookCommentDAO {
 		HashMap<String, String> bparams = new HashMap<String, String>();
 		bparams.put("bId", bookId);
 		bparams.put("aId", authorId);
-		List<BookComment> bResult = ooDbTx.command(bQuery).execute(bparams);
+		List<Bookcomment> bResult = ooDbTx.command(bQuery).execute(bparams);
 		return bResult;
 	}
 
@@ -85,14 +85,15 @@ public class BookCommentDAO {
 	 * @param handleTransaction
 	 * @return
 	 */
-	public static BookComment addBookComment(String bookId, String authorId,
-			String comment, OObjectDatabaseTx ooDbTx, boolean handleTransaction) throws Exception {
+	public static Bookcomment addBookComment(String bookId, String authorId,
+			String comment, OObjectDatabaseTx ooDbTx, boolean handleTransaction)
+			throws Exception {
 
 		if (handleTransaction == true) {
 			ooDbTx.begin(TXTYPE.OPTIMISTIC);
 		}
 
-		BookComment com = new BookComment();
+		Bookcomment com = new Bookcomment();
 		com.setAuthorId(authorId);
 		com.setBookId(bookId);
 		com.setComment(comment);
@@ -105,6 +106,24 @@ public class BookCommentDAO {
 		}
 
 		return com;
+	}
+
+	/**
+	 * Returns true if the book has comments, false otherwise
+	 * 
+	 * @param bookId
+	 * @param ooDbTx
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean bookHasComments(String bookId, OObjectDatabaseTx ooDbTx)
+			throws Exception {
+		List<Bookcomment> comments = getBookCommentsByBookId(bookId, ooDbTx);
+		if (comments != null && comments.size() > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

@@ -150,6 +150,10 @@ public class BookDAO {
 				.setBookLogo((logoFileName != null && logoFileName.length() > 0) ? true
 						: false);
 
+		// Comments?
+		boolean hasComments = BookCommentDAO.bookHasComments(bookId, ooDbTx);
+		bookDisplay.setHasComments(hasComments);
+
 		// Return the display
 		return bookDisplay;
 	}

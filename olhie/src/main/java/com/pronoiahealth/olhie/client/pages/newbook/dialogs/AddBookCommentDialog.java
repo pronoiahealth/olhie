@@ -29,7 +29,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.shared.events.book.AddBookCommentEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.ShowBookCommentModalEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowAddBookCommentModalEvent;
 
 /**
  * CommentDialog.java<br/>
@@ -91,10 +91,10 @@ public class AddBookCommentDialog extends Composite {
 	 * 
 	 * @param showBookCommentModalEvent
 	 */
-	protected void observesShowBookCommentModalEvent(
-			@Observes ShowBookCommentModalEvent showBookCommentModalEvent) {
+	protected void observesShowAddBookCommentModalEvent(
+			@Observes ShowAddBookCommentModalEvent showAddBookCommentModalEvent) {
 		comment.setText("");
-		currentBookId = showBookCommentModalEvent.getBookId();
+		currentBookId = showAddBookCommentModalEvent.getBookId();
 		commentModal.show();
 	}
 

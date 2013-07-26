@@ -35,6 +35,7 @@ public class BookDisplay {
 	private BookCover bookCover;
 	private String authorFullName;
 	private boolean bookLogo;
+	private boolean hasComments;
 	private Set<UserBookRelationshipEnum> relEnums;
 	private int bookRating;
 	private int userBookRating;
@@ -55,21 +56,36 @@ public class BookDisplay {
 	 */
 	public BookDisplay(Book book, BookCategory bookCategory,
 			BookCover bookCover, String authorFullName,
-			List<Bookassetdescription> bookAssetDescriptions, int bookRating, int userBookRating) {
+			List<Bookassetdescription> bookAssetDescriptions, int bookRating,
+			int userBookRating) {
 		this(book, bookCategory, bookCover, authorFullName,
-				bookAssetDescriptions, false, bookRating, userBookRating);
+				bookAssetDescriptions, false, false, bookRating, userBookRating);
 	}
 
+	/**
+	 * Constructor
+	 *
+	 * @param book
+	 * @param bookCategory
+	 * @param bookCover
+	 * @param authorFullName
+	 * @param bookAssetDescriptions
+	 * @param bookLogo
+	 * @param hasComments
+	 * @param bookRating
+	 * @param userBookRating
+	 */
 	public BookDisplay(Book book, BookCategory bookCategory,
 			BookCover bookCover, String authorFullName,
 			List<Bookassetdescription> bookAssetDescriptions, boolean bookLogo,
-			int bookRating, int userBookRating) {
+			boolean hasComments, int bookRating, int userBookRating) {
 		super();
 		this.book = book;
 		this.bookCategory = bookCategory;
 		this.bookCover = bookCover;
 		this.authorFullName = authorFullName;
 		this.bookLogo = bookLogo;
+		this.hasComments = hasComments;
 		this.bookAssetDescriptions = bookAssetDescriptions;
 		this.bookLogo = bookLogo;
 		this.bookRating = bookRating;
@@ -148,5 +164,13 @@ public class BookDisplay {
 	public void setUserBookRating(int userBookRating) {
 		this.userBookRating = userBookRating;
 	}
-	
+
+	public boolean isHasComments() {
+		return hasComments;
+	}
+
+	public void setHasComments(boolean hasComments) {
+		this.hasComments = hasComments;
+	}
+
 }

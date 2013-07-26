@@ -45,6 +45,7 @@ import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddFileDialog;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddLogoDialog;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.NewAssetDialog;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.NewBookDialog;
+import com.pronoiahealth.olhie.client.pages.newbook.dialogs.ViewBookCommentsDialog;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.ViewBookassetDialog;
 import com.pronoiahealth.olhie.client.pages.register.RegisterDialog;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
@@ -141,6 +142,9 @@ public class MainPage extends AbstractComposite {
 	@Inject
 	AddBookCommentDialog addBookCommentDialog;
 
+	@Inject
+	ViewBookCommentsDialog viewBookCommentsDialog;
+
 	@UiField
 	public HTMLPanel loginModalPlaceHolder;
 
@@ -173,6 +177,9 @@ public class MainPage extends AbstractComposite {
 
 	@UiField
 	public HTMLPanel lookupUserModalPlaceHolder;
+
+	@UiField
+	public HTMLPanel viewBookCommentsPlaceHolder;
 
 	@UiField
 	public HTMLPanel addBookCommentPlaceHolder;
@@ -367,6 +374,7 @@ public class MainPage extends AbstractComposite {
 		lookupUserModalPlaceHolder.add(lookupUserDialog);
 		addLogoDialogModalPlaceHolder.add(addLogoDialog);
 		addBookCommentPlaceHolder.add(addBookCommentDialog);
+		viewBookCommentsPlaceHolder.add(viewBookCommentsDialog);
 	}
 
 	/**

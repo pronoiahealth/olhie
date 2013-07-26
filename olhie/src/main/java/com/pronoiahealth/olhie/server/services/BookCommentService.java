@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,7 +23,10 @@ import javax.inject.Inject;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.AddBookCommentEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.BookFindCommentsEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.BookFindCommentsResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
+import com.pronoiahealth.olhie.client.shared.vo.Bookcomment;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
@@ -53,6 +58,9 @@ public class BookCommentService {
 	@Inject
 	private Event<ServiceErrorEvent> serviceErrorEvent;
 
+	@Inject
+	private Event<BookFindCommentsResponseEvent> bookFindCommentsResponseEvent;
+
 	/**
 	 * Constructor
 	 * 
@@ -65,8 +73,7 @@ public class BookCommentService {
 	 * 
 	 * @param addBookCommentEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
-			SecurityRoleEnum.ANONYMOUS })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
 	protected void observesAddBookCommentEvent(
 			@Observes AddBookCommentEvent addBookCommentEvent) {
 
@@ -74,9 +81,47 @@ public class BookCommentService {
 			String userId = userToken.getUserId();
 			String bookId = addBookCommentEvent.getBookId();
 			String comment = addBookCommentEvent.getBookComment();
-			
+
 			BookCommentDAO
 					.addBookComment(bookId, userId, comment, ooDbTx, true);
+		} catch (Exception e) {
+			String errMsg = e.getMessage();
+			log.log(Level.SEVERE, errMsg, e);
+			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
+		}
+	}
+
+	/**
+	 * Returns the list of comments for a book
+	 * 
+	 * @param bookFindCommentsEvent
+	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.ANONYMOUS })
+	protected void observesBookFindCommentsEvent(
+			@Observes BookFindCommentsEvent bookFindCommentsEvent) {
+		try {
+			// Return list
+			List<String> retLst = new ArrayList<String>();
+
+			// Book to find comments for
+			String bookId = bookFindCommentsEvent.getBookId();
+
+			// Get the list
+			List<Bookcomment> comments = BookCommentDAO
+					.getBookCommentsByBookId(bookId, ooDbTx);
+
+			// Transfer the comments to the return list
+			if (comments != null && comments.size() > 0) {
+				for (Bookcomment comment : comments) {
+					retLst.add(comment.getComment());
+				}
+			}
+
+			// Fire the list back
+			bookFindCommentsResponseEvent
+					.fire(new BookFindCommentsResponseEvent(bookId, retLst));
+
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);
