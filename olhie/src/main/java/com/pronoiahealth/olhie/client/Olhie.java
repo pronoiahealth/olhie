@@ -29,6 +29,7 @@ import org.jboss.errai.ioc.client.api.EntryPoint;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.pronoiahealth.olhie.client.pages.main.MainPage;
 import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
@@ -73,6 +74,9 @@ public class Olhie {
 
 		// Layout main panel
 		RootLayoutPanel.get().add(mainPage);
+		
+		// Remove loading panel
+		RootPanel.get("loading").setVisible(false);
 	}
 
 	/**

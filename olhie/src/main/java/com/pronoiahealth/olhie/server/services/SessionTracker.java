@@ -52,6 +52,8 @@ public class SessionTracker {
 	private static final String ExpireListener = "LoggedInHandleExpiredSessionsService";
 	
 	private static final String CloseListener = "LoggedInHandlerCloseSessionService";
+	
+	private static final String LoginListener = "LoginHandlerLoginService";
 
 	private final ScheduledExecutorService service = Executors
 			.newScheduledThreadPool(1);
@@ -145,6 +147,9 @@ public class SessionTracker {
 
 		// Add an active session
 		activeSessions.put(erraiSessionId, user);
+		
+		// Tell the LoggInSession Entity about it
+		loginSession(new UserSession(userId, erraiSessionId));
 	}
 
 	/**
@@ -191,8 +196,19 @@ public class SessionTracker {
 	 */
 	private void closeSession(UserSession sess) {
 		MessageBuilder.createMessage().toSubject(CloseListener).signalling()
-				.with("CloseSession", sess).noErrorHandling()
+				.with("UserSession", sess).noErrorHandling()
 				.sendNowWith(dispatcher);
+	}
+	
+	/**
+	 * Causes the creation of a row in the db
+	 * 
+	 * @param sess
+	 */
+	private void loginSession(UserSession sess) {
+		MessageBuilder.createMessage().toSubject(LoginListener).signalling()
+		.with("UserSession", sess).noErrorHandling()
+		.sendNowWith(dispatcher);
 	}
 
 }

@@ -76,6 +76,8 @@ public class AddBookCommentDialog extends Composite {
 	@PostConstruct
 	public void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
+		commentModal.setStyleName("ph-BookComment-Modal", true);
+		//commentModal.setStyleName("ph-BookComment-Modal-Size", true);
 		
 		// Set focus
 		commentModal.addShownHandler(new ShownHandler() {

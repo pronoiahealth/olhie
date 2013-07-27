@@ -21,7 +21,6 @@ import javax.inject.Inject;
 import org.jboss.errai.cdi.server.events.EventConversationContext;
 
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
-import com.pronoiahealth.olhie.client.shared.events.loggedinsession.UserLogginEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LoginErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LoginRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LoginResponseEvent;
@@ -63,9 +62,6 @@ public class LoginService {
 
 	@Inject
 	private Event<LoginResponseEvent> loginResponseEvent;
-	
-	@Inject
-	private Event<UserLogginEvent> userLogginEvent;
 
 	@Inject
 	@OODbTx
@@ -148,9 +144,6 @@ public class LoginService {
 						.getSessionId();
 				sessionTracker.trackUserSession(user.getUserId(), lastName,
 						firstName, sessionId);
-				
-				// Fire Login event to track login info
-				userLogginEvent.fire(new UserLogginEvent(sessionId, userId, firstName, lastName));
 
 				// Fire a positive response
 				loginResponseEvent.fire(new LoginResponseEvent(user));

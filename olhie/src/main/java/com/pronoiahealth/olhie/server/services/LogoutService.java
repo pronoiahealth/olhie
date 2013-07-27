@@ -22,7 +22,6 @@ import org.jboss.errai.cdi.server.events.EventConversationContext;
 
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
-import com.pronoiahealth.olhie.client.shared.events.loggedinsession.UserLogoutEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LogoutResponseEvent;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
@@ -53,9 +52,6 @@ public class LogoutService {
 
 	@Inject
 	private Event<LogoutResponseEvent> logoutResponseEvent;
-
-	@Inject
-	private Event<UserLogoutEvent> userLogoutEvent;
 
 	@Inject
 	private Event<ServiceErrorEvent> serviceErrorEvent;

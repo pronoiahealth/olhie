@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services;
 
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,23 +22,14 @@ import org.jboss.errai.bus.client.api.messaging.RequestDispatcher;
 import org.jboss.errai.bus.server.annotations.Service;
 
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.client.shared.vo.UserSession;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
 import com.pronoiahealth.olhie.server.services.dbaccess.LoggedInSessionDAO;
-import com.pronoiahealth.olhie.server.services.dbaccess.OfferDAO;
+import com.pronoiahealth.olhie.server.services.dbaccess.UserDAO;
 
-/**
- * LoggedInHandlerCloseSessionService.java<br/>
- * Responsibilities:<br/>
- * 1.
- * 
- * @author John DeStefano
- * @version 1.0
- * @since Jul 23, 2013
- * 
- */
 @Service
-public class LoggedInHandlerCloseSessionService implements MessageCallback {
+public class LoginHandlerLoginService implements MessageCallback {
 	@Inject
 	private Logger log;
 
@@ -53,12 +45,12 @@ public class LoggedInHandlerCloseSessionService implements MessageCallback {
 	 * @param dispatcher
 	 */
 	@Inject
-	public LoggedInHandlerCloseSessionService(RequestDispatcher dispatcher) {
+	public LoginHandlerLoginService(RequestDispatcher dispatcher) {
 		this.dispatcher = dispatcher;
 	}
 
 	/**
-	 * Expire sessions based on Errai Session Id
+	 * ECreates a new session in the LoggedInSession entity
 	 * 
 	 * @see org.jboss.errai.bus.client.api.messaging.MessageCallback#callback(org.jboss.errai.bus.client.api.messaging.Message)
 	 */
@@ -69,15 +61,16 @@ public class LoggedInHandlerCloseSessionService implements MessageCallback {
 			String userId = us.getUserId();
 			String erraiSessionId = us.getSessionId();
 			try {
-				// Take care of sync'ing the LoggedInSession
-				LoggedInSessionDAO.endActiveSessionsByErraiSessionId(
-						erraiSessionId, ooDbTx, true);
+				// Get the user
+				User user = UserDAO.getUserByUserId(userId, ooDbTx);
 
-				// Close offers
-				OfferDAO.closeOfferByUserId(userId, erraiSessionId, ooDbTx,
-						true);
+				// Create the row
+				LoggedInSessionDAO.addSession(userId, erraiSessionId,
+						user.getFirstName(), user.getLastName(), new Date(),
+						ooDbTx, true);
+
 			} catch (Exception e) {
-				log.log(Level.SEVERE, "Error ending session with session id "
+				log.log(Level.SEVERE, "Error creating session with session id "
 						+ erraiSessionId + " and  user id " + userId, e);
 			}
 		}
