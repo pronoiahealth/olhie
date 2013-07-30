@@ -109,6 +109,7 @@ public class BookUpdateService {
 				book.setActDate(null);
 			}
 			book.setLastUpdated(now);
+			book.setSolrUpdate(null);
 			book = ooDbTx.save(book);
 			ooDbTx.commit();
 
@@ -163,6 +164,7 @@ public class BookUpdateService {
 			Book book = bookUpdateEvent.getBook();
 			book.setCreatedDate(now);
 			book.setLastUpdated(now);
+			book.setSolrUpdate(null);
 			book.setAuthorId(userToken.getUserId());
 			if (book.getActive() == true) {
 				book.setActDate(now);
