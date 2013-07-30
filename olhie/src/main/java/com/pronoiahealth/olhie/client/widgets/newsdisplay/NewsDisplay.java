@@ -97,8 +97,8 @@ public class NewsDisplay extends Composite {
 			@Override
 			public void run() {
 				if (newsItems != null && newsItems.size() > 0) {
-					GQuery obj = $("#fadeNewsDisplay");
-					obj.show();
+					$("#fadeNewsDisplay").css(
+							Properties.create("opacity: 1.0;")).show();
 					$("#fadeNewsDisplay").as(Effects.Effects).fadeOut(
 							newsFadeInterval, new Function() {
 								@Override
@@ -111,6 +111,7 @@ public class NewsDisplay extends Composite {
 			}
 		};
 		fadeTimer.scheduleRepeating(newsFadeInterval + 2000);
+
 	}
 
 	/**
@@ -153,8 +154,8 @@ public class NewsDisplay extends Composite {
 
 	private void stopFadeAnimation() {
 		fadeTimer.cancel();
-		GQuery elem = $("#fadeNewsDisplay");
-		elem.stop(true);
+		$("#fadeNewsDisplay").stop(true)
+				.css(Properties.create("opacity: 1.0;"));
 	}
 
 	/**
@@ -164,8 +165,7 @@ public class NewsDisplay extends Composite {
 	 */
 	@EventHandler("fadeNewsItem")
 	public void handleMouseOutEvents(MouseOutEvent event) {
-		GQuery elem = $("#fadeNewsDisplay");
-		elem.css(Properties.create("opacity: 1.0;"));
+		$("#fadeNewsDisplay").css(Properties.create("opacity: 1.0;"));
 		fadeTimer.scheduleRepeating(newsFadeInterval + 1000);
 	}
 
