@@ -16,8 +16,11 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 
 import org.apache.deltaspike.core.api.config.ConfigProperty;
@@ -129,9 +132,13 @@ public class OrientFactory {
 	 */
 	@Produces
 	@OODbTx
-	public OObjectDatabaseTx createOObjTx() {
-		return OObjectDatabasePool.global()
+	public OObjectDatabaseTx createOObjTx(InjectionPoint ip) {
+		OObjectDatabaseTx ooDbTx = OObjectDatabasePool.global()
 				.acquire(dbConStr, dbUserName, dbPwd);
+		
+		log.log(Level.INFO, "Aquired connection " + ooDbTx.hashCode() + " for bean " + ip.toString());
+		
+		return ooDbTx;
 	}
 
 	/**
@@ -142,6 +149,9 @@ public class OrientFactory {
 	 * @param ooDbTx
 	 */
 	public void disposeOObjTx(@Disposes @OODbTx OObjectDatabaseTx ooDbTx) {
+		
+		log.log(Level.INFO, "Released connection " + ooDbTx.hashCode());
+		
 		ooDbTx.close();
 	}
 }

@@ -13,6 +13,7 @@ package com.pronoiahealth.olhie.server.services;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.jboss.errai.bus.client.api.messaging.Message;
@@ -37,6 +38,7 @@ import com.pronoiahealth.olhie.server.services.dbaccess.OfferDAO;
  * 
  */
 @Service
+@RequestScoped
 public class LoggedInHandlerCloseSessionService implements MessageCallback {
 	@Inject
 	private Logger log;
@@ -45,16 +47,13 @@ public class LoggedInHandlerCloseSessionService implements MessageCallback {
 	@OODbTx
 	private OObjectDatabaseTx ooDbTx;
 
-	private RequestDispatcher dispatcher;
-
 	/**
 	 * Constructor
 	 * 
 	 * @param dispatcher
 	 */
 	@Inject
-	public LoggedInHandlerCloseSessionService(RequestDispatcher dispatcher) {
-		this.dispatcher = dispatcher;
+	public LoggedInHandlerCloseSessionService() {
 	}
 
 	/**

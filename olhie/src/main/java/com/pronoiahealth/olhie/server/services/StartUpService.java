@@ -60,6 +60,10 @@ public class StartUpService {
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);
+		} finally {
+			// Explicitly close this connection as it will not be released
+			// through CDI
+			ooDbTx.close();
 		}
 	}
 

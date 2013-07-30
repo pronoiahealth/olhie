@@ -153,8 +153,8 @@ public class NewsDisplay extends Composite {
 
 	private void stopFadeAnimation() {
 		fadeTimer.cancel();
-		GQuery elem = $("#fadeNewsDisplay").stop();
-		elem.css(Properties.create("opacity: 1.0;"));
+		GQuery elem = $("#fadeNewsDisplay");
+		elem.stop(true);
 	}
 
 	/**
@@ -164,6 +164,8 @@ public class NewsDisplay extends Composite {
 	 */
 	@EventHandler("fadeNewsItem")
 	public void handleMouseOutEvents(MouseOutEvent event) {
+		GQuery elem = $("#fadeNewsDisplay");
+		elem.css(Properties.create("opacity: 1.0;"));
 		fadeTimer.scheduleRepeating(newsFadeInterval + 1000);
 	}
 
