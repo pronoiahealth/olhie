@@ -43,4 +43,7 @@ public interface NewBookMessages extends Messages {
 	@DefaultMessage("{0}.")
 	String createTOCNumber(String txt);
 	
+	@DefaultMessage("Upload a File: ({0})")
+	String uploadAFileWithName(String txt);
+	
 }

@@ -179,3 +179,9 @@
 	-khtml-border-radius: 20px;
 	border-radius: 30px;
 }
+
+.ph-SearchResults-NoResults-Lbl {
+	font-family: 'Source Code Pro';
+	font-size: 24px;
+	font-weight: bold;
+}

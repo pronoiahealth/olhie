@@ -13,7 +13,7 @@
 					<b:TextBox ui:field="description" placeholder="Between 1 and 250 characters"
 						maxLength="250" width="400px"></b:TextBox>
 				</b:ControlGroup>
-				<b:ControlLabel>Upload a File:</b:ControlLabel>
+				<b:ControlLabel ui:field="uploadFileLbl">Upload a File:</b:ControlLabel>
 				<g:HorizontalPanel ui:field="uploadContainer">
 				</g:HorizontalPanel>
 				<g:Label ui:field="noFileToUploadErr"

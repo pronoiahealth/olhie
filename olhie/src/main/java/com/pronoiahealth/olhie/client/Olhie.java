@@ -32,7 +32,7 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.pronoiahealth.olhie.client.pages.main.MainPage;
 import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.CommunicationErrorEvent;
 import com.pronoiahealth.olhie.resources.OlhieResourceInjector;
 
 /**
@@ -52,6 +52,9 @@ public class Olhie {
 
 	@Inject
 	private Event<ClientErrorEvent> clientErrorEvent;
+
+	@Inject
+	private Event<CommunicationErrorEvent> communicationErrorEvent;
 
 	private ClientMessageBus cBus = (ClientMessageBus) ErraiBus.get();
 
@@ -74,7 +77,7 @@ public class Olhie {
 
 		// Layout main panel
 		RootLayoutPanel.get().add(mainPage);
-		
+
 		// Remove loading panel
 		RootPanel.get("loading").setVisible(false);
 	}
@@ -93,15 +96,20 @@ public class Olhie {
 				// Log the error
 				int statusCode = error.getStatusCode();
 				String errorString = error.getErrorMessage();
-				String errMsg = "A communication problem has occured:" + errorString
-						+ " with code " + statusCode;
+				String errMsg = "A communication problem has occured:"
+						+ errorString
+						+ " with code "
+						+ statusCode
+						+ ". Close the error dialog and the application will attempt a resync.";
 
 				if (Log.isWarnEnabled()) {
 					Log.warn(errMsg);
-
 				}
 
-				clientErrorEvent.fire(new ClientErrorEvent(errMsg));
+				// Fire client side communication error
+				communicationErrorEvent.fire(new CommunicationErrorEvent(
+						errMsg, error, true));
+
 				// cBus.stop(true);
 				// cBus.init();
 

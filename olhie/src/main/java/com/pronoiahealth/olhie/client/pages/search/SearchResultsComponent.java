@@ -17,11 +17,12 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.FluidRow;
+import com.github.gwtbootstrap.client.ui.Label;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
@@ -61,10 +62,10 @@ public class SearchResultsComponent extends AbstractComposite {
 	public FluidRow searchResultsHeader;
 
 	@UiField
-	public ChosenListBox resultListCnt;
-
+	public ScrollPanel searchResultsContainerList;
+	
 	@UiField
-	public HTMLPanel searchResultsContainerList;
+	public Label resultsLbl;
 
 	private BookSelectCallBack bookSelectCallBack;
 
@@ -82,11 +83,11 @@ public class SearchResultsComponent extends AbstractComposite {
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
 
-		// Hearder for list
+		// Header for list
 		searchResultsHeader.addStyleName("ph-SearchResults-Header");
-
-		// Set width of dropdown
-		resultListCnt.setWidth("100px");
+		
+		// Set search label
+		resultsLbl.setText(SearchConstants.INSTANCE.searchResults());
 
 		// Navigate to the NewBookPage. The edit mode will be set by logic on
 		// that page.
@@ -108,12 +109,23 @@ public class SearchResultsComponent extends AbstractComposite {
 	public void observesBookSearchResponseEvent(
 			@Observes BookSearchResponseEvent event) {
 
-		List<BookDisplay> lst = event.getBookDisplayList();
-
-		BookList3D bookLst = new BookList3D(lst, bookSelectCallBack);
-
+		// Clear the current display
 		searchResultsContainerList.clear();
-		searchResultsContainerList.add(bookLst);
+
+		// Display the books, if nothing is returned the display a message
+		List<BookDisplay> lst = event.getBookDisplayList();
+		if (lst != null && lst.size() > 0) {
+			int total = event.getTotalInResultSet();
+			int returned  = lst.size();
+			resultsLbl.setText(SearchMessages.INSTANCE.searchResultsReturned(returned, total));
+			BookList3D bookLst = new BookList3D(lst, bookSelectCallBack);
+			searchResultsContainerList.add(bookLst);
+		} else {
+			resultsLbl.setText(SearchConstants.INSTANCE.searchResults());
+			Label noBooksLbl = new Label(SearchConstants.INSTANCE.noResults());
+			noBooksLbl.setStyleName("ph-SearchResults-NoResults-Lbl");
+			searchResultsContainerList.add(noBooksLbl);
+		}
 	}
 
 	/**
@@ -153,7 +165,7 @@ public class SearchResultsComponent extends AbstractComposite {
 
 			// 128 is search at top + Search results label + footer at bottom
 			int newSearchResultsScrollerHeight = wndHeight - 128;
-			searchResultsContainerList.setHeight(""
+			searchResultsContainerList.setSize("100%", ""
 					+ newSearchResultsScrollerHeight + "px");
 		}
 	}

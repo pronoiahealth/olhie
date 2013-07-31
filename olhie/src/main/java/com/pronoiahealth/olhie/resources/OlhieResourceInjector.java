@@ -69,6 +69,7 @@ public class OlhieResourceInjector {
 		OlhieResources.INSTANCE.chatdialogcss().ensureInjected();
 		OlhieResources.INSTANCE.bookcommentcss().ensureInjected();
 		OlhieResources.INSTANCE.bookcommentdisplaycss().ensureInjected();
+		OlhieResources.INSTANCE.bookscrollercss().ensureInjected();
 		/*injectResourceCssAsFile("gwt_overrides.css");*/
 	}
 

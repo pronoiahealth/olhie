@@ -13,6 +13,7 @@ package com.pronoiahealth.olhie.server.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.jboss.errai.bus.server.annotations.Service;
@@ -39,6 +40,7 @@ import com.pronoiahealth.olhie.server.services.dbaccess.LoggedInSessionDAO;
  * 
  */
 @Service
+@RequestScoped
 public class ConnectedUserServiceImpl implements ConnectedUserService {
 	@Inject
 	private SessionTracker sessionTracker;

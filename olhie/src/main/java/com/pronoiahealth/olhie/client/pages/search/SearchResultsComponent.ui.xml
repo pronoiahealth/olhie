@@ -8,19 +8,12 @@
 		<g:HTMLPanel></g:HTMLPanel>
 		<b:FluidContainer>
 			<b:FluidRow ui:field="searchResultsHeader">
-				<b:Label styleName="ph-SearchResults-Header-Text">Search Results</b:Label>
-				<chzn:ChosenListBox ui:field="resultListCnt" maxSelectedOptions="1"
-					placeholderText="how many to return ...">
-					<g:item>20</g:item>
-					<g:item>40</g:item>
-					<g:item>60</g:item>
-					<g:item>All</g:item>
-				</chzn:ChosenListBox>
+				<b:Label ui:field="resultsLbl" styleName="ph-SearchResults-Header-Text">Search Results</b:Label>
 			</b:FluidRow>
 		</b:FluidContainer>
 
-		<g:HTMLPanel ui:field="searchResultsContainerList"
-			styleName="ph-SearchResults-ResultList-Container">
+		<g:HTMLPanel>
+			<g:ScrollPanel ui:field="searchResultsContainerList"></g:ScrollPanel>
 		</g:HTMLPanel>
 	</g:HTMLPanel>
 

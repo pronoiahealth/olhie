@@ -13,17 +13,15 @@ package com.pronoiahealth.olhie.server.services;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.bus.client.api.messaging.MessageCallback;
-import org.jboss.errai.bus.client.api.messaging.RequestDispatcher;
 import org.jboss.errai.bus.server.annotations.Service;
 
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.vo.UserSession;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
+import com.pronoiahealth.olhie.server.dataaccess.orient.OrientFactory;
 import com.pronoiahealth.olhie.server.services.dbaccess.LoggedInSessionDAO;
 import com.pronoiahealth.olhie.server.services.dbaccess.OfferDAO;
 
@@ -38,14 +36,12 @@ import com.pronoiahealth.olhie.server.services.dbaccess.OfferDAO;
  * 
  */
 @Service
-@RequestScoped
 public class LoggedInHandlerCloseSessionService implements MessageCallback {
 	@Inject
 	private Logger log;
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	private OrientFactory oFac;
 
 	/**
 	 * Constructor
@@ -67,6 +63,11 @@ public class LoggedInHandlerCloseSessionService implements MessageCallback {
 		if (us != null) {
 			String userId = us.getUserId();
 			String erraiSessionId = us.getSessionId();
+			OObjectDatabaseTx ooDbTx = oFac.getUninjectedConnection();
+			// if (log.isLoggable(Level.FINEST)) {
+			log.log(Level.INFO, "Aquired connection " + ooDbTx.hashCode()
+					+ " for bean " + LoggedInHandlerCloseSessionService.class.getName());
+			// }
 			try {
 				// Take care of sync'ing the LoggedInSession
 				LoggedInSessionDAO.endActiveSessionsByErraiSessionId(
@@ -78,6 +79,14 @@ public class LoggedInHandlerCloseSessionService implements MessageCallback {
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "Error ending session with session id "
 						+ erraiSessionId + " and  user id " + userId, e);
+			} finally {
+				if (ooDbTx != null) {
+					// if (log.isLoggable(Level.FINEST)) {
+					log.log(Level.INFO, "Released connection " + ooDbTx.hashCode());
+					// }
+					
+					ooDbTx.close();
+				}
 			}
 		}
 	}

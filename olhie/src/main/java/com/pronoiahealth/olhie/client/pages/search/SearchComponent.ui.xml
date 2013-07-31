@@ -1,14 +1,25 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
-	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base' xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'>
+	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base' xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'
+	xmlns:chzn='urn:import:com.watopi.chosen.client.gwt'>
 
 	<g:HTMLPanel ui:field="searchComponent" styleName="ph-SeachComponnet-Container"
 		height="48px">
 		<b:WellForm ui:field="searchForm" type="SEARCH">
-			<b:Icon type="SEARCH" />
-			<b:TextBox ui:field="searchQryBox" searchQuery="true" placeholder="search our site..." />
-			<b:Button ui:field="findButton" type="PRIMARY" icon="PLAY">Find</b:Button>
+			<b:InputAddOn prependIcon="SEARCH">
+				<b:TextBox ui:field="searchQryBox" searchQuery="true"
+					placeholder="search our site..." />
+				<b:Tooltip text="Number of results to return" placement="BOTTOM">
+					<b:ListBox ui:field="returnVal" multipleSelect="false">
+						<g:item>20</g:item>
+						<g:item>40</g:item>
+						<g:item>60</g:item>
+						<g:item>All</g:item>
+					</b:ListBox>
+				</b:Tooltip>
+				<b:Button ui:field="findButton" type="PRIMARY" icon="PLAY">Find</b:Button>
+			</b:InputAddOn>
 		</b:WellForm>
 	</g:HTMLPanel>
 

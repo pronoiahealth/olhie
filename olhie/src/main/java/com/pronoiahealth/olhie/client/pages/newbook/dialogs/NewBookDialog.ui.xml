@@ -33,7 +33,7 @@
 						<b:FluidRow>
 							<b:Column size="4">
 								<b:ControlGroup ui:field="categoryCG">
-									<b:ControlLabel>Catagory:</b:ControlLabel>
+									<b:ControlLabel>Category:</b:ControlLabel>
 									<b:SplitDropdownButton ui:field="catagoryDropDown"
 										dropup="true" text="Select a category">
 									</b:SplitDropdownButton>

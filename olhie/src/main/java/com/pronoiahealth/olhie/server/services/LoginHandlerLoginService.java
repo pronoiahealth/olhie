@@ -14,30 +14,26 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.bus.client.api.messaging.MessageCallback;
-import org.jboss.errai.bus.client.api.messaging.RequestDispatcher;
 import org.jboss.errai.bus.server.annotations.Service;
 
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.client.shared.vo.UserSession;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
+import com.pronoiahealth.olhie.server.dataaccess.orient.OrientFactory;
 import com.pronoiahealth.olhie.server.services.dbaccess.LoggedInSessionDAO;
 import com.pronoiahealth.olhie.server.services.dbaccess.UserDAO;
 
 @Service
-@RequestScoped
 public class LoginHandlerLoginService implements MessageCallback {
 	@Inject
 	private Logger log;
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	private OrientFactory oFac;
 
 	/**
 	 * Constructor
@@ -59,6 +55,11 @@ public class LoginHandlerLoginService implements MessageCallback {
 		if (us != null) {
 			String userId = us.getUserId();
 			String erraiSessionId = us.getSessionId();
+			OObjectDatabaseTx ooDbTx = oFac.getUninjectedConnection();
+			// if (log.isLoggable(Level.FINEST)) {
+			log.log(Level.INFO, "Aquired connection " + ooDbTx.hashCode()
+					+ " for bean " + LoginHandlerLoginService.class.getName());
+			// }
 			try {
 				// Get the user
 				User user = UserDAO.getUserByUserId(userId, ooDbTx);
@@ -71,6 +72,15 @@ public class LoginHandlerLoginService implements MessageCallback {
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "Error creating session with session id "
 						+ erraiSessionId + " and  user id " + userId, e);
+			} finally {
+				if (ooDbTx != null) {
+					// if (log.isLoggable(Level.FINEST)) {
+					log.log(Level.INFO,
+							"Released connection " + ooDbTx.hashCode());
+					// }
+
+					ooDbTx.close();
+				}
 			}
 		}
 	}

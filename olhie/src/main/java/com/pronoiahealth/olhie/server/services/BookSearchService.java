@@ -121,7 +121,7 @@ public class BookSearchService {
 
 			// Fire the event
 			bookSearchResponseEvent.fire(new BookSearchResponseEvent(
-					bookDisplayList));
+					bookDisplayList, bookDisplayList.size()));
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);

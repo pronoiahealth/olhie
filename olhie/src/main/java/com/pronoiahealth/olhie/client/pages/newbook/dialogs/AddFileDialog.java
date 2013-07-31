@@ -33,6 +33,7 @@ import org.moxieapps.gwt.uploader.client.events.UploadSuccessHandler;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
+import com.github.gwtbootstrap.client.ui.ControlLabel;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
@@ -53,6 +54,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.pages.newbook.NewBookConstants;
+import com.pronoiahealth.olhie.client.pages.newbook.NewBookMessages;
 import com.pronoiahealth.olhie.client.shared.constants.BookAssetActionType;
 import com.pronoiahealth.olhie.client.shared.events.local.BookContentUpdatedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowAddFileModalEvent;
@@ -78,6 +80,9 @@ public class AddFileDialog extends Composite {
 
 	@UiField
 	public TextBox description;
+
+	@UiField
+	public ControlLabel uploadFileLbl;
 
 	@UiField
 	public ControlGroup descriptionCG;
@@ -112,7 +117,7 @@ public class AddFileDialog extends Composite {
 	@PostConstruct
 	public void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
-		
+
 		// set focus
 		addFileModal.addShownHandler(new ShownHandler() {
 			@Override
@@ -129,6 +134,10 @@ public class AddFileDialog extends Composite {
 	private void initUploader() {
 		// Create the upload widget
 		progressBar = new ProgressBar();
+		progressBar.setHeight("18px");
+		progressBar.setWidth("200px");
+		uploadFileLbl.getElement().setInnerText(
+				NewBookConstants.INSTANCE.uploadAFile());
 		cancelButton = new Image(GWT.getModuleName() + "/images/cancel.png");
 
 		uploader = new Uploader()
@@ -145,8 +154,11 @@ public class AddFileDialog extends Composite {
 					public boolean onFileQueued(
 							final FileQueuedEvent fileQueuedEvent) {
 						// Create a Progress Bar for this file
-						progressBar.setTitle(fileQueuedEvent.getFile()
-								.getName());
+						String fileName = fileQueuedEvent.getFile().getName();
+						uploadFileLbl.getElement().setInnerText(
+								NewBookMessages.INSTANCE
+										.uploadAFileWithName(fileName));
+						progressBar.setTitle(fileName);
 						progressBar.setHeight("18px");
 						progressBar.setWidth("200px");
 
@@ -156,6 +168,10 @@ public class AddFileDialog extends Composite {
 							public void onClick(ClickEvent event) {
 								uploader.cancelUpload(fileQueuedEvent.getFile()
 										.getId(), false);
+								uploadFileLbl.getElement()
+										.setInnerText(
+												NewBookConstants.INSTANCE
+														.uploadAFile());
 								progressBar.setProgress(-1.0d);
 								cancelButton.removeFromParent();
 							}

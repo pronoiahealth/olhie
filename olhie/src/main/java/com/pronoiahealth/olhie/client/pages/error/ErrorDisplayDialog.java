@@ -25,12 +25,14 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.CommunicationErrorEvent;
 
 /**
  * ErrorDisplayDialog.java<br/>
@@ -62,6 +64,8 @@ public class ErrorDisplayDialog extends Composite {
 	@Inject
 	private MessageBus bus;
 
+	private boolean reloadWindow;
+
 	/**
 	 * Constructor
 	 * 
@@ -82,7 +86,7 @@ public class ErrorDisplayDialog extends Composite {
 			@Override
 			public void callback(Message message) {
 				String msg = message.get(String.class, "Message");
-				displayError(msg);
+				displayError(msg, false);
 			}
 		});
 	}
@@ -94,7 +98,7 @@ public class ErrorDisplayDialog extends Composite {
 	 */
 	protected void observesServiceErrorEvent(
 			@Observes ServiceErrorEvent serviceErrorEvent) {
-		displayError(serviceErrorEvent.getErrorMsg());
+		displayError(serviceErrorEvent.getErrorMsg(), false);
 	}
 
 	/**
@@ -104,10 +108,22 @@ public class ErrorDisplayDialog extends Composite {
 	 */
 	protected void observesClientErrorEvent(
 			@Observes ClientErrorEvent clientErrorEvent) {
-		displayError(clientErrorEvent.getMessage());
+		displayError(clientErrorEvent.getMessage(), false);
 	}
 
-	private void displayError(String msg) {
+	/**
+	 * Observes CommunicationErrorEvent
+	 * 
+	 * @param communicationErrorEvent
+	 */
+	protected void observesCommunicationErrorEvent(
+			@Observes CommunicationErrorEvent communicationErrorEvent) {
+		boolean reloadWindow = communicationErrorEvent.isReloadWindow();
+		displayError(communicationErrorEvent.getMsg(), reloadWindow);
+	}
+
+	private void displayError(String msg, boolean reloadWindow) {
+		this.reloadWindow = reloadWindow;
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
 		if (msg == null) {
 			msg = "No error message was reported.";
@@ -124,6 +140,11 @@ public class ErrorDisplayDialog extends Composite {
 	@UiHandler("closeButton")
 	public void closeButtonClicked(ClickEvent event) {
 		errorDisplayModal.hide();
+
+		// Should the window be reloaded as a result of this error
+		if (reloadWindow == true) {
+			Window.Location.reload();
+		}
 	}
 
 }

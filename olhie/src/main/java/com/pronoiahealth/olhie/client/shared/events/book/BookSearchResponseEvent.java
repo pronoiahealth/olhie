@@ -35,7 +35,7 @@ import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 @Portable
 @Conversational
 public class BookSearchResponseEvent {
-	
+	private int totalInResultSet;
 	private List<BookDisplay> bookDisplayList;
 
 	/**
@@ -48,7 +48,8 @@ public class BookSearchResponseEvent {
 	/**
 	 * @param bookList
 	 */
-	public BookSearchResponseEvent(List<BookDisplay> bookDisplayList) {
+	public BookSearchResponseEvent(List<BookDisplay> bookDisplayList,
+			int totalInResultSet) {
 		super();
 		this.bookDisplayList = bookDisplayList;
 	}
@@ -61,5 +62,12 @@ public class BookSearchResponseEvent {
 		this.bookDisplayList = bookDisplayList;
 	}
 
-	
+	public int getTotalInResultSet() {
+		return totalInResultSet;
+	}
+
+	public void setTotalInResultSet(int totalInResultSet) {
+		this.totalInResultSet = totalInResultSet;
+	}
+
 }

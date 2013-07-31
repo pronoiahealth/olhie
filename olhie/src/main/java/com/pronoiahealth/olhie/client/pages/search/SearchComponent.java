@@ -15,6 +15,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.WellForm;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -50,6 +51,9 @@ public class SearchComponent extends AbstractComposite {
 	public TextBox searchQryBox;
 
 	@UiField
+	public ListBox returnVal;
+
+	@UiField
 	public Button findButton;
 
 	@Inject
@@ -69,6 +73,13 @@ public class SearchComponent extends AbstractComposite {
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
 		searchForm.setStyleName("ph-SearchComponent-Form", true);
+
+		// Some style stuff
+		findButton.getElement()
+				.setAttribute("style", "border-radius: 0 0 0 0;");
+		searchQryBox.getElement().setAttribute("style",
+				"border-radius: 0 0 0 0;");
+		returnVal.getElement().setAttribute("style", "width: 75px; border-radius: 0 0 0 0;");
 
 		// Add an enter key handler
 		searchQryBox.addKeyDownHandler(new KeyDownHandler() {
@@ -112,11 +123,14 @@ public class SearchComponent extends AbstractComposite {
 	 * @param _searchText
 	 * @return
 	 */
-	public boolean validateSearchText(String _searchText) {
-		return true;
-		// TODO: write a validation handler
+	public boolean validateSearchText(String searchText) {
+		if (searchText != null && searchText.length() > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
-	
+
 	public void setFocusOnSearchQryBox() {
 		searchQryBox.setFocus(true);
 	}
