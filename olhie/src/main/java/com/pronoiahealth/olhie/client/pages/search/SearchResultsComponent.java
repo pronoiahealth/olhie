@@ -34,7 +34,6 @@ import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.BookSelectCallBack;
-import com.watopi.chosen.client.gwt.ChosenListBox;
 
 /**
  * SearchResultsComponent.java<br/>
