@@ -52,6 +52,7 @@ public class BookSearchResponseEvent {
 			int totalInResultSet) {
 		super();
 		this.bookDisplayList = bookDisplayList;
+		this.totalInResultSet = totalInResultSet;
 	}
 
 	public List<BookDisplay> getBookDisplayList() {
