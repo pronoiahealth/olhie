@@ -32,6 +32,7 @@ import org.moxieapps.gwt.uploader.client.events.UploadSuccessEvent;
 import org.moxieapps.gwt.uploader.client.events.UploadSuccessHandler;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.ControlLabel;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -77,6 +78,9 @@ public class AddLogoDialog extends Composite {
 	public HorizontalPanel uploadContainer;
 
 	@UiField
+	public ControlLabel uploadLogoLbl;
+
+	@UiField
 	public Button uploadButton;
 
 	private Uploader uploader;
@@ -100,6 +104,12 @@ public class AddLogoDialog extends Composite {
 	@PostConstruct
 	public void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
+
+		// Init values for components
+		progressBar.setHeight("18px");
+		progressBar.setWidth("200px");
+		uploadLogoLbl.getElement().setInnerText(
+				NewBookConstants.INSTANCE.uploadLogo());
 	}
 
 	/**
@@ -137,6 +147,10 @@ public class AddLogoDialog extends Composite {
 							public void onClick(ClickEvent event) {
 								uploader.cancelUpload(fileQueuedEvent.getFile()
 										.getId(), false);
+								uploadLogoLbl.getElement()
+								.setInnerText(
+										NewBookConstants.INSTANCE
+												.uploadAFile());
 								progressBar.setProgress(-1.0d);
 								cancelButton.removeFromParent();
 							}
@@ -175,8 +189,8 @@ public class AddLogoDialog extends Composite {
 						cancelButton.removeFromParent();
 						addLogoModal.hide();
 						bookListBookSelectedEvent
-						.fire(new BookListBookSelectedEvent(
-								currentBookId));
+								.fire(new BookListBookSelectedEvent(
+										currentBookId));
 						clearErrors();
 						clearFields();
 						return true;

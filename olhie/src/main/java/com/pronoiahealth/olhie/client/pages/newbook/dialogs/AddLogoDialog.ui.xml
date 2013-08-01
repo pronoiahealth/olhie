@@ -8,7 +8,7 @@
 
 		<b:FluidContainer>
 			<b:WellForm ui:field="addlogoForm">
-				<b:ControlLabel>Save logo</b:ControlLabel>
+				<b:ControlLabel ui:field="uploadLogoLbl"></b:ControlLabel>
 				<g:HorizontalPanel ui:field="uploadContainer">
 				</g:HorizontalPanel>
 				<g:Label ui:field="noFileToUploadErr"

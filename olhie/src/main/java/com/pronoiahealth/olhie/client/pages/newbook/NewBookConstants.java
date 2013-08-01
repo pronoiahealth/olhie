@@ -12,4 +12,7 @@ public interface NewBookConstants extends Constants {
 	
 	@DefaultStringValue("Upload a File:")
 	String uploadAFile();
+	
+	@DefaultStringValue("Upload the logo:")
+	String uploadLogo();
 }
