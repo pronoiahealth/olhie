@@ -49,6 +49,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.pages.newbook.NewBookConstants;
+import com.pronoiahealth.olhie.client.pages.newbook.NewBookMessages;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowAddLogoModalEvent;
 import com.pronoiahealth.olhie.client.widgets.progressbar.ProgressBar;
@@ -104,12 +105,6 @@ public class AddLogoDialog extends Composite {
 	@PostConstruct
 	public void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
-
-		// Init values for components
-		progressBar.setHeight("18px");
-		progressBar.setWidth("200px");
-		uploadLogoLbl.getElement().setInnerText(
-				NewBookConstants.INSTANCE.uploadLogo());
 	}
 
 	/**
@@ -119,6 +114,10 @@ public class AddLogoDialog extends Composite {
 	private void initUploader() {
 		// Create the upload widget
 		progressBar = new ProgressBar();
+		progressBar.setHeight("18px");
+		progressBar.setWidth("200px");
+		uploadLogoLbl.getElement().setInnerText(
+				NewBookConstants.INSTANCE.uploadLogo());
 		cancelButton = new Image(GWT.getModuleName() + "/images/cancel.png");
 
 		uploader = new Uploader()
@@ -136,8 +135,11 @@ public class AddLogoDialog extends Composite {
 					public boolean onFileQueued(
 							final FileQueuedEvent fileQueuedEvent) {
 						// Create a Progress Bar for this file
-						progressBar.setTitle(fileQueuedEvent.getFile()
-								.getName());
+						String fileName = fileQueuedEvent.getFile().getName();
+						uploadLogoLbl.getElement().setInnerText(
+								NewBookMessages.INSTANCE
+										.uploadAFileWithName(fileName));
+						progressBar.setTitle(fileName);
 						progressBar.setHeight("18px");
 						progressBar.setWidth("200px");
 
