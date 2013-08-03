@@ -27,6 +27,17 @@ import com.pronoiahealth.olhie.server.dataaccess.orient.OrientFactory;
 import com.pronoiahealth.olhie.server.services.dbaccess.LoggedInSessionDAO;
 import com.pronoiahealth.olhie.server.services.dbaccess.UserDAO;
 
+/**
+ * LoginHandlerLoginService.java<br/>
+ * Responsibilities:<br/>
+ * 1. Part of the session tracking function. When a user logins in this class
+ * manages the tracking of the Login event.<br/>
+ * 
+ * @author John DeStefano
+ * @version 1.0
+ * @since Aug 2, 2013
+ * 
+ */
 @Service
 public class LoginHandlerLoginService implements MessageCallback {
 	@Inject
@@ -45,7 +56,7 @@ public class LoginHandlerLoginService implements MessageCallback {
 	}
 
 	/**
-	 * ECreates a new session in the LoggedInSession entity
+	 * Creates a new session in the LoggedInSession entity
 	 * 
 	 * @see org.jboss.errai.bus.client.api.messaging.MessageCallback#callback(org.jboss.errai.bus.client.api.messaging.Message)
 	 */
@@ -56,10 +67,13 @@ public class LoginHandlerLoginService implements MessageCallback {
 			String userId = us.getUserId();
 			String erraiSessionId = us.getSessionId();
 			OObjectDatabaseTx ooDbTx = oFac.getUninjectedConnection();
-			// if (log.isLoggable(Level.FINEST)) {
-			log.log(Level.INFO, "Aquired connection " + ooDbTx.hashCode()
-					+ " for bean " + LoginHandlerLoginService.class.getName());
-			// }
+			if (log.isLoggable(Level.FINEST)) {
+				log.log(Level.INFO,
+						"Aquired connection " + ooDbTx.hashCode()
+								+ " for bean "
+								+ LoginHandlerLoginService.class.getName());
+			}
+
 			try {
 				// Get the user
 				User user = UserDAO.getUserByUserId(userId, ooDbTx);
@@ -74,10 +88,10 @@ public class LoginHandlerLoginService implements MessageCallback {
 						+ erraiSessionId + " and  user id " + userId, e);
 			} finally {
 				if (ooDbTx != null) {
-					// if (log.isLoggable(Level.FINEST)) {
-					log.log(Level.INFO,
-							"Released connection " + ooDbTx.hashCode());
-					// }
+					if (log.isLoggable(Level.FINEST)) {
+						log.log(Level.INFO,
+								"Released connection " + ooDbTx.hashCode());
+					}
 
 					ooDbTx.close();
 				}

@@ -203,6 +203,30 @@ public class OfferDAO {
 	}
 
 	/**
+	 * Expire specific Offer types based on the types parameter. If types is
+	 * null then all unaccepted offers for the suerId will be marked as expired.
+	 * 
+	 * @param userId
+	 * @param ooDbTx
+	 * @param handleTransaction
+	 * @param types
+	 * @throws Exception
+	 */
+	public static void expireOfferByUserId(String userId,
+			OObjectDatabaseTx ooDbTx, boolean handleTransaction,
+			OfferTypeEnum... types) throws Exception {
+
+		if (types != null && types.length > 0) {
+			for (OfferTypeEnum type : types) {
+				expireOfferByUserId(userId, type, ooDbTx, handleTransaction);
+			}
+		} else {
+			expireOfferByUserId(userId, null, ooDbTx, handleTransaction);
+		}
+
+	}
+
+	/**
 	 * Set the expired date on the offer. This will occur if an offer has not
 	 * been rejected and not been closed but the users session has ended.
 	 * 
@@ -210,7 +234,7 @@ public class OfferDAO {
 	 * @param ooDbTx
 	 * @throws Exception
 	 */
-	public static void expireOfferByUserId(String userId,
+	public static void expireOfferByUserId(String userId, OfferTypeEnum type,
 			OObjectDatabaseTx ooDbTx, boolean handleTransaction)
 			throws Exception {
 
@@ -218,7 +242,7 @@ public class OfferDAO {
 			ooDbTx.begin(TXTYPE.OPTIMISTIC);
 		}
 
-		List<Offer> offers = getUnacceptedOffersById(userId, ooDbTx);
+		List<Offer> offers = getUnacceptedOffersById(userId, type, ooDbTx);
 		if (offers != null && offers.size() > 0) {
 			for (Offer offer : offers) {
 				offer.setExpiredDT(new Date());
@@ -240,14 +264,14 @@ public class OfferDAO {
 	 * @throws Exception
 	 */
 	public static void closeOfferByUserId(String userId, String erraiSessionId,
-			OObjectDatabaseTx ooDbTx, boolean handleTransaction)
-			throws Exception {
+			OfferTypeEnum type, OObjectDatabaseTx ooDbTx,
+			boolean handleTransaction) throws Exception {
 
 		if (handleTransaction == true) {
 			ooDbTx.begin(TXTYPE.OPTIMISTIC);
 		}
 
-		List<Offer> offers = getUnacceptedOffersById(userId, ooDbTx);
+		List<Offer> offers = getUnacceptedOffersById(userId, type, ooDbTx);
 		if (offers != null && offers.size() > 0) {
 			for (Offer offer : offers) {
 				if (offer.getOffererSessionId().equals(erraiSessionId)
@@ -297,12 +321,21 @@ public class OfferDAO {
 	 * @throws Exception
 	 */
 	private static List<Offer> getUnacceptedOffersById(String userId,
-			OObjectDatabaseTx ooDbTx) throws Exception {
-		OSQLSynchQuery<Offer> rQuery = new OSQLSynchQuery<Offer>(
-				"select from Offer where (peerId = :pId or offererId = :ofId) and expiredDT = NULL or closedDT = null or rejectedDT = null");
+			OfferTypeEnum type, OObjectDatabaseTx ooDbTx) throws Exception {
+		OSQLSynchQuery<Offer> rQuery = null;
 		HashMap<String, String> rparams = new HashMap<String, String>();
-		rparams.put("pId", userId);
-		rparams.put("ofId", userId);
+		if (type != null) {
+			rQuery = new OSQLSynchQuery<Offer>(
+					"select from Offer where (peerId = :pId or offererId = :ofId) and offerType = :type and expiredDT = null and closedDT = null and rejectedDT = null)");
+			rparams.put("pId", userId);
+			rparams.put("ofId", userId);
+			rparams.put("type", type.toString());
+		} else {
+			rQuery = new OSQLSynchQuery<Offer>(
+					"select from Offer where (peerId = :pId or offererId = :ofId) and expiredDT = null and closedDT = null and rejectedDT = null");
+			rparams.put("pId", userId);
+			rparams.put("ofId", userId);
+		}
 		return ooDbTx.command(rQuery).execute(rparams);
 	}
 }

@@ -79,6 +79,7 @@ public class LookupUserDialog extends Composite {
 			public String onSelection(Suggestion selectedSuggestion) {
 				GenericMultiWordSuggestion<ConnectedUser> sug = (GenericMultiWordSuggestion<ConnectedUser>) selectedSuggestion;
 				currentSelection = (ConnectedUser) sug.getPojo();
+				submitButton.setEnabled(true);
 				return sug.getDisplayString();
 			}
 		});
@@ -99,6 +100,7 @@ public class LookupUserDialog extends Composite {
 	 */
 	public void show() {
 		userNameTxtBox.setText("");
+		submitButton.setEnabled(false);
 		lookupUserModal.show();
 	}
 

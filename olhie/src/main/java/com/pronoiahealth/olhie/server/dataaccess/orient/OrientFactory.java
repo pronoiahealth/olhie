@@ -133,10 +133,10 @@ public class OrientFactory {
 	public OObjectDatabaseTx createOObjTx(InjectionPoint ip) {
 		OObjectDatabaseTx ooDbTx = OObjectDatabasePool.global().acquire(
 				dbConStr, dbUserName, dbPwd);
-		// if (log.isLoggable(Level.FINEST)) {
-		log.log(Level.INFO, "Aquired connection " + ooDbTx.hashCode()
-				+ " for bean " + ip.toString());
-		// }
+		if (log.isLoggable(Level.FINEST)) {
+			log.log(Level.INFO, "Aquired connection " + ooDbTx.hashCode()
+					+ " for bean " + ip.toString());
+		}
 
 		return ooDbTx;
 	}
@@ -160,9 +160,9 @@ public class OrientFactory {
 	 * @param ooDbTx
 	 */
 	public void disposeOObjTx(@Disposes @OODbTx OObjectDatabaseTx ooDbTx) {
-		// if (log.isLoggable(Level.FINEST)) {
-		log.log(Level.INFO, "Released connection " + ooDbTx.hashCode());
-		// }
+		if (log.isLoggable(Level.FINEST)) {
+			log.log(Level.INFO, "Released connection " + ooDbTx.hashCode());
+		}
 
 		ooDbTx.close();
 	}

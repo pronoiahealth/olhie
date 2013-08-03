@@ -29,8 +29,9 @@ import com.pronoiahealth.olhie.server.services.dbaccess.OfferDAO;
 /**
  * LoggedInHandleExpiredSessionsService.java<br/>
  * Responsibilities:<br/>
- * 1. Handles messages that cause any chat outstanding offers to be closed and
- * the LoggedInSession matching an errai session id to be marked closed.<br/>
+ * 1. Part of the session tracking function. Handles messages that cause any
+ * chat outstanding offers to be closed and the LoggedInSession matching an
+ * errai session id to be marked closed.<br/>
  * 
  * <p>
  * Notice that OrientFactory is injected and used to directly get database
@@ -62,7 +63,10 @@ public class LoggedInHandleExpiredSessionsService implements MessageCallback {
 	}
 
 	/**
-	 * Expire sessions based on Errai Session Id
+	 * Expire sessions based on Errai Session Id. This can happen if a logged in
+	 * user closes the browser without logging off first. This method will mark
+	 * the LoggedInSession as closed and will mark any outstanding CHAT offers
+	 * as exoired.
 	 * 
 	 * @see org.jboss.errai.bus.client.api.messaging.MessageCallback#callback(org.jboss.errai.bus.client.api.messaging.Message)
 	 */
@@ -76,10 +80,15 @@ public class LoggedInHandleExpiredSessionsService implements MessageCallback {
 				String userId = us.getUserId();
 				String erraiSessionId = us.getSessionId();
 				OObjectDatabaseTx ooDbTx = oFac.getUninjectedConnection();
-				// if (log.isLoggable(Level.FINEST)) {
-				log.log(Level.INFO, "Aquired connection " + ooDbTx.hashCode()
-						+ " for bean " + LoggedInHandleExpiredSessionsService.class.getName());
-				// }
+				if (log.isLoggable(Level.FINEST)) {
+					log.log(Level.INFO,
+							"Aquired connection "
+									+ ooDbTx.hashCode()
+									+ " for bean "
+									+ LoggedInHandleExpiredSessionsService.class
+											.getName());
+				}
+
 				try {
 					// Take care of sync'ing the LoggedInSession
 					LoggedInSessionDAO.endActiveSessionsByErraiSessionId(
@@ -95,9 +104,10 @@ public class LoggedInHandleExpiredSessionsService implements MessageCallback {
 									+ userId, e);
 				} finally {
 					if (ooDbTx != null) {
-						// if (log.isLoggable(Level.FINEST)) {
-						log.log(Level.INFO, "Released connection " + ooDbTx.hashCode());
-						// }
+						if (log.isLoggable(Level.FINEST)) {
+							log.log(Level.INFO,
+									"Released connection " + ooDbTx.hashCode());
+						}
 						ooDbTx.close();
 					}
 				}

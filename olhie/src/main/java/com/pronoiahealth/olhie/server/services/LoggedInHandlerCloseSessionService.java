@@ -20,6 +20,7 @@ import org.jboss.errai.bus.client.api.messaging.MessageCallback;
 import org.jboss.errai.bus.server.annotations.Service;
 
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.pronoiahealth.olhie.client.shared.constants.OfferTypeEnum;
 import com.pronoiahealth.olhie.client.shared.vo.UserSession;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OrientFactory;
 import com.pronoiahealth.olhie.server.services.dbaccess.LoggedInSessionDAO;
@@ -64,27 +65,30 @@ public class LoggedInHandlerCloseSessionService implements MessageCallback {
 			String userId = us.getUserId();
 			String erraiSessionId = us.getSessionId();
 			OObjectDatabaseTx ooDbTx = oFac.getUninjectedConnection();
-			// if (log.isLoggable(Level.FINEST)) {
-			log.log(Level.INFO, "Aquired connection " + ooDbTx.hashCode()
-					+ " for bean " + LoggedInHandlerCloseSessionService.class.getName());
-			// }
+			if (log.isLoggable(Level.FINEST)) {
+				log.log(Level.INFO, "Aquired connection " + ooDbTx.hashCode()
+						+ " for bean "
+						+ LoggedInHandlerCloseSessionService.class.getName());
+			}
+
 			try {
 				// Take care of sync'ing the LoggedInSession
 				LoggedInSessionDAO.endActiveSessionsByErraiSessionId(
 						erraiSessionId, ooDbTx, true);
 
 				// Close offers
-				OfferDAO.closeOfferByUserId(userId, erraiSessionId, ooDbTx,
-						true);
+				OfferDAO.closeOfferByUserId(userId, erraiSessionId,
+						OfferTypeEnum.CHAT, ooDbTx, true);
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "Error ending session with session id "
 						+ erraiSessionId + " and  user id " + userId, e);
 			} finally {
 				if (ooDbTx != null) {
-					// if (log.isLoggable(Level.FINEST)) {
-					log.log(Level.INFO, "Released connection " + ooDbTx.hashCode());
-					// }
-					
+					if (log.isLoggable(Level.FINEST)) {
+						log.log(Level.INFO,
+								"Released connection " + ooDbTx.hashCode());
+					}
+
 					ooDbTx.close();
 				}
 			}
