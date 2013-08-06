@@ -45,8 +45,12 @@ public class SolrSearchService {
 	
 	private static final String SOLR_QUERY_ALL = "http://" + SOLR_SERVER + ":" + SOLR_PORT + "/solr/select?q=*:*&wt=xml";
 	private static final String SOLR_QUERY_KEYWORDS = "http://" + SOLR_SERVER + ":" + SOLR_PORT + "/solr/select?q=keywords:";
+	private static final String SOLR_QUERY_TEXT = "http://" + SOLR_SERVER + ":" + SOLR_PORT + "/solr/select?q=text:";
 	private static final String SOLR_QUERY_FULL = "http://" + SOLR_SERVER + ":" + SOLR_PORT + "/solr/select?q=";
-
+	private static final String SOLR_ROWS_PARAM = "&rows=";
+	
+	private static final int RETURN_ALL_ROWS = -1;
+	
 	@Inject
 	private Logger log;
 
@@ -61,16 +65,56 @@ public class SolrSearchService {
 	}
 
 	/**
-	 * Run the solr query and parse the results.
+	 * Run the solr query using a text string and parse the results.
 	 * 
-	 * @param bookFindByIdEvent
+	 * @param _text
 	 */
 	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
 			SecurityRoleEnum.ANONYMOUS })
 	protected List<String> searchSolr(String _text) {
 		List<String> idList = null;
 		try {
-			String resultXml = querySolrKeywords(_text);
+			String resultXml = querySolrKeywords("*" + _text + "*");
+			idList = parseResults(resultXml);
+		} catch (Exception e) {
+			String errMsg = e.getMessage();
+			log.log(Level.SEVERE, errMsg, e);
+		}
+		return idList;
+	}
+	
+	/**
+	 * Run the solr query using a token list and parse the results.
+	 * 
+	 * @param _tokenList
+	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.ANONYMOUS })
+	protected List<String> searchSolr(String[] _tokenList) {
+		List<String> idList = null;
+		try {
+			String resultXml = querySolrText(_tokenList, RETURN_ALL_ROWS);
+			idList = parseResults(resultXml);
+		} catch (Exception e) {
+			String errMsg = e.getMessage();
+			log.log(Level.SEVERE, errMsg, e);
+		}
+		return idList;
+	}
+	
+	/**
+	 * Run the solr query using a token list and the number of rows to return, then 
+	 * parse the results.
+	 * 
+	 * @param _tokenList
+	 * @param _rows
+	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.ANONYMOUS })
+	protected List<String> searchSolr(String[] _tokenList, int _rows) {
+		List<String> idList = null;
+		try {
+			String resultXml = querySolrText(_tokenList, _rows);
 			idList = parseResults(resultXml);
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
@@ -93,19 +137,72 @@ public class SolrSearchService {
 	 */
 	private String querySolrKeywords(String _query)
 	{
-		return querySolr(SOLR_QUERY_KEYWORDS + "*" + _query + "*");
+		return querySolr(SOLR_QUERY_KEYWORDS + _query);
+	}
+	
+	/**
+	 * build a solr query using a list of tokens and the number of rows.
+	 * 
+	 * @param _tokenList
+	 * @param _rows
+	 * @return
+	 */
+	private String querySolrText(String[] _tokenList, int _rows)
+	{
+		StringBuffer query = new StringBuffer();
+		query.append("(");
+		for (int i=0 ;i<_tokenList.length; i++) {
+			query.append("*");
+			query.append(_tokenList[i]);
+			query.append("*");
+			if (i < _tokenList.length-1) {
+				query.append(" and ");
+			}
+		}
+		query.append(")");
+		
+		return querySolrText(query.toString(), _rows);
 	}
 	
 	/**
 	 * @param _query
+	 * @param _rows
 	 * @return
 	 */
-	private String querySolrFull(String _query)
+	private String querySolrText(String _query, int _rows)
 	{
-		return querySolr(SOLR_QUERY_FULL + _query);
+		return querySolr(SOLR_QUERY_TEXT + _query, _rows);
 	}
 	
 	/**
+	 * @param _query
+	 * @param _rows
+	 * @return
+	 */
+	private String querySolrFull(String _query, int _rows)
+	{
+		return querySolr(SOLR_QUERY_FULL + _query, _rows);
+	}
+	
+	/**
+	 * Add row parameter to determine how many records to return.
+	 * 
+	 * @param _query
+	 * @param _rows
+	 * @return
+	 */
+	private String querySolr(String _query, int _rows)
+	{
+		if (_rows == RETURN_ALL_ROWS) {
+			return querySolr(_query);
+		} else {
+			return querySolr(_query + SOLR_ROWS_PARAM + _rows);
+		}
+	}
+	
+	/**
+	 * Send the query to the solr server, and return the xml result list.
+	 * 
 	 * @param _query
 	 * @return
 	 */

@@ -25,6 +25,7 @@ import com.pronoiahealth.olhie.client.shared.vo.Book;
 public class BookSearchEvent {
 	
 	private String searchText;
+	private int rows;
 
 	/**
 	 * Constructor
@@ -36,11 +37,13 @@ public class BookSearchEvent {
 	/**
 	 * Constructor
 	 *
-	 * @param book
+	 * @param searchText
+	 * @param _rows
 	 */
-	public BookSearchEvent(String searchText) {
+	public BookSearchEvent(String searchText, int _rows) {
 		super();
 		this.searchText = searchText;
+		this.rows = _rows;
 	}
 
 	public String getSearchText() {
@@ -51,5 +54,14 @@ public class BookSearchEvent {
 		this.searchText = searchText;
 	}
 
+	public int getRows() {
+		return rows;
+	}
+
+	public void setRows(int rows) {
+		this.rows = rows;
+	}
+
+	
 
 }

@@ -104,13 +104,20 @@ public class SearchComponent extends AbstractComposite {
 		try {
 			// Grab the search text
 			String searchText = searchQryBox.getText();
+			String rowSelection = returnVal.getValue(returnVal.getSelectedIndex());
+			int rows = -1; // -1 indicates return all rows
+			try {
+				rows = Integer.parseInt(rowSelection);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
 			boolean isValid = validateSearchText(searchText);
 
 			if (isValid) {
 				// Fire event and send the results to the
 				// SearchResultsComponent.
-				newBookSearchEvent.fire(new BookSearchEvent(searchText));
+				newBookSearchEvent.fire(new BookSearchEvent(searchText, rows));
 			}
 
 		} catch (Exception e) {
