@@ -16,7 +16,6 @@
 		sizingMethod='scale')";
 }
 */
-
 .ph-SeachComponnet-Container {
 	float: right;
 	margin-right: 20px;
@@ -93,8 +92,7 @@
 .ph-SearchResults-BookListResult-BookImagePanel {
 	/*background-image: url("Olhie/images/Book1.png");
 	width: 200px;
-	height: 100px; */
-	/*background-color: blue;*/
+	height: 100px; */ /*background-color: blue;*/
 	width: 40px;
 	height: 50px;
 	/*
@@ -113,8 +111,8 @@
 	background-image: url("Olhie/images/lock-small.png");
 	background-repeat: no-repeat;
 	margin-right: 3px;
-    margin-top: 3px;
-    border: 1px solid black;
+	margin-top: 3px;
+	border: 1px solid black;
 }
 
 .ph-SearchResults-BookListResult-BookImagePanel-NoLock {
@@ -184,4 +182,10 @@
 	font-family: 'Source Code Pro';
 	font-size: 24px;
 	font-weight: bold;
+}
+
+.ph-SearchResults-Spinner {
+	display: block;
+	margin-left: auto;
+	margin-right: auto
 }

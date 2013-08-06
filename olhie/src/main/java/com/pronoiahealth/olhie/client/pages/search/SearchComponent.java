@@ -12,6 +12,7 @@ package com.pronoiahealth.olhie.client.pages.search;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -28,6 +29,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
 import com.pronoiahealth.olhie.client.shared.events.book.BookSearchEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.BookSearchResponseEvent;
 
 /**
  * SearchComponent.java<br/>
@@ -79,7 +81,8 @@ public class SearchComponent extends AbstractComposite {
 				.setAttribute("style", "border-radius: 0 0 0 0;");
 		searchQryBox.getElement().setAttribute("style",
 				"border-radius: 0 0 0 0;");
-		returnVal.getElement().setAttribute("style", "width: 75px; border-radius: 0 0 0 0;");
+		returnVal.getElement().setAttribute("style",
+				"width: 75px; border-radius: 0 0 0 0;");
 
 		// Add an enter key handler
 		searchQryBox.addKeyDownHandler(new KeyDownHandler() {

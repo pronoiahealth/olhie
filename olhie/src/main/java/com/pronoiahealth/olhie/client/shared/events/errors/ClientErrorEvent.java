@@ -20,13 +20,14 @@ import org.jboss.errai.enterprise.client.cdi.api.Conversational;
  * 
  * <p>
  * Fired From : MainPage class - see bus error handler.<br/>
- * Observed By: ErrorDisplayDialog class<br/>
+ * Observed By: ErrorDisplayDialog class, SearchResultsComponent (removes
+ * spinner if its there)<br/>
  * </p>
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since Jun 5, 2013
- *
+ * 
  */
 @Portable
 @Conversational

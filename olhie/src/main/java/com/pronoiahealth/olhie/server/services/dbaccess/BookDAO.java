@@ -48,7 +48,9 @@ public class BookDAO {
 			OObjectDatabaseTx ooDbTx, String userId,
 			TempCoverBinderHolder holder) throws Exception {
 		// Find Book
-		Book book = ooDbTx.detach(getBookById(bookId, ooDbTx));
+		// Book book = ooDbTx.detach(getBookById(bookId, ooDbTx));
+		Book book = getBookById(bookId, ooDbTx);
+		book = getBookDataForBookDisplay(book);
 
 		// Find author
 		User user = UserDAO.getUserByUserId(book.getAuthorId(), ooDbTx);
@@ -294,5 +296,27 @@ public class BookDAO {
 		}
 
 		return authorSelected;
+	}
+	
+	/**
+	 * Detachs the Book data except for the base64Logo field
+	 * 
+	 * @param book
+	 */
+	private static Book getBookDataForBookDisplay(Book book) {
+		book.getActDate();
+		book.getActive();
+		book.getAuthorId();
+		book.getBookDescriptions();
+		book.getBookTitle();
+		book.getCategory();
+		book.getCoverName();
+		book.getCreatedDate();
+		book.getId();
+		book.getIntroduction();
+		book.getKeywords();
+		book.getLastUpdated();
+		book.getLogoFileName();
+		return book;
 	}
 }
