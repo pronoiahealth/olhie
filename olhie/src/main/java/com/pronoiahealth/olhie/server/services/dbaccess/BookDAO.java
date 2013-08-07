@@ -48,10 +48,9 @@ public class BookDAO {
 			OObjectDatabaseTx ooDbTx, String userId,
 			TempCoverBinderHolder holder) throws Exception {
 		// Find Book
-		// Book book = ooDbTx.detach(getBookById(bookId, ooDbTx));
-		Book book = getBookById(bookId, ooDbTx);
-		book = getBookDataForBookDisplay(book);
-
+		Book book = ooDbTx.detach(getBookById(bookId, ooDbTx));
+		book = clearUnNeeded(book);
+		
 		// Find author
 		User user = UserDAO.getUserByUserId(book.getAuthorId(), ooDbTx);
 		String authorName = user.getFirstName() + " " + user.getLastName();
@@ -303,20 +302,9 @@ public class BookDAO {
 	 * 
 	 * @param book
 	 */
-	private static Book getBookDataForBookDisplay(Book book) {
-		book.getActDate();
-		book.getActive();
-		book.getAuthorId();
-		book.getBookDescriptions();
-		book.getBookTitle();
-		book.getCategory();
-		book.getCoverName();
-		book.getCreatedDate();
-		book.getId();
-		book.getIntroduction();
-		book.getKeywords();
-		book.getLastUpdated();
-		book.getLogoFileName();
+	private static Book clearUnNeeded(Book book) {
+		book.setBase64LogoData(null);
+		book.setSolrUpdate(null);
 		return book;
 	}
 }

@@ -43,10 +43,10 @@ public class UserBookRelationshipDAO {
 			OSQLSynchQuery<UserBookRelationship> rQuery = null;
 			if (activeOnly == true) {
 				rQuery = new OSQLSynchQuery<UserBookRelationship>(
-						"select from UserBookRelationship where bookId = :bId and userId = :uId and activeRelationship = true");
+						"select from UserBookRelationship where userId = :uId and bookId = :bId and activeRelationship = true");
 			} else {
 				rQuery = new OSQLSynchQuery<UserBookRelationship>(
-						"select from UserBookRelationship where bookId = :bId and userId = :uId");
+						"select from UserBookRelationship where userId = :uId and bookId = :bId");
 			}
 			HashMap<String, String> rparams = new HashMap<String, String>();
 			rparams.put("bId", bookId);
@@ -129,7 +129,7 @@ public class UserBookRelationshipDAO {
 			String bookId, String userId, OObjectDatabaseTx ooDbTx)
 			throws Exception {
 		OSQLSynchQuery<UserBookRelationship> rQuery = new OSQLSynchQuery<UserBookRelationship>(
-				"select from UserBookRelationship where bookId = :bId and userId = :uId and activeRelationship = true");
+				"select from UserBookRelationship where userId = :uId and bookId = :bId and activeRelationship = true");
 		HashMap<String, String> rparams = new HashMap<String, String>();
 		rparams.put("bId", bookId);
 		rparams.put("uId", userId);
