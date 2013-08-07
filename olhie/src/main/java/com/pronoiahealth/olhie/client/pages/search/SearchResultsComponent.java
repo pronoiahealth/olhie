@@ -17,6 +17,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.FluidRow;
+import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.google.common.collect.ArrayListMultimap;
@@ -70,7 +71,8 @@ public class SearchResultsComponent extends AbstractComposite {
 	@UiField
 	public Label resultsLbl;
 
-	private Image spinner;
+	@UiField
+	public Icon spinner;
 
 	private BookSelectCallBack bookSelectCallBack;
 
@@ -93,6 +95,9 @@ public class SearchResultsComponent extends AbstractComposite {
 
 		// Set search label
 		resultsLbl.setText(SearchConstants.INSTANCE.searchResults());
+		
+		// Set initial spinner state
+		spinner.setVisible(false);
 
 		// Navigate to the NewBookPage. The edit mode will be set by logic on
 		// that page.
@@ -115,7 +120,7 @@ public class SearchResultsComponent extends AbstractComposite {
 			@Observes BookSearchResponseEvent event) {
 
 		// Remove the spinner
-		removeSpinner();
+		spinner.setVisible(false);
 		
 		// Display the books, if nothing is returned the display a message
 		List<BookDisplay> lst = event.getBookDisplayList();
@@ -144,38 +149,29 @@ public class SearchResultsComponent extends AbstractComposite {
 		searchResultsContainerList.clear();
 
 		// Set the spinner visible
-		addSpinner();
+		spinner.setVisible(true);
 	}
 
+	/**
+	 * Hide the spinner on an error
+	 * 
+	 * @param serviceErrorEvent
+	 */
 	protected void observesServiceErrorEvent(
 			@Observes ServiceErrorEvent serviceErrorEvent) {
 		// Set the spinner visible
-		removeSpinner();
+		spinner.setVisible(false);
 	}
 
+	/**
+	 * Hide the spinner on a error
+	 * 
+	 * @param clientErrorEvent
+	 */
 	protected void observesClientErrorEvent(
 			@Observes ClientErrorEvent clientErrorEvent) {
 		// Set the spinner visible
-		removeSpinner();
-	}
-
-	/**
-	 * Removes the spinner
-	 */
-	private void removeSpinner() {
-		if (spinner != null) {
-			spinner.removeFromParent();
-			spinner = null;
-		}
-	}
-
-	/**
-	 * Adds a spinner to search results container
-	 */
-	private void addSpinner() {
-		spinner = new Image("Olhie/images/loading.gif");
-		spinner.getElement().setAttribute("style", "ph-SearchResults-Spinner");
-		searchResultsContainerList.add(spinner);
+		spinner.setVisible(false);
 	}
 
 	/**

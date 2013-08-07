@@ -7,7 +7,7 @@
 		backdrop="STATIC" keyboard="true" animation="true">
 
 		<b:FluidContainer>
-			<b:FluidRow>
+			<b:FluidRow ui:field="controlsRow">
 				<b:Form type="HORIZONTAL">
 					<b:Fieldset>
 						<b:ControlGroup>

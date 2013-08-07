@@ -20,7 +20,7 @@ import org.jboss.errai.enterprise.client.cdi.api.Conversational;
  * 
  * <p>
  * Fired From : LoginService, RegistrationDialog class<br/>
- * Observed By: ErrorDialogDisplay class, SearchResultsComponent (removes
+ * Observed By: ErrorDialogDisplay class, SearchResultsComponent and BookCasePage (removes
  * spinner if its there)<br/>
  * </p>
  * 

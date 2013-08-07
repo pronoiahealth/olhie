@@ -20,7 +20,7 @@ import org.jboss.errai.enterprise.client.cdi.api.Conversational;
  * 
  * <p>
  * Fired From : MainPage class - see bus error handler.<br/>
- * Observed By: ErrorDisplayDialog class, SearchResultsComponent (removes
+ * Observed By: ErrorDisplayDialog class, SearchResultsComponent and BookcasePage (removes
  * spinner if its there)<br/>
  * </p>
  * 

@@ -9,6 +9,7 @@
 		<b:FluidContainer>
 			<b:FluidRow ui:field="searchResultsHeader">
 				<b:Label ui:field="resultsLbl" styleName="ph-SearchResults-Header-Text">Search Results</b:Label>
+				<b:Icon ui:field="spinner" spin="true" type="SPINNER" size="LARGE"></b:Icon>
 			</b:FluidRow>
 		</b:FluidContainer>
 
