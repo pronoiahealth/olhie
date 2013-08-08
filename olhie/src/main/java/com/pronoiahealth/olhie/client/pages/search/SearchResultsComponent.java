@@ -17,6 +17,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.FluidRow;
+import com.github.gwtbootstrap.client.ui.Icon;
+import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -27,7 +29,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
+import com.pronoiahealth.olhie.client.shared.events.book.BookSearchEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookSearchResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
@@ -62,9 +67,12 @@ public class SearchResultsComponent extends AbstractComposite {
 
 	@UiField
 	public ScrollPanel searchResultsContainerList;
-	
+
 	@UiField
 	public Label resultsLbl;
+
+	@UiField
+	public Icon spinner;
 
 	private BookSelectCallBack bookSelectCallBack;
 
@@ -84,9 +92,12 @@ public class SearchResultsComponent extends AbstractComposite {
 
 		// Header for list
 		searchResultsHeader.addStyleName("ph-SearchResults-Header");
-		
+
 		// Set search label
 		resultsLbl.setText(SearchConstants.INSTANCE.searchResults());
+		
+		// Set initial spinner state
+		spinner.setVisible(false);
 
 		// Navigate to the NewBookPage. The edit mode will be set by logic on
 		// that page.
@@ -108,15 +119,16 @@ public class SearchResultsComponent extends AbstractComposite {
 	public void observesBookSearchResponseEvent(
 			@Observes BookSearchResponseEvent event) {
 
-		// Clear the current display
-		searchResultsContainerList.clear();
-
+		// Remove the spinner
+		spinner.setVisible(false);
+		
 		// Display the books, if nothing is returned the display a message
 		List<BookDisplay> lst = event.getBookDisplayList();
 		if (lst != null && lst.size() > 0) {
 			int total = event.getTotalInResultSet();
-			int returned  = lst.size();
-			resultsLbl.setText(SearchMessages.INSTANCE.searchResultsReturned(returned, total));
+			int returned = lst.size();
+			resultsLbl.setText(SearchMessages.INSTANCE.searchResultsReturned(
+					returned, total));
 			BookList3D bookLst = new BookList3D(lst, bookSelectCallBack);
 			searchResultsContainerList.add(bookLst);
 		} else {
@@ -125,6 +137,41 @@ public class SearchResultsComponent extends AbstractComposite {
 			noBooksLbl.setStyleName("ph-SearchResults-NoResults-Lbl");
 			searchResultsContainerList.add(noBooksLbl);
 		}
+	}
+
+	/**
+	 * @param bookSearchEvent
+	 */
+	protected void observesBookSearchEvent(
+			@Observes BookSearchEvent bookSearchEvent) {
+
+		// Clear the current display
+		searchResultsContainerList.clear();
+
+		// Set the spinner visible
+		spinner.setVisible(true);
+	}
+
+	/**
+	 * Hide the spinner on an error
+	 * 
+	 * @param serviceErrorEvent
+	 */
+	protected void observesServiceErrorEvent(
+			@Observes ServiceErrorEvent serviceErrorEvent) {
+		// Set the spinner visible
+		spinner.setVisible(false);
+	}
+
+	/**
+	 * Hide the spinner on a error
+	 * 
+	 * @param clientErrorEvent
+	 */
+	protected void observesClientErrorEvent(
+			@Observes ClientErrorEvent clientErrorEvent) {
+		// Set the spinner visible
+		spinner.setVisible(false);
 	}
 
 	/**

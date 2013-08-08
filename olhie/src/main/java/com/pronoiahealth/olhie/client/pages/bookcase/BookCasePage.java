@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.nav.client.local.PageShowing;
 
+import com.github.gwtbootstrap.client.ui.Icon;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gwt.query.client.GQuery;
@@ -36,6 +37,8 @@ import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.GetMyBookcaseEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.GetMyBookcaseResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
@@ -73,6 +76,9 @@ public class BookCasePage extends AbstractPage {
 	@UiField
 	public TabLayoutPanel tabPanel;
 
+	@UiField
+	public Icon spinner;
+
 	@Inject
 	private ClientUserToken clientToken;
 
@@ -92,6 +98,9 @@ public class BookCasePage extends AbstractPage {
 	@PostConstruct
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
+
+		// Initial state of spinner
+		spinner.setVisible(false);
 
 		// create selector - This will fire the bookId to the server to see what
 		// the users relationship with the book is. If he's the author or
@@ -124,6 +133,7 @@ public class BookCasePage extends AbstractPage {
 	 */
 	@PageShowing
 	protected void pageShowing() {
+		spinner.setVisible(true);
 		getMyBookcaseEvent
 				.fire(new GetMyBookcaseEvent(clientToken.getUserId()));
 	}
@@ -178,5 +188,30 @@ public class BookCasePage extends AbstractPage {
 		if (books != null && books.size() > 0) {
 			myCollectionTab.add(new BookList3D(books, bookSelectCallBack));
 		}
+
+		// Set the spinner state
+		spinner.setVisible(false);
+	}
+
+	/**
+	 * Hide the spinner on an error
+	 * 
+	 * @param serviceErrorEvent
+	 */
+	protected void observesServiceErrorEvent(
+			@Observes ServiceErrorEvent serviceErrorEvent) {
+		// Set the spinner visible
+		spinner.setVisible(false);
+	}
+
+	/**
+	 * Hide the spinner on a error
+	 * 
+	 * @param clientErrorEvent
+	 */
+	protected void observesClientErrorEvent(
+			@Observes ClientErrorEvent clientErrorEvent) {
+		// Set the spinner visible
+		spinner.setVisible(false);
 	}
 }

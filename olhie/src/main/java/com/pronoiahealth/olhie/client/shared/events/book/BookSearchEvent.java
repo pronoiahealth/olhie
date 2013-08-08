@@ -12,7 +12,7 @@ import com.pronoiahealth.olhie.client.shared.vo.Book;
  * 
  * <p>
  * Fired By: SearchComponent class<br/>
- * Observed By: BookSearchService<br/>
+ * Observed By: BookSearchService, SeachResultsComponnet (starts the spinner)<br/>
  * </p>
  * 
  * @author Alex Roman

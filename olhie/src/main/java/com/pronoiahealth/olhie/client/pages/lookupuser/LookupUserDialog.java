@@ -16,6 +16,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.FluidRow;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.Typeahead;
@@ -42,6 +43,9 @@ public class LookupUserDialog extends Composite {
 
 	@UiField
 	public Modal lookupUserModal;
+	
+	@UiField
+	public FluidRow controlsRow;
 
 	@UiField
 	public Button submitButton;
@@ -74,17 +78,23 @@ public class LookupUserDialog extends Composite {
 		userNameTypeAhead.setMinLength(2);
 		initWidget(binder.createAndBindUi(this));
 		sOracle.setSuggestWidget(userNameTxtBox);
+		
 		userNameTypeAhead.setUpdaterCallback(new UpdaterCallback() {
 			@Override
 			public String onSelection(Suggestion selectedSuggestion) {
 				GenericMultiWordSuggestion<ConnectedUser> sug = (GenericMultiWordSuggestion<ConnectedUser>) selectedSuggestion;
 				currentSelection = (ConnectedUser) sug.getPojo();
-				submitButton.setEnabled(true);
+				submitButton.setVisible(true);
 				return sug.getDisplayString();
 			}
 		});
+		
+		// Set Modal css
 		lookupUserModal.setStyleName("ph-LookupUser-Modal", true);
 		lookupUserModal.setStyleName("ph-LookupUser-Modal-Size", true);
+		
+		// Set height of controls row
+		controlsRow.setStyleName("ph-LookupUser-Modal-ControlRow", true);
 		
 		// Set focus
 		lookupUserModal.addShownHandler(new ShownHandler() {
@@ -100,7 +110,7 @@ public class LookupUserDialog extends Composite {
 	 */
 	public void show() {
 		userNameTxtBox.setText("");
-		submitButton.setEnabled(false);
+		submitButton.setVisible(false);
 		lookupUserModal.show();
 	}
 

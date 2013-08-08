@@ -287,6 +287,7 @@ public class BookList3D extends Widget {
 	public void attachEventsToLst() {
 		final GQuery books = $("#bk-list > li > div.bk-book", rootDiv);
 		this.currentBookCnt = books.length();
+		
 		books.each(new Function() {
 			@Override
 			public void f(Element e) {
@@ -453,7 +454,7 @@ public class BookList3D extends Widget {
 						navPrev.unbind(Event.ONCLICK);
 						navPrev.remove();
 					}
-					
+
 					GQuery navNext = page.find(".bk-page-next");
 					if (navNext != null) {
 						navNext.unbind(Event.ONCLICK);

@@ -20,29 +20,30 @@ import org.jboss.errai.enterprise.client.cdi.api.Conversational;
  * 
  * <p>
  * Fired From : LoginService, RegistrationDialog class<br/>
- * Observed By: ErrorDialogDisplay class<br/>
+ * Observed By: ErrorDialogDisplay class, SearchResultsComponent and BookCasePage (removes
+ * spinner if its there)<br/>
  * </p>
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since May 26, 2013
- *
+ * 
  */
 @Portable
 @Conversational
 public class ServiceErrorEvent {
 	String errorMsg;
-	
+
 	/**
 	 * Constructor
-	 *
+	 * 
 	 */
 	public ServiceErrorEvent() {
 	}
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param errorMsg
 	 */
 	public ServiceErrorEvent(String errorMsg) {

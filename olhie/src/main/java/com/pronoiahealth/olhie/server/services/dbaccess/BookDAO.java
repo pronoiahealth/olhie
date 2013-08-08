@@ -49,7 +49,8 @@ public class BookDAO {
 			TempCoverBinderHolder holder) throws Exception {
 		// Find Book
 		Book book = ooDbTx.detach(getBookById(bookId, ooDbTx));
-
+		book = clearUnNeeded(book);
+		
 		// Find author
 		User user = UserDAO.getUserByUserId(book.getAuthorId(), ooDbTx);
 		String authorName = user.getFirstName() + " " + user.getLastName();
@@ -294,5 +295,16 @@ public class BookDAO {
 		}
 
 		return authorSelected;
+	}
+	
+	/**
+	 * Detachs the Book data except for the base64Logo field
+	 * 
+	 * @param book
+	 */
+	private static Book clearUnNeeded(Book book) {
+		book.setBase64LogoData(null);
+		book.setSolrUpdate(null);
+		return book;
 	}
 }
