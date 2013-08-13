@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages.main;
 
+import java.util.Date;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -23,12 +25,15 @@ import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Window.ClosingEvent;
+import com.google.gwt.user.client.Window.ClosingHandler;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -56,6 +61,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.SyncPageToMenuEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LoggedInPingEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LoginResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.loginout.LogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LogoutResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.news.NewsItemsRequestEvent;
 import com.pronoiahealth.olhie.client.shared.rest.TestRest;
@@ -193,6 +199,8 @@ public class MainPage extends AbstractComposite {
 	@ScreenTimeout
 	private Integer screenTimeout;
 
+	private HandlerRegistration screenTimeOutHandlerRegistration;
+
 	private Timer pingTimer;
 
 	@Inject
@@ -233,7 +241,12 @@ public class MainPage extends AbstractComposite {
 	private Event<ClientErrorEvent> clientErrorEvent;
 
 	@Inject
+	private Event<LogoutRequestEvent> logoutRequestEvent;
+
+	@Inject
 	private Caller<TestRest> testRestService;
+
+	private long lastPingTime;
 
 	private static final int EAST_PANEL_WIDTH = 180;
 
@@ -274,23 +287,15 @@ public class MainPage extends AbstractComposite {
 			}
 		});
 
-		// Create timer and schedule
+		// Create timer that will call the observesClientLogoutRequestEvent
+		// if a logged in user does not access the mouse or keyboard within the
+		// provides screen timeout period.
 		screenTimer = new Timer() {
 			@Override
 			public void run() {
+				observesClientLogoutRequestEvent(null);
 			}
 		};
-
-		// Create global event listener // Any events (mouse or keyboard)
-		// will reset the timer
-		com.google.gwt.user.client.Event
-				.addNativePreviewHandler(new NativePreviewHandler() {
-					@Override
-					public void onPreviewNativeEvent(NativePreviewEvent event) {
-						screenTimer.cancel();
-						screenTimer.schedule(screenTimeout);
-					}
-				});
 
 		// Not all GWT panel will resize when the window resizes
 		// Observing this event gives panel a chance to resize if necessary
@@ -298,6 +303,17 @@ public class MainPage extends AbstractComposite {
 			@Override
 			public void onResize(ResizeEvent event) {
 				windowResizeEvent.fire(new WindowResizeEvent());
+			}
+		});
+
+		// If the user navigates away from the window or closes the browser and
+		// is logged in then reset the session on the server
+		Window.addWindowClosingHandler(new ClosingHandler() {
+			@Override
+			public void onWindowClosing(ClosingEvent event) {
+				if (clientUserToken.isLoggedIn() == true) {
+					logoutRequestEvent.fire(new LogoutRequestEvent(false));
+				}
 			}
 		});
 
@@ -322,11 +338,6 @@ public class MainPage extends AbstractComposite {
 
 		// Fire get news event
 		newsItemsRequestEvent.fire(new NewsItemsRequestEvent());
-
-		// Test to see if we are on the BulletinBoardPage as the initial page
-		// if (!navigator.isCurrentPage(NavEnum.BulletinboardPage.name())) {
-		// hideEast();
-		// }
 	}
 
 	/**
@@ -435,14 +446,27 @@ public class MainPage extends AbstractComposite {
 	}
 
 	/**
-	 * After a user logs in start pinging the server.
+	 * After a user logs in start pinging the server. The ping functionality
+	 * also checks the last time a ping was sent against the current time. If
+	 * there is more than a 5 minute difference it is assumed the user put the
+	 * system to sleep. This will cause an automatic log out.
 	 */
 	private void startPinging() {
+		this.lastPingTime = new Date().getTime();
 		ping();
 		pingTimer = new Timer() {
 			@Override
 			public void run() {
-				ping();
+				long currentTime = (new Date()).getTime();
+
+				// If the difference is greater than 5 minutes then log the user
+				// out.
+				if (currentTime > (lastPingTime + (1000 * 60 * 5))) {
+					observesClientLogoutRequestEvent(null);
+				} else {
+					ping();
+					lastPingTime = currentTime;
+				}
 			}
 		};
 		pingTimer.scheduleRepeating(pingFireTime);
@@ -462,12 +486,36 @@ public class MainPage extends AbstractComposite {
 		loggedInPingEvent.fire(new LoggedInPingEvent());
 	}
 
+	/**
+	 * Cancel the running screen handler
+	 */
 	private void cancelScreenTimer() {
+		if (screenTimeOutHandlerRegistration != null) {
+			screenTimeOutHandlerRegistration.removeHandler();
+			screenTimeOutHandlerRegistration = null;
+		}
 		screenTimer.cancel();
 	}
 
+	/**
+	 * Start the screen timeout handler. If the user does not move the mouse or
+	 * input anything into the app for the screen timeout period then the system
+	 * will automatically log the user out.
+	 */
 	private void startScreenTimer() {
-		screenTimer.scheduleRepeating(this.screenTimeout);
+		// Cancel any current handler
+		cancelScreenTimer();
+
+		// Re-init
+		screenTimeOutHandlerRegistration = com.google.gwt.user.client.Event
+				.addNativePreviewHandler(new NativePreviewHandler() {
+					@Override
+					public void onPreviewNativeEvent(NativePreviewEvent event) {
+						screenTimer.cancel();
+						screenTimer.schedule(screenTimeout);
+					}
+				});
+		screenTimer.schedule(this.screenTimeout);
 	}
 
 	/**

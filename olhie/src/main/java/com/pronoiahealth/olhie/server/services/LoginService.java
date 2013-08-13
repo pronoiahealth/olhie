@@ -92,13 +92,13 @@ public class LoginService {
 			// browser level this will mess up state tracking in the
 			// application. Therefore, we only allow one log in per session (in
 			// this case browser).
-			boolean alreadyLoggedIn = userToken.getLoggedIn();
-			if (alreadyLoggedIn == true) {
-				loginErrorEvent.fire(new LoginErrorEvent(
-						"Already logged in on this browser as "
-								+ userToken.getUserId() + "."));
-				return;
-			}
+			// boolean alreadyLoggedIn = userToken.getLoggedIn();
+			// if (alreadyLoggedIn == true) {
+			// loginErrorEvent.fire(new LoginErrorEvent(
+			// "Already logged in on this browser as "
+			// + userToken.getUserId() + "."));
+			// return;
+			// }
 
 			// User check
 			// 1. Look up user
