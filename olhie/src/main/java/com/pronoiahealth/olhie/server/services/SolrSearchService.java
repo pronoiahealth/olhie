@@ -41,6 +41,7 @@ import com.pronoiahealth.olhie.server.security.ServerUserToken;
 public class SolrSearchService {
 
 	private static final String SOLR_SERVER = "184.173.121.82";
+	//private static final String SOLR_SERVER = "localhost";
 	private static final int SOLR_PORT = 8080;
 	
 	private static final String SOLR_QUERY_ALL = "http://" + SOLR_SERVER + ":" + SOLR_PORT + "/solr/select?q=*:*&wt=xml";
@@ -48,6 +49,7 @@ public class SolrSearchService {
 	private static final String SOLR_QUERY_TEXT = "http://" + SOLR_SERVER + ":" + SOLR_PORT + "/solr/select?q=text:";
 	private static final String SOLR_QUERY_FULL = "http://" + SOLR_SERVER + ":" + SOLR_PORT + "/solr/select?q=";
 	private static final String SOLR_ROWS_PARAM = "&rows=";
+	private static final String SOLR__POST_FIELDS = "&fl=id";
 	
 	private static final int RETURN_ALL_ROWS = -1;
 	
@@ -152,11 +154,9 @@ public class SolrSearchService {
 		StringBuffer query = new StringBuffer();
 		query.append("(");
 		for (int i=0 ;i<_tokenList.length; i++) {
-			query.append("*");
 			query.append(_tokenList[i]);
-			query.append("*");
 			if (i < _tokenList.length-1) {
-				query.append(" and ");
+				query.append("+");
 			}
 		}
 		query.append(")");
@@ -208,13 +208,14 @@ public class SolrSearchService {
 	 */
 	private String querySolr(String _query)
 	{
+		String query = _query + SOLR__POST_FIELDS;
 		StringBuffer result = new StringBuffer();
 		
 		BufferedReader reader = null;
 		InputStream is = null;
 		
         try {
-        	URL url = new URL(_query);
+        	URL url = new URL(query);
             is = url.openConnection().getInputStream();
             reader = new BufferedReader(new InputStreamReader(is));
             String line = null;
@@ -258,9 +259,12 @@ public class SolrSearchService {
 	 */
 	public static void main(String [] args)
 	{
-		String resultXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> <response> <lst name=\"responseHeader\"><int name=\"status\">0</int><int name=\"QTime\">11</int><lst name=\"params\"><str name=\"q\">keywords:*destefano*</str></lst></lst><result name=\"response\" numFound=\"6\" start=\"0\"><doc><str name=\"id\">#15:92</str><str name=\"keywords\">TEST BOOK FOR TODAY TEST BOOK FOR TODAY'S PRESENTATION   INTERFACE GREY DESIGNED JOHN DESTEFANO JDESTEF TEST FILE FOR TODAY'S DISCUSSION QUICKSTART_GUIDE.PDF</str><long name=\"_version_\">1440800724562739200</long></doc><doc><str name=\"id\">#15:93</str><str name=\"keywords\">THIS IS A TEST BOOK THIS IS A TEST BOOK   INTERFACE BLUE-GREY 1 JOHN DESTEFANO JDESTEF</str><long name=\"_version_\">1440800724563787776</long></doc><doc><str name=\"id\">#15:94</str><str name=\"keywords\">TEST BOOK 101 THIS IS TEST BOOK 101   LEGAL BLUE-GREY 1 JOHN DESTEFANO JDESTEF</str><long name=\"_version_\">1440800724563787777</long></doc><doc><str name=\"id\">#15:95</str><str name=\"keywords\">TEST BOOK 100 THIS IS TEST BOOK 100   INTERFACE BROWN 3 JOHN DESTEFANO JDESTEF</str><long name=\"_version_\">1440800724563787778</long></doc><doc><str name=\"id\">#15:96</str><str name=\"keywords\">TEST BOOK 3 THIS IS TEST BOOK 3   INTERFACE BROWN DESIGNED JOHN DESTEFANO JDESTEF</str><long name=\"_version_\">1440800724563787779</long></doc><doc><str name=\"id\">#15:98</str><str name=\"keywords\">TEST BOOK 1 THIS IS TEST BOOK 1   LEGAL MAUVE 1 JOHN DESTEFANO JDESTEF TEST FILE 2 TEST FILE DESCRIPTION QUICKSTART_GUIDE.PDF</str><long name=\"_version_\">1440800724563787781</long></doc></result> </response>";
+		//String[] searchTokens = new String[] { "orange", "test.txt" };
+		String[] searchTokens = new String[] { "book" };
 		SolrSearchService solrService = new SolrSearchService();
-		solrService.parseResults(resultXml);
+		System.out.println(solrService.searchSolr(searchTokens, 5));
+		//String resultXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> <response> <lst name=\"responseHeader\"><int name=\"status\">0</int><int name=\"QTime\">11</int><lst name=\"params\"><str name=\"q\">keywords:*destefano*</str></lst></lst><result name=\"response\" numFound=\"6\" start=\"0\"><doc><str name=\"id\">#15:92</str><str name=\"keywords\">TEST BOOK FOR TODAY TEST BOOK FOR TODAY'S PRESENTATION   INTERFACE GREY DESIGNED JOHN DESTEFANO JDESTEF TEST FILE FOR TODAY'S DISCUSSION QUICKSTART_GUIDE.PDF</str><long name=\"_version_\">1440800724562739200</long></doc><doc><str name=\"id\">#15:93</str><str name=\"keywords\">THIS IS A TEST BOOK THIS IS A TEST BOOK   INTERFACE BLUE-GREY 1 JOHN DESTEFANO JDESTEF</str><long name=\"_version_\">1440800724563787776</long></doc><doc><str name=\"id\">#15:94</str><str name=\"keywords\">TEST BOOK 101 THIS IS TEST BOOK 101   LEGAL BLUE-GREY 1 JOHN DESTEFANO JDESTEF</str><long name=\"_version_\">1440800724563787777</long></doc><doc><str name=\"id\">#15:95</str><str name=\"keywords\">TEST BOOK 100 THIS IS TEST BOOK 100   INTERFACE BROWN 3 JOHN DESTEFANO JDESTEF</str><long name=\"_version_\">1440800724563787778</long></doc><doc><str name=\"id\">#15:96</str><str name=\"keywords\">TEST BOOK 3 THIS IS TEST BOOK 3   INTERFACE BROWN DESIGNED JOHN DESTEFANO JDESTEF</str><long name=\"_version_\">1440800724563787779</long></doc><doc><str name=\"id\">#15:98</str><str name=\"keywords\">TEST BOOK 1 THIS IS TEST BOOK 1   LEGAL MAUVE 1 JOHN DESTEFANO JDESTEF TEST FILE 2 TEST FILE DESCRIPTION QUICKSTART_GUIDE.PDF</str><long name=\"_version_\">1440800724563787781</long></doc></result> </response>";
+		//solrService.parseResults(resultXml);
 	}
 
 	
