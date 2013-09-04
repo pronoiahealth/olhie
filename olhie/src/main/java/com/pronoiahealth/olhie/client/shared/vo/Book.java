@@ -67,7 +67,7 @@ public class Book {
 	private Date lastUpdated;
 
 	@NotNull
-	private boolean active;
+	private Boolean active;
 	
 	private Date solrUpdate;
 
@@ -187,11 +187,11 @@ public class Book {
 		this.actDate = actDate;
 	}
 
-	public boolean getActive() {
+	public Boolean getActive() {
 		return active;
 	}
 
-	public void setActive(boolean active) {
+	public void setActive(Boolean active) {
 		this.active = active;
 	}
 

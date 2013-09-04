@@ -98,7 +98,7 @@ public class BookSelectedService {
 
 			// Get the Book
 			BookDisplay bookDisplay = BookDAO.getBookDisplayById(bookId,
-					ooDbTx, userId, holder);
+					ooDbTx, userId, holder, true);
 
 			// Get User Book relationships
 			Set<UserBookRelationshipEnum> rels = BookDAO

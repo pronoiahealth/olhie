@@ -3,7 +3,7 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
 	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base'>
 
-	<b:Modal ui:field="addLogoModal" title="What logo do you want to use?"
+	<b:Modal ui:field="addLogoModal" title="Logos can only be 50kb or less in size"
 		backdrop="STATIC" keyboard="true" animation="true">
 
 		<b:FluidContainer>

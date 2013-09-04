@@ -82,6 +82,9 @@ public class OlhieResourceInjector {
 		//if (isNotLoadedJquery()) {
 		//	injectJs(OlhieResources.INSTANCE.jquery172minjs());
 		//}
+		injectJs(OlhieResources.INSTANCE.jquerycontentcarouseljs());
+		injectJs(OlhieResources.INSTANCE.jqueryeasingjs());
+		injectJs(OlhieResources.INSTANCE.jquerymousewheeljs());
 	}
 
 	/**

@@ -11,7 +11,6 @@
 package com.pronoiahealth.olhie.server.services;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,7 +20,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.BookSearchEvent;
@@ -97,6 +95,7 @@ public class BookSearchService {
 			List<BookDisplay> bookDisplayList = new ArrayList<BookDisplay>();
 
 			int rows = bookSearchEvent.getRows();
+			/*
 			List<String> bookIdList =
 			// solrSearchService.searchSolr(searchText);
 			solrSearchService.searchSolr(searchText.split("\\s+"), rows);
@@ -108,6 +107,7 @@ public class BookSearchService {
 			HashMap<String, Object> bparams = new HashMap<String, Object>();
 			// bparams.put("idlist", bookIdList);
 			List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
+			*/
 /*
 			OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
 					"select from Book where bookTitle.toLowerCase() like :title and active = true");
@@ -115,13 +115,14 @@ public class BookSearchService {
 			bparams.put("title", "%" + searchText.toLowerCase() + "%");
 			List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
 */
+			
+			List<Book> bResult = BookDAO.getActiveBooksByTitle(searchText, 0, rows, ooDbTx);
 			for (Book book : bResult) {
-				BookDisplay bookDisplay = BookDAO.getBookDisplayById(
-						book.getId(), ooDbTx, userToken.getUserId(), holder);
-
+				BookDisplay bookDisplay = BookDAO.getBookDisplayByBook(
+						book, ooDbTx, userToken.getUserId(), holder, true);
 				bookDisplayList.add(bookDisplay);
 			}
-
+			
 			// Fire the event
 			bookSearchResponseEvent.fire(new BookSearchResponseEvent(
 					bookDisplayList, bookDisplayList.size()));

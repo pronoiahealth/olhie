@@ -164,6 +164,10 @@ public class OrientFactory {
 			log.log(Level.INFO, "Released connection " + ooDbTx.hashCode());
 		}
 
-		ooDbTx.close();
+		// There may be places where the connection object is closed to prevent
+		// the Errai Marshalling Framework for sending back unwanted data
+		if (ooDbTx != null && ooDbTx.isClosed() == false) {
+			ooDbTx.close();
+		}
 	}
 }

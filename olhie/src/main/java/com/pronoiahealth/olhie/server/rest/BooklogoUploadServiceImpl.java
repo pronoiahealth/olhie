@@ -56,7 +56,7 @@ public class BooklogoUploadServiceImpl implements BooklogoUploadService {
 	@Inject
 	private Logger log;
 
-	private long FILE_SIZE_LIMIT = 5 * 1024 * 1024; // 5 MiB
+	private long FILE_SIZE_LIMIT = 50 * 1024; // 50k
 
 	@Inject
 	@OODbTx

@@ -18,7 +18,6 @@ import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.FluidRow;
 import com.github.gwtbootstrap.client.ui.Icon;
-import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -67,7 +66,7 @@ public class SearchResultsComponent extends AbstractComposite {
 
 	@UiField
 	public ScrollPanel searchResultsContainerList;
-
+	
 	@UiField
 	public Label resultsLbl;
 

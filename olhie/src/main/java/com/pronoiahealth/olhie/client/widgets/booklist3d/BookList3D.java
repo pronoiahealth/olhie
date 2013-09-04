@@ -77,6 +77,13 @@ public class BookList3D extends Widget {
 		this.rootDiv = doc.createDivElement();
 		this.setElement(rootDiv);
 
+		// There seems to be a bug in the current versions of Firefox when using
+		// transformations.
+		// The container with the transformed elements needs to have the opacity
+		// set to prevent the transformed elements from showing outside a scroll
+		// area
+		rootDiv.setAttribute("style", "opacity: 0.99;");
+
 		// Create the list
 		this.ulElem = doc.createULElement();
 		rootDiv.appendChild(ulElem);
@@ -287,7 +294,7 @@ public class BookList3D extends Widget {
 	public void attachEventsToLst() {
 		final GQuery books = $("#bk-list > li > div.bk-book", rootDiv);
 		this.currentBookCnt = books.length();
-		
+
 		books.each(new Function() {
 			@Override
 			public void f(Element e) {

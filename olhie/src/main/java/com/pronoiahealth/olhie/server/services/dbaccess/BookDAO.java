@@ -31,26 +31,46 @@ import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
 import com.pronoiahealth.olhie.server.services.TempCoverBinderHolder;
 
+/**
+ * BookDAO.java<br/>
+ * Responsibilities:<br/>
+ * 1. Dataaccess for Book
+ * 
+ * @author John DeStefano
+ * @version 1.0
+ * @since Aug 28, 2013
+ * 
+ */
 public class BookDAO {
 
 	/**
-	 * Returns a BookDisplay. None published Books can only be viewed by the
-	 * books author.
-	 * 
-	 * @param bookId
+	 * @param book
 	 * @param ooDbTx
 	 * @param userId
 	 * @param holder
 	 * @return
 	 * @throws Exception
 	 */
-	public static BookDisplay getBookDisplayById(String bookId,
+	public static BookDisplay getBookDisplayByBook(Book book,
 			OObjectDatabaseTx ooDbTx, String userId,
-			TempCoverBinderHolder holder) throws Exception {
-		// Find Book
-		Book book = ooDbTx.detach(getBookById(bookId, ooDbTx));
+			TempCoverBinderHolder holder, boolean returnNonProxyed)
+			throws Exception {
+
+		// Proxied or un-Proxied instance
+		// Remember if proxyed then you must call the get method to access the
+		// data
+		// If Errai marshalling is involved it will eventually access all daat
+		// for return
+		if (returnNonProxyed == true) {
+			book = ooDbTx.detachAll(book, true);
+		}
+
+		// Get rid of unwanted return data
 		book = clearUnNeeded(book);
 		
+		// Used for querying
+		String bookId = book.getId();
+
 		// Find author
 		User user = UserDAO.getUserByUserId(book.getAuthorId(), ooDbTx);
 		String authorName = user.getFirstName() + " " + user.getLastName();
@@ -160,6 +180,28 @@ public class BookDAO {
 	}
 
 	/**
+	 * Eventually calls getBookDisplayByBook().
+	 * 
+	 * @param bookId
+	 * @param ooDbTx
+	 * @param userId
+	 * @param holder
+	 * @return
+	 * @throws Exception
+	 */
+	public static BookDisplay getBookDisplayById(String bookId,
+			OObjectDatabaseTx ooDbTx, String userId,
+			TempCoverBinderHolder holder, boolean returnNonProxyed)
+			throws Exception {
+		// Find Book
+		Book book = ooDbTx.detach(getBookById(bookId, ooDbTx), true);
+
+		// Return the Display object
+		return getBookDisplayByBook(book, ooDbTx, userId, holder,
+				returnNonProxyed);
+	}
+
+	/**
 	 * Gets a Book entity by the book id.
 	 * 
 	 * @param bookId
@@ -198,6 +240,56 @@ public class BookDAO {
 		List<Bookassetdescription> baResult = ooDbTx.command(baQuery).execute(
 				baparams);
 		return baResult;
+	}
+
+	/**
+	 * Gets a list of books that matches the title or partial title. If either
+	 * startPos and limit are 0 then all books that match will be returned.
+	 * 
+	 * @param title
+	 * @param startPos
+	 * @param limit
+	 * @param ooDbTx
+	 * @return
+	 */
+	public static List<Book> getActiveBooksByTitle(String title, int startPos,
+			int limit, OObjectDatabaseTx ooDbTx) {
+		OSQLSynchQuery<Book> bQuery = null;
+		HashMap<String, Object> bparams = new HashMap<String, Object>();
+		bparams.put("title", "%" + title.toLowerCase() + "%");
+
+		if (limit != 0 && limit > 0) {
+			bQuery = new OSQLSynchQuery<Book>(
+					"select from Book where bookTitle.toLowerCase() like :title and active = true SKIP "
+							+ startPos + " LIMIT " + limit);
+		} else {
+			bQuery = new OSQLSynchQuery<Book>(
+					"select from Book where bookTitle.toLowerCase() like :title and active = true");
+		}
+		List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
+		return bResult;
+	}
+
+	/**
+	 * Gets a list of book ids
+	 * 
+	 * @param title
+	 * @param startPos
+	 * @param limit
+	 * @param ooDbTx
+	 * @return
+	 */
+	public List<String> getActiveBooksIdsByTitle(String title, int startPos,
+			int limit, OObjectDatabaseTx ooDbTx) {
+		List<String> retLst = new ArrayList<String>();
+		List<Book> bResult = getActiveBooksByTitle(title, startPos, limit,
+				ooDbTx);
+		if (bResult != null && bResult.size() > 0) {
+			for (Book book : bResult) {
+				retLst.add(book.getId());
+			}
+		}
+		return retLst;
 	}
 
 	/**
@@ -296,7 +388,7 @@ public class BookDAO {
 
 		return authorSelected;
 	}
-	
+
 	/**
 	 * Detachs the Book data except for the base64Logo field
 	 * 

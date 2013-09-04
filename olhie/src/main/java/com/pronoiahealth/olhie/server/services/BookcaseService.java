@@ -125,9 +125,9 @@ public class BookcaseService {
 							retMap.put(catEnum, books);
 						}
 
-						BookDisplay retDisplay = BookDAO.getBookDisplayById(
-								currentBook.getId(), ooDbTx,
-								currentBook.getAuthorId(), holder);
+						BookDisplay retDisplay = BookDAO.getBookDisplayByBook(
+								currentBook, ooDbTx,
+								currentBook.getAuthorId(), holder, true);
 
 						// Add to the list
 						books.add(retDisplay);

@@ -103,7 +103,7 @@ public class RemoveBookFromMyCollectionService {
 			// Return a BookFindResponseEvent
 			// Get the book display
 			BookDisplay bookDisplay = BookDAO.getBookDisplayById(bookId,
-					ooDbTx, userId, holder);
+					ooDbTx, userId, holder, true);
 
 			// Get the user relations
 			Set<UserBookRelationshipEnum> rels = BookDAO

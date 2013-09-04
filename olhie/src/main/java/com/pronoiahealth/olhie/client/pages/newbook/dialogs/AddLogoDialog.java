@@ -126,7 +126,7 @@ public class AddLogoDialog extends Composite {
 						GWT.getModuleName() + "/images/upload_button.png")
 				.setButtonWidth(133)
 				.setButtonHeight(22)
-				.setFileSizeLimit("5 MB")
+				.setFileSizeLimit("50 KB")
 				.setButtonCursor(Uploader.Cursor.HAND)
 				.setButtonAction(Uploader.ButtonAction.SELECT_FILE)
 				.setFileQueueLimit(1)

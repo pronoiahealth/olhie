@@ -58,7 +58,7 @@ public class AddBookToMyCollectionService {
 
 	@Inject
 	private ServerUserToken userToken;
-	
+
 	@Inject
 	private TempCoverBinderHolder holder;
 
@@ -84,8 +84,7 @@ public class AddBookToMyCollectionService {
 	 * 
 	 * @param addBookToMyCollectionEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
-			SecurityRoleEnum.ANONYMOUS })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
 	protected void observesAddBookToMyCollectionEvent(
 			@Observes AddBookToMyCollectionEvent addBookToMyCollectionEvent) {
 
@@ -95,12 +94,13 @@ public class AddBookToMyCollectionService {
 			String userId = userToken.getUserId();
 			boolean loggedIn = userToken.getLoggedIn();
 			String bookId = addBookToMyCollectionEvent.getBookId();
+			Book book = null;
 
 			if (!role.equals(SecurityRoleEnum.ANONYMOUS.toString())
 					&& loggedIn == true && userId.length() > 0) {
 
 				// Need the Book
-				Book book = BookDAO.getBookById(bookId, ooDbTx);
+				book = BookDAO.getBookById(bookId, ooDbTx);
 
 				// Find user
 				User user = UserDAO.getUserByUserId(book.getAuthorId(), ooDbTx);
@@ -137,25 +137,29 @@ public class AddBookToMyCollectionService {
 					rel.setLastViewedDate(now);
 					ooDbTx.save(rel);
 				}
+
+				// Return a BookFindResponseEvent
+				// Get the book display
+				BookDisplay bookDisplay = BookDAO.getBookDisplayByBook(book,
+						ooDbTx, userId, holder, true);
+
+				// Get the user relations
+				Set<UserBookRelationshipEnum> rels = BookDAO
+						.getActiveBookRealtionshipForUser(userId,
+								userToken.getLoggedIn(), bookId, ooDbTx);
+
+				// Is the user asking for the book the author or co-author
+				boolean authorSelected = BookDAO.isAuthorSelected(userId,
+						bookId, ooDbTx);
+
+				// Fire the event
+				bookFindResponseEvent.fire(new BookFindResponseEvent(
+						bookDisplay, rels, authorSelected));
+			} else {
+				serviceErrorEvent
+						.fire(new ServiceErrorEvent(
+								"You can't create a relationship with this book. Please sign-in."));
 			}
-
-			// Return a BookFindResponseEvent
-			// Get the book display
-			BookDisplay bookDisplay = BookDAO.getBookDisplayById(bookId,
-					ooDbTx, userId, holder);
-
-			// Get the user relations
-			Set<UserBookRelationshipEnum> rels = BookDAO
-					.getActiveBookRealtionshipForUser(userId,
-							userToken.getLoggedIn(), bookId, ooDbTx);
-			
-			// Is the user asking for the book the author or co-author
-			boolean authorSelected = BookDAO.isAuthorSelected(userId, bookId,
-					ooDbTx);
-
-			// Fire the event
-			bookFindResponseEvent.fire(new BookFindResponseEvent(bookDisplay,
-					rels, authorSelected));
 
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
