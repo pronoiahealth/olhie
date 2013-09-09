@@ -38,6 +38,7 @@
 				<g:HTMLPanel ui:field="addBookCommentPlaceHolder"></g:HTMLPanel>
 				<g:HTMLPanel ui:field="viewBookCommentsPlaceHolder"></g:HTMLPanel>
 				<g:HTMLPanel ui:field="errorModalPlaceHolder"></g:HTMLPanel>
+				<g:HTMLPanel ui:field="reloadModalPlaceHolder"></g:HTMLPanel>
 				<g:HTMLPanel ui:field="navContent" styleName="center-background"
 					width="100%" height="100%">
 				</g:HTMLPanel>

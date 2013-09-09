@@ -23,6 +23,8 @@ import org.jboss.errai.ioc.client.api.AfterInitialization;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -65,6 +67,7 @@ import com.pronoiahealth.olhie.client.shared.events.loginout.LogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LogoutResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.news.NewsItemsRequestEvent;
 import com.pronoiahealth.olhie.client.shared.rest.TestRest;
+import com.pronoiahealth.olhie.client.shared.rest.WindowCloseService;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.client.widgets.DownloadFrame;
@@ -190,6 +193,9 @@ public class MainPage extends AbstractComposite {
 	@UiField
 	public HTMLPanel addBookCommentPlaceHolder;
 
+	@UiField
+	public HTMLPanel reloadModalPlaceHolder;
+
 	/*
 	 * Used to time things on screen such as when a key is pressed.
 	 */
@@ -245,6 +251,9 @@ public class MainPage extends AbstractComposite {
 
 	@Inject
 	private Caller<TestRest> testRestService;
+
+	@Inject
+	private Caller<WindowCloseService> windowCloseService;
 
 	private long lastPingTime;
 
@@ -311,8 +320,21 @@ public class MainPage extends AbstractComposite {
 		Window.addWindowClosingHandler(new ClosingHandler() {
 			@Override
 			public void onWindowClosing(ClosingEvent event) {
+				// if (clientUserToken.isLoggedIn() == true) {
+				// logoutRequestEvent.fire(new LogoutRequestEvent(false));
+				// Window.alert("You're still signed into Olhie so we're signing you off. Come agan!");
+				// event.setMessage("Leave Olhie?");
+				// }
+			}
+		});
+
+		// Combined with Closing Handler
+		Window.addCloseHandler(new CloseHandler<Window>() {
+			@Override
+			public void onClose(CloseEvent<Window> event) {
 				if (clientUserToken.isLoggedIn() == true) {
-					logoutRequestEvent.fire(new LogoutRequestEvent(false));
+					// logoutRequestEvent.fire(new LogoutRequestEvent(false));
+					windowCloseService.call().windowCloseAction();
 				}
 			}
 		});

@@ -76,7 +76,9 @@ public class LogoutService {
 		try {
 			if (userToken.getLoggedIn() == true) {
 				userToken.clearToken();
-				logoutResponseEvent.fire(new LogoutResponseEvent());
+				if (logoutRequestEvent.isSendResponse() == true) {
+					logoutResponseEvent.fire(new LogoutResponseEvent());
+				}
 			}
 
 			// Stop tracking the session in the db (LoggedInSession

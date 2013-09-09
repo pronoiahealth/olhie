@@ -8,16 +8,14 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.shared.services;
+package com.pronoiahealth.olhie.client.shared.rest;
 
-import java.util.List;
-
-import org.jboss.errai.bus.server.annotations.Remote;
-
-import com.pronoiahealth.olhie.client.shared.vo.ConnectedUser;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 
 /**
- * ConnectedUserService.java<br/>
+ * WindowCloseService.java<br/>
  * Responsibilities:<br/>
  * 1.
  *
@@ -26,7 +24,11 @@ import com.pronoiahealth.olhie.client.shared.vo.ConnectedUser;
  * @since Sep 8, 2013
  *
  */
-@Remote
-public interface ConnectedUserService {
-	public List<ConnectedUser> getConnectedUsers(String qry);
+@Path("/windowclose")
+public interface WindowCloseService {
+	
+	@POST
+	@Path("/closeaction")
+	@Consumes("application/json")
+	public void windowCloseAction();
 }
