@@ -49,7 +49,7 @@ public class LargeBookWidget extends SimplePanel {
 		getElement().setAttribute(
 				"style",
 				"background-image: url('" + backgroundUrl
-						+ "'); background-repeat: repeat;");
+						+ "'); background-size: contain;");
 	}
 	
 	/**

@@ -44,6 +44,7 @@
 									<b:ControlLabel>Cover Design:</b:ControlLabel>
 									<b:SplitDropdownButton ui:field="bookCoverDropDown"
 										dropup="true" text="Select a book cover">
+											
 									</b:SplitDropdownButton>
 								</b:ControlGroup>
 							</b:Column>

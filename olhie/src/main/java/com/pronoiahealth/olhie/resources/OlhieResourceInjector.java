@@ -70,6 +70,7 @@ public class OlhieResourceInjector {
 		OlhieResources.INSTANCE.bookcommentcss().ensureInjected();
 		OlhieResources.INSTANCE.bookcommentdisplaycss().ensureInjected();
 		OlhieResources.INSTANCE.bookscrollercss().ensureInjected();
+		//OlhieResources.INSTANCE.customiconscss().ensureInjected();
 		/*injectResourceCssAsFile("gwt_overrides.css");*/
 	}
 

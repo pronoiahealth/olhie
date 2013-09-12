@@ -28,17 +28,19 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.Column;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
+import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.NavWidget;
 import com.github.gwtbootstrap.client.ui.SplitDropdownButton;
 import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.WellForm;
 import com.github.gwtbootstrap.client.ui.base.IconAnchor;
-import com.github.gwtbootstrap.client.ui.base.UnorderedList;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -47,6 +49,9 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.validation.client.impl.Validation;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
@@ -68,7 +73,6 @@ import com.pronoiahealth.olhie.client.shared.vo.BookCover;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.shared.vo.RegistrationForm;
 import com.pronoiahealth.olhie.client.widgets.bookcat.BookCategoryListWidget;
-import com.pronoiahealth.olhie.client.widgets.bookcover.BookCoverListWidget;
 import com.pronoiahealth.olhie.client.widgets.booklargeshow.LargeBookWidget;
 
 /**
@@ -225,8 +229,8 @@ public class NewBookDialog extends Composite {
 					bookCoverDropDown.setText(a.getName());
 
 					// Change book background
-					String imgUrl = a.getElement().getAttribute(
-							BookCoverListWidget.IMG_URL_HOLDER);
+					String imgUrl = a.getElement().getFirstChildElement()
+							.getNextSiblingElement().getAttribute("img-url");
 					largeBookWidget.setBackground(imgUrl);
 				}
 			}
@@ -291,15 +295,45 @@ public class NewBookDialog extends Composite {
 		List<BookCover> bookCovers = bookCoverListResponseEvent.getBookCover();
 		if (bookCovers != null) {
 			for (BookCover cover : bookCovers) {
-				BookCoverListWidget nav = new BookCoverListWidget(cover);
-				nav.addClickHandler(coverClickedHandler);
-				bookCoverDropDown.getMenuWiget().add(nav);
+				String coverName = cover.getCoverName();
+				NavWidget link = new NavWidget();
+				link.setName(coverName);
+				HorizontalPanel panel = new HorizontalPanel();
+				Image img = new Image();
+				img.setUrl(cover.getCustomIcon());
+				HTMLPanel htmlPanel = new HTMLPanel(coverName);
+				htmlPanel.getElement().setAttribute("style",
+						"padding-left: 10px;");
+				panel.add(img);
+				panel.add(htmlPanel);
+				panel.setCellVerticalAlignment(htmlPanel,
+						HasVerticalAlignment.ALIGN_MIDDLE);
+				link.add(panel);
+				link.addClickHandler(coverClickedHandler);
+				panel.getElement().setAttribute("img-url", cover.getImgUrl());
+				bookCoverDropDown.getMenuWiget().add(link);
 
-				// If editing set the backgroup
+				/*
+				 * NavLink link = new NavLink();
+				 * link.setCustomIconStyle(cover.getCustomIcon());
+				 * link.setHref("#"); link.setText(cover.getCoverName());
+				 * link.addClickHandler(coverClickedHandler);
+				 * bookCoverDropDown.getMenuWiget().add(link);
+				 */
 				if (mode.equals(ModeEnum.EDIT)
 						&& cover.getCoverName().equals(book.getCoverName())) {
 					largeBookWidget.setBackground(cover.getImgUrl());
 				}
+
+				/*
+				 * BookCoverListWidget nav = new BookCoverListWidget(cover);
+				 * nav.addClickHandler(coverClickedHandler);
+				 * bookCoverDropDown.getMenuWiget().add(nav);
+				 * 
+				 * If editing set the backgroup if (mode.equals(ModeEnum.EDIT)
+				 * && cover.getCoverName().equals(book.getCoverName())) {
+				 * largeBookWidget.setBackground(cover.getImgUrl()); }
+				 */
 			}
 		}
 	}

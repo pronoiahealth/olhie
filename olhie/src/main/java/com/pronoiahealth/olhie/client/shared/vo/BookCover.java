@@ -42,6 +42,10 @@ public class BookCover {
 	@NotNull
 	@Size(min = 4, max = 100, message = "Image URL between 4 and 100 characters.")
 	private String imgUrl;
+	
+	@NotNull
+	@Size(min = 4, max = 100, message = "Image URL between 4 and 100 characters.")
+	private String customIcon;
 
 	@NotNull
 	@Size(min = 1, max = 50, message = "Cover name between 1 and 50 characters.")
@@ -60,9 +64,10 @@ public class BookCover {
 	 * @param imgUrl
 	 * @param coverName
 	 */
-	public BookCover(String imgUrl, String coverName) {
+	public BookCover(String imgUrl, String customIcon, String coverName) {
 		super();
 		this.imgUrl = imgUrl;
+		this.customIcon = customIcon;
 		this.coverName = coverName;
 	}
 
@@ -80,5 +85,13 @@ public class BookCover {
 
 	public void setCoverName(String coverName) {
 		this.coverName = coverName;
+	}
+
+	public String getCustomIcon() {
+		return customIcon;
+	}
+
+	public void setCustomIcon(String customIcon) {
+		this.customIcon = customIcon;
 	}
 }

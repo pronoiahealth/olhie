@@ -38,17 +38,17 @@ import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
 
 /**
- * BooklogoDownloadServiceImpl.java<br/>
+ * BookImageDownloadServiceImpl.java<br/>
  * Responsibilities:<br/>
- * 1. Down load a book logo<br/>
+ * 1.
  * 
  * @author John DeStefano
  * @version 1.0
- * @since Jun 28, 2013
+ * @since Sep 11, 2013
  * 
  */
-@Path("/logo_download")
-public class BooklogoDownloadServiceImpl implements BooklogoDownloadService {
+@Path("/book_image_download")
+public class BookImageDownloadServiceImpl implements BookImageDownloadService {
 	@Inject
 	private Logger log;
 
@@ -60,17 +60,20 @@ public class BooklogoDownloadServiceImpl implements BooklogoDownloadService {
 	 * Constructor
 	 * 
 	 */
-	public BooklogoDownloadServiceImpl() {
+	public BookImageDownloadServiceImpl() {
 	}
 
+	/**
+	 * @see com.pronoiahealth.olhie.server.rest.BookImageDownloadService#getBookFrontCoverImage(javax.servlet.http.HttpServletRequest,
+	 *      javax.servlet.http.HttpServletResponse, java.lang.String,
+	 *      javax.servlet.ServletContext)
+	 */
 	@Override
 	@GET
-	@Path("/logo/{uniqueNumb}/{bookId}")
-	// @Produces({"application/pdf", "application/octet-stream", "text/html"})
-	@Produces({ "application/octet-stream" })
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
-			SecurityRoleEnum.ANONYMOUS })
-	public InputStream getBooklogo(@Context HttpServletRequest request,
+	@Path("/front/{uniqueNumb}/{bookId}")
+	@SecureAccess({ SecurityRoleEnum.ANONYMOUS })
+	public InputStream getBookFrontCoverImage(
+			@Context HttpServletRequest request,
 			@Context HttpServletResponse response,
 			@PathParam("bookId") String bookId, @Context ServletContext context)
 			throws ServletException, IOException, FileDownloadException {
@@ -84,9 +87,9 @@ public class BooklogoDownloadServiceImpl implements BooklogoDownloadService {
 			}
 
 			byte[] fileBytes = null;
-			String fileContents = book.getBase64LogoData();
+			String fileContents = book.getBase64FrontCover();
 			if (fileContents != null && fileContents.length() > 0) {
-				String fileName = book.getLogoFileName();
+				String fileName = book.getBookTitle() + "_front_cover.png";
 				String mimetype = context.getMimeType(fileName);
 				fileBytes = Base64.decode(fileContents);
 				response.setContentType((mimetype != null) ? mimetype
@@ -116,4 +119,63 @@ public class BooklogoDownloadServiceImpl implements BooklogoDownloadService {
 			}
 		}
 	}
+
+	/**
+	 * @see com.pronoiahealth.olhie.server.rest.BookImageDownloadService#getBookBackCoverImage(javax.servlet.http.HttpServletRequest,
+	 *      javax.servlet.http.HttpServletResponse, java.lang.String,
+	 *      javax.servlet.ServletContext)
+	 */
+	@Override
+	@GET
+	@Path("/path/{uniqueNumb}/{bookId}")
+	@Produces({ "application/octet-stream" })
+	@SecureAccess({ SecurityRoleEnum.ANONYMOUS })
+	public InputStream getBookBackCoverImage(
+			@Context HttpServletRequest request,
+			@Context HttpServletResponse response,
+			@PathParam("bookId") String bookId, @Context ServletContext context)
+			throws ServletException, IOException, FileDownloadException {
+		DataInputStream in = null;
+		try {
+			// Get the file contents
+			Book book = BookDAO.getBookById(bookId, ooDbTx);
+			if (book == null) {
+				throw new FileDownloadException(String.format(
+						"Could not find Book for id %s", bookId));
+			}
+
+			byte[] fileBytes = null;
+			String fileContents = book.getBase64BackCover();
+			if (fileContents != null && fileContents.length() > 0) {
+				String fileName = book.getBookTitle() + "_back_cover.png";
+				String mimetype = context.getMimeType(fileName);
+				fileBytes = Base64.decode(fileContents);
+				response.setContentType((mimetype != null) ? mimetype
+						: "application/octet-stream");
+			} else {
+				fileBytes = new byte[0];
+			}
+
+			// No image caching
+			response.setHeader("Pragma", "No-cache");
+			response.setDateHeader("Expires", 0);
+			response.setHeader("Cache-Control", "no-cache");
+			in = new DataInputStream(new ByteArrayInputStream(fileBytes));
+			return in;
+		} catch (Exception e) {
+			log.log(Level.SEVERE,
+					"Throwing servlet exception for unhandled exception", e);
+
+			if (e instanceof FileDownloadException) {
+				throw (FileDownloadException) e;
+			} else {
+				throw new FileDownloadException(e);
+			}
+		} finally {
+			if (in != null) {
+				in.close();
+			}
+		}
+	}
+
 }

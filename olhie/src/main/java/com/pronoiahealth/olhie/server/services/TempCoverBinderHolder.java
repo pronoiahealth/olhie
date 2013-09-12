@@ -21,19 +21,19 @@ public class TempCoverBinderHolder {
 
 		// Covers
 		this.bookCovers = new ArrayList<BookCover>();
-		bookCovers.add(new BookCover("Olhie/images/bookcover-green1.png", "Green 1"));
-		bookCovers.add(new BookCover("Olhie/images/bookcover-mauve1.png", "Mauve 1"));
-		bookCovers.add(new BookCover("Olhie/images/wood1.png", "Wood 1"));
-		bookCovers.add(new BookCover("Olhie/images/bookcover0.png", "Brown 2"));
-		bookCovers.add(new BookCover("Olhie/images/bookcover2.png", "Brown 3"));
-		bookCovers.add(new BookCover("Olhie/images/bookcover3.png", "Blue 1"));
-		bookCovers.add(new BookCover("Olhie/images/bookcover4.png", "Grey 1"));
-		bookCovers.add(new BookCover("Olhie/images/bookcover5.png", "Blue-Grey 1"));
-		bookCovers.add(new BookCover("Olhie/images/bookcover6.png", "Green 4"));
-		bookCovers.add(new BookCover("Olhie/images/bookcover7.png", "Grey Designed"));
-		bookCovers.add(new BookCover("Olhie/images/bookcover8.png", "Brown Designed"));
-		bookCovers.add(new BookCover("Olhie/images/bookcover9.png", "Light Brown Designed"));
-		bookCovers.add(new BookCover("Olhie/images/bookcoverX.png", "Orange Designed"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover-green1.png", "Olhie/images/bookcover-green1_30X40.png", "Green 1"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover-mauve1.png", "Olhie/images/bookcover-mauve1_30X40.png", "Mauve 1"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover-wood1.png", "Olhie/images/bookcover-wood1_30X40.png", "Wood 1"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover0.png", "Olhie/images/bookcover0_30X40.png", "Brown 2"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover2.png", "Olhie/images/bookcover2_30X40.png", "Brown 3"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover3.png", "Olhie/images/bookcover3_30X40.png", "Blue 1"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover4.png", "Olhie/images/bookcover4_30X40.png", "Grey 1"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover5.png", "Olhie/images/bookcover5_30X40.png", "Blue-Grey 1"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover6.png", "Olhie/images/bookcover6_30X40.png", "Green 4"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover7.png", "Olhie/images/bookcover7_30X40.png", "Grey Designed"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover8.png", "Olhie/images/bookcover8_30X40.png", "Brown Designed"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover9.png", "Olhie/images/bookcover9_30X40.png", "Light Brown Designed"));
+		bookCovers.add(new BookCover("Olhie/images/bookcoverX.png", "Olhie/images/bookcoverX_30X40.png", "Orange Designed"));
 	}
 	
 	public List<BookCategory> getCategories() {

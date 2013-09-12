@@ -148,7 +148,7 @@ public class SessionTracker {
 		// Add an active session
 		activeSessions.put(erraiSessionId, user);
 		
-		// Tell the LoggInSession Entity about it
+		// Tell the LoggedInSession Entity about it
 		loginSession(new UserSession(userId, erraiSessionId));
 	}
 

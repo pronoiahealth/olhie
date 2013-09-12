@@ -125,15 +125,15 @@
 
 .ph-NewBook-BookImagePanel-Large {
 	width: 60px;
-	height: 75px;
+	height: 80px;
 	/*margin-right: 10px;*/
 	background-color: white;
 }
 
 .ph-NewBook-BookImagePanel-Large-Binder {
 	float: left;
-	width: 10px;
-	height: 75px;
+	width: 2px;
+	height: 80px;
 	border-right: 1px solid black;
 }
 

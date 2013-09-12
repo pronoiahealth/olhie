@@ -77,6 +77,10 @@ public class Book {
 	@Size(min = 6, max = 20, message = "Must be between 6 and 20 characters")
 	private String authorId;
 	
+	private String base64FrontCover;
+	
+	private String base64BackCover;
+	
 	private String base64LogoData;
 	
 	@Size(max = 250, message = "File names can only be 250 characters long.")
@@ -230,6 +234,20 @@ public class Book {
 	public void setSolrUpdate(Date solrUpdate) {
 		this.solrUpdate = solrUpdate;
 	}
-	
-	
+
+	public String getBase64FrontCover() {
+		return base64FrontCover;
+	}
+
+	public void setBase64FrontCover(String base64FrontCover) {
+		this.base64FrontCover = base64FrontCover;
+	}
+
+	public String getBase64BackCover() {
+		return base64BackCover;
+	}
+
+	public void setBase64BackCover(String base64BackCover) {
+		this.base64BackCover = base64BackCover;
+	}
 }

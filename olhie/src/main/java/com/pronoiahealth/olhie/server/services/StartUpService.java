@@ -25,7 +25,7 @@ import com.pronoiahealth.olhie.server.services.dbaccess.LoggedInSessionDAO;
 /**
  * StartUpService.java<br/>
  * Responsibilities:<br/>
- * 1. Startup clean-up in case server crashes or on redeploy or restart
+ * 1. Startup clean-up in case server crashes, re-deploy, or restart
  * 
  * @author John DeStefano
  * @version 1.0
@@ -67,7 +67,7 @@ public class StartUpService {
 			log.log(Level.SEVERE, errMsg, e);
 		} finally {
 			// Explicitly close this connection as it will not be released
-			// through CDI
+			// through CDI dispose method
 			if (log.isLoggable(Level.FINEST)) {
 				log.log(Level.INFO, "Released connection " + ooDbTx.hashCode());
 			}
