@@ -24,7 +24,6 @@ import org.jboss.errai.cdi.server.events.EventConversationContext;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.protocols.MessageParts;
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.OfferActionEnum;
 import com.pronoiahealth.olhie.client.shared.constants.OfferEnum;
 import com.pronoiahealth.olhie.client.shared.constants.OfferRoleEnum;
@@ -33,7 +32,7 @@ import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.offers.SendMessageEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Offer;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
+import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
 import com.pronoiahealth.olhie.server.services.dbaccess.OfferDAO;
@@ -51,8 +50,8 @@ public class ChatRouterService {
 	private SessionTracker sessionTracker;
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	@DAO
+	private OfferDAO offerDAO;
 
 	@Inject
 	private Event<ServiceErrorEvent> serviceErrorEvent;
@@ -76,7 +75,7 @@ public class ChatRouterService {
 					.getSessionId();
 
 			// Look up the channel in the Offer entity
-			Offer offer = OfferDAO.getOfferByChannelId(channelId, ooDbTx);
+			Offer offer = offerDAO.getOfferByChannelId(channelId);
 
 			// Determine if offerer can be used to chat
 			if (offer.canChat()) {

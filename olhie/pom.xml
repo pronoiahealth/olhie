@@ -34,7 +34,8 @@
 		<version.org.codehaus.mojo.gwt.maven.plugin>2.5.1</version.org.codehaus.mojo.gwt.maven.plugin>
 
 		<!-- version.org.jboss.errai>3.0-SNAPSHOT</version.org.jboss.errai -->
-		<version.org.jboss.errai>2.4.0-SNAPSHOT</version.org.jboss.errai>
+		<!-- version.org.jboss.errai>2.4.1-SNAPSHOT</version.org.jboss.errai -->
+		<version.org.jboss.errai>2.4.0.Final</version.org.jboss.errai>
 		<version.com.google.gwt>2.5.1</version.com.google.gwt>
 		<version.org.codehaus.mojo.gwt.maven.plugin>${version.com.google.gwt}</version.org.codehaus.mojo.gwt.maven.plugin>
 		<resteasy.version>2.3.2.Final</resteasy.version>
@@ -458,6 +459,11 @@
 				<artifactId>commons-imaging</artifactId>
 				<version>${apache.commons.imaging}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.jboss.errai</groupId>
+				<artifactId>errai-common</artifactId>
+				<version>${version.org.jboss.errai}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -850,6 +856,10 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-imaging</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.jboss.errai</groupId>
+			<artifactId>errai-common</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -897,7 +907,7 @@
 				<configuration>
 					<inplace>true</inplace>
 					<logLevel>INFO</logLevel>
-					<extraJvmArgs>-Xmx4096M -Xms1024M -XX:PermSize=128m -XX:MaxPermSize=256m</extraJvmArgs>
+					<extraJvmArgs>-Xmx4096M -Xms1024M -XX:PermSize=128m -XX:MaxPermSize=256m -Derrai.devel.debugCacheDir=${project.basedir}/.errai -Derrai.marshalling.server.classOutput=${project.build.outputDirectory}</extraJvmArgs>
 					<!-- extraJvmArgs>-Xmx512m</extraJvmArgs -->
 					<!-- enableClosureCompiler>true</enableClosureCompiler -->
 

@@ -13,8 +13,6 @@ package com.pronoiahealth.olhie.server.rest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,13 +31,11 @@ import org.apache.commons.fileupload.util.Streams;
 import org.apache.commons.io.IOUtils;
 
 import com.lowagie.text.pdf.codec.Base64;
-import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.exceptions.FileUploadException;
-import com.pronoiahealth.olhie.client.shared.vo.Book;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
+import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
+import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
 
 /**
  * BooklogoUploadServiceImpl.java<br/>
@@ -59,8 +55,8 @@ public class BooklogoUploadServiceImpl implements BooklogoUploadService {
 	private long FILE_SIZE_LIMIT = 50 * 1024; // 50k
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	@DAO
+	private BookDAO bookDAO;
 
 	/**
 	 * Constructor
@@ -114,7 +110,9 @@ public class BooklogoUploadServiceImpl implements BooklogoUploadService {
 						}
 					}
 				}
-				addToDB(bookId, contentType, data, fileName, size);
+				
+				// Add the logo
+				bookDAO.addLogo(bookId, contentType, data, fileName, size);
 			}
 			return "OK";
 		} catch (Exception e) {
@@ -128,40 +126,6 @@ public class BooklogoUploadServiceImpl implements BooklogoUploadService {
 				throw new FileUploadException(e.getMessage());
 			}
 		}
-	}
-
-	
-	/**
-	 * Save the logo
-	 * 
-	 * @param bookId
-	 * @param contentType
-	 * @param data
-	 * @param fileName
-	 * @param size
-	 * @throws Exception
-	 */
-	private void addToDB(String bookId, String contentType, String data,
-			String fileName, long size) throws Exception {
-
-		// Find Book
-		OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
-				"select from Book where @rid = :bId");
-		HashMap<String, String> bparams = new HashMap<String, String>();
-		bparams.put("bId", bookId);
-		List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
-		Book book = null;
-		if (bResult != null && bResult.size() == 1) {
-			book = bResult.get(0);
-		} else {
-			throw new FileUploadException(String.format(
-					"Could not find Book for id %s", bookId));
-		}
-		
-		// Update the book
-		book.setLogoFileName(fileName);
-		book.setBase64LogoData(data);
-		ooDbTx.save(book);
 	}
 
 }

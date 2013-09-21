@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
@@ -59,6 +60,14 @@ public class OrientFactory {
 	private String dbMode;
 
 	@Inject
+	@ConfigProperty(name = "dbPoolSizeMin", defaultValue = "20")
+	private String dbPoolSizeMinStr;
+
+	@Inject
+	@ConfigProperty(name = "dbPoolSizeMax", defaultValue = "100")
+	private String dbPoolSizeMaxStr;
+
+	@Inject
 	@DBValueObjects
 	private String[] dbValObjs;
 
@@ -81,6 +90,7 @@ public class OrientFactory {
 		if (dbValObjs != null && dbValObjs.length > 0) {
 			registerClasses();
 		}
+
 	}
 
 	/**
@@ -107,6 +117,12 @@ public class OrientFactory {
 						.loadClass(str);
 				db.getEntityManager().registerEntityClass(clazz);
 			}
+
+			// Database pool size
+			OObjectDatabasePool.global().setup(
+					Integer.parseInt(dbPoolSizeMinStr),
+					Integer.parseInt(dbPoolSizeMaxStr));
+
 			db.close();
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "Error configuring Orient DB!", e);
@@ -133,9 +149,10 @@ public class OrientFactory {
 	public OObjectDatabaseTx createOObjTx(InjectionPoint ip) {
 		OObjectDatabaseTx ooDbTx = OObjectDatabasePool.global().acquire(
 				dbConStr, dbUserName, dbPwd);
-		if (log.isLoggable(Level.FINEST)) {
+		if (log.isLoggable(Level.INFO)) {
+			String className = ip.getBean().getBeanClass().getName();
 			log.log(Level.INFO, "Aquired connection " + ooDbTx.hashCode()
-					+ " for bean " + ip.toString());
+					+ " for bean " + className);
 		}
 
 		return ooDbTx;
@@ -160,7 +177,7 @@ public class OrientFactory {
 	 * @param ooDbTx
 	 */
 	public void disposeOObjTx(@Disposes @OODbTx OObjectDatabaseTx ooDbTx) {
-		if (log.isLoggable(Level.FINEST)) {
+		if (log.isLoggable(Level.INFO)) {
 			log.log(Level.INFO, "Released connection " + ooDbTx.hashCode());
 		}
 

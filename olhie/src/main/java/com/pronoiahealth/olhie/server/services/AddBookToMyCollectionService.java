@@ -20,7 +20,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.AddBookToMyCollectionEvent;
@@ -28,14 +27,10 @@ import com.pronoiahealth.olhie.client.shared.events.book.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
-import com.pronoiahealth.olhie.client.shared.vo.User;
-import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
+import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
-import com.pronoiahealth.olhie.server.services.dbaccess.UserBookRelationshipDAO;
-import com.pronoiahealth.olhie.server.services.dbaccess.UserDAO;
 
 /**
  * AddBookToMyCollectionService.java<br/>
@@ -69,8 +64,8 @@ public class AddBookToMyCollectionService {
 	private Event<ServiceErrorEvent> serviceErrorEvent;
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	@DAO
+	private BookDAO bookDAO;
 
 	/**
 	 * Constructor
@@ -100,15 +95,12 @@ public class AddBookToMyCollectionService {
 					&& loggedIn == true && userId.length() > 0) {
 
 				// Need the Book
-				book = BookDAO.getBookById(bookId, ooDbTx);
-
-				// Find user
-				User user = UserDAO.getUserByUserId(book.getAuthorId(), ooDbTx);
+				book = bookDAO.getBookById(bookId);
 
 				// Get UserBookRelatioship
-				Set<UserBookRelationshipEnum> rResult = UserBookRelationshipDAO
+				Set<UserBookRelationshipEnum> rResult = bookDAO
 						.getUserBookRelationshipByUserIdBookId(bookId, userId,
-								true, ooDbTx);
+								true);
 
 				// If the user already has an active relationship of the
 				// following
@@ -125,32 +117,24 @@ public class AddBookToMyCollectionService {
 				// active appropriate relationship
 				if (addRelationship == true) {
 					Date now = new Date();
-					UserBookRelationship rel = new UserBookRelationship();
-					rel.setActiveRelationship(true);
-					rel.setUserRelationship(UserBookRelationshipEnum.MYCOLLECTION
-							.toString());
-					rel.setBookId(bookId);
-					rel.setTheBook(book);
-					rel.setTheUser(user);
-					rel.setUserId(userId);
-					rel.setEffectiveDate(now);
-					rel.setLastViewedDate(now);
-					ooDbTx.save(rel);
+					bookDAO.addBookToUserCollection(now, true,
+							UserBookRelationshipEnum.MYCOLLECTION, bookId,
+							userId, now, now);
 				}
 
 				// Return a BookFindResponseEvent
 				// Get the book display
-				BookDisplay bookDisplay = BookDAO.getBookDisplayByBook(book,
-						ooDbTx, userId, holder, true);
+				BookDisplay bookDisplay = bookDAO.getBookDisplayByBook(book,
+						userId, holder, true);
 
 				// Get the user relations
-				Set<UserBookRelationshipEnum> rels = BookDAO
+				Set<UserBookRelationshipEnum> rels = bookDAO
 						.getActiveBookRealtionshipForUser(userId,
-								userToken.getLoggedIn(), bookId, ooDbTx);
+								userToken.getLoggedIn(), bookId);
 
 				// Is the user asking for the book the author or co-author
-				boolean authorSelected = BookDAO.isAuthorSelected(userId,
-						bookId, ooDbTx);
+				boolean authorSelected = bookDAO.isAuthorSelected(userId,
+						bookId, rels);
 
 				// Fire the event
 				bookFindResponseEvent.fire(new BookFindResponseEvent(

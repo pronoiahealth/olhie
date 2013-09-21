@@ -10,47 +10,66 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services.dbaccess;
 
-import java.util.HashMap;
-import java.util.List;
-
-import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.vo.User;
+import com.pronoiahealth.olhie.server.dataaccess.vo.Password;
 
 /**
  * UserDAO.java<br/>
  * Responsibilities:<br/>
  * 1.
- *
+ * 
  * @author John DeStefano
  * @version 1.0
- * @since Jul 11, 2013
- *
+ * @since Sep 12, 2013
+ * 
  */
-public class UserDAO {
+public interface UserDAO {
 
 	/**
-	 * Gets the user by there Id
+	 * Gets the user by there Id. Returns a fully populated (detached) instance.
 	 * 
 	 * @param userId
 	 * @param ooDbTx
 	 * @return
 	 * @throws Exception
 	 */
-	public static User getUserByUserId(String userId, OObjectDatabaseTx ooDbTx)
-			throws Exception {
-		OSQLSynchQuery<User> uQuery = new OSQLSynchQuery<User>(
-				"select from User where userId = :uId");
-		HashMap<String, String> uparams = new HashMap<String, String>();
-		uparams.put("uId", userId);
-		List<User> uResult = ooDbTx.command(uQuery).execute(uparams);
-		User user = null;
-		if (uResult != null && uResult.size() == 1) {
-			user = uResult.get(0);
-		} else {
-			throw new Exception("Can't find user.");
-		}
-		return user;
-	}
+	public User getUserByUserId(String userId) throws Exception;
 
+	/**
+	 * Returns a fully populated (detached) instance.
+	 * 
+	 * @param userId
+	 * @return
+	 * @throws Exception
+	 */
+	public Password getPwdByUserId(String userId) throws Exception;
+
+	/**
+	 * Add a user
+	 * 
+	 * @param userId
+	 * @param lastName
+	 * @param firstName
+	 * @param role
+	 * @param email
+	 * @param password
+	 * @return
+	 * @throws Exception
+	 */
+	public void addUser(String userId, String lastName, String firstName,
+			SecurityRoleEnum role, String email, String pwd) throws Exception;
+
+	/**
+	 * Update the user
+	 * 
+	 * @param userId
+	 * @param lastName
+	 * @param firstName
+	 * @param role
+	 * @param email
+	 * @throws Exception
+	 */
+	public void updateUser(String userId, String lastName, String firstName,
+			SecurityRoleEnum role, String email) throws Exception;
 }

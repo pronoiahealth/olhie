@@ -35,8 +35,6 @@ import org.apache.commons.imaging.ImageFormat;
 import org.apache.commons.imaging.Imaging;
 import org.apache.commons.io.IOUtils;
 
-import com.pronoiahealth.olhie.client.shared.vo.BookCover;
-
 /**
  * BookCoverImageService.java<br/>
  * Responsibilities:<br/>

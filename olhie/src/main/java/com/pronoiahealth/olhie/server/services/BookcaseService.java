@@ -22,7 +22,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.GetMyBookcaseEvent;
@@ -30,12 +29,12 @@ import com.pronoiahealth.olhie.client.shared.events.bookcase.GetMyBookcaseRespon
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
+import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
+import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
-import com.pronoiahealth.olhie.server.services.dbaccess.UserBookRelationshipDAO;
 
 /**
  * BookcaseService.java<br/>
@@ -65,8 +64,8 @@ public class BookcaseService {
 	private TempCoverBinderHolder holder;
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	@DAO
+	private BookDAO bookDAO;
 
 	/**
 	 * Constructor
@@ -100,9 +99,8 @@ public class BookcaseService {
 					&& userSessionToken.getLoggedIn() == true) {
 
 				// Must have an active relationship
-				List<UserBookRelationship> bResult = UserBookRelationshipDAO
-						.getUserBooksRelationshipLstByUserId(userId, true,
-								ooDbTx);
+				List<UserBookRelationship> bResult = bookDAO
+						.getUserBooksRelationshipLstByUserId(userId, true);
 				for (UserBookRelationship rel : bResult) {
 					// Get the relationship
 					String userRel = rel.getUserRelationship();
@@ -125,9 +123,9 @@ public class BookcaseService {
 							retMap.put(catEnum, books);
 						}
 
-						BookDisplay retDisplay = BookDAO.getBookDisplayByBook(
-								currentBook, ooDbTx,
-								currentBook.getAuthorId(), holder, true);
+						// get display
+						BookDisplay retDisplay = bookDAO.getBookDisplayByBook(
+								currentBook, userId, holder, true);
 
 						// Add to the list
 						books.add(retDisplay);

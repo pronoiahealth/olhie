@@ -10,9 +10,6 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,17 +18,15 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
-import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.NewStarRatingEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.NewStarRatingResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Bookstarrating;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
+import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
+import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
 
 /**
  * RemoveBookassetdescriptionService.java<br/>
@@ -59,8 +54,8 @@ public class StarRatingService {
 	private Event<NewStarRatingResponseEvent> newStarRatingEventResponseEvent;
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	@DAO
+	private BookDAO bookDAO;
 
 	/**
 	 * Constructor
@@ -70,8 +65,7 @@ public class StarRatingService {
 	}
 
 	/**
-	 * Observes for the NewStarRatingEvent and in-activates the
-	 * description.
+	 * Observes for the NewStarRatingEvent and in-activates the description.
 	 * 
 	 * @param newStarRatingEvent
 	 */
@@ -80,44 +74,21 @@ public class StarRatingService {
 			@Observes NewStarRatingEvent newStarRatingEvent) {
 
 		try {
-			ooDbTx.begin(TXTYPE.OPTIMISTIC);
-			// Find the book stars
-			String sessionUserId = userToken.getUserId();
-			int star = newStarRatingEvent.getStars();
+			String userId = userToken.getUserId();
+			int rating = newStarRatingEvent.getStars();
 			String bookId = newStarRatingEvent.getBookId();
-			OSQLSynchQuery<Bookstarrating> query = new OSQLSynchQuery<Bookstarrating>(
-					"select from Bookstarrating where bookId = :bookId and userId = :userId");
-			HashMap<String, String> uparams = new HashMap<String, String>();
-			uparams.put("bookId", bookId);
-			uparams.put("userId", sessionUserId);
-			List<Bookstarrating> resultList = ooDbTx.command(query)
-					.execute(uparams);
-			Bookstarrating current = null;
-			if (resultList != null && resultList.size() == 1) {
-				// Got the book star rating
-				current = resultList.get(0);
-				current.setUpdatedDate(new Date());
-				current.setStars(star);
-			} else {
-				current = new Bookstarrating();
-				current.setBookId(bookId);
-				current.setUserId(sessionUserId);
-				current.setStars(star);
-			}
 
-			// Now save it
-			current.setUpdatedDate(new Date());
-			current = ooDbTx.save(current);
-			ooDbTx.commit();
+			// add/update the rating
+			Bookstarrating current = bookDAO.addUpdateBookRating(userId,
+					bookId, rating);
 
 			// Return good result
 			newStarRatingEventResponseEvent
-					.fire(new NewStarRatingResponseEvent(
-							current.getStars(), current.getUserId(), current.getBookId()));
+					.fire(new NewStarRatingResponseEvent(current.getStars(),
+							current.getUserId(), current.getBookId()));
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			log.log(Level.SEVERE, msg, e);
-			ooDbTx.rollback();
 			serviceErrorEvent.fire(new ServiceErrorEvent(msg));
 		}
 	}

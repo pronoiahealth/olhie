@@ -18,9 +18,8 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OrientFactory;
-import com.pronoiahealth.olhie.server.services.dbaccess.LoggedInSessionDAO;
+import com.pronoiahealth.olhie.server.dataaccess.DAO;
+import com.pronoiahealth.olhie.server.services.dbaccess.StartupDAO;
 
 /**
  * StartUpService.java<br/>
@@ -40,7 +39,8 @@ public class StartUpService {
 	private Logger log;
 
 	@Inject
-	private OrientFactory oFac;
+	@DAO
+	private StartupDAO startupDAO;
 
 	/**
 	 * Constructor
@@ -54,25 +54,11 @@ public class StartUpService {
 	 */
 	@PostConstruct
 	protected void postConstruct() {
-		OObjectDatabaseTx ooDbTx = oFac.getUninjectedConnection();
-		if (log.isLoggable(Level.FINEST)) {
-			log.log(Level.INFO, "Aquired connection " + ooDbTx.hashCode()
-					+ " for bean " + StartUpService.class.getName());
-		}
-
 		try {
-			LoggedInSessionDAO.inactivateAllActive(ooDbTx, true);
+			startupDAO.inactivateAllActive();
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);
-		} finally {
-			// Explicitly close this connection as it will not be released
-			// through CDI dispose method
-			if (log.isLoggable(Level.FINEST)) {
-				log.log(Level.INFO, "Released connection " + ooDbTx.hashCode());
-			}
-
-			ooDbTx.close();
 		}
 	}
 

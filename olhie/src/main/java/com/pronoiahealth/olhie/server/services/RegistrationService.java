@@ -10,8 +10,6 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,9 +18,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
-import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.annotations.Load;
 import com.pronoiahealth.olhie.client.shared.annotations.New;
 import com.pronoiahealth.olhie.client.shared.annotations.Update;
@@ -33,10 +28,8 @@ import com.pronoiahealth.olhie.client.shared.events.registration.RegistrationReq
 import com.pronoiahealth.olhie.client.shared.events.registration.RegistrationResponseEvent;
 import com.pronoiahealth.olhie.client.shared.vo.RegistrationForm;
 import com.pronoiahealth.olhie.client.shared.vo.User;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
-import com.pronoiahealth.olhie.server.dataaccess.vo.Password;
-import com.pronoiahealth.olhie.server.security.SaltedPassword;
-import com.pronoiahealth.olhie.server.security.SecurityUtils;
+import com.pronoiahealth.olhie.server.dataaccess.DAO;
+import com.pronoiahealth.olhie.server.services.dbaccess.UserDAO;
 
 /**
  * RegistrationService.java<br/>
@@ -56,8 +49,8 @@ public class RegistrationService {
 	private Logger log;
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	@DAO
+	private UserDAO userDAO;
 
 	@Inject
 	private Event<RegistrationErrorEvent> registrationErrorEvent;
@@ -88,17 +81,9 @@ public class RegistrationService {
 		String userId = form.getUserId();
 
 		try {
-			// Do in a single transaction
-			ooDbTx.begin(TXTYPE.OPTIMISTIC);
-
-			OSQLSynchQuery<User> uQuery = new OSQLSynchQuery<User>(
-					"select from User where userId = :uId");
-			HashMap<String, String> uparams = new HashMap<String, String>();
-			uparams.put("uId", userId);
-			List<User> uResult = ooDbTx.command(uQuery).execute(uparams);
-
-			//
-			if (uResult != null && uResult.size() == 1) {
+			// See if user id is already in use
+			User user = userDAO.getUserByUserId(userId);
+			if (user != null) {
 				// Already used
 				log.log(Level.SEVERE, "UserId " + userId
 						+ " is already in use.");
@@ -106,44 +91,29 @@ public class RegistrationService {
 						"UserId already in use.",
 						RegistrationErrorEvent.ErrorTypeEnum.USER_ID_ALREADY_EXISTS);
 				registrationErrorEvent.fire(errEvt);
-			} else {
-
-				// Create a User object and add it to the database
-				User user = new User();
-				user.setFirstName(form.getFirstName());
-				user.setLastName(form.getLastName());
-				user.setRole(SecurityRoleEnum.AUTHOR.getName());
-				user.setEmail(form.getEmail());
-				user.setUserId(userId);
-				ooDbTx.save(user);
-
-				// Create a password object and add it to the database
-				// One last time to make sure the passwords match
-				String pwd = form.getPwd();
-				if (!pwd.equals(form.getPwdRepeat())) {
-					handleError(
-							Level.SEVERE,
-							"Passwords don't match",
-							RegistrationErrorEvent.ErrorTypeEnum.PASSWORDS_DONT_MATCH,
-							null);
-				}
-
-				Password password = new Password();
-				SaltedPassword passSalt = SecurityUtils
-						.genSaltedPasswordAndSalt(form.getPwd());
-				password.setPwdDigest(passSalt.getPwdDigest());
-				password.setPwdSalt(passSalt.getSalt());
-				password.setUserId(userId);
-				ooDbTx.save(password);
-
-				// Saved the user and password now commit
-				ooDbTx.commit();
-
-				// Fire the good response event
-				registrationResponseEvent.fire(new RegistrationResponseEvent());
+				return;
 			}
+
+			// Check the password
+			// Create a password object and add it to the database
+			// One last time to make sure the passwords match
+			String pwd = form.getPwd();
+			if (!pwd.equals(form.getPwdRepeat())) {
+				handleError(
+						Level.SEVERE,
+						"Passwords don't match",
+						RegistrationErrorEvent.ErrorTypeEnum.PASSWORDS_DONT_MATCH,
+						null);
+				return;
+			}
+
+			// Add user
+			userDAO.addUser(userId, form.getLastName(), form.getFirstName(),
+					SecurityRoleEnum.AUTHOR, form.getEmail(), form.getPwd());
+
+			// Fire the good response event
+			registrationResponseEvent.fire(new RegistrationResponseEvent());
 		} catch (Exception e) {
-			ooDbTx.rollback();
 			handleError(Level.SEVERE, e.getMessage(),
 					RegistrationErrorEvent.ErrorTypeEnum.OTHER, e);
 		}
@@ -157,40 +127,29 @@ public class RegistrationService {
 	protected void observesLoadRegistrationRequestEvent(
 			@Observes @Load RegistrationRequestEvent registrationRequestEvent) {
 
-		// Check the id to make sure it is unique
 		RegistrationForm form = registrationRequestEvent.getRegistrationForm();
 		String userId = form.getUserId();
-		//log.log(Level.SEVERE, userId);
 
 		try {
-			// Do in a single transaction
-			ooDbTx.begin(TXTYPE.OPTIMISTIC);
-
-			OSQLSynchQuery<User> uQuery = new OSQLSynchQuery<User>(
-					"select from User where userId = :uId");
-			HashMap<String, String> uparams = new HashMap<String, String>();
-			uparams.put("uId", userId);
-			List<User> uResult = ooDbTx.command(uQuery).execute(uparams);
-
+			// find the user
+			User user = userDAO.getUserByUserId(userId);
 			//
-			if (uResult != null && uResult.size() == 1) {
-				
-				User user = uResult.get(0);
+			if (user != null) {
 				form.setLastName(user.getLastName());
 				form.setFirstName(user.getFirstName());
 				form.setEmail(user.getEmail());
 
 				// Fire the good response event
-				loadProfileResponseEvent.fire(new LoadProfileResponseEvent(form));
+				loadProfileResponseEvent
+						.fire(new LoadProfileResponseEvent(form));
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, e.getMessage());
-			ooDbTx.rollback();
 			handleError(Level.SEVERE, e.getMessage(),
 					RegistrationErrorEvent.ErrorTypeEnum.OTHER, e);
 		}
 	}
-	
+
 	/**
 	 * When a new comment is received add it to the database
 	 * 
@@ -204,34 +163,12 @@ public class RegistrationService {
 		String userId = form.getUserId();
 
 		try {
-			// Do in a single transaction
-			ooDbTx.begin(TXTYPE.OPTIMISTIC);
+			userDAO.updateUser(userId, form.getLastName(), form.getFirstName(),
+					SecurityRoleEnum.AUTHOR, form.getEmail());
 
-			OSQLSynchQuery<User> uQuery = new OSQLSynchQuery<User>(
-					"select from User where userId = :uId");
-			HashMap<String, String> uparams = new HashMap<String, String>();
-			uparams.put("uId", userId);
-			List<User> uResult = ooDbTx.command(uQuery).execute(uparams);
-
-			//
-			if (uResult != null && uResult.size() == 1) {
-				
-				User user = uResult.get(0);
-				user.setFirstName(form.getFirstName());
-				user.setLastName(form.getLastName());
-				user.setRole(SecurityRoleEnum.AUTHOR.getName());
-				user.setEmail(form.getEmail());
-
-				ooDbTx.save(user);
-
-				// Saved the user and password now commit
-				ooDbTx.commit();
-
-				// Fire the good response event
-				registrationResponseEvent.fire(new RegistrationResponseEvent());
-			}
+			// Fire the good response event
+			registrationResponseEvent.fire(new RegistrationResponseEvent());
 		} catch (Exception e) {
-			ooDbTx.rollback();
 			handleError(Level.SEVERE, e.getMessage(),
 					RegistrationErrorEvent.ErrorTypeEnum.OTHER, e);
 		}

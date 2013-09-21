@@ -29,11 +29,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import com.lowagie.text.pdf.codec.Base64;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.exceptions.FileDownloadException;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
+import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
 
@@ -53,8 +52,8 @@ public class BooklogoDownloadServiceImpl implements BooklogoDownloadService {
 	private Logger log;
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	@DAO
+	private BookDAO bookDAO;
 
 	/**
 	 * Constructor
@@ -77,7 +76,7 @@ public class BooklogoDownloadServiceImpl implements BooklogoDownloadService {
 		DataInputStream in = null;
 		try {
 			// Get the file contents
-			Book book = BookDAO.getBookById(bookId, ooDbTx);
+			Book book = bookDAO.getBookById(bookId);
 			if (book == null) {
 				throw new FileDownloadException(String.format(
 						"Could not find Book for id %s", bookId));

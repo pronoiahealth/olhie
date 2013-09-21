@@ -4,12 +4,12 @@
 	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base'
 	xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'
 	xmlns:chzn='urn:import:com.watopi.chosen.client.gwt'>
-	<g:HTMLPanel width="100%">
+	<g:HTMLPanel ui:field="searchContainer" width="100%">
 		<g:HTMLPanel></g:HTMLPanel>
 		<b:FluidContainer>
 			<b:FluidRow ui:field="searchResultsHeader">
 				<b:Label ui:field="resultsLbl" styleName="ph-SearchResults-Header-Text">Search Results</b:Label>
-				<b:Icon ui:field="spinner" spin="true" type="SPINNER" size="LARGE"></b:Icon>
+				<!-- b:Icon ui:field="spinner" spin="true" type="SPINNER" size="LARGE"></b:Icon -->
 			</b:FluidRow>
 		</b:FluidContainer>
 

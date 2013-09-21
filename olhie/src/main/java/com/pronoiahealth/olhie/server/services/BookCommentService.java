@@ -20,17 +20,16 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.AddBookCommentEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindCommentsEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindCommentsResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Bookcomment;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
+import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
-import com.pronoiahealth.olhie.server.services.dbaccess.BookCommentDAO;
+import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
 
 /**
  * BookCommentService.java<br/>
@@ -52,8 +51,8 @@ public class BookCommentService {
 	private ServerUserToken userToken;
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	@DAO
+	private BookDAO bookDAO;;
 
 	@Inject
 	private Event<ServiceErrorEvent> serviceErrorEvent;
@@ -82,8 +81,7 @@ public class BookCommentService {
 			String bookId = addBookCommentEvent.getBookId();
 			String comment = addBookCommentEvent.getBookComment();
 
-			BookCommentDAO
-					.addBookComment(bookId, userId, comment, ooDbTx, true);
+			bookDAO.addBookComment(bookId, userId, comment, true);
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);
@@ -108,8 +106,8 @@ public class BookCommentService {
 			String bookId = bookFindCommentsEvent.getBookId();
 
 			// Get the list
-			List<Bookcomment> comments = BookCommentDAO
-					.getBookCommentsByBookId(bookId, ooDbTx);
+			List<Bookcomment> comments = bookDAO
+					.getBookCommentsByBookId(bookId);
 
 			// Transfer the comments to the return list
 			if (comments != null && comments.size() > 0) {

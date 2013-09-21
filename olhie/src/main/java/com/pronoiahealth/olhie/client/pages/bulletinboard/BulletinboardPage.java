@@ -15,12 +15,12 @@ import javax.inject.Inject;
 
 import org.jboss.errai.ui.nav.client.local.DefaultPage;
 import org.jboss.errai.ui.nav.client.local.Page;
+import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.Templated;
 
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.pages.AbstractPage;
+import com.pronoiahealth.olhie.client.pages.bulletinboard.widgets.CurrentStatusWidget;
+import com.pronoiahealth.olhie.client.widgets.FlowPanelWithSpacer;
 
 /**
  * BulletinboardPage.java<br/>
@@ -32,11 +32,18 @@ import com.pronoiahealth.olhie.client.pages.AbstractPage;
  * @since May 26, 2013
  * 
  */
+@Templated("#root")
 @Page(role = { DefaultPage.class })
 public class BulletinboardPage extends AbstractPage {
 
+	@DataField
+	private FlowPanelWithSpacer col1 = new FlowPanelWithSpacer();
+
+	@DataField
+	private FlowPanelWithSpacer col2 = new FlowPanelWithSpacer();
+	
 	@Inject
-	UiBinder<Widget, BulletinboardPage> binder;
+	private CurrentStatusWidget statusWidget;
 
 	public BulletinboardPage() {
 	}
@@ -46,7 +53,7 @@ public class BulletinboardPage extends AbstractPage {
 	 */
 	@PostConstruct
 	private void postConstruct() {
-		initWidget(binder.createAndBindUi(this));
+		col1.add(statusWidget);
 	}
 
 	@Override

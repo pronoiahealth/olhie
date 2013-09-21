@@ -249,12 +249,6 @@ public class MainPage extends AbstractComposite {
 	@Inject
 	private Event<LogoutRequestEvent> logoutRequestEvent;
 
-	@Inject
-	private Caller<TestRest> testRestService;
-
-	@Inject
-	private Caller<WindowCloseService> windowCloseService;
-
 	private long lastPingTime;
 
 	private static final int EAST_PANEL_WIDTH = 180;
@@ -317,24 +311,28 @@ public class MainPage extends AbstractComposite {
 
 		// If the user navigates away from the window or closes the browser and
 		// is logged in then reset the session on the server
-		Window.addWindowClosingHandler(new ClosingHandler() {
-			@Override
-			public void onWindowClosing(ClosingEvent event) {
-				// if (clientUserToken.isLoggedIn() == true) {
-				// logoutRequestEvent.fire(new LogoutRequestEvent(false));
-				// Window.alert("You're still signed into Olhie so we're signing you off. Come agan!");
-				// event.setMessage("Leave Olhie?");
-				// }
-			}
-		});
+		/*
+		 * Window.addWindowClosingHandler(new ClosingHandler() {
+		 * 
+		 * @Override public void onWindowClosing(ClosingEvent event) { // if
+		 * (clientUserToken.isLoggedIn() == true) { //
+		 * logoutRequestEvent.fire(new LogoutRequestEvent(false)); //
+		 * Window.alert
+		 * ("You're still signed into Olhie so we're signing you off. Come agan!"
+		 * ); // event.setMessage("Leave Olhie?"); // } // if
+		 * (clientUserToken.isLoggedIn() == true) { // //
+		 * logoutRequestEvent.fire(new LogoutRequestEvent(false)); //
+		 * windowCloseService.call().windowCloseAction(); // } } });
+		 */
 
-		// Combined with Closing Handler
+		// Called when window closing, user navigates from page, or user closes
+		// browser
 		Window.addCloseHandler(new CloseHandler<Window>() {
 			@Override
 			public void onClose(CloseEvent<Window> event) {
 				if (clientUserToken.isLoggedIn() == true) {
-					// logoutRequestEvent.fire(new LogoutRequestEvent(false));
-					windowCloseService.call().windowCloseAction();
+					// windowCloseService.call().windowCloseAction();
+					windowCloseTrapped();
 				}
 			}
 		});
@@ -409,6 +407,30 @@ public class MainPage extends AbstractComposite {
 		addBookCommentPlaceHolder.add(addBookCommentDialog);
 		viewBookCommentsPlaceHolder.add(viewBookCommentsDialog);
 	}
+
+	/**
+	 * Calls a jQuery method to send a synchronous rest message to the server to
+	 * indicate that the user, if logged in, should be marked as logged out. We
+	 * must use a synchronous method as Chrome will not handle asynchronous
+	 * calls in window closing events. FireFox and IE will, but this approach
+	 * works for Chrome as well as FireFox and IE.
+	 */
+	public static native void windowCloseTrapped() /*-{
+		$wnd.jQuery.ajax({
+			url : "/olhie/rest/windowclose/closeaction",
+			async : false,
+			contentType : "application/json; charset=utf-8",
+			dataType : "json",
+			data : ({}),
+			type : "POST",
+			success : function() {
+				return true;
+			},
+			error : function() {
+				alert('Error');
+			}
+		});
+	}-*/;
 
 	/**
 	 * When the user logs out the ClientUserToken is updated, the ping service

@@ -113,6 +113,10 @@ public interface OlhieResources extends ClientBundle {
 	@CssResource.NotStrict
 	CssResource bookscrollercss();
 	
+	@Source("com/pronoiahealth/olhie/resources/css/glasspanelspinner.css")
+	@CssResource.NotStrict
+	CssResource glasspanelspinnercss();
+	
 	//@Source("com/pronoiahealth/olhie/resources/css/custom_icons.css")
 	//@CssResource.NotStrict
 	//CssResource customiconscss();

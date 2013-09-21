@@ -27,7 +27,7 @@
 				<g:customHeader size='7'>
 					<g:HTMLPanel>
 						<b:Image url="Olhie/images/Collection.png"></b:Image>
-						<b:Icon ui:field="spinner" spin="true" type="SPINNER" size="LARGE"></b:Icon>
+						<!-- b:Icon ui:field="spinner" spin="true" type="SPINNER" size="LARGE"></b:Icon -->
 					</g:HTMLPanel>
 				</g:customHeader>
 				<g:HTMLPanel ui:field="myCollectionTab" styleName="ph-Bookcase-MyCollectionTab"

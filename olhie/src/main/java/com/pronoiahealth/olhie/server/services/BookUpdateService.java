@@ -11,8 +11,6 @@
 package com.pronoiahealth.olhie.server.services;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,9 +19,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
-import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.annotations.New;
 import com.pronoiahealth.olhie.client.shared.annotations.Update;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
@@ -34,10 +29,10 @@ import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
+import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
-import com.pronoiahealth.olhie.server.services.dbaccess.UserDAO;
+import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
 
 /**
  * BookUpdateService.java<br/>
@@ -67,8 +62,8 @@ public class BookUpdateService {
 	private Event<BookUpdateCommittedEvent> bookUpdateCommittedEvent;
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	@DAO
+	private BookDAO bookDAO;
 
 	/**
 	 * Constructor
@@ -86,15 +81,12 @@ public class BookUpdateService {
 	protected void observesNewBookUpdateEvent(
 			@Observes @Update BookUpdateEvent bookUpdateEvent) {
 		try {
-			ooDbTx.begin(TXTYPE.OPTIMISTIC);
 			// Find the user. The user sending this request should be the same
 			// one in the session
 			String sessionUserId = userToken.getUserId();
-			User currentUser = UserDAO.getUserByUserId(sessionUserId, ooDbTx);
 
 			// Compare the session user and the one sending the request
-			String currentUserId = currentUser.getUserId();
-			if (!currentUserId.equals(bookUpdateEvent.getBook().getAuthorId())) {
+			if (!sessionUserId.equals(bookUpdateEvent.getBook().getAuthorId())) {
 				throw new Exception(
 						"The current user and the author don't match.");
 			}
@@ -110,8 +102,7 @@ public class BookUpdateService {
 			}
 			book.setLastUpdated(now);
 			book.setSolrUpdate(null);
-			book = ooDbTx.save(book);
-			ooDbTx.commit();
+			book = bookDAO.addBook(book);
 
 			// Return the result
 			BookUpdateCommittedEvent event = new BookUpdateCommittedEvent(
@@ -120,7 +111,6 @@ public class BookUpdateService {
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			log.log(Level.SEVERE, msg, e);
-			ooDbTx.rollback();
 			serviceErrorEvent.fire(new ServiceErrorEvent(msg));
 		}
 	}
@@ -134,27 +124,12 @@ public class BookUpdateService {
 	protected void observesUpdateBookUpdateEvent(
 			@Observes @New BookUpdateEvent bookUpdateEvent) {
 		try {
-			ooDbTx.begin(TXTYPE.OPTIMISTIC);
 			// Find the user. The user sending this request should be the same
 			// one in the session
 			String sessionUserId = userToken.getUserId();
-			OSQLSynchQuery<User> uQuery = new OSQLSynchQuery<User>(
-					"select from User where userId = :uId");
-			HashMap<String, String> uparams = new HashMap<String, String>();
-			uparams.put("uId", sessionUserId);
-			List<User> uResult = ooDbTx.command(uQuery).execute(uparams);
-			User currentUser = null;
-			if (uResult != null && uResult.size() == 1) {
-				// Got the user
-				currentUser = uResult.get(0);
-			} else {
-				throw new Exception(
-						"Can't find the book creator in the database.");
-			}
 
 			// Compare the session user and the one sending the request
-			String currentUserId = currentUser.getUserId();
-			if (!currentUserId.equals(bookUpdateEvent.getBook().getAuthorId())) {
+			if (!sessionUserId.equals(bookUpdateEvent.getBook().getAuthorId())) {
 				throw new Exception(
 						"The current user and the author don't match.");
 			}
@@ -169,35 +144,20 @@ public class BookUpdateService {
 			if (book.getActive() == true) {
 				book.setActDate(now);
 			}
-			book = ooDbTx.save(book);
-			ooDbTx.commit();
+			book = bookDAO.addBook(book);
 
 			// Add the UserBookRelationship
-			ooDbTx.begin(TXTYPE.OPTIMISTIC);
-			String bookId = book.getId();
-			UserBookRelationship ubRel = new UserBookRelationship();
-			ubRel.setActiveRelationship(true);
-			ubRel.setBookId(bookId);
-			ubRel.setTheBook(book);
-			ubRel.setTheUser(currentUser);
-			ubRel.setUserId(currentUserId);
-			ubRel.setUserRelationship(UserBookRelationshipEnum.CREATOR
-					.toString());
-			ubRel.setEffectiveDate(now);
-			ubRel.setLastViewedDate(now);
-			ooDbTx.save(ubRel);
-			ooDbTx.commit();
+			bookDAO.addUserBookRelationship(book, true, sessionUserId,
+					UserBookRelationshipEnum.CREATOR);
 
 			// Return the result
 			BookUpdateCommittedEvent event = new BookUpdateCommittedEvent(
-					bookId);
+					book.getId());
 			bookUpdateCommittedEvent.fire(event);
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			log.log(Level.SEVERE, msg, e);
-			ooDbTx.rollback();
 			serviceErrorEvent.fire(new ServiceErrorEvent(msg));
 		}
 	}
-
 }

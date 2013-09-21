@@ -10,7 +10,6 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services;
 
-import java.util.Date;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,20 +19,16 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.RemoveBookFromMyCollectionEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
-import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
+import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
-import com.pronoiahealth.olhie.server.services.dbaccess.UserBookRelationshipDAO;
 
 /**
  * RemoveBookFromMyCollectionService.java<br/>
@@ -63,8 +58,8 @@ public class RemoveBookFromMyCollectionService {
 	private TempCoverBinderHolder holder;
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	@DAO
+	private BookDAO bookDAO;
 
 	/**
 	 * Constructor
@@ -88,38 +83,24 @@ public class RemoveBookFromMyCollectionService {
 			String userId = userToken.getUserId();
 			String bookId = removeBookFromMyCollectionEvent.getBookId();
 
-			// Inactivate the relationship if we can find it
-			ooDbTx.begin(TXTYPE.OPTIMISTIC);
-			UserBookRelationship rel = UserBookRelationshipDAO
-					.getBookForUserWithActiveMyCollectionRelationship(bookId,
-							userId, ooDbTx);
-			if (rel != null) {
-				rel.setActiveRelationship(false);
-				rel.setInactiveDate(new Date());
-				ooDbTx.save(rel);
-				ooDbTx.commit();
-			}
-
 			// Return a BookFindResponseEvent
 			// Get the book display
-			BookDisplay bookDisplay = BookDAO.getBookDisplayById(bookId,
-					ooDbTx, userId, holder, true);
+			BookDisplay bookDisplay = bookDAO.getBookDisplayById(bookId,
+					userId, holder, true);
 
 			// Get the user relations
-			Set<UserBookRelationshipEnum> rels = BookDAO
+			Set<UserBookRelationshipEnum> rels = bookDAO
 					.getActiveBookRealtionshipForUser(userId,
-							userToken.getLoggedIn(), bookId, ooDbTx);
+							userToken.getLoggedIn(), bookId);
 
 			// Is the user asking for the book the author or co-author
-			boolean authorSelected = BookDAO.isAuthorSelected(userId, bookId,
-					ooDbTx);
+			boolean authorSelected = bookDAO.isAuthorSelected(userId, bookId, rels);
 
 			// Fire the event
 			bookFindResponseEvent.fire(new BookFindResponseEvent(bookDisplay,
 					rels, authorSelected));
 
 		} catch (Exception e) {
-			ooDbTx.rollback();
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);
 			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));

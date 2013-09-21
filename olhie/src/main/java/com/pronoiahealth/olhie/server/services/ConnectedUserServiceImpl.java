@@ -13,18 +13,16 @@ package com.pronoiahealth.olhie.server.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.jboss.errai.bus.server.annotations.Service;
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.exceptions.GenericRPCException;
 import com.pronoiahealth.olhie.client.shared.services.ConnectedUserService;
 import com.pronoiahealth.olhie.client.shared.vo.ConnectedUser;
 import com.pronoiahealth.olhie.client.shared.vo.LoggedInSession;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
+import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
 import com.pronoiahealth.olhie.server.services.dbaccess.LoggedInSessionDAO;
@@ -40,7 +38,6 @@ import com.pronoiahealth.olhie.server.services.dbaccess.LoggedInSessionDAO;
  * 
  */
 @Service
-@RequestScoped
 public class ConnectedUserServiceImpl implements ConnectedUserService {
 	@Inject
 	private SessionTracker sessionTracker;
@@ -49,8 +46,8 @@ public class ConnectedUserServiceImpl implements ConnectedUserService {
 	private ServerUserToken userToken;
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	@DAO
+	private LoggedInSessionDAO loggedInSessionDAO;
 
 	/**
 	 * Constructor
@@ -71,9 +68,9 @@ public class ConnectedUserServiceImpl implements ConnectedUserService {
 	public List<ConnectedUser> getConnectedUsers(String qry) {
 		try {
 			List<ConnectedUser> retLst = new ArrayList<ConnectedUser>();
-			List<LoggedInSession> sesses = LoggedInSessionDAO
+			List<LoggedInSession> sesses = loggedInSessionDAO
 					.getActiveSessionsByLookupNameQry(qry,
-							userToken.getUserId(), ooDbTx);
+							userToken.getUserId());
 
 			if (sesses != null && sesses.size() > 0) {
 				for (LoggedInSession sess : sesses) {

@@ -1,0 +1,15 @@
+.glass-panel {
+	opacity: 0.4;
+	filter: alpha(opacity=40);
+	z-index: 4000;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	background-color: black;
+	background-image: url('Olhie/images/spinner.gif');
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-position: center;
+}

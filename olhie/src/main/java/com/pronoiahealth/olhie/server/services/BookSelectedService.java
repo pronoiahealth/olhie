@@ -11,7 +11,6 @@
 package com.pronoiahealth.olhie.server.services;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,19 +20,16 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
-import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
+import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
-import com.pronoiahealth.olhie.server.services.dbaccess.UserBookRelationshipDAO;
 
 /**
  * BookSelectedService.java<br/>
@@ -65,8 +61,8 @@ public class BookSelectedService {
 	private Event<ServiceErrorEvent> serviceErrorEvent;
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	@DAO
+	private BookDAO bookDAO;
 
 	/**
 	 * Constructor
@@ -89,25 +85,25 @@ public class BookSelectedService {
 		try {
 			String bookId = bookListBookSelectedEvent.getBookId();
 			String userId = serverToken.getUserId();
+			boolean loggedIn = serverToken.getLoggedIn();
 
 			// If the user has logged in
 			// relationship. Otherwise he is an anonymous user and has no
 			// relationship
-			boolean authorSelected = BookDAO.isAuthorSelected(userId, bookId,
-					ooDbTx);
-
-			// Get the Book
-			BookDisplay bookDisplay = BookDAO.getBookDisplayById(bookId,
-					ooDbTx, userId, holder, true);
 
 			// Get User Book relationships
-			Set<UserBookRelationshipEnum> rels = BookDAO
-					.getActiveBookRealtionshipForUser(userId,
-							serverToken.getLoggedIn(), bookId, ooDbTx);
+			Set<UserBookRelationshipEnum> rels = bookDAO
+					.getActiveBookRealtionshipForUser(userId, loggedIn, bookId);
+
+			boolean authorSelected = bookDAO.isAuthorSelected(userId, bookId, rels);
+			
+			// Get the Book
+			BookDisplay bookDisplay = bookDAO.getBookDisplayById(bookId,
+					userId, holder, true);
 
 			// Update the last viewed date in the UserBookRelationship
-			UserBookRelationshipDAO.setLastViewedOnUserBookRelationship(userId,
-					bookId, new Date(), ooDbTx);
+			bookDAO.setLastViewedOnUserBookRelationship(userId,
+					bookId, new Date());
 
 			// Fire the event
 			bookListBookSelectedResponseEvent

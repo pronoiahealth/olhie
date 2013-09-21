@@ -25,8 +25,6 @@ import org.jboss.errai.cdi.server.events.EventConversationContext;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.protocols.MessageParts;
 
-import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.OfferActionEnum;
 import com.pronoiahealth.olhie.client.shared.constants.OfferEnum;
 import com.pronoiahealth.olhie.client.shared.constants.OfferRoleEnum;
@@ -41,7 +39,7 @@ import com.pronoiahealth.olhie.client.shared.events.offers.CreateOfferEvent;
 import com.pronoiahealth.olhie.client.shared.events.offers.RejectOfferEvent;
 import com.pronoiahealth.olhie.client.shared.exceptions.PeerNotLoggedInException;
 import com.pronoiahealth.olhie.client.shared.vo.Offer;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
+import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
 import com.pronoiahealth.olhie.server.services.dbaccess.LoggedInSessionDAO;
@@ -145,8 +143,12 @@ public class OfferService {
 	private Event<AcceptOfferResponseErrorEvent> acceptOfferResponseErrorEvent;
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	@DAO
+	private OfferDAO offerDAO;
+
+	@Inject
+	@DAO
+	private LoggedInSessionDAO loggedInSessionDAO;
 
 	@Inject
 	private RequestDispatcher dispatcher;
@@ -171,8 +173,6 @@ public class OfferService {
 	protected void observesCreateOfferEvent(
 			@Observes CreateOfferEvent createOfferEvent) {
 		try {
-			ooDbTx.begin(TXTYPE.OPTIMISTIC);
-
 			// Get arguments
 			String peerId = createOfferEvent.getPeerId();
 			OfferTypeEnum offerType = createOfferEvent.getOfferType();
@@ -182,8 +182,8 @@ public class OfferService {
 
 			// Create offer in DB and get back a channelId
 			// Handle transaction in this class
-			String channelId = OfferDAO.createNewOffer(userId, sessionId,
-					peerId, offerType, ooDbTx, false);
+			String channelId = offerDAO.createNewOffer(userId, sessionId,
+					peerId, offerType);
 
 			try {
 				// Tell the peer about it
@@ -197,7 +197,7 @@ public class OfferService {
 						OfferRoleEnum.OFFERER, OfferActionEnum.CREATED);
 			} catch (PeerNotLoggedInException pe) {
 				// Clean up the database
-				OfferDAO.expireOffer(channelId, ooDbTx, false);
+				offerDAO.expireOffer(channelId);
 
 				// Tell the offerer that the peer has disconnected
 				sendMessage(OfferEnum.CLIENT_OFFER_LISTENER.toString(),
@@ -205,12 +205,9 @@ public class OfferService {
 						OfferRoleEnum.OFFERER,
 						OfferActionEnum.PEER_DISCONNECTED);
 			}
-
-			ooDbTx.commit();
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			log.log(Level.SEVERE, msg, e);
-			ooDbTx.rollback();
 			serviceErrorEvent.fire(new ServiceErrorEvent(msg));
 		}
 	}
@@ -233,7 +230,7 @@ public class OfferService {
 
 			try {
 				// Get the offer
-				Offer offer = OfferDAO.getOfferByChannelId(channelId, ooDbTx);
+				Offer offer = offerDAO.getOfferByChannelId(channelId);
 				if (offer.canAccept() == true) {
 					// Check to see if the Offerer is still logged in and
 					// tell the Offerer that the offer has been accepted
@@ -250,7 +247,7 @@ public class OfferService {
 							channelId, offererKey));
 
 					// Update the database
-					OfferDAO.acceptOffer(channelId, sessionId, ooDbTx, true);
+					offerDAO.acceptOffer(channelId, sessionId);
 				}
 			} catch (Exception e) {
 				acceptOfferResponseErrorEvent
@@ -262,11 +259,13 @@ public class OfferService {
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			log.log(Level.SEVERE, msg, e);
-			ooDbTx.rollback();
 			serviceErrorEvent.fire(new ServiceErrorEvent(msg));
 		}
 	}
 
+	/**
+	 * @param rejectOfferEvent
+	 */
 	protected void observesRejectOfferEvent(
 			@Observes RejectOfferEvent rejectOfferEvent) {
 		try {
@@ -275,7 +274,7 @@ public class OfferService {
 			String sessionId = EventConversationContext.get().getSessionId();
 
 			// Find the offer and mark it rejected
-			Offer offer = OfferDAO.rejectOffer(channelId, ooDbTx, true);
+			Offer offer = offerDAO.rejectOffer(channelId);
 
 			// Tell the Offerer about it
 			// The offerer will be tuned into the already set up channelId
@@ -286,7 +285,6 @@ public class OfferService {
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			log.log(Level.SEVERE, msg, e);
-			ooDbTx.rollback();
 			serviceErrorEvent.fire(new ServiceErrorEvent(msg));
 		}
 	}
@@ -303,7 +301,7 @@ public class OfferService {
 					.getSessionId();
 			String channelId = closeOfferEvent.getChannelId();
 			String partnerName = closeOfferEvent.getPartnerName();
-			Offer offer = OfferDAO.closeOffer(channelId, ooDbTx, true);
+			Offer offer = offerDAO.closeOffer(channelId);
 
 			// If the offerer is closing the conversation tell the peer
 			// else tell the offerer
@@ -332,8 +330,8 @@ public class OfferService {
 				// the peer id.
 				String userKey = ceateSessionTrackerLookupKey(partnerName,
 						offer.getPeerId());
-				forwardOffer(channelId, offer.getPeerId(), partnerName, userKey,
-						OfferTypeEnum.CHAT, OfferRoleEnum.PEER,
+				forwardOffer(channelId, offer.getPeerId(), partnerName,
+						userKey, OfferTypeEnum.CHAT, OfferRoleEnum.PEER,
 						OfferActionEnum.CLOSE);
 
 			}
@@ -341,7 +339,6 @@ public class OfferService {
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			log.log(Level.SEVERE, msg, e);
-			ooDbTx.rollback();
 			serviceErrorEvent.fire(new ServiceErrorEvent(msg));
 		}
 	}
@@ -358,8 +355,8 @@ public class OfferService {
 	private void forwardOffer(String channelId, String userId, String name,
 			String key, OfferTypeEnum offerType, OfferRoleEnum role,
 			OfferActionEnum action) throws Exception {
-		Set<String> sessions = LoggedInSessionDAO
-				.getSessionIdsForACtiveSessionsByUserId(userId, ooDbTx);
+		Set<String> sessions = loggedInSessionDAO
+				.getSessionIdsForACtiveSessionsByUserId(userId);
 		if (sessions != null && sessions.size() > 0) {
 			for (String sessionId : sessions) {
 				sendMessage(OfferEnum.CLIENT_OFFER_LISTENER.toString(),

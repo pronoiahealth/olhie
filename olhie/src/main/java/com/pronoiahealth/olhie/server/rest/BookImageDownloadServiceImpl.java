@@ -33,6 +33,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.exceptions.FileDownloadException;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
+import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
@@ -53,8 +54,8 @@ public class BookImageDownloadServiceImpl implements BookImageDownloadService {
 	private Logger log;
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	@DAO
+	private BookDAO bookDAO;
 
 	/**
 	 * Constructor
@@ -80,7 +81,7 @@ public class BookImageDownloadServiceImpl implements BookImageDownloadService {
 		DataInputStream in = null;
 		try {
 			// Get the file contents
-			Book book = BookDAO.getBookById(bookId, ooDbTx);
+			Book book = bookDAO.getBookById(bookId);
 			if (book == null) {
 				throw new FileDownloadException(String.format(
 						"Could not find Book for id %s", bookId));
@@ -138,7 +139,7 @@ public class BookImageDownloadServiceImpl implements BookImageDownloadService {
 		DataInputStream in = null;
 		try {
 			// Get the file contents
-			Book book = BookDAO.getBookById(bookId, ooDbTx);
+			Book book = bookDAO.getBookById(bookId);
 			if (book == null) {
 				throw new FileDownloadException(String.format(
 						"Could not find Book for id %s", bookId));

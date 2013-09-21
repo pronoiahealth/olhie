@@ -10,7 +10,6 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
  * UserSessionToken.java<br/>

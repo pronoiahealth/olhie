@@ -29,6 +29,7 @@ import com.pronoiahealth.olhie.client.shared.events.book.RemoveBookassetdescript
 import com.pronoiahealth.olhie.client.shared.events.book.RemoveBookassetdescriptionResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
+import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
@@ -60,8 +61,8 @@ public class RemoveBookassetdescriptionService {
 	private Event<RemoveBookassetdescriptionResponseEvent> removeBookassetdescriptionResponseEvent;
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	@DAO
+	private BookDAO bookDAO;
 
 	/**
 	 * Constructor
@@ -81,49 +82,23 @@ public class RemoveBookassetdescriptionService {
 			@Observes RemoveBookassetdescriptionEvent removeBookassetdescriptionEvent) {
 
 		try {
-			ooDbTx.begin(TXTYPE.OPTIMISTIC);
 			// Find the book asset description
 			String sessionUserId = userToken.getUserId();
 			String bookAssetdescriptionId = removeBookassetdescriptionEvent
 					.getBookAssetdescriptionId();
-			OSQLSynchQuery<Bookassetdescription> badQuery = new OSQLSynchQuery<Bookassetdescription>(
-					"select from Bookassetdescription where @rid = :badId");
-			HashMap<String, String> uparams = new HashMap<String, String>();
-			uparams.put("badId", bookAssetdescriptionId);
-			List<Bookassetdescription> badResult = ooDbTx.command(badQuery)
-					.execute(uparams);
-			Bookassetdescription currentBad = null;
-			if (badResult != null && badResult.size() == 1) {
-				// Got the user
-				currentBad = badResult.get(0);
-			} else {
-				throw new Exception(
-						"Can't find the book asset description to remove.");
-			}
 
-			// Get bookId for later
-			String bookId = currentBad.getBookId();
-			
-			// Set it to removed and save it
-			currentBad.setRemoved(true);
-			currentBad.setRemovedDate(new Date());
-			currentBad.setRemovedBy(sessionUserId);
-
-			// Now save it
-			currentBad = ooDbTx.save(currentBad);
-			ooDbTx.commit();
-			
-			// Update the last updated attribute of the book
-			BookDAO.setLastUpdatedDT(bookId, new Date(), ooDbTx);
+			// inactivate the bad
+			Bookassetdescription bad = bookDAO
+					.inactivateBookAssetDescriptionFromBook(sessionUserId,
+							bookAssetdescriptionId);
 
 			// Return good result
 			removeBookassetdescriptionResponseEvent
 					.fire(new RemoveBookassetdescriptionResponseEvent(
-							bookAssetdescriptionId, currentBad.getBookId()));
+							bookAssetdescriptionId, bad.getBookId()));
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			log.log(Level.SEVERE, msg, e);
-			ooDbTx.rollback();
 			serviceErrorEvent.fire(new ServiceErrorEvent(msg));
 		}
 	}

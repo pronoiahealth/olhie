@@ -10,14 +10,8 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services.dbaccess;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
-import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
-import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.OfferTypeEnum;
 import com.pronoiahealth.olhie.client.shared.vo.Offer;
 
@@ -28,10 +22,10 @@ import com.pronoiahealth.olhie.client.shared.vo.Offer;
  * 
  * @author John DeStefano
  * @version 1.0
- * @since Jul 10, 2013
+ * @since Sep 14, 2013
  * 
  */
-public class OfferDAO {
+public interface OfferDAO {
 
 	/**
 	 * Creates a new Offer in the database and returns a channelId for the
@@ -44,35 +38,8 @@ public class OfferDAO {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String createNewOffer(String offererId,
-			String offererSessionId, String peerId, OfferTypeEnum offerType,
-			OObjectDatabaseTx ooDbTx, boolean handleTransaction)
-			throws Exception {
-
-		if (handleTransaction == true) {
-			ooDbTx.begin(TXTYPE.OPTIMISTIC);
-		}
-
-		// Need a channel ID to return
-		String channelId = UUID.randomUUID().toString();
-
-		// Create offer
-		Offer offer = new Offer();
-		offer.setChannelId(channelId);
-		offer.setPeerId(peerId);
-		offer.setOffererId(offererId);
-		offer.setOffererSessionId(offererSessionId);
-		offer.setCreatedDT(new Date());
-		offer.setOfferType(offerType.toString());
-		ooDbTx.save(offer);
-
-		if (handleTransaction == true) {
-			ooDbTx.commit();
-		}
-
-		// Return the id
-		return channelId;
-	}
+	public String createNewOffer(String offererId, String offererSessionId,
+			String peerId, OfferTypeEnum offerType) throws Exception;
 
 	/**
 	 * Accept an offer. Can't accept and offer that has already been accepted,
@@ -82,32 +49,8 @@ public class OfferDAO {
 	 * @param ooDbTx
 	 * @throws Exception
 	 */
-	public static Offer acceptOffer(String channelId, String peerSessionId,
-			OObjectDatabaseTx ooDbTx, boolean handleTransaction)
-			throws Exception {
-
-		Offer offer = getOfferByChannelId(channelId, ooDbTx);
-		if (offer.getAcceptedDT() == null && offer.getRejectedDT() == null
-				&& offer.getClosedDT() == null && offer.getExpiredDT() == null) {
-			if (handleTransaction == true) {
-				ooDbTx.begin(TXTYPE.OPTIMISTIC);
-			}
-
-			offer.setAcceptedDT(new Date());
-			offer.setPeerSessionId(peerSessionId);
-			offer = ooDbTx.save(offer);
-
-			if (handleTransaction == true) {
-				ooDbTx.commit();
-				offer = ooDbTx.detach(offer, true);
-			}
-
-			return offer;
-		} else {
-			throw new Exception(
-					"Can't accept and offer that has already been accepted, closed, expired, or rejected.");
-		}
-	}
+	public Offer acceptOffer(String channelId, String peerSessionId)
+			throws Exception;
 
 	/**
 	 * Reject an offer. Can't reject an offer that has already been rejected, is
@@ -117,30 +60,7 @@ public class OfferDAO {
 	 * @param ooDbTx
 	 * @throws Exception
 	 */
-	public static Offer rejectOffer(String channelId, OObjectDatabaseTx ooDbTx,
-			boolean handleTransaction) throws Exception {
-		Offer offer = getOfferByChannelId(channelId, ooDbTx);
-		if (offer.getRejectedDT() == null && offer.getClosedDT() == null
-				&& offer.getAcceptedDT() == null
-				&& offer.getExpiredDT() == null) {
-			if (handleTransaction == true) {
-				ooDbTx.begin(TXTYPE.OPTIMISTIC);
-			}
-
-			offer.setRejectedDT(new Date());
-			offer = ooDbTx.save(offer);
-
-			if (handleTransaction == true) {
-				ooDbTx.commit();
-				offer = ooDbTx.detach(offer, true);
-			}
-
-			return offer;
-		} else {
-			throw new Exception(
-					"Can't reject an offer that has already been rejected, is closed, or has been accepted.");
-		}
-	}
+	public Offer rejectOffer(String channelId) throws Exception;
 
 	/**
 	 * Close a previously accepted offer. Can't close an offer that has already
@@ -150,28 +70,7 @@ public class OfferDAO {
 	 * @param ooDbTx
 	 * @throws Exception
 	 */
-	public static Offer closeOffer(String channelId, OObjectDatabaseTx ooDbTx,
-			boolean handleTransaction) throws Exception {
-		Offer offer = getOfferByChannelId(channelId, ooDbTx);
-		if (offer.getClosedDT() == null) {
-			if (offer.getRejectedDT() == null && offer.getExpiredDT() == null) {
-
-				if (handleTransaction == true) {
-					ooDbTx.begin(TXTYPE.OPTIMISTIC);
-				}
-
-				offer.setClosedDT(new Date());
-				offer = ooDbTx.save(offer);
-
-				if (handleTransaction == true) {
-					ooDbTx.commit();
-					offer = ooDbTx.detach(offer, true);
-				}
-			}
-		}
-
-		return offer;
-	}
+	public Offer closeOffer(String channelId) throws Exception;
 
 	/**
 	 * Set the expired date on the offer. This will occur if an offer has not
@@ -181,26 +80,7 @@ public class OfferDAO {
 	 * @param ooDbTx
 	 * @throws Exception
 	 */
-	public static Offer expireOffer(String channelId, OObjectDatabaseTx ooDbTx,
-			boolean handleTransaction) throws Exception {
-
-		if (handleTransaction == true) {
-			ooDbTx.begin(TXTYPE.OPTIMISTIC);
-		}
-
-		Offer offer = getOfferByChannelId(channelId, ooDbTx);
-		if (offer.getRejectedDT() == null && offer.getClosedDT() == null) {
-			offer.setExpiredDT(new Date());
-			offer = ooDbTx.save(offer);
-		}
-
-		if (handleTransaction == true) {
-			ooDbTx.commit();
-			offer = ooDbTx.detach(offer, true);
-		}
-
-		return offer;
-	}
+	public Offer expireOffer(String channelId) throws Exception;
 
 	/**
 	 * Expire specific Offer types based on the types parameter. If types is
@@ -212,48 +92,9 @@ public class OfferDAO {
 	 * @param types
 	 * @throws Exception
 	 */
-	public static void expireOfferByUserId(String userId,
-			OObjectDatabaseTx ooDbTx, boolean handleTransaction,
-			OfferTypeEnum... types) throws Exception {
+	public void expireOfferByUserId(String userId, OfferTypeEnum... types)
+			throws Exception;
 
-		if (types != null && types.length > 0) {
-			for (OfferTypeEnum type : types) {
-				expireOfferByUserId(userId, type, ooDbTx, handleTransaction);
-			}
-		} else {
-			expireOfferByUserId(userId, null, ooDbTx, handleTransaction);
-		}
-
-	}
-
-	/**
-	 * Set the expired date on the offer. This will occur if an offer has not
-	 * been rejected and not been closed but the users session has ended.
-	 * 
-	 * @param channelId
-	 * @param ooDbTx
-	 * @throws Exception
-	 */
-	public static void expireOfferByUserId(String userId, OfferTypeEnum type,
-			OObjectDatabaseTx ooDbTx, boolean handleTransaction)
-			throws Exception {
-
-		if (handleTransaction == true) {
-			ooDbTx.begin(TXTYPE.OPTIMISTIC);
-		}
-
-		List<Offer> offers = getUnacceptedOffersById(userId, type, ooDbTx);
-		if (offers != null && offers.size() > 0) {
-			for (Offer offer : offers) {
-				offer.setExpiredDT(new Date());
-				ooDbTx.save(offer);
-			}
-		}
-
-		if (handleTransaction == true) {
-			ooDbTx.commit();
-		}
-	}
 
 	/**
 	 * Set the closed date on the offer. This will occur if an offer has not
@@ -263,29 +104,8 @@ public class OfferDAO {
 	 * @param ooDbTx
 	 * @throws Exception
 	 */
-	public static void closeOfferByUserId(String userId, String erraiSessionId,
-			OfferTypeEnum type, OObjectDatabaseTx ooDbTx,
-			boolean handleTransaction) throws Exception {
-
-		if (handleTransaction == true) {
-			ooDbTx.begin(TXTYPE.OPTIMISTIC);
-		}
-
-		List<Offer> offers = getUnacceptedOffersById(userId, type, ooDbTx);
-		if (offers != null && offers.size() > 0) {
-			for (Offer offer : offers) {
-				if (offer.getOffererSessionId().equals(erraiSessionId)
-						|| offer.getPeerSessionId().equals(erraiSessionId)) {
-					offer.setClosedDT(new Date());
-					ooDbTx.save(offer);
-				}
-			}
-		}
-
-		if (handleTransaction == true) {
-			ooDbTx.commit();
-		}
-	}
+	public void closeOfferByUserId(String userId, String erraiSessionId,
+			OfferTypeEnum type) throws Exception;
 
 	/**
 	 * Return the Offer associated with the channel
@@ -295,22 +115,19 @@ public class OfferDAO {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Offer getOfferByChannelId(String channelId,
-			OObjectDatabaseTx ooDbTx) throws Exception {
-		OSQLSynchQuery<Offer> rQuery = new OSQLSynchQuery<Offer>(
-				"select from Offer where channelId = :cId");
-		HashMap<String, String> rparams = new HashMap<String, String>();
-		rparams.put("cId", channelId);
-		List<Offer> rResult = ooDbTx.command(rQuery).execute(rparams);
-		if (rResult != null && rResult.size() > 0) {
-			Offer offer = rResult.get(0);
-			return ooDbTx.detach(offer, true);
-		} else {
-			throw new Exception("Offer with given channel id (" + channelId
-					+ ") does not exist.");
-		}
-	}
-
+	public Offer getOfferByChannelId(String channelId) throws Exception;
+	
+	/**
+	 * Set the expired date on the offer. This will occur if an offer has not
+	 * been rejected and not been closed but the users session has ended.
+	 * 
+	 * @param channelId
+	 * @param ooDbTx
+	 * @throws Exception
+	 */
+	public void expireOfferByUserId(String userId, OfferTypeEnum type)
+			throws Exception;
+	
 	/**
 	 * Get the list of offers where the peerId or the offererId equals the
 	 * pasted in ID and the offer has not been closed or expired.
@@ -320,22 +137,5 @@ public class OfferDAO {
 	 * @return
 	 * @throws Exception
 	 */
-	private static List<Offer> getUnacceptedOffersById(String userId,
-			OfferTypeEnum type, OObjectDatabaseTx ooDbTx) throws Exception {
-		OSQLSynchQuery<Offer> rQuery = null;
-		HashMap<String, String> rparams = new HashMap<String, String>();
-		if (type != null) {
-			rQuery = new OSQLSynchQuery<Offer>(
-					"select from Offer where (peerId = :pId or offererId = :ofId) and offerType = :type and expiredDT = null and closedDT = null and rejectedDT = null)");
-			rparams.put("pId", userId);
-			rparams.put("ofId", userId);
-			rparams.put("type", type.toString());
-		} else {
-			rQuery = new OSQLSynchQuery<Offer>(
-					"select from Offer where (peerId = :pId or offererId = :ofId) and expiredDT = null and closedDT = null and rejectedDT = null");
-			rparams.put("pId", userId);
-			rparams.put("ofId", userId);
-		}
-		return ooDbTx.command(rQuery).execute(rparams);
-	}
+	public List<Offer> getUnacceptedOffersById(String userId, OfferTypeEnum type) throws Exception;
 }

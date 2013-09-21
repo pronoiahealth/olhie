@@ -21,7 +21,6 @@ import javax.inject.Inject;
 import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.nav.client.local.PageShowing;
 
-import com.github.gwtbootstrap.client.ui.Icon;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gwt.query.client.GQuery;
@@ -42,6 +41,7 @@ import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
+import com.pronoiahealth.olhie.client.widgets.GlassPanelSpinner;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.BookSelectCallBack;
 
@@ -76,8 +76,10 @@ public class BookCasePage extends AbstractPage {
 	@UiField
 	public TabLayoutPanel tabPanel;
 
-	@UiField
-	public Icon spinner;
+	//@UiField
+	//public Icon spinner;
+	
+	private GlassPanelSpinner gSpinner;
 
 	@Inject
 	private ClientUserToken clientToken;
@@ -98,9 +100,13 @@ public class BookCasePage extends AbstractPage {
 	@PostConstruct
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
-
+		//
+		gSpinner = new GlassPanelSpinner();
+		gSpinner.setVisible(false);
+		bookcaseContainer.add(gSpinner);
+		
 		// Initial state of spinner
-		spinner.setVisible(false);
+		// spinner.setVisible(false);
 
 		// create selector - This will fire the bookId to the server to see what
 		// the users relationship with the book is. If he's the author or
@@ -133,7 +139,8 @@ public class BookCasePage extends AbstractPage {
 	 */
 	@PageShowing
 	protected void pageShowing() {
-		spinner.setVisible(true);
+		gSpinner.setVisible(true);
+		//spinner.setVisible(true);
 		getMyBookcaseEvent
 				.fire(new GetMyBookcaseEvent(clientToken.getUserId()));
 	}
@@ -190,7 +197,8 @@ public class BookCasePage extends AbstractPage {
 		}
 
 		// Set the spinner state
-		spinner.setVisible(false);
+		gSpinner.setVisible(false);
+		//spinner.setVisible(false);
 	}
 
 	/**
@@ -201,7 +209,8 @@ public class BookCasePage extends AbstractPage {
 	protected void observesServiceErrorEvent(
 			@Observes ServiceErrorEvent serviceErrorEvent) {
 		// Set the spinner visible
-		spinner.setVisible(false);
+		gSpinner.setVisible(false);
+		// spinner.setVisible(false);
 	}
 
 	/**
@@ -212,6 +221,7 @@ public class BookCasePage extends AbstractPage {
 	protected void observesClientErrorEvent(
 			@Observes ClientErrorEvent clientErrorEvent) {
 		// Set the spinner visible
-		spinner.setVisible(false);
+		gSpinner.setVisible(false);
+		// spinner.setVisible(false);
 	}
 }

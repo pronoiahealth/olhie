@@ -32,12 +32,12 @@ import javax.ws.rs.core.Context;
 
 import com.lowagie.text.pdf.codec.Base64;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.exceptions.FileDownloadException;
 import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
+import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
+import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
 
 /**
  * BookassetDownloadServiceImpl.java<br/>
@@ -55,8 +55,8 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 	private Logger log;
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	@DAO
+	private BookDAO bookDAO;;
 
 	/**
 	 * Constructor
@@ -81,15 +81,8 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 		DataInputStream in = null;
 		try {
 			// Get the file contents
-			OSQLSynchQuery<Bookasset> bQuery = new OSQLSynchQuery<Bookasset>(
-					"select from Bookasset where @rid = :bId");
-			HashMap<String, String> bparams = new HashMap<String, String>();
-			bparams.put("bId", assetId);
-			List<Bookasset> bResult = ooDbTx.command(bQuery).execute(bparams);
-			Bookasset bookasset = null;
-			if (bResult != null && bResult.size() == 1) {
-				bookasset = bResult.get(0);
-			} else {
+			Bookasset bookasset = bookDAO.getBookasset(assetId);
+			if (bookasset == null) {
 				throw new FileDownloadException(String.format(
 						"Could not find Book for id %s", assetId));
 			}
@@ -137,7 +130,7 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 	@Path("/book/{uniqueNumb}/{assetId}/PDF")
 	@Produces({ "application/pdf" })
 	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
-		SecurityRoleEnum.ANONYMOUS })
+			SecurityRoleEnum.ANONYMOUS })
 	public InputStream viewPDFAsset(@Context HttpServletRequest request,
 			@Context HttpServletResponse response,
 			@PathParam("assetId") String assetId,
@@ -147,15 +140,8 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 		DataInputStream in = null;
 		try {
 			// Get the file contents
-			OSQLSynchQuery<Bookasset> bQuery = new OSQLSynchQuery<Bookasset>(
-					"select from Bookasset where @rid = :bId");
-			HashMap<String, String> bparams = new HashMap<String, String>();
-			bparams.put("bId", assetId);
-			List<Bookasset> bResult = ooDbTx.command(bQuery).execute(bparams);
-			Bookasset bookasset = null;
-			if (bResult != null && bResult.size() == 1) {
-				bookasset = bResult.get(0);
-			} else {
+			Bookasset bookasset = bookDAO.getBookasset(assetId);
+			if (bookasset == null) {
 				throw new FileDownloadException(String.format(
 						"Could not find Book for id %s", assetId));
 			}
@@ -197,7 +183,7 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 	@Path("/book/{uniqueNumb}/{assetId}/TEXT")
 	@Produces({ "text/plain" })
 	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
-		SecurityRoleEnum.ANONYMOUS })
+			SecurityRoleEnum.ANONYMOUS })
 	public InputStream viewTestAsset(@Context HttpServletRequest request,
 			@Context HttpServletResponse response,
 			@PathParam("assetId") String assetId,
@@ -207,15 +193,8 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 		DataInputStream in = null;
 		try {
 			// Get the file contents
-			OSQLSynchQuery<Bookasset> bQuery = new OSQLSynchQuery<Bookasset>(
-					"select from Bookasset where @rid = :bId");
-			HashMap<String, String> bparams = new HashMap<String, String>();
-			bparams.put("bId", assetId);
-			List<Bookasset> bResult = ooDbTx.command(bQuery).execute(bparams);
-			Bookasset bookasset = null;
-			if (bResult != null && bResult.size() == 1) {
-				bookasset = bResult.get(0);
-			} else {
+			Bookasset bookasset = bookDAO.getBookasset(assetId);
+			if (bookasset == null) {
 				throw new FileDownloadException(String.format(
 						"Could not find Book for id %s", assetId));
 			}
@@ -257,7 +236,7 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 	@Path("/book/{uniqueNumb}/{assetId}/HTML")
 	@Produces({ "text/html" })
 	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
-		SecurityRoleEnum.ANONYMOUS })
+			SecurityRoleEnum.ANONYMOUS })
 	public InputStream viewHTMLAsset(@Context HttpServletRequest request,
 			@Context HttpServletResponse response,
 			@PathParam("assetId") String assetId,
@@ -267,15 +246,8 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 		DataInputStream in = null;
 		try {
 			// Get the file contents
-			OSQLSynchQuery<Bookasset> bQuery = new OSQLSynchQuery<Bookasset>(
-					"select from Bookasset where @rid = :bId");
-			HashMap<String, String> bparams = new HashMap<String, String>();
-			bparams.put("bId", assetId);
-			List<Bookasset> bResult = ooDbTx.command(bQuery).execute(bparams);
-			Bookasset bookasset = null;
-			if (bResult != null && bResult.size() == 1) {
-				bookasset = bResult.get(0);
-			} else {
+			Bookasset bookasset = bookDAO.getBookasset(assetId);
+			if (bookasset == null) {
 				throw new FileDownloadException(String.format(
 						"Could not find Book for id %s", assetId));
 			}

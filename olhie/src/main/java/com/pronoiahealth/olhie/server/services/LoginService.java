@@ -20,16 +20,14 @@ import javax.inject.Inject;
 
 import org.jboss.errai.cdi.server.events.EventConversationContext;
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LoginErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LoginRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LoginResponseEvent;
 import com.pronoiahealth.olhie.client.shared.vo.User;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
+import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.dataaccess.vo.Password;
 import com.pronoiahealth.olhie.server.security.SecurityUtils;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
-import com.pronoiahealth.olhie.server.services.dbaccess.PasswordDAO;
 import com.pronoiahealth.olhie.server.services.dbaccess.UserDAO;
 
 /**
@@ -64,8 +62,8 @@ public class LoginService {
 	private Event<LoginResponseEvent> loginResponseEvent;
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	@DAO
+	private UserDAO userDAO;
 
 	/**
 	 * Default Constructor
@@ -105,8 +103,7 @@ public class LoginService {
 			// User check
 			// 1. Look up user
 			try {
-				user = UserDAO.getUserByUserId(loginRequestEvent.getUserID(),
-						ooDbTx);
+				user = userDAO.getUserByUserId(loginRequestEvent.getUserID());
 			} catch (Exception e) {
 				loginErrorEvent
 						.fire(new LoginErrorEvent("User ID is not valid"));
@@ -117,7 +114,7 @@ public class LoginService {
 			// 1. Look up pwd
 			Password pwd = null;
 			try {
-				pwd = PasswordDAO.getPwdByUserId(user.getUserId(), ooDbTx);
+				pwd = userDAO.getPwdByUserId(user.getUserId());
 			} catch (Exception e) {
 				// Fire an error response
 				loginErrorEvent

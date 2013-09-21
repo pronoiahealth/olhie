@@ -20,7 +20,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
@@ -28,11 +27,10 @@ import com.pronoiahealth.olhie.client.shared.events.book.BookFindByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
+import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
-import com.pronoiahealth.olhie.server.services.dbaccess.UserBookRelationshipDAO;
 
 /**
  * BookFindService.java<br/>
@@ -67,8 +65,8 @@ public class BookFindService {
 	private TempCoverBinderHolder holder;
 
 	@Inject
-	@OODbTx
-	private OObjectDatabaseTx ooDbTx;
+	@DAO
+	private BookDAO bookDAO;
 
 	/**
 	 * Constructor
@@ -93,26 +91,26 @@ public class BookFindService {
 			String userId = userToken.getUserId();
 
 			// Get the book display
-			BookDisplay bookDisplay = BookDAO.getBookDisplayById(bookId,
-					ooDbTx, userId, holder, true);
+			BookDisplay bookDisplay = bookDAO.getBookDisplayById(bookId,
+					userId, holder, true);
 
 			// Get the user relations
-			Set<UserBookRelationshipEnum> rels = BookDAO
+			Set<UserBookRelationshipEnum> rels = bookDAO
 					.getActiveBookRealtionshipForUser(userId,
-							userToken.getLoggedIn(), bookId, ooDbTx);
+							userToken.getLoggedIn(), bookId);
 
 			// Update the last viewed date on the user book relationship
-			UserBookRelationshipDAO.setLastViewedOnUserBookRelationship(userId,
-					bookId, new Date(), ooDbTx);
+			bookDAO.setLastViewedOnUserBookRelationship(userId,
+					bookId, new Date());
 
 			// Is the user asking for the book the author or co-author
-			boolean authorSelected = BookDAO.isAuthorSelected(userId, bookId,
-					ooDbTx);
+			boolean authorSelected = bookDAO.isAuthorSelected(userId, bookId,
+					rels);
 
 			// Fire the event
 			bookFindResponseEvent.fire(new BookFindResponseEvent(bookDisplay,
 					rels, authorSelected));
-			
+
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);

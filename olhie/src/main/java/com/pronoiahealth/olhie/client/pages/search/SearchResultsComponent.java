@@ -23,6 +23,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
@@ -36,6 +37,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEve
 import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
+import com.pronoiahealth.olhie.client.widgets.GlassPanelSpinner;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.BookSelectCallBack;
 
@@ -58,20 +60,22 @@ public class SearchResultsComponent extends AbstractComposite {
 	@Inject
 	private PageNavigator nav;
 
-	// @UiField
-	// public Pagination searchResultsPager;
+	@UiField
+	public HTMLPanel searchContainer;
 
 	@UiField
 	public FluidRow searchResultsHeader;
 
 	@UiField
 	public ScrollPanel searchResultsContainerList;
-	
+
 	@UiField
 	public Label resultsLbl;
 
-	@UiField
-	public Icon spinner;
+	// @UiField
+	// public Icon spinner;
+
+	private GlassPanelSpinner gSpinner;
 
 	private BookSelectCallBack bookSelectCallBack;
 
@@ -94,9 +98,14 @@ public class SearchResultsComponent extends AbstractComposite {
 
 		// Set search label
 		resultsLbl.setText(SearchConstants.INSTANCE.searchResults());
-		
+
 		// Set initial spinner state
-		spinner.setVisible(false);
+		// spinner.setVisible(false);
+
+		// Construct spinner
+		gSpinner = new GlassPanelSpinner();
+		gSpinner.setVisible(false);
+		searchContainer.add(gSpinner);
 
 		// Navigate to the NewBookPage. The edit mode will be set by logic on
 		// that page.
@@ -118,9 +127,12 @@ public class SearchResultsComponent extends AbstractComposite {
 	public void observesBookSearchResponseEvent(
 			@Observes BookSearchResponseEvent event) {
 
+		// Hide spinner
+		gSpinner.setVisible(false);
+
 		// Remove the spinner
-		spinner.setVisible(false);
-		
+		// spinner.setVisible(false);
+
 		// Display the books, if nothing is returned the display a message
 		List<BookDisplay> lst = event.getBookDisplayList();
 		if (lst != null && lst.size() > 0) {
@@ -147,8 +159,11 @@ public class SearchResultsComponent extends AbstractComposite {
 		// Clear the current display
 		searchResultsContainerList.clear();
 
+		// Show spinner
+		gSpinner.setVisible(true);
+
 		// Set the spinner visible
-		spinner.setVisible(true);
+		// spinner.setVisible(true);
 	}
 
 	/**
@@ -158,8 +173,10 @@ public class SearchResultsComponent extends AbstractComposite {
 	 */
 	protected void observesServiceErrorEvent(
 			@Observes ServiceErrorEvent serviceErrorEvent) {
+		// hide spinner
+		gSpinner.setVisible(false);
 		// Set the spinner visible
-		spinner.setVisible(false);
+		// spinner.setVisible(false);
 	}
 
 	/**
@@ -169,8 +186,10 @@ public class SearchResultsComponent extends AbstractComposite {
 	 */
 	protected void observesClientErrorEvent(
 			@Observes ClientErrorEvent clientErrorEvent) {
+		// hide spinner
+		gSpinner.setVisible(false);
 		// Set the spinner visible
-		spinner.setVisible(false);
+		// spinner.setVisible(false);
 	}
 
 	/**
