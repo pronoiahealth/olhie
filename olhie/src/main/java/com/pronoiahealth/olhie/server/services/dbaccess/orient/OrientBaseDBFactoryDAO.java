@@ -84,7 +84,7 @@ public abstract class OrientBaseDBFactoryDAO {
 	 */
 	protected OObjectDatabaseTx getConnection() throws Exception {
 		OObjectDatabaseTx ooDbTx = oFac.getUninjectedConnection();
-		if (log.isLoggable(Level.INFO)) {
+		if (log.isLoggable(Level.FINEST)) {
 			log.log(Level.INFO,
 					"Aquired connection "
 							+ ooDbTx.hashCode()
@@ -103,7 +103,7 @@ public abstract class OrientBaseDBFactoryDAO {
 	 */
 	protected void closeConnection(OObjectDatabaseTx ooDbTx) {
 		if (ooDbTx != null && ooDbTx.isClosed() == false) {
-			if (log.isLoggable(Level.INFO)) {
+			if (log.isLoggable(Level.FINEST)) {
 				log.log(Level.INFO, "Released connection " + ooDbTx.hashCode());
 			}
 			ooDbTx.close();
