@@ -23,7 +23,7 @@ import com.pronoiahealth.olhie.client.shared.vo.Bookcomment;
 import com.pronoiahealth.olhie.client.shared.vo.Bookstarrating;
 import com.pronoiahealth.olhie.client.shared.vo.Comment;
 import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
-import com.pronoiahealth.olhie.server.services.TempCoverBinderHolder;
+import com.pronoiahealth.olhie.server.services.TempThemeHolder;
 
 /**
  * BookDAO.java<br/>
@@ -56,7 +56,7 @@ public interface BookDAO {
 	 * @throws Exception
 	 */
 	public BookDisplay getBookDisplayByBook(Book book, String userId,
-			TempCoverBinderHolder holder, boolean returnNonProxyed)
+			TempThemeHolder holder, boolean returnNonProxyed)
 			throws Exception;
 
 	/**
@@ -70,7 +70,7 @@ public interface BookDAO {
 	 * @throws Exception
 	 */
 	public BookDisplay getBookDisplayById(String bookId, String userId,
-			TempCoverBinderHolder holder, boolean returnNonProxyed)
+			TempThemeHolder holder, boolean returnNonProxyed)
 			throws Exception;
 
 	/**
@@ -381,8 +381,23 @@ public interface BookDAO {
 	 * @param size
 	 * @throws Exception
 	 */
-	public void addLogo(String bookId, String contentType, String data,
+	public Book addLogo(String bookId, String contentType, String data,
 			String fileName, long size) throws Exception;
+	
+	/**
+	 * Add logo and encoded front cover
+	 * 
+	 * @param bookId
+	 * @param contentType
+	 * @param data
+	 * @param fileName
+	 * @param size
+	 * @param encodedFrontCover
+	 * @return
+	 * @throws Exception
+	 */
+	public Book addLogoAndFrontCover(String bookId, String contentType, String data,
+			String fileName, long size, String encodedFrontCover) throws Exception;
 
 	/**
 	 * Saves a book comment
@@ -404,4 +419,12 @@ public interface BookDAO {
 	 */
 	public Bookstarrating addUpdateBookRating(String userId, String bookId,
 			int rating) throws Exception;
+
+	/**
+	 * Returns the author name (first then last).
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public String getAuthorName(String authorId) throws Exception;
 }

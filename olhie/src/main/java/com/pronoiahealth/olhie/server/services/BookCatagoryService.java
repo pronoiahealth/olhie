@@ -42,7 +42,7 @@ public class BookCatagoryService {
 	private Event<BookCategoryListResponseEvent> bookCategoryListResponseEvent;
 
 	@Inject
-	private TempCoverBinderHolder holder;
+	private TempThemeHolder holder;
 
 	/**
 	 * Constructor

@@ -55,7 +55,7 @@ public class AddBookToMyCollectionService {
 	private ServerUserToken userToken;
 
 	@Inject
-	private TempCoverBinderHolder holder;
+	private TempThemeHolder holder;
 
 	@Inject
 	private Event<BookFindResponseEvent> bookFindResponseEvent;

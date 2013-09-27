@@ -29,12 +29,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import com.lowagie.text.pdf.codec.Base64;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.exceptions.FileDownloadException;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
-import com.pronoiahealth.olhie.server.dataaccess.orient.OODbTx;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
 
@@ -72,7 +70,7 @@ public class BookImageDownloadServiceImpl implements BookImageDownloadService {
 	@Override
 	@GET
 	@Path("/front/{uniqueNumb}/{bookId}")
-	@SecureAccess({ SecurityRoleEnum.ANONYMOUS })
+	@SecureAccess({ SecurityRoleEnum.ANONYMOUS, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.ADMIN })
 	public InputStream getBookFrontCoverImage(
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response,
@@ -128,9 +126,9 @@ public class BookImageDownloadServiceImpl implements BookImageDownloadService {
 	 */
 	@Override
 	@GET
-	@Path("/path/{uniqueNumb}/{bookId}")
+	@Path("/back/{uniqueNumb}/{bookId}")
 	@Produces({ "application/octet-stream" })
-	@SecureAccess({ SecurityRoleEnum.ANONYMOUS })
+	@SecureAccess({ SecurityRoleEnum.ANONYMOUS, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.ADMIN })
 	public InputStream getBookBackCoverImage(
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response,

@@ -42,7 +42,7 @@ public class BookCoverService {
 	private Event<BookCoverListResponseEvent> bookCoverListResponseEvent;
 
 	@Inject
-	private TempCoverBinderHolder holder;
+	private TempThemeHolder holder;
 
 	/**
 	 * Constructor

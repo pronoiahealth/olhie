@@ -55,7 +55,7 @@ public class RemoveBookFromMyCollectionService {
 	private Event<ServiceErrorEvent> serviceErrorEvent;
 
 	@Inject
-	private TempCoverBinderHolder holder;
+	private TempThemeHolder holder;
 
 	@Inject
 	@DAO

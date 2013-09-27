@@ -67,7 +67,7 @@ public class Book {
 	private Date lastUpdated;
 
 	@NotNull
-	private Boolean active;
+	private Boolean active = Boolean.FALSE;
 	
 	private Date solrUpdate;
 

@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.server.services;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,6 +20,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.lowagie.text.pdf.codec.Base64;
 import com.pronoiahealth.olhie.client.shared.annotations.New;
 import com.pronoiahealth.olhie.client.shared.annotations.Update;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
@@ -27,11 +29,12 @@ import com.pronoiahealth.olhie.client.shared.events.book.BookUpdateCommittedEven
 import com.pronoiahealth.olhie.client.shared.events.book.BookUpdateEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
-import com.pronoiahealth.olhie.client.shared.vo.User;
-import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
+import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
+import com.pronoiahealth.olhie.client.shared.vo.BookCover;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
+import com.pronoiahealth.olhie.server.services.BookCoverImageService.Cover;
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
 
 /**
@@ -53,7 +56,13 @@ public class BookUpdateService {
 	private Logger log;
 
 	@Inject
+	private BookCoverImageService imgService;
+
+	@Inject
 	private ServerUserToken userToken;
+
+	@Inject
+	private TempThemeHolder holder;
 
 	@Inject
 	private Event<ServiceErrorEvent> serviceErrorEvent;
@@ -91,22 +100,61 @@ public class BookUpdateService {
 						"The current user and the author don't match.");
 			}
 
-			// Add the book
-			Date now = new Date();
+			// Get the book
 			Book book = bookUpdateEvent.getBook();
-			book.setAuthorId(userToken.getUserId());
-			if (book.getActive() == true) {
-				book.setActDate(now);
-			} else {
-				book.setActDate(null);
+			
+			// Get current book from db
+			Book currentBook = bookDAO.getBookById(book.getId());
+
+			// Make the images
+			BookCategory cat = holder.getCategoryByName(book.getCategory());
+			BookCover cover = holder.getCoverByName(book.getCoverName());
+			String authorName = bookDAO.getAuthorName(book.getAuthorId());
+			
+			// Is there a logo on the current book
+			String logoStr = currentBook.getBase64LogoData();
+
+			// Is there currently a logo
+			// TODO: Don't recreate the images if the data in the image hasn't
+			// changed.
+			byte[] logo = null;
+			if (logoStr != null && logoStr.length() > 0) {
+				logo = Base64.decode(logoStr);
 			}
-			book.setLastUpdated(now);
-			book.setSolrUpdate(null);
-			book = bookDAO.addBook(book);
+			Map<Cover, String> coverMap = imgService.createDefaultBookCovers(
+					book, cat, cover, logo, authorName);
+
+			// Update basic book data
+			currentBook.setBookTitle(book.getBookTitle());
+			currentBook.setIntroduction(book.getIntroduction());
+			currentBook.setKeywords(book.getKeywords());
+			currentBook.setCategory(book.getCategory());
+			currentBook.setCoverName(book.getCoverName());
+			
+			// Update the active
+			Date now = new Date();
+			boolean active = book.getActive();
+			currentBook.setActive(active);
+			if (active == true) {
+				currentBook.setActDate(now);
+			} else {
+				currentBook.setActDate(null);
+			}
+			
+			// image data
+			currentBook.setBase64FrontCover(coverMap.get(Cover.FRONT));
+			currentBook.setBase64BackCover(coverMap.get(Cover.BACK));
+			currentBook.setLastUpdated(now);
+			
+			// Solr updating
+			currentBook.setSolrUpdate(null);
+			
+			// Save it
+			currentBook = bookDAO.addBook(currentBook);
 
 			// Return the result
 			BookUpdateCommittedEvent event = new BookUpdateCommittedEvent(
-					book.getId());
+					currentBook.getId());
 			bookUpdateCommittedEvent.fire(event);
 		} catch (Exception e) {
 			String msg = e.getMessage();
@@ -134,14 +182,26 @@ public class BookUpdateService {
 						"The current user and the author don't match.");
 			}
 
+			// Get the book
+			Book book = bookUpdateEvent.getBook();
+
+			// Make the images
+			BookCategory cat = holder.getCategoryByName(book.getCategory());
+			BookCover cover = holder.getCoverByName(book.getCoverName());
+			String authorName = bookDAO.getAuthorName(sessionUserId);
+			Map<Cover, String> coverMap = imgService.createDefaultBookCovers(
+					book, cat, cover, null, authorName);
+
 			// Add the book
 			Date now = new Date();
-			Book book = bookUpdateEvent.getBook();
 			book.setCreatedDate(now);
+			book.setBase64FrontCover(coverMap.get(Cover.FRONT));
+			book.setBase64BackCover(coverMap.get(Cover.BACK));
 			book.setLastUpdated(now);
 			book.setSolrUpdate(null);
 			book.setAuthorId(userToken.getUserId());
-			if (book.getActive() == true) {
+			if (book.getActive() != null
+					&& book.getActive().booleanValue() == true) {
 				book.setActDate(now);
 			}
 			book = bookDAO.addBook(book);

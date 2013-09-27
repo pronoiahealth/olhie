@@ -22,31 +22,31 @@ import com.pronoiahealth.olhie.client.shared.vo.BookCover;
  * BookCoverListWidget.java<br/>
  * Responsibilities:<br/>
  * 1. Display a book cover.<br/>
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since Jun 6, 2013
- *
+ * 
  */
 public class BookCoverListWidget extends NavWidget {
 	public static final String IMG_URL_HOLDER = "img-url";
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 */
 	public BookCoverListWidget() {
 	}
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param bookCover
 	 */
-	public BookCoverListWidget(BookCover bookCover) {
+	public BookCoverListWidget(BookCover cover) {
 		super();
-		String name = bookCover.getCoverName();
-		String imgUrl = bookCover.getImgUrl();
+		String name = cover.getCoverName();
+		String imgUrl = cover.getImgUrl();
 		FlowPanel fp = new FlowPanel();
 		SimplePanel colorPanel = new SimplePanel();
 		colorPanel.setStyleName("ph-NewBook-BookImagePanel", true);
@@ -54,7 +54,8 @@ public class BookCoverListWidget extends NavWidget {
 				"style",
 				"background-image: url('" + imgUrl
 						+ "'); background-repeat: repeat; display: inline;");
-		Image i = new Image(GWT.getModuleName() + "/images/transparent_15x1.png");
+		Image i = new Image(GWT.getModuleName()
+				+ "/images/transparent_15x1.png");
 		i.getElement().setAttribute("style", "width: 40px;");
 		colorPanel.add(i);
 		fp.add(colorPanel);

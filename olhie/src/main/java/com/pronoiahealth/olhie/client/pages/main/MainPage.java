@@ -423,6 +423,7 @@ public class MainPage extends AbstractComposite {
 			dataType : "json",
 			data : ({}),
 			type : "POST",
+			timeout: 20000,
 			success : function() {
 				return true;
 			},

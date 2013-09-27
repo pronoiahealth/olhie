@@ -35,7 +35,7 @@ import com.pronoiahealth.olhie.client.shared.vo.Bookstarrating;
 import com.pronoiahealth.olhie.client.shared.vo.Comment;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
-import com.pronoiahealth.olhie.server.services.TempCoverBinderHolder;
+import com.pronoiahealth.olhie.server.services.TempThemeHolder;
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
 
 /**
@@ -79,7 +79,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public BookDisplay getBookDisplayByBook(Book book, String userId,
-			TempCoverBinderHolder holder, boolean returnNonProxyed)
+			TempThemeHolder holder, boolean returnNonProxyed)
 			throws Exception {
 
 		// Proxied or un-Proxied instance
@@ -187,7 +187,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		}
 
 		// Create BookDisplay
-		BookDisplay bookDisplay = new BookDisplay(book, cat, cover, authorName,
+		BookDisplay bookDisplay = new BookDisplay(book, cover, cat, authorName,
 				retBaResults, bookRating, userBookRating);
 
 		// Logo?
@@ -216,7 +216,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public BookDisplay getBookDisplayById(String bookId, String userId,
-			TempCoverBinderHolder holder, boolean returnNonProxyed)
+			TempThemeHolder holder, boolean returnNonProxyed)
 			throws Exception {
 		// Find Book
 		Book book = ooDbTx.detach(getBookById(bookId), true);
@@ -1012,41 +1012,6 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		}
 	}
 
-	/**
-	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#addLogo(java.lang.String,
-	 *      java.lang.String, java.lang.String, java.lang.String, long)
-	 */
-	@Override
-	public void addLogo(String bookId, String contentType, String data,
-			String fileName, long size) throws Exception {
-
-		ooDbTx.begin(TXTYPE.OPTIMISTIC);
-		try {
-			// Find Book
-			OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
-					"select from Book where @rid = :bId");
-			HashMap<String, String> bparams = new HashMap<String, String>();
-			bparams.put("bId", bookId);
-			List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
-			Book book = null;
-			if (bResult != null && bResult.size() == 1) {
-				book = bResult.get(0);
-			} else {
-				throw new Exception(String.format(
-						"Could not find Book for id %s", bookId));
-			}
-
-			// Update the book
-			book.setLogoFileName(fileName);
-			book.setBase64LogoData(data);
-			ooDbTx.save(book);
-			ooDbTx.commit();
-		} catch (Exception e) {
-			ooDbTx.rollback();
-			throw e;
-		}
-	}
-
 	// Comments
 	// ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1119,6 +1084,103 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	}
 
 	// ///////////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Returns a non-proxyed instance of the book
+	 * 
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#addLogo(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String, long)
+	 */
+	@Override
+	public Book addLogo(String bookId, String contentType, String data,
+			String fileName, long size) throws Exception {
+
+		ooDbTx.begin(TXTYPE.OPTIMISTIC);
+		try {
+			// Find Book
+			OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
+					"select from Book where @rid = :bId");
+			HashMap<String, String> bparams = new HashMap<String, String>();
+			bparams.put("bId", bookId);
+			List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
+			Book book = null;
+			if (bResult != null && bResult.size() == 1) {
+				book = bResult.get(0);
+			} else {
+				throw new Exception(String.format(
+						"Could not find Book for id %s", bookId));
+			}
+
+			// Update the book
+			book.setLogoFileName(fileName);
+			book.setBase64LogoData(data);
+			book = ooDbTx.save(book);
+			ooDbTx.commit();
+
+			return ooDbTx.detach(book, true);
+		} catch (Exception e) {
+			ooDbTx.rollback();
+			throw e;
+		}
+	}
+
+	/**
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#addLogoAndFrontCover(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String, long,
+	 *      java.lang.String)
+	 */
+	@Override
+	public Book addLogoAndFrontCover(String bookId, String contentType,
+			String data, String fileName, long size, String encodedFrontCover)
+			throws Exception {
+		ooDbTx.begin(TXTYPE.OPTIMISTIC);
+		try {
+			// Find Book
+			OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
+					"select from Book where @rid = :bId");
+			HashMap<String, String> bparams = new HashMap<String, String>();
+			bparams.put("bId", bookId);
+			List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
+			Book book = null;
+			if (bResult != null && bResult.size() == 1) {
+				book = bResult.get(0);
+			} else {
+				throw new Exception(String.format(
+						"Could not find Book for id %s", bookId));
+			}
+
+			// Update the book
+			book.setLogoFileName(fileName);
+			book.setBase64LogoData(data);
+			book.setBase64FrontCover(encodedFrontCover);
+			book = ooDbTx.save(book);
+			ooDbTx.commit();
+
+			return ooDbTx.detach(book, true);
+		} catch (Exception e) {
+			ooDbTx.rollback();
+			throw e;
+		}
+	}
+
+	/**
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#getAuthorName()
+	 */
+	@Override
+	public String getAuthorName(String authorId) throws Exception {
+		User user = getUserByUserId(authorId);
+		return getBookAuthorName(user.getLastName(), user.getFirstName());
+	}
+
+	/**
+	 * @param lastName
+	 * @param firstName
+	 * @return
+	 */
+	private String getBookAuthorName(String lastName, String firstName) {
+		return String.format("%1$s %2$s", firstName != null ? firstName : "",
+				lastName != null ? lastName : "");
+	}
 
 	/**
 	 * Detachs the Book data except for the base64Logo field

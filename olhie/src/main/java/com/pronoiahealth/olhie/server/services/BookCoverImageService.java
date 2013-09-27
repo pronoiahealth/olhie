@@ -24,16 +24,25 @@ import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.imaging.ImageFormat;
 import org.apache.commons.imaging.Imaging;
 import org.apache.commons.io.IOUtils;
+import org.apache.deltaspike.servlet.api.Web;
+
+import com.lowagie.text.pdf.codec.Base64;
+import com.pronoiahealth.olhie.client.shared.vo.Book;
+import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
+import com.pronoiahealth.olhie.client.shared.vo.BookCover;
 
 /**
  * BookCoverImageService.java<br/>
@@ -49,7 +58,14 @@ import org.apache.commons.io.IOUtils;
 public class BookCoverImageService {
 	@Inject
 	private Logger log;
-	
+
+	@Inject
+	@Web
+	private ServletContext servletContext;
+
+	@Inject
+	private TempThemeHolder coverDisplayData;
+
 	public enum Cover {
 		FRONT, BACK
 	};
@@ -68,7 +84,6 @@ public class BookCoverImageService {
 	 * 
 	 */
 	public BookCoverImageService() {
-
 	}
 
 	/**
@@ -77,53 +92,27 @@ public class BookCoverImageService {
 	@PostConstruct
 	protected void postActivate() {
 		try {
-			// Init the coverMap
+			// Init the coverMap and load the images
 			coverMap = new HashMap<String, byte[]>();
-
-			// Need a class loader and graphics environment
-			Class clazz = this.getClass();
-			// GraphicsEnvironment ge = GraphicsEnvironment
-			// .getLocalGraphicsEnvironment();
+			List<BookCover> covers = coverDisplayData.getCovers();
+			for (BookCover cover : covers) {
+				coverMap.put(
+						cover.getCoverName(),
+						readResourceToByteArray("/" + cover.getImgUrl(),
+								servletContext));
+			}
 
 			// Load needed fonts
-			medulaOneRegularFont = Font.createFont(Font.TRUETYPE_FONT, clazz
-					.getResourceAsStream("/Olhie/font/MedulaOne-Regular.ttf"));
+			medulaOneRegularFont = Font
+					.createFont(
+							Font.TRUETYPE_FONT,
+							servletContext
+									.getResourceAsStream("/Olhie/font/MedulaOne-Regular.ttf"));
 			medulaOneRegularFont48 = medulaOneRegularFont.deriveFont(new Float(
 					48.0));
 			arialBoldFont13 = new Font("Arial Bold", Font.BOLD, 13);
 			arialBoldFont16 = new Font("Arial Bold", Font.ITALIC, 16);
 
-			// Register font
-			// ge.registerFont(medulaOneRegularFont);
-
-			// Load images
-			coverMap.put("Green 1", 
-					readResourceToByteArray("/Olhie/images/bookcover-green1.png", clazz));
-			coverMap.put("Mauve 1", 
-					readResourceToByteArray("/Olhie/images/bookcover-mauve1.png", clazz));
-			coverMap.put("Wood 1", 
-					readResourceToByteArray("/Olhie/images/wood1.png", clazz));
-			coverMap.put("Brown 2", 
-					readResourceToByteArray("/Olhie/images/bookcover0.png", clazz));
-			coverMap.put("Brown 3", 
-					readResourceToByteArray("/Olhie/images/bookcover0.png", clazz));
-			coverMap.put("Blue 1", 
-					readResourceToByteArray("/Olhie/images/bookcover3.png", clazz));
-			coverMap.put("Grey 1", 
-					readResourceToByteArray("/Olhie/images/bookcover4.png", clazz));
-			coverMap.put("Blue-Grey 1", 
-					readResourceToByteArray("/Olhie/images/bookcover5.png", clazz));
-			coverMap.put("Green 4", 
-					readResourceToByteArray("/Olhie/images/bookcover6.png", clazz));
-			coverMap.put("Grey Designed", 
-					readResourceToByteArray("/Olhie/images/bookcover7.png", clazz));
-			coverMap.put("Brown Designed", 
-					readResourceToByteArray("/Olhie/images/bookcover8.png", clazz));
-			coverMap.put("Light Brown Designed", 
-					readResourceToByteArray("/Olhie/images/bookcover9.png", clazz));
-			coverMap.put("Orange Designed", 
-					readResourceToByteArray("/Olhie/images/bookcoverX.png", clazz));
-			
 			// Init font maps
 			// author
 			authorFontMap = new Hashtable<TextAttribute, Object>();
@@ -144,7 +133,9 @@ public class BookCoverImageService {
 					TextAttribute.UNDERLINE_LOW_ONE_PIXEL);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.log(Level.SEVERE,
+					"Error occured during BookCoverImageService initialization.",
+					e);
 		}
 	}
 
@@ -162,24 +153,54 @@ public class BookCoverImageService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Map<Cover, byte[]> createBookCovers(String coverId,
+	public Map<Cover, String> createBookCovers(String coverId,
 			byte[] logoBytes, String authorStr, String titleStr,
-			String spineColor, String textColor, int width, int height,
-			int type, ImageFormat imgFormat) throws Exception {
+			String spineColor, String authorTextColor, String titleTextColor,
+			int width, int height, int type, ImageFormat imgFormat)
+			throws Exception {
 		// Create the return make
-		Map<Cover, byte[]> retMap = new HashMap<Cover, byte[]>();
+		Map<Cover, String> retMap = new HashMap<Cover, String>();
 
 		// Front cover
 		retMap.put(
 				Cover.FRONT,
-				createFrontCover(coverId, logoBytes, authorStr, titleStr,
-						spineColor, textColor, width, height, type, imgFormat));
+				createFrontCoverEncoded(coverId, logoBytes, authorStr,
+						titleStr, spineColor, authorTextColor, titleTextColor,
+						width, height, type, imgFormat));
 
 		// Back cover
 		retMap.put(
 				Cover.BACK,
-				createBackCover(coverId, titleStr, textColor, width, height,
-						type, imgFormat));
+				createBackCoverEncoded(coverId, titleStr, titleTextColor,
+						width, height, type, imgFormat));
+
+		// Return the map with the front and back cover
+		return retMap;
+	}
+
+	/**
+	 * @param book
+	 * @param category
+	 * @param cover
+	 * @param logo
+	 * @param user
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<Cover, String> createDefaultBookCovers(Book book,
+			BookCategory category, BookCover cover, byte[] logo,
+			String authorName) throws Exception {
+		// Create the return make
+		Map<Cover, String> retMap = new HashMap<Cover, String>();
+
+		// Front cover
+		retMap.put(
+				Cover.FRONT,
+				createDefaultFrontCoverEncoded(book, category, cover, logo,
+						authorName));
+
+		// Back cover
+		retMap.put(Cover.BACK, createDefaultBackCoverEncoded(book, cover));
 
 		// Return the map with the front and back cover
 		return retMap;
@@ -205,8 +226,8 @@ public class BookCoverImageService {
 	 */
 	public byte[] createFrontCover(String coverId, byte[] logoBytes,
 			String authorStr, String titleStr, String spineColor,
-			String textColor, int width, int height, int type,
-			ImageFormat imgFormat) throws Exception {
+			String authorTextColor, String titleTextColor, int width,
+			int height, int type, ImageFormat imgFormat) throws Exception {
 
 		Graphics2D g = null;
 
@@ -250,14 +271,14 @@ public class BookCoverImageService {
 			if (authorStr != null && authorStr.length() > 0) {
 				// Add author text to image
 				BufferedImage authorTextImg = createText(40, 220, authorStr,
-						textColor, false, authorFontMap, type);
+						authorTextColor, false, authorFontMap, type);
 				g.drawImage(authorTextImg, 30, 215, null);
 			}
 
 			// Add title if present
 			if (titleStr != null && titleStr.length() > 0) {
 				BufferedImage titleTextImg = createText(100, 220, titleStr,
-						textColor, false, titleFontMap, type);
+						titleTextColor, false, titleFontMap, type);
 				g.drawImage(titleTextImg, 30, 240, null);
 			}
 
@@ -279,7 +300,54 @@ public class BookCoverImageService {
 				g.dispose();
 			}
 		}
+	}
 
+	/**
+	 * Create the front cover and return as base 64 encoded string
+	 * 
+	 * @param coverId
+	 * @param logoBytes
+	 * @param authorStr
+	 * @param titleStr
+	 * @param textColor
+	 *            - ex. #FFFFFF
+	 * @param width
+	 * @param height
+	 * @param type
+	 *            - ex. BufferedImage.TYPE_INT_ARGB
+	 * @param imgFormat
+	 *            - ex. ImageFormat.IMAGE_FORMAT_PNG
+	 * @return
+	 * @throws Exception
+	 */
+	public String createFrontCoverEncoded(String coverId, byte[] logoBytes,
+			String authorStr, String titleStr, String spineColor,
+			String authorTextColor, String titleTextColor, int width,
+			int height, int type, ImageFormat imgFormat) throws Exception {
+
+		return Base64.encodeBytes(createFrontCover(coverId, logoBytes,
+				authorStr, titleStr, spineColor, authorTextColor,
+				titleTextColor, width, height, type, imgFormat));
+	}
+
+	/**
+	 * 
+	 * @param book
+	 * @param category
+	 * @param cover
+	 * @param logo
+	 * @param author
+	 * @return
+	 * @throws Exception
+	 */
+	public String createDefaultFrontCoverEncoded(Book book,
+			BookCategory category, BookCover cover, byte[] logo,
+			String authorName) throws Exception {
+		return createFrontCoverEncoded(book.getCoverName(), logo, authorName,
+				book.getBookTitle(), category.getColor(),
+				cover.getAuthorTextColor(), cover.getCoverTitleTextColor(),
+				300, 400, BufferedImage.TYPE_INT_ARGB,
+				ImageFormat.IMAGE_FORMAT_PNG);
 	}
 
 	/**
@@ -336,6 +404,40 @@ public class BookCoverImageService {
 				g.dispose();
 			}
 		}
+	}
+
+	/**
+	 * Create a back cover
+	 * 
+	 * @param coverId
+	 * @param titleStr
+	 * @param textColor
+	 * @param width
+	 * @param height
+	 * @param type
+	 * @param imgFormat
+	 * @return
+	 * @throws Exception
+	 */
+	public String createBackCoverEncoded(String coverId, String titleStr,
+			String textColor, int width, int height, int type,
+			ImageFormat imgFormat) throws Exception {
+
+		return Base64.encodeBytes(createBackCover(coverId, titleStr, textColor,
+				width, height, type, imgFormat));
+	}
+
+	/**
+	 * @param book
+	 * @param category
+	 * @return
+	 * @throws Exception
+	 */
+	public String createDefaultBackCoverEncoded(Book book, BookCover cover)
+			throws Exception {
+		return createBackCoverEncoded(book.getCoverName(), book.getBookTitle(),
+				cover.getCoverTitleTextColor(), 300, 400, BufferedImage.TYPE_INT_ARGB,
+				ImageFormat.IMAGE_FORMAT_PNG);
 	}
 
 	/**
@@ -455,8 +557,8 @@ public class BookCoverImageService {
 	 * @throws Exception
 	 */
 	private byte[] readResourceToByteArray(String resourceLocation,
-			Class loaderClass) throws Exception {
-		return IOUtils.toByteArray(loaderClass
+			ServletContext servletContext) throws Exception {
+		return IOUtils.toByteArray(servletContext
 				.getResourceAsStream(resourceLocation));
 	}
 }

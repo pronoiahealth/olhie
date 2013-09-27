@@ -50,6 +50,14 @@ public class BookCover {
 	@NotNull
 	@Size(min = 1, max = 50, message = "Cover name between 1 and 50 characters.")
 	private String coverName;
+	
+	@NotNull
+	@Size(min = 1, max = 50, message = "Cover name between 1 and 50 characters.")
+	private String authorTextColor = "#FFFFFF";
+	
+	@NotNull
+	@Size(min = 1, max = 50, message = "Cover name between 1 and 50 characters.")
+	private String coverTitleTextColor = "#FFFFFF";
 
 	/**
 	 * Constructor
@@ -62,13 +70,19 @@ public class BookCover {
 	 * Constructor
 	 *
 	 * @param imgUrl
+	 * @param customIcon
 	 * @param coverName
+	 * @param authorTextColor
+	 * @param coverTitleTextColor
 	 */
-	public BookCover(String imgUrl, String customIcon, String coverName) {
+	public BookCover(String imgUrl, String customIcon, String coverName,
+			String authorTextColor, String coverTitleTextColor) {
 		super();
 		this.imgUrl = imgUrl;
 		this.customIcon = customIcon;
 		this.coverName = coverName;
+		this.authorTextColor = authorTextColor;
+		this.coverTitleTextColor = coverTitleTextColor;
 	}
 
 	public String getImgUrl() {
@@ -93,5 +107,21 @@ public class BookCover {
 
 	public void setCustomIcon(String customIcon) {
 		this.customIcon = customIcon;
+	}
+
+	public String getAuthorTextColor() {
+		return authorTextColor;
+	}
+
+	public void setAuthorTextColor(String authorTextColor) {
+		this.authorTextColor = authorTextColor;
+	}
+
+	public String getCoverTitleTextColor() {
+		return coverTitleTextColor;
+	}
+
+	public void setCoverTitleTextColor(String coverTitleTextColor) {
+		this.coverTitleTextColor = coverTitleTextColor;
 	}
 }

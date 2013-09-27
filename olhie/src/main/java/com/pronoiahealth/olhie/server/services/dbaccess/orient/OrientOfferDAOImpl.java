@@ -229,7 +229,7 @@ public class OrientOfferDAOImpl extends OrientBaseDBFactoryDAO implements
 				expireOfferByUserId(userId, type);
 			}
 		} else {
-			expireOfferByUserId(userId, (OfferTypeEnum[]) null);
+			expireOfferByUserId(userId, (OfferTypeEnum)null);
 		}
 	}
 

@@ -67,7 +67,7 @@ public class BookSearchService {
 	private SolrSearchService solrSearchService;
 
 	@Inject
-	private TempCoverBinderHolder holder;
+	private TempThemeHolder holder;
 
 	@Inject
 	@DAO

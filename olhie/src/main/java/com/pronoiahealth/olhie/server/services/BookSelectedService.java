@@ -52,7 +52,7 @@ public class BookSelectedService {
 	private ServerUserToken serverToken;
 
 	@Inject
-	private TempCoverBinderHolder holder;
+	private TempThemeHolder holder;
 
 	@Inject
 	private Event<BookListBookSelectedResponseEvent> bookListBookSelectedResponseEvent;

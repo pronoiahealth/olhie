@@ -17,7 +17,6 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.FluidRow;
-import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -38,7 +37,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.widgets.GlassPanelSpinner;
-import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D_2;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.BookSelectCallBack;
 
 /**
@@ -140,7 +139,7 @@ public class SearchResultsComponent extends AbstractComposite {
 			int returned = lst.size();
 			resultsLbl.setText(SearchMessages.INSTANCE.searchResultsReturned(
 					returned, total));
-			BookList3D bookLst = new BookList3D(lst, bookSelectCallBack);
+			BookList3D_2 bookLst = new BookList3D_2(lst, bookSelectCallBack);
 			searchResultsContainerList.add(bookLst);
 		} else {
 			resultsLbl.setText(SearchConstants.INSTANCE.searchResults());

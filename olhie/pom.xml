@@ -43,7 +43,7 @@
 		<orientdb.version>1.4.1</orientdb.version>
 		<!-- deltaspike.version>0.4-incubating-SNAPSHOT</deltaspike.version -->
 		<!-- deltaspike.version>0.4-SNAPSHOT</deltaspike.version  -->
-		<deltaspike.version>0.4</deltaspike.version>
+		<deltaspike.version>0.5</deltaspike.version>
 		<vectomatic.svg.version>0.5.7</vectomatic.svg.version>
 		<vectomatic.file.version>0.3.3</vectomatic.file.version>
 		<apache.fileupload.version>1.2.2</apache.fileupload.version>
@@ -464,6 +464,16 @@
 				<artifactId>errai-common</artifactId>
 				<version>${version.org.jboss.errai}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.apache.deltaspike.modules</groupId>
+				<artifactId>deltaspike-servlet-module-api</artifactId>
+				<version>${deltaspike.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.deltaspike.modules</groupId>
+				<artifactId>deltaspike-servlet-module-impl</artifactId>
+				<version>${deltaspike.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -859,6 +869,14 @@
 		<dependency>
 			<groupId>org.jboss.errai</groupId>
 			<artifactId>errai-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.deltaspike.modules</groupId>
+			<artifactId>deltaspike-servlet-module-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.deltaspike.modules</groupId>
+			<artifactId>deltaspike-servlet-module-impl</artifactId>
 		</dependency>
 	</dependencies>
 

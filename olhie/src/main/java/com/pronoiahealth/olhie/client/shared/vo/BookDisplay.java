@@ -31,8 +31,8 @@ import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 public class BookDisplay {
 
 	private Book book;
-	private BookCategory bookCategory;
 	private BookCover bookCover;
+	private BookCategory bookCategory;
 	private String authorFullName;
 	private boolean bookLogo;
 	private boolean hasComments;
@@ -54,17 +54,16 @@ public class BookDisplay {
 	 * @param authorFullName
 	 * @param bookAssetDescriptions
 	 */
-	public BookDisplay(Book book, BookCategory bookCategory,
-			BookCover bookCover, String authorFullName,
+	public BookDisplay(Book book, BookCover bookCover, BookCategory bookCategory, String authorFullName,
 			List<Bookassetdescription> bookAssetDescriptions, int bookRating,
 			int userBookRating) {
-		this(book, bookCategory, bookCover, authorFullName,
-				bookAssetDescriptions, false, false, bookRating, userBookRating);
+		this(book, bookCover, bookCategory, authorFullName, bookAssetDescriptions, false,
+				false, bookRating, userBookRating);
 	}
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param book
 	 * @param bookCategory
 	 * @param bookCover
@@ -75,14 +74,13 @@ public class BookDisplay {
 	 * @param bookRating
 	 * @param userBookRating
 	 */
-	public BookDisplay(Book book, BookCategory bookCategory,
-			BookCover bookCover, String authorFullName,
+	public BookDisplay(Book book, BookCover bookCover, BookCategory bookCategory, String authorFullName,
 			List<Bookassetdescription> bookAssetDescriptions, boolean bookLogo,
 			boolean hasComments, int bookRating, int userBookRating) {
 		super();
 		this.book = book;
-		this.bookCategory = bookCategory;
 		this.bookCover = bookCover;
+		this.bookCategory = bookCategory;
 		this.authorFullName = authorFullName;
 		this.bookLogo = bookLogo;
 		this.hasComments = hasComments;
@@ -98,22 +96,6 @@ public class BookDisplay {
 
 	public void setBook(Book book) {
 		this.book = book;
-	}
-
-	public BookCategory getBookCategory() {
-		return bookCategory;
-	}
-
-	public void setBookCategory(BookCategory bookCategory) {
-		this.bookCategory = bookCategory;
-	}
-
-	public BookCover getBookCover() {
-		return bookCover;
-	}
-
-	public void setBookCover(BookCover bookCover) {
-		this.bookCover = bookCover;
 	}
 
 	public String getAuthorFullName() {
@@ -173,4 +155,19 @@ public class BookDisplay {
 		this.hasComments = hasComments;
 	}
 
+	public BookCover getBookCover() {
+		return bookCover;
+	}
+
+	public void setBookCover(BookCover bookCover) {
+		this.bookCover = bookCover;
+	}
+
+	public BookCategory getBookCategory() {
+		return bookCategory;
+	}
+
+	public void setBookCategory(BookCategory bookCategory) {
+		this.bookCategory = bookCategory;
+	}
 }

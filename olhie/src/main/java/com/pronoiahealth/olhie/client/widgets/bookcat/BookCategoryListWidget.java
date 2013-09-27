@@ -43,10 +43,10 @@ public class BookCategoryListWidget extends NavWidget {
 	 * 
 	 * @param category
 	 */
-	public BookCategoryListWidget(BookCategory category) {
+	public BookCategoryListWidget(BookCategory cat) {
 		super();
-		String name = category.getCatagory();
-		String color = category.getColor();
+		String name = cat.getCatagory();
+		String color = cat.getColor();
 		FlowPanel fp = new FlowPanel();
 		SimplePanel colorPanel = new SimplePanel();
 		colorPanel

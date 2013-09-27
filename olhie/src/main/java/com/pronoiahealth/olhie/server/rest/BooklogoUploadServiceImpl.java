@@ -33,8 +33,13 @@ import org.apache.commons.io.IOUtils;
 import com.lowagie.text.pdf.codec.Base64;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.exceptions.FileUploadException;
+import com.pronoiahealth.olhie.client.shared.vo.Book;
+import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
+import com.pronoiahealth.olhie.client.shared.vo.BookCover;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
+import com.pronoiahealth.olhie.server.services.BookCoverImageService;
+import com.pronoiahealth.olhie.server.services.TempThemeHolder;
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
 
 /**
@@ -57,6 +62,12 @@ public class BooklogoUploadServiceImpl implements BooklogoUploadService {
 	@Inject
 	@DAO
 	private BookDAO bookDAO;
+
+	@Inject
+	private TempThemeHolder holder;
+
+	@Inject
+	private BookCoverImageService imgService;
 
 	/**
 	 * Constructor
@@ -82,6 +93,7 @@ public class BooklogoUploadServiceImpl implements BooklogoUploadService {
 				String bookId = null;
 				String contentType = null;
 				String data = null;
+				byte[] bytes = null;
 				String fileName = null;
 				long size = 0;
 				ServletFileUpload fileUpload = new ServletFileUpload();
@@ -89,7 +101,6 @@ public class BooklogoUploadServiceImpl implements BooklogoUploadService {
 				FileItemIterator iter = fileUpload.getItemIterator(req);
 				while (iter.hasNext()) {
 					FileItemStream item = iter.next();
-					String name = item.getFieldName();
 					InputStream stream = item.openStream();
 					if (item.isFormField()) {
 						// BookId
@@ -104,15 +115,29 @@ public class BooklogoUploadServiceImpl implements BooklogoUploadService {
 							InputStream in = item.openStream();
 							ByteArrayOutputStream bos = new ByteArrayOutputStream();
 							IOUtils.copy(in, bos);
-							byte[] bytes = bos.toByteArray(); // fileItem.get();
+							bytes = bos.toByteArray(); // fileItem.get();
 							size = bytes.length;
 							data = Base64.encodeBytes(bytes);
 						}
 					}
 				}
-				
+
 				// Add the logo
-				bookDAO.addLogo(bookId, contentType, data, fileName, size);
+				Book book = bookDAO.getBookById(bookId);
+
+				// Update the front cover
+				BookCategory cat = holder.getCategoryByName(book.getCategory());
+				BookCover cover = holder.getCoverByName(book.getCoverName());
+				String authorName = bookDAO.getAuthorName(book.getAuthorId());
+				String frontBookCoverEncoded = imgService
+						.createDefaultFrontCoverEncoded(book, cat, cover,
+								bytes, authorName);
+
+				// Save it
+				// Add the logo
+				book = bookDAO.addLogoAndFrontCover(bookId, contentType, data,
+						fileName, size, frontBookCoverEncoded);
+
 			}
 			return "OK";
 		} catch (Exception e) {

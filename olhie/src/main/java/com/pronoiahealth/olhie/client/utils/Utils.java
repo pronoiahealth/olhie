@@ -10,7 +10,6 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.utils;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Random;
 
@@ -62,7 +61,7 @@ public class Utils {
 	}
 	
 	/**
-	 * Build a URI for file download
+	 * Build a URI for logo download
 	 * 
 	 * @param assetId
 	 * @param forDownload
@@ -71,6 +70,38 @@ public class Utils {
 	public static String buildRestServiceForLogoDownloadLink(String bookId) {
 		StringBuilder urlStr = new StringBuilder();
 		urlStr.append("rest/logo_download/logo/");
+		urlStr.append(Random.nextInt(100000));
+		urlStr.append("/");
+		urlStr.append(URL.encodeQueryString(bookId));
+		return urlStr.toString();
+	}
+	
+	/**
+	 * Build a URI for book front cover download
+	 * 
+	 * @param assetId
+	 * @param forDownload
+	 * @return
+	 */
+	public static String buildRestServiceForBookFrontCoverDownloadLink(String bookId) {
+		StringBuilder urlStr = new StringBuilder();
+		urlStr.append("rest/book_image_download/front/");
+		urlStr.append(Random.nextInt(100000));
+		urlStr.append("/");
+		urlStr.append(URL.encodeQueryString(bookId));
+		return urlStr.toString();
+	}
+	
+	/**
+	 * Build a URI for book back cover download
+	 * 
+	 * @param assetId
+	 * @param forDownload
+	 * @return
+	 */
+	public static String buildRestServiceForBookBackCoverDownloadLink(String bookId) {
+		StringBuilder urlStr = new StringBuilder();
+		urlStr.append("rest/book_image_download/back/");
 		urlStr.append(Random.nextInt(100000));
 		urlStr.append("/");
 		urlStr.append(URL.encodeQueryString(bookId));
