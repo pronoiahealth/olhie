@@ -23,6 +23,8 @@ import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.RemoveBookFromMyCollectionEvent;
+import com.pronoiahealth.olhie.client.shared.events.bookcase.RemoveBookFromMyCollectionEvent.REMOVE_RESPONSE_TYPE;
+import com.pronoiahealth.olhie.client.shared.events.bookcase.RemoveBookFromMyCollectionResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
@@ -50,6 +52,9 @@ public class RemoveBookFromMyCollectionService {
 
 	@Inject
 	private Event<BookFindResponseEvent> bookFindResponseEvent;
+
+	@Inject
+	private Event<RemoveBookFromMyCollectionResponseEvent> removeBookFromMyCollectionResponseEvent;
 
 	@Inject
 	private Event<ServiceErrorEvent> serviceErrorEvent;
@@ -80,26 +85,34 @@ public class RemoveBookFromMyCollectionService {
 			@Observes RemoveBookFromMyCollectionEvent removeBookFromMyCollectionEvent) {
 
 		try {
+			// Remove it
 			String userId = userToken.getUserId();
 			String bookId = removeBookFromMyCollectionEvent.getBookId();
+			bookDAO.removeBookFromMyCollection(userId, bookId);
 
-			// Return a BookFindResponseEvent
-			// Get the book display
-			BookDisplay bookDisplay = bookDAO.getBookDisplayById(bookId,
-					userId, holder, true);
+			if (removeBookFromMyCollectionEvent.getResponseType() == REMOVE_RESPONSE_TYPE.FIND_REMOVE_RESPONSE) {
+				// Return a BookFindResponseEvent
+				// Get the book display
+				BookDisplay bookDisplay = bookDAO.getBookDisplayById(bookId,
+						userId, holder, true);
 
-			// Get the user relations
-			Set<UserBookRelationshipEnum> rels = bookDAO
-					.getActiveBookRealtionshipForUser(userId,
-							userToken.getLoggedIn(), bookId);
+				// Get the user relations
+				Set<UserBookRelationshipEnum> rels = bookDAO
+						.getActiveBookRealtionshipForUser(userId,
+								userToken.getLoggedIn(), bookId);
 
-			// Is the user asking for the book the author or co-author
-			boolean authorSelected = bookDAO.isAuthorSelected(userId, bookId, rels);
+				// Is the user asking for the book the author or co-author
+				boolean authorSelected = bookDAO.isAuthorSelected(userId,
+						bookId, rels);
 
-			// Fire the event
-			bookFindResponseEvent.fire(new BookFindResponseEvent(bookDisplay,
-					rels, authorSelected));
-
+				// Fire the event
+				bookFindResponseEvent.fire(new BookFindResponseEvent(
+						bookDisplay, rels, authorSelected));
+			} else {
+				removeBookFromMyCollectionResponseEvent
+						.fire(new RemoveBookFromMyCollectionResponseEvent(
+								bookId));
+			}
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);

@@ -26,6 +26,7 @@ import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
  * 
  */
 public class SideBarNavWidget extends ListItemWidget {
+	private String navName;
 	private String navToPageName;
 	private Hyperlink link;
 	private Element iTag;
@@ -74,6 +75,7 @@ public class SideBarNavWidget extends ListItemWidget {
 			String iconName, String navName, SecurityRoleEnum securityRole) {
 		super();
 		this.navToPageName = navToPageName;
+		this.navName = navName;
 		link = new Hyperlink(aName, aRef);
 		add(link);
 		iTag = DOM.createElement("i");
@@ -99,6 +101,13 @@ public class SideBarNavWidget extends ListItemWidget {
 	 */
 	public String getNavToPageName() {
 		return navToPageName;
+	}
+	
+	/**
+	 * @return name on widget
+	 */
+	public String getNavName() {
+		return this.navName;
 	}
 
 	public HandlerRegistration getClickHandlerReg() {

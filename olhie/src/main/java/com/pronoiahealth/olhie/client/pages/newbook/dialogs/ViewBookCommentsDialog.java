@@ -122,5 +122,4 @@ public class ViewBookCommentsDialog extends Composite {
 	public void closeDialog(ClickEvent event) {
 		viewCommentModal.hide();
 	}
-
 }

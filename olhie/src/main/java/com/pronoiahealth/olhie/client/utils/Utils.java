@@ -52,7 +52,7 @@ public class Utils {
 			String viewType) {
 		StringBuilder urlStr = new StringBuilder();
 		urlStr.append("rest/book_download/book/");
-		urlStr.append(Random.nextInt(100000));
+		urlStr.append(getRandom());
 		urlStr.append("/");
 		urlStr.append(URL.encodeQueryString(assetId));
 		urlStr.append("/");
@@ -70,7 +70,7 @@ public class Utils {
 	public static String buildRestServiceForLogoDownloadLink(String bookId) {
 		StringBuilder urlStr = new StringBuilder();
 		urlStr.append("rest/logo_download/logo/");
-		urlStr.append(Random.nextInt(100000));
+		urlStr.append(getRandom());
 		urlStr.append("/");
 		urlStr.append(URL.encodeQueryString(bookId));
 		return urlStr.toString();
@@ -86,7 +86,7 @@ public class Utils {
 	public static String buildRestServiceForBookFrontCoverDownloadLink(String bookId) {
 		StringBuilder urlStr = new StringBuilder();
 		urlStr.append("rest/book_image_download/front/");
-		urlStr.append(Random.nextInt(100000));
+		urlStr.append(getRandom());
 		urlStr.append("/");
 		urlStr.append(URL.encodeQueryString(bookId));
 		return urlStr.toString();
@@ -102,9 +102,18 @@ public class Utils {
 	public static String buildRestServiceForBookBackCoverDownloadLink(String bookId) {
 		StringBuilder urlStr = new StringBuilder();
 		urlStr.append("rest/book_image_download/back/");
-		urlStr.append(Random.nextInt(100000));
+		urlStr.append(getRandom());
 		urlStr.append("/");
 		urlStr.append(URL.encodeQueryString(bookId));
 		return urlStr.toString();
+	}
+	
+	/**
+	 * Gets a random integer
+	 * 
+	 * @return
+	 */
+	public static String getRandom() {
+		return "" + Random.nextInt(100000);
 	}
 }

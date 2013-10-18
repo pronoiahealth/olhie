@@ -14,6 +14,7 @@ import static com.google.gwt.query.client.GQuery.$;
 
 import java.util.List;
 
+import com.google.gwt.dom.client.AnchorElement;
 import com.google.gwt.dom.client.ButtonElement;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
@@ -150,22 +151,76 @@ public class BookList3D_2 extends Widget {
 		DivElement bookPages = doc.createDivElement();
 		bookDiv.appendChild(bookPages);
 		bookPages.addClassName("bk-page");
-		boolean bookCurrentPageSet = false;
+		// boolean bookCurrentPageSet = false;
 		List<Bookassetdescription> descs = bookDisplay
 				.getBookAssetDescriptions();
+
+		// Create a TOC and make it the current page
+		DivElement bookContentkTOCDiv = doc.createDivElement();
+		bookPages.appendChild(bookContentkTOCDiv);
+		bookContentkTOCDiv.setClassName("bk-content bk-content-current bk-toc");
+		DivElement bookContentTOCTitleDiv = doc.createDivElement();
+		bookContentkTOCDiv.appendChild(bookContentTOCTitleDiv);
+		bookContentTOCTitleDiv.setAttribute("style", "text-align: center;");
+		bookContentTOCTitleDiv
+				.setInnerHTML("<span style='text-decoration: underline; font-weight: bold;'>TOC</span>");
+
+		// Create the pages
 		if (descs != null && descs.size() > 0) {
+			int counter = 0;
 			for (Bookassetdescription desc : descs) {
 				DivElement bookContentkDiv = doc.createDivElement();
 				bookPages.appendChild(bookContentkDiv);
-				if (bookCurrentPageSet == false) {
-					bookContentkDiv
-							.setClassName("bk-content bk-content-current");
-				} else {
-					bookContentkDiv.setClassName("bk-content");
-				}
+				bookContentkDiv.setClassName("bk-content");
+
+				// Add to the Page
+				String descStr = desc.getDescription();
 				ParagraphElement pageContentElem = doc.createPElement();
 				bookContentkDiv.appendChild(pageContentElem);
-				pageContentElem.setInnerText(desc.getDescription());
+				pageContentElem.setInnerText(descStr);
+
+				// Add buttons to page
+				// Depends on bootstrap css being available, example:
+				// <div class="btn-group">
+				// <a id="gwt-uid-97" class="btn btn-mini btn-info"
+				// href="javascript:;" bookassetid="#11:6"
+				// data-original-title="Download" title="">
+				// <i class="icon-cloud-download"></i>
+				// </a>
+				// <a id="gwt-uid-98" class="btn btn-mini btn-success"
+				// href="javascript:;" bookassetid="#11:6" viewtype="HTML"
+				// data-original-title="View item." title="">
+				// <i class="icon-eye-open"></i>
+				// </a>
+				// </div>
+				ParagraphElement pageButtonContainerElem = doc.createPElement();
+				bookContentkDiv.appendChild(pageButtonContainerElem);
+				DivElement buttonBarDiv = doc.createDivElement();
+				pageButtonContainerElem.appendChild(buttonBarDiv);
+				buttonBarDiv.setClassName("btn-group");
+
+				// Downlaod button
+				AnchorElement downLoadAnchorElem = doc.createAnchorElement();
+				buttonBarDiv.appendChild(downLoadAnchorElem);
+				downLoadAnchorElem.setClassName("btn btn-mini btn-info");
+				downLoadAnchorElem.setHref("javascript:;");
+				downLoadAnchorElem.setAttribute("bookassetid", desc.getId());
+				downLoadAnchorElem.setAttribute("data-original-title",
+						"Download");
+				downLoadAnchorElem.setAttribute("title", "");
+				downLoadAnchorElem.setAttribute("rel", "tooltip");
+				Element iconElem = doc.createElement("i");
+				downLoadAnchorElem.appendChild(iconElem);
+				iconElem.setClassName("icon-cloud-download");
+
+				// Add to TOC
+				DivElement bookContentTOCItemDiv = doc.createDivElement();
+				bookContentkTOCDiv.appendChild(bookContentTOCItemDiv);
+				bookContentTOCItemDiv.setClassName("bk-toc-item");
+				String currentRef = "" + (counter + 1);
+				bookContentTOCItemDiv.setAttribute("item-ref", currentRef);
+				bookContentTOCItemDiv.setInnerText("" + ++counter + ". "
+						+ descStr);
 			}
 		}
 
@@ -269,16 +324,13 @@ public class BookList3D_2 extends Widget {
 				final GQuery book = $(e);
 				final GQuery other = books.not(book);
 				final GQuery parent = book.parent();
-				// final GQuery ratings =
-				// parent.children("div.bk-info").find(
-				// "input.star");
 				final GQuery page = book.children("div.bk-page");
 				final GQuery bookview = parent.find("button.bk-bookview");
 				final GQuery flipAction = parent.find("button.bk-bookback");
 				final GQuery content = page.children("div.bk-content");
+				final GQuery tocItems = content
+						.children(".bk-toc .bk-toc-item");
 				final IntHolder current = new IntHolder();
-
-				// ratings.as(Ratings).rate();
 
 				// Bind the call back
 				book.bind(Event.ONCLICK, new Function() {
@@ -290,7 +342,6 @@ public class BookList3D_2 extends Widget {
 					}
 				});
 
-				// GQuery flipAction = parent.find("button.bk-bookback");
 				flipAction.bind(Event.ONCLICK, new Function() {
 					@Override
 					public boolean f(Event e) {
@@ -400,6 +451,30 @@ public class BookList3D_2 extends Widget {
 							return false;
 						}
 					});
+
+					// TOC items
+					tocItems.each(new Function() {
+						@Override
+						public void f(Element e) {
+							GQuery item = $(e);
+							item.bind(Event.ONCLICK, new Function() {
+								@Override
+								public boolean f(Event e) {
+									GQuery thisItem = $(e);
+									String refStr = thisItem.attr("item-ref");
+									int refInt = Integer.parseInt(refStr);
+									if (refInt <= content.length() - 1) {
+										current.setIntVal(refInt);
+										content.removeClass(
+												"bk-content-current")
+												.eq(current.getIntVal())
+												.addClass("bk-content-current");
+									}
+									return false;
+								}
+							});
+						}
+					});
 				}
 			}
 		});
@@ -419,6 +494,8 @@ public class BookList3D_2 extends Widget {
 				final GQuery bookview = parent.find("button.bk-bookview");
 				final GQuery flipAction = parent.find("button.bk-bookback");
 				final GQuery content = page.children("div.bk-content");
+				final GQuery tocItems = content
+						.children(".bk-toc .bk-toc-item");
 
 				book.unbind(Event.ONCLICK);
 				flipAction.unbind(Event.ONCLICK);
@@ -435,6 +512,9 @@ public class BookList3D_2 extends Widget {
 						navNext.unbind(Event.ONCLICK);
 						navNext.remove();
 					}
+
+					// Unbind TOC items
+					tocItems.each().unbind(Event.ONCLICK);
 				}
 			}
 		});
@@ -449,5 +529,32 @@ public class BookList3D_2 extends Widget {
 			// Did it the first time mark it as done
 			this.hasBeenAttached = true;
 		}
+		
+		// Use jQuery for the tooltip buttons
+		setUpToolTipsForButtons();
 	}
+
+	@Override
+	protected void onDetach() {
+		super.onDetach();
+		
+		// Remove tool tips
+		removeToolTipsForButtons();
+		removeEventsFromLst();
+	}
+
+	/**
+	 * Set tooltips for item buttons
+	 */
+	private native void setUpToolTipsForButtons() /*-{
+		$wnd.jQuery("[rel=tooltip]").tooltip();
+	}-*/;
+
+	/**
+	 * Remove tooltips
+	 */
+	private native void removeToolTipsForButtons() /*-{
+		$wnd.jQuery("[rel=tooltip]").tooltip("destroy");
+	}-*/;
+
 }

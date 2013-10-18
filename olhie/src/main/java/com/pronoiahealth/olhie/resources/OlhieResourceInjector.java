@@ -71,6 +71,7 @@ public class OlhieResourceInjector {
 		OlhieResources.INSTANCE.bookcommentdisplaycss().ensureInjected();
 		OlhieResources.INSTANCE.bookscrollercss().ensureInjected();
 		OlhieResources.INSTANCE.glasspanelspinnercss().ensureInjected();
+		OlhieResources.INSTANCE.carouselsliderwidgetcss().ensureInjected();
 		//OlhieResources.INSTANCE.customiconscss().ensureInjected();
 		/*injectResourceCssAsFile("gwt_overrides.css");*/
 	}

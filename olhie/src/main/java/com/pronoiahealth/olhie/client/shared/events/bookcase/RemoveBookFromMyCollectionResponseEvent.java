@@ -14,32 +14,29 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
 /**
- * RemoveBookFromMyCollectionEvent.java<br/>
+ * RemoveBookFromMyCollectionResponseEvent.java<br/>
  * Responsibilities:<br/>
  * 1.
  *
- * <p>
- * Fired From: NewBookPage<br/>
- * Observed By: RemoveBookFromMyCollectionService<br/>
+ *<p>
+ * Fired From: RemoveBookFromMyCollectionService<br/>
+ * Observed By: Book3d_3<br/>
  * </p>
- * 
  * @author John DeStefano
  * @version 1.0
- * @since Jun 30, 2013
+ * @since Oct 17, 2013
  *
  */
 @Portable
 @Conversational
-public class RemoveBookFromMyCollectionEvent {
-	public enum REMOVE_RESPONSE_TYPE {FIND_REMOVE_RESPONSE, REMOVE_RESPONSE};
+public class RemoveBookFromMyCollectionResponseEvent {
 	private String bookId;
-	private REMOVE_RESPONSE_TYPE responseType;
 
 	/**
 	 * Constructor
 	 *
 	 */
-	public RemoveBookFromMyCollectionEvent() {
+	public RemoveBookFromMyCollectionResponseEvent() {
 	}
 
 	/**
@@ -47,10 +44,9 @@ public class RemoveBookFromMyCollectionEvent {
 	 *
 	 * @param bookId
 	 */
-	public RemoveBookFromMyCollectionEvent(String bookId, REMOVE_RESPONSE_TYPE responseType) {
+	public RemoveBookFromMyCollectionResponseEvent(String bookId) {
 		super();
 		this.bookId = bookId;
-		this.responseType = responseType;
 	}
 
 	public String getBookId() {
@@ -59,13 +55,5 @@ public class RemoveBookFromMyCollectionEvent {
 
 	public void setBookId(String bookId) {
 		this.bookId = bookId;
-	}
-
-	public REMOVE_RESPONSE_TYPE getResponseType() {
-		return responseType;
-	}
-
-	public void setResponseType(REMOVE_RESPONSE_TYPE responseType) {
-		this.responseType = responseType;
 	}
 }

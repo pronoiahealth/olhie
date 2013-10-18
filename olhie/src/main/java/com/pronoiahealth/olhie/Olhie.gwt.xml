@@ -42,6 +42,7 @@
 	<inherits name='gwtquery.plugins.draggable.Draggable' />
 	<inherits name='gwtquery.plugins.droppable.Droppable' />
 	<inherits name='com.watopi.chosen.Chosen' />
+	<inherits name='com.arcbees.gquery.tooltip.Tooltip'/>
 
 	<!-- Inherit the gwt-recaptcha module -->
 	<inherits name="com.claudiushauptmann.gwt.recaptcha.gwt-recaptcha" />

@@ -22,8 +22,10 @@ import javax.inject.Inject;
 
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
-import com.pronoiahealth.olhie.client.shared.events.book.AddBookToMyCollectionEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.bookcase.AddBookToMyCollectionEvent;
+import com.pronoiahealth.olhie.client.shared.events.bookcase.AddBookToMyCollectionEvent.ADD_RESPONSE_TYPE;
+import com.pronoiahealth.olhie.client.shared.events.bookcase.AddBookToMyCollectionResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
@@ -59,6 +61,9 @@ public class AddBookToMyCollectionService {
 
 	@Inject
 	private Event<BookFindResponseEvent> bookFindResponseEvent;
+
+	@Inject
+	private Event<AddBookToMyCollectionResponseEvent> addBookToMyCollectionResponseEvent;
 
 	@Inject
 	private Event<ServiceErrorEvent> serviceErrorEvent;
@@ -122,23 +127,28 @@ public class AddBookToMyCollectionService {
 							userId, now, now);
 				}
 
-				// Return a BookFindResponseEvent
-				// Get the book display
-				BookDisplay bookDisplay = bookDAO.getBookDisplayByBook(book,
-						userId, holder, true);
+				if (addBookToMyCollectionEvent.getResponseType() == ADD_RESPONSE_TYPE.FIND_ADD_RESPONSE) {
+					// Return a BookFindResponseEvent
+					// Get the book display
+					BookDisplay bookDisplay = bookDAO.getBookDisplayByBook(
+							book, userId, holder, true);
 
-				// Get the user relations
-				Set<UserBookRelationshipEnum> rels = bookDAO
-						.getActiveBookRealtionshipForUser(userId,
-								userToken.getLoggedIn(), bookId);
+					// Get the user relations
+					Set<UserBookRelationshipEnum> rels = bookDAO
+							.getActiveBookRealtionshipForUser(userId,
+									userToken.getLoggedIn(), bookId);
 
-				// Is the user asking for the book the author or co-author
-				boolean authorSelected = bookDAO.isAuthorSelected(userId,
-						bookId, rels);
+					// Is the user asking for the book the author or co-author
+					boolean authorSelected = bookDAO.isAuthorSelected(userId,
+							bookId, rels);
 
-				// Fire the event
-				bookFindResponseEvent.fire(new BookFindResponseEvent(
-						bookDisplay, rels, authorSelected));
+					// Fire the event
+					bookFindResponseEvent.fire(new BookFindResponseEvent(
+							bookDisplay, rels, authorSelected));
+				} else {
+					addBookToMyCollectionResponseEvent
+							.fire(new AddBookToMyCollectionResponseEvent(bookId));
+				}
 			} else {
 				serviceErrorEvent
 						.fire(new ServiceErrorEvent(

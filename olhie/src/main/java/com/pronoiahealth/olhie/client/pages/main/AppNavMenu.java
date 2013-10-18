@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.pages.main;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
@@ -73,13 +74,13 @@ public class AppNavMenu extends UnorderedListWidget {
 
 		// Create desktop screen and search
 		clear();
-		
+
 		// Bulletin board
 		SideBarNavWidget navWidget = new SideBarNavWidget(
 				NavEnum.BulletinboardPage.toString(), "", "", "icon-calendar",
 				"Bulletin Board");
 		addSideBarNavWidget(navWidget);
-		
+
 		// Search screen
 		navWidget = new SideBarNavWidget(NavEnum.SearchPage.toString(), "", "",
 				"icon-search", "Find a Book");
@@ -104,10 +105,13 @@ public class AppNavMenu extends UnorderedListWidget {
 				case AUTHOR:
 
 				case REGISTERED:
-					SideBarNavWidget navWidget = new SideBarNavWidget(
-							NavEnum.BookCasePage.toString(), "", "",
-							"icon-book", "Book Case", SecurityRoleEnum.REGISTERED);
-					addSideBarNavWidget(navWidget);
+					if (!isInList("Book Case")) {
+						SideBarNavWidget navWidget = new SideBarNavWidget(
+								NavEnum.BookCasePage.toString(), "", "",
+								"icon-book", "Book Case",
+								SecurityRoleEnum.REGISTERED);
+						addSideBarNavWidget(navWidget);
+					}
 					break;
 				}
 			}
@@ -143,16 +147,22 @@ public class AppNavMenu extends UnorderedListWidget {
 		sWidget.setClickHandlerReg(handler);
 		sWidgetLst.add(sWidget);
 	}
-	
+
 	/**
-	 * Removes nav widgets that are not of securityRole type anonymous
+	 * Removes nav widgets that are not of securityRole type anonymous. Need to
+	 * use an iterator to safely remove the item from the sWidgetLst while
+	 * iterating. Don't use a standard for loop unless use use for and iterator
+	 * together.
 	 */
 	private void removeAllButAnonymousItems() {
-		for (SideBarNavWidget w : sWidgetLst) {
+		Iterator<SideBarNavWidget> iter = sWidgetLst.iterator();
+		while (iter.hasNext()) {
+			SideBarNavWidget w = iter.next();
 			if (w.getSecurityRole() != SecurityRoleEnum.ANONYMOUS) {
 				HandlerRegistration reg = w.getClickHandlerReg();
 				reg.removeHandler();
-				this.removeSideBarNavWidget(w);
+				removeSideBarNavWidget(w);
+				iter.remove();
 			}
 		}
 	}
@@ -189,8 +199,7 @@ public class AppNavMenu extends UnorderedListWidget {
 	 * 
 	 * @param event
 	 */
-	public void observesSyncPageToMenuEvent(
-			@Observes SyncPageToMenuEvent event) {
+	public void observesSyncPageToMenuEvent(@Observes SyncPageToMenuEvent event) {
 		currentPage = event.getPageName();
 
 		SideBarNavWidget cWidget = this
@@ -254,6 +263,22 @@ public class AppNavMenu extends UnorderedListWidget {
 		for (SideBarNavWidget sWidget : sWidgetLst) {
 			sWidget.setCurrent(false);
 		}
+	}
+
+	/**
+	 * Check the list by navName to see if this widget (with name) is already
+	 * displayed
+	 * 
+	 * @param navName
+	 * @return
+	 */
+	private boolean isInList(String navName) {
+		for (SideBarNavWidget w : sWidgetLst) {
+			if (w.getNavName().equals(navName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

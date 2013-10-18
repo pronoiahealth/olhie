@@ -19,6 +19,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 import com.pronoiahealth.olhie.client.pages.AbstractPage;
+import com.pronoiahealth.olhie.client.pages.bulletinboard.widgets.CarouselSliderWidget;
 import com.pronoiahealth.olhie.client.pages.bulletinboard.widgets.CurrentStatusWidget;
 import com.pronoiahealth.olhie.client.widgets.FlowPanelWithSpacer;
 
@@ -41,10 +42,13 @@ public class BulletinboardPage extends AbstractPage {
 
 	@DataField
 	private FlowPanelWithSpacer col2 = new FlowPanelWithSpacer();
-	
+
 	@Inject
 	private CurrentStatusWidget statusWidget;
 
+	@Inject
+	private CarouselSliderWidget carouselWidget;
+	
 	public BulletinboardPage() {
 	}
 
@@ -54,11 +58,17 @@ public class BulletinboardPage extends AbstractPage {
 	@PostConstruct
 	private void postConstruct() {
 		col1.add(statusWidget);
+		col2.add(carouselWidget);
 	}
 
 	@Override
 	protected void onLoad() {
 		super.onLoad();
 		setPageBackgroundClass("ph-BulletinBoard-Background");
+	}
+
+	@Override
+	protected void onUnload() {
+		super.onUnload();
 	}
 }

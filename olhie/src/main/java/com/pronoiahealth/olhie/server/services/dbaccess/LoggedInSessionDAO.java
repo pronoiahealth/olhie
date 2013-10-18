@@ -28,7 +28,7 @@ import com.pronoiahealth.olhie.client.shared.vo.Offer;
  * @since Sep 13, 2013
  * 
  */
-public interface LoggedInSessionDAO {
+public interface LoggedInSessionDAO extends BaseDAO {
 
 	/**
 	 * Adds a new session to the database. This would happen on login.

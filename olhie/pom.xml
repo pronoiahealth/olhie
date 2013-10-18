@@ -35,7 +35,7 @@
 
 		<!-- version.org.jboss.errai>3.0-SNAPSHOT</version.org.jboss.errai -->
 		<!-- version.org.jboss.errai>2.4.1-SNAPSHOT</version.org.jboss.errai -->
-		<version.org.jboss.errai>2.4.0.Final</version.org.jboss.errai>
+		<version.org.jboss.errai>2.4.1.Final</version.org.jboss.errai>
 		<version.com.google.gwt>2.5.1</version.com.google.gwt>
 		<version.org.codehaus.mojo.gwt.maven.plugin>${version.com.google.gwt}</version.org.codehaus.mojo.gwt.maven.plugin>
 		<resteasy.version>2.3.2.Final</resteasy.version>
@@ -58,6 +58,7 @@
 		<version.gwtquery.chosen>1.1.0</version.gwtquery.chosen>
 		<version.gwt.log>3.2.1</version.gwt.log>
 		<apache.commons.imaging>1.1-SNAPSHOT</apache.commons.imaging>
+		<version.tooltip>1.1-SNAPSHOT</version.tooltip>
 	</properties>
 
 	<repositories>
@@ -474,6 +475,11 @@
 				<artifactId>deltaspike-servlet-module-impl</artifactId>
 				<version>${deltaspike.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.arcbees.gquery</groupId>
+				<artifactId>tooltip</artifactId>
+				<version>${version.tooltip}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -877,6 +883,10 @@
 		<dependency>
 			<groupId>org.apache.deltaspike.modules</groupId>
 			<artifactId>deltaspike-servlet-module-impl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.arcbees.gquery</groupId>
+			<artifactId>tooltip</artifactId>
 		</dependency>
 	</dependencies>
 

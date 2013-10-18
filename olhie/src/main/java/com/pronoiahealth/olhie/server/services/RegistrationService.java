@@ -82,8 +82,8 @@ public class RegistrationService {
 
 		try {
 			// See if user id is already in use
-			User user = userDAO.getUserByUserId(userId);
-			if (user != null) {
+			boolean idInUser = userDAO.checkUserByUserId(userId);
+			if (idInUser == true) {
 				// Already used
 				log.log(Level.SEVERE, "UserId " + userId
 						+ " is already in use.");

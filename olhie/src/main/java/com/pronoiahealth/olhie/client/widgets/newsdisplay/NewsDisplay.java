@@ -30,7 +30,6 @@ import com.google.gwt.dom.client.LIElement;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.query.client.Function;
-import com.google.gwt.query.client.GQuery;
 import com.google.gwt.query.client.Properties;
 import com.google.gwt.query.client.plugins.Effects;
 import com.google.gwt.user.client.Timer;

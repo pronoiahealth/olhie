@@ -79,8 +79,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public BookDisplay getBookDisplayByBook(Book book, String userId,
-			TempThemeHolder holder, boolean returnNonProxyed)
-			throws Exception {
+			TempThemeHolder holder, boolean returnNonProxyed) throws Exception {
 
 		// Proxied or un-Proxied instance
 		// Remember if proxyed then you must call the get method to access the
@@ -200,6 +199,14 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		boolean hasComments = bookHasComments(bookId);
 		bookDisplay.setHasComments(hasComments);
 
+		// Current requestors relationships with this book
+		if (user != null) {
+			bookDisplay.setRelEnums(getUserBookRelationshipByUserIdBookId(
+					bookId, userId, true));
+		} else {
+			bookDisplay.setRelEnums(new TreeSet<UserBookRelationshipEnum>());
+		}
+
 		// Return the display
 		return bookDisplay;
 	}
@@ -216,8 +223,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public BookDisplay getBookDisplayById(String bookId, String userId,
-			TempThemeHolder holder, boolean returnNonProxyed)
-			throws Exception {
+			TempThemeHolder holder, boolean returnNonProxyed) throws Exception {
 		// Find Book
 		Book book = ooDbTx.detach(getBookById(bookId), true);
 

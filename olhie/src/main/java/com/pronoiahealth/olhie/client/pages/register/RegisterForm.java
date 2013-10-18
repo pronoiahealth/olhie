@@ -250,5 +250,5 @@ public class RegisterForm extends Composite {
 	
 	public void setFocusOnFirstName() {
 		firstName.setFocus(true);
-	}
+	}	
 }

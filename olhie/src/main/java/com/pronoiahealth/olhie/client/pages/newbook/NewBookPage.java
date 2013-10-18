@@ -55,7 +55,6 @@ import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.constants.BookAssetDataType;
 import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
-import com.pronoiahealth.olhie.client.shared.events.book.AddBookToMyCollectionEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedEvent;
@@ -63,7 +62,10 @@ import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedRes
 import com.pronoiahealth.olhie.client.shared.events.book.NewStarRatingEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.RemoveBookassetdescriptionEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.RemoveBookassetdescriptionResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.bookcase.AddBookToMyCollectionEvent;
+import com.pronoiahealth.olhie.client.shared.events.bookcase.AddBookToMyCollectionEvent.ADD_RESPONSE_TYPE;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.RemoveBookFromMyCollectionEvent;
+import com.pronoiahealth.olhie.client.shared.events.bookcase.RemoveBookFromMyCollectionEvent.REMOVE_RESPONSE_TYPE;
 import com.pronoiahealth.olhie.client.shared.events.local.BookContentUpdatedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.DownloadBookAssetEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent;
@@ -903,7 +905,7 @@ public class NewBookPage extends AbstractPage {
 	public void addToCollectionBookButtonClicked(ClickEvent event) {
 		if (pageState == NewBookPageStateEnum.LOGGED_IN_NOT_IN_MY_COLLECTION_STATE) {
 			addBookToMyCollectionEvent.fire(new AddBookToMyCollectionEvent(
-					this.currentBookDisplay.getBook().getId()));
+					this.currentBookDisplay.getBook().getId(), ADD_RESPONSE_TYPE.FIND_ADD_RESPONSE));
 		}
 	}
 
@@ -917,7 +919,7 @@ public class NewBookPage extends AbstractPage {
 		if (pageState == NewBookPageStateEnum.LOGGED_IN_MY_COLLECTION_STATE) {
 			this.removeBookFromMyCollectionEvent
 					.fire(new RemoveBookFromMyCollectionEvent(
-							currentBookDisplay.getBook().getId()));
+							currentBookDisplay.getBook().getId(), REMOVE_RESPONSE_TYPE.FIND_REMOVE_RESPONSE));
 		}
 	}
 

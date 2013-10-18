@@ -36,6 +36,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.imaging.ImageFormat;
 import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.palette.PaletteFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.deltaspike.servlet.api.Web;
 
@@ -43,6 +44,7 @@ import com.lowagie.text.pdf.codec.Base64;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
 import com.pronoiahealth.olhie.client.shared.vo.BookCover;
+import com.pronoiahealth.olhie.server.utils.ImageUtils;
 
 /**
  * BookCoverImageService.java<br/>
@@ -78,6 +80,7 @@ public class BookCoverImageService {
 	private Hashtable<TextAttribute, Object> authorFontMap;
 	private Hashtable<TextAttribute, Object> titleFontMap;
 	private Hashtable<TextAttribute, Object> backTitleFontMap;
+	private PaletteFactory palFac;
 
 	/**
 	 * Constructor
@@ -132,6 +135,9 @@ public class BookCoverImageService {
 			backTitleFontMap.put(TextAttribute.UNDERLINE,
 					TextAttribute.UNDERLINE_LOW_ONE_PIXEL);
 
+			// Build palette factory
+			palFac = new PaletteFactory();
+
 		} catch (Exception e) {
 			log.log(Level.SEVERE,
 					"Error occured during BookCoverImageService initialization.",
@@ -156,8 +162,8 @@ public class BookCoverImageService {
 	public Map<Cover, String> createBookCovers(String coverId,
 			byte[] logoBytes, String authorStr, String titleStr,
 			String spineColor, String authorTextColor, String titleTextColor,
-			int width, int height, int type, ImageFormat imgFormat)
-			throws Exception {
+			int width, int height, int type, ImageFormat imgFormat,
+			int maxColors) throws Exception {
 		// Create the return make
 		Map<Cover, String> retMap = new HashMap<Cover, String>();
 
@@ -166,13 +172,13 @@ public class BookCoverImageService {
 				Cover.FRONT,
 				createFrontCoverEncoded(coverId, logoBytes, authorStr,
 						titleStr, spineColor, authorTextColor, titleTextColor,
-						width, height, type, imgFormat));
+						width, height, type, imgFormat, maxColors));
 
 		// Back cover
 		retMap.put(
 				Cover.BACK,
-				createBackCoverEncoded(coverId, titleStr, titleTextColor,
-						width, height, type, imgFormat));
+				createBackCoverEncoded(coverId, titleStr, spineColor, titleTextColor,
+						width, height, type, imgFormat, maxColors));
 
 		// Return the map with the front and back cover
 		return retMap;
@@ -200,7 +206,7 @@ public class BookCoverImageService {
 						authorName));
 
 		// Back cover
-		retMap.put(Cover.BACK, createDefaultBackCoverEncoded(book, cover));
+		retMap.put(Cover.BACK, createDefaultBackCoverEncoded(book, cover, category));
 
 		// Return the map with the front and back cover
 		return retMap;
@@ -227,7 +233,8 @@ public class BookCoverImageService {
 	public byte[] createFrontCover(String coverId, byte[] logoBytes,
 			String authorStr, String titleStr, String spineColor,
 			String authorTextColor, String titleTextColor, int width,
-			int height, int type, ImageFormat imgFormat) throws Exception {
+			int height, int type, ImageFormat imgFormat, int maxColors)
+			throws Exception {
 
 		Graphics2D g = null;
 
@@ -290,6 +297,11 @@ public class BookCoverImageService {
 				outImg = frontCoverImg;
 			}
 
+			// Do we want a PNG with a fixed number of colors
+			if (maxColors >= 2 && imgFormat == ImageFormat.IMAGE_FORMAT_PNG) {
+				outImg = ImageUtils.reduce32(outImg, maxColors);
+			}
+
 			// Return bytes
 			Map<String, Object> params = new HashMap<String, Object>();
 			byte[] outBytes = Imaging.writeImageToBytes(outImg, imgFormat,
@@ -323,11 +335,12 @@ public class BookCoverImageService {
 	public String createFrontCoverEncoded(String coverId, byte[] logoBytes,
 			String authorStr, String titleStr, String spineColor,
 			String authorTextColor, String titleTextColor, int width,
-			int height, int type, ImageFormat imgFormat) throws Exception {
+			int height, int type, ImageFormat imgFormat, int maxColors)
+			throws Exception {
 
 		return Base64.encodeBytes(createFrontCover(coverId, logoBytes,
 				authorStr, titleStr, spineColor, authorTextColor,
-				titleTextColor, width, height, type, imgFormat));
+				titleTextColor, width, height, type, imgFormat, maxColors));
 	}
 
 	/**
@@ -347,7 +360,7 @@ public class BookCoverImageService {
 				book.getBookTitle(), category.getColor(),
 				cover.getAuthorTextColor(), cover.getCoverTitleTextColor(),
 				300, 400, BufferedImage.TYPE_INT_ARGB,
-				ImageFormat.IMAGE_FORMAT_PNG);
+				ImageFormat.IMAGE_FORMAT_PNG, 128);
 	}
 
 	/**
@@ -360,14 +373,17 @@ public class BookCoverImageService {
 	 * @param height
 	 * @param type
 	 * @param imgFormat
+	 * @param macColors
+	 *            - for PNG images reduce the color palette (must be greater
+	 *            than 2)
 	 * @return
 	 * @throws Exception
 	 */
-	public byte[] createBackCover(String coverId, String titleStr,
+	public byte[] createBackCover(String coverId, String titleStr, String spineColor,
 			String textColor, int width, int height, int type,
-			ImageFormat imgFormat) throws Exception {
+			ImageFormat imgFormat, int maxColors) throws Exception {
 
-		Graphics2D g = null;
+		Graphics2D g2D = null;
 
 		try {
 			// Front cover first
@@ -377,13 +393,19 @@ public class BookCoverImageService {
 
 			// Resize cover image to the basic 300 X 400 for front cover
 			BufferedImage backCoverImg = resize(coverImg, 300, 400, type);
-			g = (Graphics2D) backCoverImg.getGraphics();
+			g2D = (Graphics2D) backCoverImg.getGraphics();
 
 			// Add title if present
 			if (titleStr != null && titleStr.length() > 0) {
 				BufferedImage titleTextImg = createText(82, 220, titleStr,
 						textColor, true, backTitleFontMap, type);
-				g.drawImage(titleTextImg, 40, 35, null);
+				g2D.drawImage(titleTextImg, 40, 35, null);
+			}
+
+			// Add spine if present
+			if (spineColor != null && spineColor.length() > 0) {
+				g2D.setColor(Color.decode(spineColor));
+				g2D.fillRect(backCoverImg.getWidth()-2, 0, 2, backCoverImg.getHeight());
 			}
 
 			// If the requested size is not 300X400 convert the image
@@ -394,14 +416,19 @@ public class BookCoverImageService {
 				outImg = backCoverImg;
 			}
 
+			// Do we want a PNG with a fixed number of colors
+			if (maxColors >= 2 && imgFormat == ImageFormat.IMAGE_FORMAT_PNG) {
+				outImg = ImageUtils.reduce32(outImg, maxColors);
+			}
+
 			// Return bytes
 			Map<String, Object> params = new HashMap<String, Object>();
 			byte[] outBytes = Imaging.writeImageToBytes(outImg, imgFormat,
 					params);
 			return outBytes;
 		} finally {
-			if (g != null) {
-				g.dispose();
+			if (g2D != null) {
+				g2D.dispose();
 			}
 		}
 	}
@@ -419,12 +446,12 @@ public class BookCoverImageService {
 	 * @return
 	 * @throws Exception
 	 */
-	public String createBackCoverEncoded(String coverId, String titleStr,
+	public String createBackCoverEncoded(String coverId, String titleStr, String spineColor,
 			String textColor, int width, int height, int type,
-			ImageFormat imgFormat) throws Exception {
+			ImageFormat imgFormat, int maxColors) throws Exception {
 
-		return Base64.encodeBytes(createBackCover(coverId, titleStr, textColor,
-				width, height, type, imgFormat));
+		return Base64.encodeBytes(createBackCover(coverId, titleStr, spineColor, textColor,
+				width, height, type, imgFormat, maxColors));
 	}
 
 	/**
@@ -433,11 +460,11 @@ public class BookCoverImageService {
 	 * @return
 	 * @throws Exception
 	 */
-	public String createDefaultBackCoverEncoded(Book book, BookCover cover)
+	public String createDefaultBackCoverEncoded(Book book, BookCover cover, BookCategory category)
 			throws Exception {
-		return createBackCoverEncoded(book.getCoverName(), book.getBookTitle(),
-				cover.getCoverTitleTextColor(), 300, 400, BufferedImage.TYPE_INT_ARGB,
-				ImageFormat.IMAGE_FORMAT_PNG);
+		return createBackCoverEncoded(book.getCoverName(), book.getBookTitle(), category.getColor(),
+				cover.getCoverTitleTextColor(), 300, 400,
+				BufferedImage.TYPE_INT_ARGB, ImageFormat.IMAGE_FORMAT_PNG, 128);
 	}
 
 	/**

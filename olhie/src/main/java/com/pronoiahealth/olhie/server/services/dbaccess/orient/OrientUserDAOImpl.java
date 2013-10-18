@@ -12,6 +12,7 @@ package com.pronoiahealth.olhie.server.services.dbaccess.orient;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
@@ -55,6 +56,22 @@ public class OrientUserDAOImpl extends OrientBaseTxDAO implements UserDAO {
 			return ooDbTx.detach(pResult.get(0), true);
 		} else {
 			throw new Exception("Can't find password for userId");
+		}
+	}
+
+	/**
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.UserDAO#checkUserByUserId(java.lang.String)
+	 */
+	@Override
+	public boolean checkUserByUserId(String userId) {
+		try {
+			getUserByUserId(userId);
+			return true;
+		} catch (Exception e) {
+			if (log.isLoggable(Level.FINEST) == true) {
+				log.log(Level.FINEST, "Exception in getting user.", e);
+			}
+			return false;
 		}
 	}
 

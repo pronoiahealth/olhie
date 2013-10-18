@@ -16,6 +16,11 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.jboss.errai.ioc.client.container.IOC;
+import org.jboss.errai.ioc.client.container.async.AsyncBeanDef;
+import org.jboss.errai.ioc.client.container.async.AsyncBeanManager;
+import org.jboss.errai.ioc.client.container.async.CreationalCallback;
+
 import com.github.gwtbootstrap.client.ui.FluidRow;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.google.common.collect.ArrayListMultimap;
@@ -37,8 +42,10 @@ import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.widgets.GlassPanelSpinner;
-import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D_2;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.BookSelectCallBack;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3D_3;
+
+//import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D_2;
 
 /**
  * SearchResultsComponent.java<br/>
@@ -71,12 +78,11 @@ public class SearchResultsComponent extends AbstractComposite {
 	@UiField
 	public Label resultsLbl;
 
-	// @UiField
-	// public Icon spinner;
-
 	private GlassPanelSpinner gSpinner;
 
 	private BookSelectCallBack bookSelectCallBack;
+
+	private BookList3D_3 bookList3D;
 
 	/**
 	 * Constructor
@@ -97,9 +103,6 @@ public class SearchResultsComponent extends AbstractComposite {
 
 		// Set search label
 		resultsLbl.setText(SearchConstants.INSTANCE.searchResults());
-
-		// Set initial spinner state
-		// spinner.setVisible(false);
 
 		// Construct spinner
 		gSpinner = new GlassPanelSpinner();
@@ -129,9 +132,6 @@ public class SearchResultsComponent extends AbstractComposite {
 		// Hide spinner
 		gSpinner.setVisible(false);
 
-		// Remove the spinner
-		// spinner.setVisible(false);
-
 		// Display the books, if nothing is returned the display a message
 		List<BookDisplay> lst = event.getBookDisplayList();
 		if (lst != null && lst.size() > 0) {
@@ -139,8 +139,7 @@ public class SearchResultsComponent extends AbstractComposite {
 			int returned = lst.size();
 			resultsLbl.setText(SearchMessages.INSTANCE.searchResultsReturned(
 					returned, total));
-			BookList3D_2 bookLst = new BookList3D_2(lst, bookSelectCallBack);
-			searchResultsContainerList.add(bookLst);
+			cleanUpAndInitBookList3D(bookList3D, lst);
 		} else {
 			resultsLbl.setText(SearchConstants.INSTANCE.searchResults());
 			Label noBooksLbl = new Label(SearchConstants.INSTANCE.noResults());
@@ -160,9 +159,6 @@ public class SearchResultsComponent extends AbstractComposite {
 
 		// Show spinner
 		gSpinner.setVisible(true);
-
-		// Set the spinner visible
-		// spinner.setVisible(true);
 	}
 
 	/**
@@ -174,8 +170,6 @@ public class SearchResultsComponent extends AbstractComposite {
 			@Observes ServiceErrorEvent serviceErrorEvent) {
 		// hide spinner
 		gSpinner.setVisible(false);
-		// Set the spinner visible
-		// spinner.setVisible(false);
 	}
 
 	/**
@@ -187,8 +181,6 @@ public class SearchResultsComponent extends AbstractComposite {
 			@Observes ClientErrorEvent clientErrorEvent) {
 		// hide spinner
 		gSpinner.setVisible(false);
-		// Set the spinner visible
-		// spinner.setVisible(false);
 	}
 
 	/**
@@ -231,6 +223,40 @@ public class SearchResultsComponent extends AbstractComposite {
 			searchResultsContainerList.setSize("100%", ""
 					+ newSearchResultsScrollerHeight + "px");
 		}
+	}
+
+	private void cleanUpAndInitBookList3D(BookList3D_3 bl,
+			final List<BookDisplay> books) {
+
+		AsyncBeanManager bm = IOC.getAsyncBeanManager();
+
+		// Get rid of the old one
+		if (bl != null) {
+			bm.destroyBean(bl);
+		}
+
+		// Create a new one
+		AsyncBeanDef<BookList3D_3> itemBeanDef = bm
+				.lookupBean(BookList3D_3.class);
+		itemBeanDef.getInstance(new CreationalCallback<BookList3D_3>() {
+			@Override
+			public void callback(BookList3D_3 beanInstance) {
+				beanInstance.build(books, false);
+				setCurrentBookList3D(beanInstance);
+			}
+		});
+	}
+
+	@Override
+	protected void onLoad() {
+		// TODO Auto-generated method stub
+		super.onLoad();
+	}
+
+	private void setCurrentBookList3D(BookList3D_3 currentBookList3D) {
+		this.bookList3D = currentBookList3D;
+		searchResultsContainerList.clear();
+		searchResultsContainerList.add(bookList3D);
 	}
 
 }

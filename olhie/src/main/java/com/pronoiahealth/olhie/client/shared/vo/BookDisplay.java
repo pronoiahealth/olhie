@@ -29,7 +29,6 @@ import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
  */
 @Portable
 public class BookDisplay {
-
 	private Book book;
 	private BookCover bookCover;
 	private BookCategory bookCategory;

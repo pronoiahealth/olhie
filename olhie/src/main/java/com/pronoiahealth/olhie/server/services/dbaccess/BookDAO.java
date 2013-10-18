@@ -35,7 +35,7 @@ import com.pronoiahealth.olhie.server.services.TempThemeHolder;
  * @since Sep 12, 2013
  * 
  */
-public interface BookDAO {
+public interface BookDAO extends BaseDAO {
 
 	/**
 	 * Adds the book to the database. Returns a fully populated (detached)

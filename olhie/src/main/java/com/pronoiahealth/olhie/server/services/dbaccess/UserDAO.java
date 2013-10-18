@@ -24,17 +24,26 @@ import com.pronoiahealth.olhie.server.dataaccess.vo.Password;
  * @since Sep 12, 2013
  * 
  */
-public interface UserDAO {
+public interface UserDAO extends BaseDAO {
 
 	/**
 	 * Gets the user by there Id. Returns a fully populated (detached) instance.
 	 * 
 	 * @param userId
-	 * @param ooDbTx
 	 * @return
 	 * @throws Exception
 	 */
 	public User getUserByUserId(String userId) throws Exception;
+
+	/**
+	 * Checks the user by there Id. Returns true if id in use or false
+	 * otherwise.
+	 * 
+	 * @param userId
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean checkUserByUserId(String userId);
 
 	/**
 	 * Returns a fully populated (detached) instance.

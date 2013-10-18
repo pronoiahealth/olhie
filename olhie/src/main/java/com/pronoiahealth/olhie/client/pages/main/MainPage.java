@@ -17,8 +17,10 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.util.TimeUnit;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
+import org.jboss.errai.ioc.client.api.Timed;
+import org.jboss.errai.ioc.client.api.TimerType;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
@@ -34,8 +36,6 @@ import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.Window.ClosingEvent;
-import com.google.gwt.user.client.Window.ClosingHandler;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -66,8 +66,6 @@ import com.pronoiahealth.olhie.client.shared.events.loginout.LoginResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LogoutResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.news.NewsItemsRequestEvent;
-import com.pronoiahealth.olhie.client.shared.rest.TestRest;
-import com.pronoiahealth.olhie.client.shared.rest.WindowCloseService;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.client.widgets.DownloadFrame;
@@ -251,6 +249,8 @@ public class MainPage extends AbstractComposite {
 
 	private long lastPingTime;
 
+	private long lastSystemTime;
+
 	private static final int EAST_PANEL_WIDTH = 180;
 
 	/**
@@ -282,6 +282,9 @@ public class MainPage extends AbstractComposite {
 	 */
 	@AfterInitialization
 	public void postInit() {
+
+		// CurrentTime
+		this.lastSystemTime = System.currentTimeMillis();
 
 		GWT.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
 			@Override
@@ -423,7 +426,7 @@ public class MainPage extends AbstractComposite {
 			dataType : "json",
 			data : ({}),
 			type : "POST",
-			timeout: 20000,
+			timeout : 20000,
 			success : function() {
 				return true;
 			},
@@ -593,6 +596,21 @@ public class MainPage extends AbstractComposite {
 						EAST_PANEL_WIDTH);
 				dockLayoutPanel.animate(1000);
 			}
+		}
+	}
+
+	/**
+	 * This method tries to detect when the system has been put to sleep for a
+	 * period of time that exceeds the server side timeout. If this happens the
+	 * page is reloaded. The time is set to 35 minutes (35*60*1000 milliseconds)
+	 */
+	@Timed(type = TimerType.REPEATING, interval = 30, timeUnit = TimeUnit.SECONDS)
+	private void longSleepCheck() {
+		long now = System.currentTimeMillis();
+		if (now - this.lastSystemTime > 2100000) {
+			Window.Location.reload();
+		} else {
+			this.lastSystemTime = now;
 		}
 	}
 }

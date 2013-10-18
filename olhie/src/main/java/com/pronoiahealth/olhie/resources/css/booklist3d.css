@@ -86,7 +86,6 @@
 	height: 30px;
 }
 
-
 .bk-info button.bk-active,.bk-info button:active {
 	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 1px
 		rgba(0, 0, 0, 0.2);
@@ -331,6 +330,16 @@
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+}
+
+.bk-toc .bk-toc-item {
+	cursor: pointer;
+	cursor: hand;
+}
+
+.bk-toc-link {
+	cursor: pointer;
+	cursor: hand;
 }
 
 .bk-page nav {

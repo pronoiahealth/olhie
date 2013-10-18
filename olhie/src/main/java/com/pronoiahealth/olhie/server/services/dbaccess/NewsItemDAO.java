@@ -24,7 +24,7 @@ import com.pronoiahealth.olhie.client.shared.vo.NewsItem;
  * @since Sep 15, 2013
  *
  */
-public interface NewsItemDAO {
+public interface NewsItemDAO  extends BaseDAO {
 	
 	/**
 	 * Gets a list of active news items.
