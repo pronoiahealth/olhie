@@ -11,15 +11,31 @@
 	type="text/css"></link>
 </head>
 <body>
-	<div data-field="toc" class="bk-content bk-content-current bk-toc" book-id="">
+	<div data-field="toc" class="bk-content bk-content-current bk-toc"
+		book-id="">
 		<div data-field="tocTitle" style="text-align: center;">
-			<span style="text-decoration: underline; font-weight: bold;">Table of Contents</span>
+			<span style="text-decoration: underline; font-weight: bold;">Table
+				of Contents</span>
 		</div>
 		<div data-field="tocItems" style="height: 265px; overflow: auto;">
 			<!-- Add additional toc items here -->
 		</div>
-		<div style="text-align: center" data-field="myCollectionBtnContainer">
-			<!-- Insert button container -->
+		<div style="text-align: center" data-field="btnContainer"
+			style="width: 100%; margin-left: auto; margin-right: auto;">
+			<div data-field="myCollectionButtonContainer" style="float: left;">
+				<a data-field="myCollectionBtn"
+					class="btn btn-mini btn-success bk-tocPage-myCollectionsBtn"
+					rel="tooltip" data-original-title=""> <i
+					data-field="myCollectionBtnIcon" class="icon-thumbs-up"></i>
+				</a>
+			</div>
+			<div data-field="commentRatingButtonContainer" style="float: right;">
+				<a data-field="commentRatingBtn"
+					class="btn btn-mini btn-success bk-tocPage-commentRatingBtn"
+					rel="tooltip" data-original-title="" title="Add or change a comment."> <i
+					data-field="commentRatingBtnIcon" class="icon-pencil"></i>
+				</a>
+			</div>
 		</div>
 	</div>
 </body>

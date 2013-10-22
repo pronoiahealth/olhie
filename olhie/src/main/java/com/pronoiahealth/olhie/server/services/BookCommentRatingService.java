@@ -21,11 +21,12 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
-import com.pronoiahealth.olhie.client.shared.events.book.AddBookCommentEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.AddBookCommentRatingEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindCommentsEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindCommentsResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Bookcomment;
+import com.pronoiahealth.olhie.client.shared.vo.Bookstarrating;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
@@ -42,7 +43,7 @@ import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
  * 
  */
 @RequestScoped
-public class BookCommentService {
+public class BookCommentRatingService {
 
 	@Inject
 	private Logger log;
@@ -64,7 +65,7 @@ public class BookCommentService {
 	 * Constructor
 	 * 
 	 */
-	public BookCommentService() {
+	public BookCommentRatingService() {
 	}
 
 	/**
@@ -74,14 +75,25 @@ public class BookCommentService {
 	 */
 	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
 	protected void observesAddBookCommentEvent(
-			@Observes AddBookCommentEvent addBookCommentEvent) {
+			@Observes AddBookCommentRatingEvent addBookCommentEvent) {
 
 		try {
 			String userId = userToken.getUserId();
 			String bookId = addBookCommentEvent.getBookId();
 			String comment = addBookCommentEvent.getBookComment();
+			int starRating = addBookCommentEvent.getStarRating();
 
-			bookDAO.addBookComment(bookId, userId, comment, true);
+			// Update the comments
+			if (comment != null && comment.length() > 0) {
+				bookDAO.addBookComment(bookId, userId, comment, true);
+			}
+
+			// Update the star rating
+			if (starRating != 0) {
+				// add/update the rating
+				Bookstarrating current = bookDAO.addUpdateBookRating(userId,
+						bookId, starRating);
+			}
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);

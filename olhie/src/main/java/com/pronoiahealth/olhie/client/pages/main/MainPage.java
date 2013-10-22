@@ -312,22 +312,6 @@ public class MainPage extends AbstractComposite {
 			}
 		});
 
-		// If the user navigates away from the window or closes the browser and
-		// is logged in then reset the session on the server
-		/*
-		 * Window.addWindowClosingHandler(new ClosingHandler() {
-		 * 
-		 * @Override public void onWindowClosing(ClosingEvent event) { // if
-		 * (clientUserToken.isLoggedIn() == true) { //
-		 * logoutRequestEvent.fire(new LogoutRequestEvent(false)); //
-		 * Window.alert
-		 * ("You're still signed into Olhie so we're signing you off. Come agan!"
-		 * ); // event.setMessage("Leave Olhie?"); // } // if
-		 * (clientUserToken.isLoggedIn() == true) { // //
-		 * logoutRequestEvent.fire(new LogoutRequestEvent(false)); //
-		 * windowCloseService.call().windowCloseAction(); // } } });
-		 */
-
 		// Called when window closing, user navigates from page, or user closes
 		// browser
 		Window.addCloseHandler(new CloseHandler<Window>() {

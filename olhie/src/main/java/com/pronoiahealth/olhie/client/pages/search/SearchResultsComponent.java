@@ -247,12 +247,6 @@ public class SearchResultsComponent extends AbstractComposite {
 		});
 	}
 
-	@Override
-	protected void onLoad() {
-		// TODO Auto-generated method stub
-		super.onLoad();
-	}
-
 	private void setCurrentBookList3D(BookList3D_3 currentBookList3D) {
 		this.bookList3D = currentBookList3D;
 		searchResultsContainerList.clear();

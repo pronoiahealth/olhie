@@ -30,15 +30,16 @@ import org.jboss.errai.enterprise.client.cdi.api.Conversational;
  */
 @Portable
 @Conversational
-public class AddBookCommentEvent {
+public class AddBookCommentRatingEvent {
 	private String bookId;
 	private String bookComment;
+	private int starRating;
 
 	/**
 	 * Constructor
 	 *
 	 */
-	public AddBookCommentEvent() {
+	public AddBookCommentRatingEvent() {
 	}
 
 	/**
@@ -47,10 +48,11 @@ public class AddBookCommentEvent {
 	 * @param bookId
 	 * @param bookComment
 	 */
-	public AddBookCommentEvent(String bookId, String bookComment) {
+	public AddBookCommentRatingEvent(String bookId, String bookComment, int starRating) {
 		super();
 		this.bookId = bookId;
 		this.bookComment = bookComment;
+		this.starRating = starRating;
 	}
 
 	public String getBookId() {
@@ -67,5 +69,13 @@ public class AddBookCommentEvent {
 
 	public void setBookComment(String bookComment) {
 		this.bookComment = bookComment;
+	}
+
+	public int getStarRating() {
+		return starRating;
+	}
+
+	public void setStarRating(int starRating) {
+		this.starRating = starRating;
 	}
 }

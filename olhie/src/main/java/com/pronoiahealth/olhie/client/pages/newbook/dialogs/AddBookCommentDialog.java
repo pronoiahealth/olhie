@@ -17,6 +17,7 @@ import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
+import com.github.gwtbootstrap.client.ui.Legend;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
@@ -27,9 +28,13 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.pronoiahealth.olhie.client.shared.events.book.AddBookCommentEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.AddBookCommentRatingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowAddBookCommentModalEvent;
+import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
+import com.pronoiahealth.olhie.client.widgets.rating.StarRating;
+import com.pronoiahealth.olhie.client.widgets.rating.StarRatingStarClickedHandler;
 
 /**
  * CommentDialog.java<br/>
@@ -50,6 +55,9 @@ public class AddBookCommentDialog extends Composite {
 	public Modal commentModal;
 
 	@UiField
+	public Legend legendTxt;
+
+	@UiField
 	public TextArea comment;
 
 	@UiField
@@ -58,8 +66,18 @@ public class AddBookCommentDialog extends Composite {
 	@UiField
 	public Button saveButton;
 
+	@UiField
+	public HTMLPanel starRatingPanel;
+
 	@Inject
-	private Event<AddBookCommentEvent> addBookCommentEvent;
+	private Event<AddBookCommentRatingEvent> addBookCommentEvent;
+
+	@Inject
+	private ClientUserToken userToken;
+
+	private StarRating starRating;
+
+	private int currentStarRating;
 
 	/**
 	 * The current book ID
@@ -77,8 +95,25 @@ public class AddBookCommentDialog extends Composite {
 	public void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
 		commentModal.setStyleName("ph-BookComment-Modal", true);
-		//commentModal.setStyleName("ph-BookComment-Modal-Size", true);
-		
+
+		// Rating widget
+		// Create star rating
+		// When a star is created update the
+		// current star rating
+		starRating = new StarRating(5, false,
+				new StarRatingStarClickedHandler() {
+					@Override
+					public void startClicked(int star) {
+						currentStarRating = star;
+					}
+				});
+
+		// Irritating Chrome issue fix
+		starRating.getElement().setAttribute("style", "display: inline-block;");
+
+		// Add it to the display
+		starRatingPanel.add(starRating);
+
 		// Set focus
 		commentModal.addShownHandler(new ShownHandler() {
 			@Override
@@ -86,6 +121,10 @@ public class AddBookCommentDialog extends Composite {
 				comment.setFocus(true);
 			}
 		});
+
+		// Set legend style
+		legendTxt.getElement().setAttribute("style",
+				"font-style: italic; font-weight: bold;");
 	}
 
 	/**
@@ -96,7 +135,19 @@ public class AddBookCommentDialog extends Composite {
 	protected void observesShowAddBookCommentModalEvent(
 			@Observes ShowAddBookCommentModalEvent showAddBookCommentModalEvent) {
 		comment.setText("");
+		currentStarRating = 0;
+		starRating.setRating(0);
 		currentBookId = showAddBookCommentModalEvent.getBookId();
+		String bookTitle = showAddBookCommentModalEvent.getBookTitle();
+		legendTxt.getElement().setInnerText(
+				bookTitle.length() > 30 ? bookTitle.substring(0, 29) + "..."
+						: bookTitle);
+
+		// Should we first check to see if this user has made a comment about
+		// this book?
+		// Call new BookFindUserCommentAndRatingForBookEvent
+		// ..........
+
 		commentModal.show();
 	}
 
@@ -110,8 +161,8 @@ public class AddBookCommentDialog extends Composite {
 		String commentTxt = comment.getText();
 		if (commentTxt != null && commentTxt.length() > 0) {
 			commentModal.hide();
-			addBookCommentEvent.fire(new AddBookCommentEvent(currentBookId,
-					commentTxt));
+			addBookCommentEvent.fire(new AddBookCommentRatingEvent(
+					currentBookId, commentTxt, currentStarRating));
 		} else {
 			commentCG.setType(ControlGroupType.ERROR);
 		}

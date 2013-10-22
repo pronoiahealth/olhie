@@ -6,14 +6,30 @@
 	<b:Modal ui:field="commentModal" title="Add a comment"
 		backdrop="STATIC" keyboard="true" animation="true">
 
+		<!-- Comment form -->
 		<b:Form ui:field="commentForm" type="HORIZONTAL">
 			<b:Fieldset ui:field="controlFieldset">
-				<b:Legend>What do you think?</b:Legend>
+				<b:Legend ui:field="legendTxt">Book Title</b:Legend>
+
+				<!-- Rating widget -->
+				<b:ControlGroup ui:field="ratingCG">
+					<b:ControlLabel for="comment">Rating:</b:ControlLabel>
+					<b:Controls>
+						<g:HTMLPanel ui:field="ratingWidgetContainer"
+							styleName="ph-NewBook-EditCurrentBook-Rating-Container">
+							<g:HTMLPanel ui:field="starRatingPanel"
+								styleName="ph-NewBook-RatingWidget-Container">
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+					</b:Controls>
+				</b:ControlGroup>
+
 				<b:ControlGroup ui:field="commentCG">
 					<b:ControlLabel for="comment">Comment:</b:ControlLabel>
 					<b:Controls>
 						<b:TextArea ui:field="comment" placeholder="Comment"
-							controlGroup="{commentCG}" errorLabel="{commentErrors}" width="300px"/>
+							controlGroup="{commentCG}" errorLabel="{commentErrors}" width="300px"
+							height="250px" />
 						<b:HelpInline ui:field="commentErrors"></b:HelpInline>
 					</b:Controls>
 				</b:ControlGroup>

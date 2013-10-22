@@ -37,7 +37,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
  * @since Oct 17, 2013
  *
  */
-@Templated("#myCollectionButtonContainer")
+@Templated("TOCWidget.html#myCollectionButtonContainer")
 public class MyCollectionButtonWidget extends Composite {
 	
 	@Inject

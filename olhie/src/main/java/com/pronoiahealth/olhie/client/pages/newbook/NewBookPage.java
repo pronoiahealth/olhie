@@ -893,7 +893,8 @@ public class NewBookPage extends AbstractPage {
 		if (pageState == NewBookPageStateEnum.LOGGED_IN_MY_COLLECTION_STATE
 				|| pageState == NewBookPageStateEnum.LOGGED_IN_NOT_IN_MY_COLLECTION_STATE) {
 			this.showAddBookCommentModalEvent
-					.fire(new ShowAddBookCommentModalEvent(bookId));
+					.fire(new ShowAddBookCommentModalEvent(bookId,
+							this.currentBookDisplay.getBook().getBookTitle()));
 		}
 	}
 
@@ -905,7 +906,8 @@ public class NewBookPage extends AbstractPage {
 	public void addToCollectionBookButtonClicked(ClickEvent event) {
 		if (pageState == NewBookPageStateEnum.LOGGED_IN_NOT_IN_MY_COLLECTION_STATE) {
 			addBookToMyCollectionEvent.fire(new AddBookToMyCollectionEvent(
-					this.currentBookDisplay.getBook().getId(), ADD_RESPONSE_TYPE.FIND_ADD_RESPONSE));
+					this.currentBookDisplay.getBook().getId(),
+					ADD_RESPONSE_TYPE.FIND_ADD_RESPONSE));
 		}
 	}
 
@@ -919,7 +921,8 @@ public class NewBookPage extends AbstractPage {
 		if (pageState == NewBookPageStateEnum.LOGGED_IN_MY_COLLECTION_STATE) {
 			this.removeBookFromMyCollectionEvent
 					.fire(new RemoveBookFromMyCollectionEvent(
-							currentBookDisplay.getBook().getId(), REMOVE_RESPONSE_TYPE.FIND_REMOVE_RESPONSE));
+							currentBookDisplay.getBook().getId(),
+							REMOVE_RESPONSE_TYPE.FIND_REMOVE_RESPONSE));
 		}
 	}
 
@@ -930,7 +933,8 @@ public class NewBookPage extends AbstractPage {
 	 */
 	public void viewCommentsButtonClicked(ClickEvent event) {
 		showBookCommentsModalEvent.fire(new ShowBookCommentsModalEvent(
-				currentBookDisplay.getBook().getId()));
+				currentBookDisplay.getBook().getId(), currentBookDisplay
+						.getBook().getBookTitle()));
 	}
 
 	/**

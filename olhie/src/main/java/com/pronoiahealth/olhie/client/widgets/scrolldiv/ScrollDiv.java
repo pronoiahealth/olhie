@@ -8,52 +8,65 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.pages;
+package com.pronoiahealth.olhie.client.widgets.scrolldiv;
 
 import static com.google.gwt.query.client.GQuery.$;
 
-import javax.inject.Inject;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.query.client.Function;
 import com.google.gwt.query.client.GQuery;
 import com.google.gwt.query.client.Properties;
 import com.google.gwt.query.client.css.CSS;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
-import com.pronoiahealth.olhie.client.navigation.PageNavigator;
+import com.google.gwt.user.client.ui.Composite;
 
 /**
- * AbstractPage - Extends AbstractComposite<br/>
+ * ScrollDiv.java<br/>
  * Responsibilities:<br/>
- * 1. Set page backgrounds<br/>
- * 2. Coordinate with AppNavMenu to sync menu with view<br/>
+ * 1.
  * 
  * @author John DeStefano
  * @version 1.0
- * @since May 26, 2013
+ * @since Oct 21, 2013
  * 
  */
-public abstract class AbstractPage extends AbstractComposite {
+@Templated("#root")
+public class ScrollDiv extends Composite {
 
-	@Inject
-	protected PageNavigator nav;
-
-	private boolean fullPageScrollingActive;
+	@DataField("root")
+	private Element root = DOM.createDiv();
 
 	private GQuery scrollLink;
 
-	public AbstractPage() {
+	/**
+	 * Constructor
+	 * 
+	 */
+	public ScrollDiv() {
 	}
 
 	/**
-	 * Add full page scrolling. This can only be done before the page is loaded.
+	 * Access to the root element
 	 * 
-	 * @param fullPageScrollingActive
+	 * @return
 	 */
-	protected void addFullPageScrolling() {
+	public Element getRootElement() {
+		return root;
+	}
+
+	@PostConstruct
+	protected void postConstruct() {
 		// Activate full page scrolling
 		// Get the root div
-		final GQuery gObj = AppSelectors.INSTANCE.getCenterBackground();
+		final GQuery gObj = $(root);
 
 		// Make sure its overflow is set to auto
 		gObj.css(CSS.OVERFLOW.with(Overflow.AUTO));
@@ -99,54 +112,13 @@ public abstract class AbstractPage extends AbstractComposite {
 				return false;
 			}
 		});
-		
-		this.fullPageScrollingActive = true;
 	}
 
-	/**
-	 * Allows for page background to be set by adding a class to the div with
-	 * the class center-background. Adjust the style attribute to be empty
-	 * 
-	 * @param backgroundClass
-	 */
-	protected void setPageBackgroundClass(String backgroundClass) {
-		GQuery gObj = AppSelectors.INSTANCE.getCenterBackground();
-		if (backgroundClass == null || backgroundClass.length() == 0) {
-			gObj.attr("class", "center-background");
-			gObj.attr("style", "");
-		} else {
-			gObj.attr("class", "center-background " + backgroundClass);
-			gObj.attr("style", "");
-		}
+	@PreDestroy
+	protected void preDestroy() {
+		$(root).unbind(Event.ONSCROLL);
+		scrollLink.unbind(Event.ONCLICK);
+		scrollLink.remove();
 	}
 
-	/**
-	 * Sets a background image by setting the style attribute of the div with
-	 * the class center-background. Calling the setPageBackgroundClass will
-	 * remove the style setting.
-	 * 
-	 * @param backgroundImage
-	 */
-	protected void setPageBackgroundStyle(String backgroundImage) {
-		GQuery gObj = AppSelectors.INSTANCE.getCenterBackground();
-		gObj.attr("style", "background: white; " + "background-image: url(\""
-				+ backgroundImage + "\"); " + "background-repeat: repeat;");
-	}
-
-	@Override
-	protected void onLoad() {
-		super.onLoad();
-	}
-
-	@Override
-	protected void onUnload() {
-		super.onUnload();
-
-		// If full page scrolling active unwind it
-		if (fullPageScrollingActive == true) {
-			AppSelectors.INSTANCE.getCenterBackground().unbind(Event.ONSCROLL);
-			scrollLink.unbind(Event.ONCLICK);
-			scrollLink.remove();
-		}
-	}
 }

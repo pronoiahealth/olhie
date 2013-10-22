@@ -29,6 +29,7 @@ import org.jboss.errai.bus.client.api.Local;
 @Local
 public class ShowBookCommentsModalEvent {
 	private String bookId;
+	private String bookTitle;
 
 	/**
 	 * Constructor
@@ -42,9 +43,10 @@ public class ShowBookCommentsModalEvent {
 	 *
 	 * @param bookId
 	 */
-	public ShowBookCommentsModalEvent(String bookId) {
+	public ShowBookCommentsModalEvent(String bookId, String bookTitle) {
 		super();
 		this.bookId = bookId;
+		this.bookTitle = bookTitle;
 	}
 
 	public String getBookId() {
@@ -53,5 +55,13 @@ public class ShowBookCommentsModalEvent {
 
 	public void setBookId(String bookId) {
 		this.bookId = bookId;
+	}
+
+	public String getBookTitle() {
+		return bookTitle;
+	}
+
+	public void setBookTitle(String bookTitle) {
+		this.bookTitle = bookTitle;
 	}
 }

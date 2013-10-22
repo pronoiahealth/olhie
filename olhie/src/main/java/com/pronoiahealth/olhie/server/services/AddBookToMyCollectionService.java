@@ -108,8 +108,7 @@ public class AddBookToMyCollectionService {
 								true);
 
 				// If the user already has an active relationship of the
-				// following
-				// types don't add it.
+				// following types don't add it.
 				boolean addRelationship = true;
 				if (rResult.contains(UserBookRelationshipEnum.CREATOR)
 						|| rResult.contains(UserBookRelationshipEnum.COAUTHOR) == true

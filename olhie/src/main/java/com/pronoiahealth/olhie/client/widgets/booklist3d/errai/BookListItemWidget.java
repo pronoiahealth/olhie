@@ -97,6 +97,8 @@ public class BookListItemWidget extends Composite {
 
 	private String bookId;
 
+	private String bookTitle;
+
 	/**
 	 * Constructor
 	 * 
@@ -112,6 +114,7 @@ public class BookListItemWidget extends Composite {
 		String catColor = bookDisplay.getBookCategory().getColor();
 		String catColorTxt = bookDisplay.getBookCategory().getTextColor();
 		this.bookId = bookDisplay.getBook().getId();
+		this.bookTitle = bookDisplay.getBook().getBookTitle();
 
 		// Set properties
 		// Id
@@ -129,6 +132,7 @@ public class BookListItemWidget extends Composite {
 		// Only display buttons if the client is logged in
 		Set<UserBookRelationshipEnum> rels = bookDisplay.getRelEnums();
 		if (clientToken.isLoggedIn() == true) {
+			// Set up collection button
 			if (rels.contains(UserBookRelationshipEnum.MYCOLLECTION)) {
 				myCollectionIndicator.setAddToMyCollectionBtn(true);
 				tocWidget.setMyCollectionBtnRemoveFromCollection(false);
@@ -140,9 +144,13 @@ public class BookListItemWidget extends Composite {
 				myCollectionIndicator.setHideMyCollectionBtn();
 				tocWidget.setMyCollectionBtnAddToCollection(false);
 			}
+
+			// Set up comment button
+			tocWidget.setCommentRatingBtnShow();
 		} else {
 			myCollectionIndicator.setHideMyCollectionBtn();
 			tocWidget.setMyCollectionBtnHide();
+			tocWidget.setCommentRatingBtnHide();
 		}
 
 		// Back cover of front cover
@@ -162,9 +170,7 @@ public class BookListItemWidget extends Composite {
 			// Can this content be viewed in an iFrame?
 			// If its in the viewable content map it can
 			String val = viewableContentType.get(contentType);
-			bContent.setDescription(
-					desc,
-					val == null ? true : false,
+			bContent.setDescription(desc, val == null ? true : false,
 					currentAssetId, val == null ? "" : val);
 			bookPage.appendChild(bContent.getElement());
 			tocWidget.addItem(counter++, desc);
@@ -190,15 +196,19 @@ public class BookListItemWidget extends Composite {
 		Element srElem = sr.getElement();
 		srElem.setAttribute("style", "display: inline-block;");
 		ratingContainer.appendChild(srElem);
-		
+
 		return bookId;
 	}
-	
+
 	public TOCWidget getTocWidget() {
 		return this.tocWidget;
 	}
-	
+
 	public MyCollectionButtonWidget getMyCollectionIndicator() {
 		return this.myCollectionIndicator;
+	}
+
+	public String getBookTitle() {
+		return this.bookTitle;
 	}
 }

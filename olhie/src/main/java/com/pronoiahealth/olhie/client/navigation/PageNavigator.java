@@ -13,7 +13,6 @@ package com.pronoiahealth.olhie.client.navigation;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -29,6 +28,7 @@ import com.pronoiahealth.olhie.client.clientfactories.DefaultAppPage;
 import com.pronoiahealth.olhie.client.clientfactories.PageRoleMap;
 import com.pronoiahealth.olhie.client.pages.bookcase.BookCasePage;
 import com.pronoiahealth.olhie.client.pages.bulletinboard.BulletinboardPage;
+import com.pronoiahealth.olhie.client.pages.events.EventsPage;
 import com.pronoiahealth.olhie.client.pages.newbook.NewBookPage;
 import com.pronoiahealth.olhie.client.pages.search.SearchPage;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
@@ -67,6 +67,9 @@ public class PageNavigator {
 
 	@Inject
 	private TransitionTo<BulletinboardPage> showBulletinboardPage;
+	
+	@Inject
+	private TransitionTo<EventsPage> showEventsPage;
 
 	@Inject
 	private TransitionTo<BookCasePage> showBookCasePage;
@@ -117,6 +120,15 @@ public class PageNavigator {
 				showBulletinboardPage.go();
 			} else {
 				showBulletinboardPage.go(state);
+			}
+			break;
+		}
+		
+		case EventsPage: {
+			if (state == null) {
+				showEventsPage.go();
+			} else {
+				showEventsPage.go(state);
 			}
 			break;
 		}

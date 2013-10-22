@@ -48,12 +48,16 @@ public class BulletinboardPage extends AbstractPage {
 
 	@Inject
 	private CarouselSliderWidget carouselWidget;
-	
+
+	/**
+	 * Constructor
+	 *
+	 */
 	public BulletinboardPage() {
 	}
 
 	/**
-	 * Inject the custom resources and create the main gui via uiBinder
+	 * Inject the custom resources
 	 */
 	@PostConstruct
 	private void postConstruct() {
@@ -61,14 +65,21 @@ public class BulletinboardPage extends AbstractPage {
 		col2.add(carouselWidget);
 	}
 
+	/**
+	 * Set-up<br/>
+	 * 1. Screen back ground<br/>
+	 * 2. Scroll to top <br/>
+	 * 
+	 * @see com.google.gwt.user.client.ui.Widget#onLoad()
+	 */
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		setPageBackgroundClass("ph-BulletinBoard-Background");
-	}
 
-	@Override
-	protected void onUnload() {
-		super.onUnload();
+		// Set the background which will make the containing div overflow
+		setPageBackgroundClass("ph-BulletinBoard-Background");
+
+		// Bind to the root div of this page
+		addFullPageScrolling();
 	}
 }

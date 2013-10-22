@@ -38,8 +38,13 @@ public class TOCWidget extends Composite {
 	private Element tocItems = DOM.createDiv();
 
 	@Inject
-	@DataField("myCollectionBtnContainer")
+	@DataField("myCollectionButtonContainer")
 	private MyCollectionButtonWidget myCollectionBtnContainer;
+	
+	@Inject
+	@DataField("commentRatingButtonContainer")
+	private CommentRatingButtonWidget commentRatingButtonContainer;
+	
 
 	/**
 	 * Constructor
@@ -83,5 +88,13 @@ public class TOCWidget extends Composite {
 
 	public void setMyCollectionBtnHide() {
 		myCollectionBtnContainer.setHideMyCollectionBtn();
+	}
+	
+	public void setCommentRatingBtnHide() {
+		commentRatingButtonContainer.setHideCommentRatingBtn();
+	}
+	
+	public void setCommentRatingBtnShow() {
+		commentRatingButtonContainer.setShowCommentRatingBtn();
 	}
 }

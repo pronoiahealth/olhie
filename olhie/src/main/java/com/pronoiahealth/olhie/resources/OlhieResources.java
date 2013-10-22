@@ -121,6 +121,18 @@ public interface OlhieResources extends ClientBundle {
 	@CssResource.NotStrict
 	CssResource carouselsliderwidgetcss();
 	
+	@Source("com/pronoiahealth/olhie/resources/css/events.css")
+	@CssResource.NotStrict
+	CssResource eventscss();
+	
+	@Source("com/pronoiahealth/olhie/resources/css/fullcalendar.css")
+	@CssResource.NotStrict
+	CssResource fullcalendarcss();
+	
+	@Source("com/pronoiahealth/olhie/resources/css/fullcalendar.print.css")
+	@CssResource.NotStrict
+	CssResource fullcalendarprintcss();
+	
 	//@Source("com/pronoiahealth/olhie/resources/css/custom_icons.css")
 	//@CssResource.NotStrict
 	//CssResource customiconscss();
@@ -136,4 +148,10 @@ public interface OlhieResources extends ClientBundle {
 
 	@Source("com/pronoiahealth/olhie/resources/js/jquery.mousewheel.js")
 	TextResource jquerymousewheeljs();
+	
+	@Source("com/pronoiahealth/olhie/resources/js/jquery-ui.custom.min.js")
+	TextResource jqueryuicustomminjs();
+	
+	@Source("com/pronoiahealth/olhie/resources/js/fullcalendar.min.js")
+	TextResource fullcalendarminjs();
 }

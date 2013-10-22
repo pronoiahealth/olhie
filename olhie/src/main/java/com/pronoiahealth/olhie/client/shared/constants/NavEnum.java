@@ -13,7 +13,7 @@ package com.pronoiahealth.olhie.client.shared.constants;
 /**
  * NavEnum.java<br/>
  * Responsibilities:<br/>
- * 1. An enumeration of page names used in Errai navigatioon system<br/>
+ * 1. An enumeration of page names used in Errai navigation system<br/>
  * 
  * @author John DeStefano
  * @version 1.0
@@ -21,5 +21,5 @@ package com.pronoiahealth.olhie.client.shared.constants;
  * 
  */
 public enum NavEnum {
-	BulletinboardPage, BookCasePage, SearchPage, NewBookPage;
+	BulletinboardPage, EventsPage, BookCasePage, SearchPage, NewBookPage;
 }

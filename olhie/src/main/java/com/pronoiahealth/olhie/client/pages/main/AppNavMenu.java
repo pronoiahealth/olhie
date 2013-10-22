@@ -77,8 +77,14 @@ public class AppNavMenu extends UnorderedListWidget {
 
 		// Bulletin board
 		SideBarNavWidget navWidget = new SideBarNavWidget(
-				NavEnum.BulletinboardPage.toString(), "", "", "icon-calendar",
+				NavEnum.BulletinboardPage.toString(), "", "", "icon-book",
 				"Bulletin Board");
+		addSideBarNavWidget(navWidget);
+		
+		// Events
+		navWidget = new SideBarNavWidget(
+				NavEnum.EventsPage.toString(), "", "", "icon-calendar",
+				"Events");
 		addSideBarNavWidget(navWidget);
 
 		// Search screen

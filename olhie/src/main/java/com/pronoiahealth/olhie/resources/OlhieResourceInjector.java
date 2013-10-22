@@ -72,7 +72,9 @@ public class OlhieResourceInjector {
 		OlhieResources.INSTANCE.bookscrollercss().ensureInjected();
 		OlhieResources.INSTANCE.glasspanelspinnercss().ensureInjected();
 		OlhieResources.INSTANCE.carouselsliderwidgetcss().ensureInjected();
-		//OlhieResources.INSTANCE.customiconscss().ensureInjected();
+		OlhieResources.INSTANCE.eventscss().ensureInjected();
+		OlhieResources.INSTANCE.fullcalendarcss().ensureInjected();
+		OlhieResources.INSTANCE.fullcalendarprintcss().ensureInjected();
 		/*injectResourceCssAsFile("gwt_overrides.css");*/
 	}
 
@@ -88,6 +90,8 @@ public class OlhieResourceInjector {
 		injectJs(OlhieResources.INSTANCE.jquerycontentcarouseljs());
 		injectJs(OlhieResources.INSTANCE.jqueryeasingjs());
 		injectJs(OlhieResources.INSTANCE.jquerymousewheeljs());
+		injectJs(OlhieResources.INSTANCE.jqueryuicustomminjs());
+		injectJs(OlhieResources.INSTANCE.fullcalendarminjs());
 	}
 
 	/**

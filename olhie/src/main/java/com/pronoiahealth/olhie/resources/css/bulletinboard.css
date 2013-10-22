@@ -11,6 +11,18 @@
 	overflow: auto;
 }
 
+.ph-BulletinBoard-Scrollup {
+    width:40px;
+    height:40px;
+    opacity:0.3;
+    position:fixed;
+    bottom:50px;
+    right:250px;
+    display:none;
+    text-indent:-9999px;
+    background: url("Olhie/images/icon_top.png") no-repeat;
+}
+
 /*
 .ph-BulletinBoard-Background {
 	background: url("Olhie/images/bulletin-color.png") no-repeat center center fixed;

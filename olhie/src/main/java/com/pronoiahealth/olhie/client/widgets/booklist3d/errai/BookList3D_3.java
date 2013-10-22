@@ -40,21 +40,21 @@ import com.pronoiahealth.olhie.client.shared.events.bookcase.RemoveBookFromMyCol
 import com.pronoiahealth.olhie.client.shared.events.bookcase.RemoveBookFromMyCollectionEvent.REMOVE_RESPONSE_TYPE;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.RemoveBookFromMyCollectionResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.DownloadBookAssetEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowAddBookCommentModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowViewBookassetDialogEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.BookSelectCallBack;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.IntHolder;
 
-
 /**
  * BookList3D_3.java<br/>
  * Responsibilities:<br/>
  * 1.
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since Oct 17, 2013
- *
+ * 
  */
 @Templated("#bookLstRoot")
 public class BookList3D_3 extends Composite {
@@ -79,6 +79,9 @@ public class BookList3D_3 extends Composite {
 
 	@Inject
 	private javax.enterprise.event.Event<RemoveBookFromMyCollectionEvent> removeBookFromMyCollectionEvent;
+
+	@Inject
+	private javax.enterprise.event.Event<ShowAddBookCommentModalEvent> showAddBookCommentModalEvent;
 
 	private GQuery books;
 
@@ -171,6 +174,18 @@ public class BookList3D_3 extends Composite {
 	}
 
 	/**
+	 * Add or update book comments by calling the AddCommentRatingDialog
+	 * 
+	 * @param bookId
+	 */
+	private void addUpdateComment(String bookId) {
+		BookListItemWidget bookListItemWidget = bliwMap.get(bookId);
+		String bookTitle = bookListItemWidget.getBookTitle();
+		showAddBookCommentModalEvent.fire(new ShowAddBookCommentModalEvent(
+				bookId, bookTitle));
+	}
+
+	/**
 	 * Watch for events where the book has been added to the users collection
 	 * 
 	 * @param addBookToMyCollectionResponseEvent
@@ -243,6 +258,8 @@ public class BookList3D_3 extends Composite {
 				final GQuery toc = page.find("div.bk-toc");
 				final GQuery tocPageMyCollectionsBtn = toc
 						.find("a.bk-tocPage-myCollectionsBtn");
+				final GQuery tocPageCommentRatingBtn = toc
+						.find("bk-tocPage-commentRatingBtn");
 				final GQuery tocItems = page.find("div.bk-toc-item");
 				final GQuery tocLinks = page.find("div.bk-toc-link");
 				final GQuery downloadContentBtns = page
@@ -349,6 +366,14 @@ public class BookList3D_3 extends Composite {
 						boolean addToCollection = anchor
 								.hasClass("btn-success");
 						adjustMyCollection(bookId, addToCollection);
+						return false;
+					}
+				});
+
+				tocPageCommentRatingBtn.bind(Event.ONCLICK, new Function() {
+					@Override
+					public boolean f(Event e) {
+						addUpdateComment(bookId);
 						return false;
 					}
 				});
