@@ -10,37 +10,26 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages.main;
 
-import java.util.Date;
-
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.jboss.errai.common.client.util.TimeUnit;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
-import org.jboss.errai.ioc.client.api.Timed;
-import org.jboss.errai.ioc.client.api.TimerType;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.event.logical.shared.ResizeEvent;
-import com.google.gwt.event.logical.shared.ResizeHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Event.NativePreviewEvent;
-import com.google.gwt.user.client.Event.NativePreviewHandler;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.pronoiahealth.olhie.client.clientfactories.PingFireTime;
-import com.pronoiahealth.olhie.client.clientfactories.ScreenTimeout;
+import com.pronoiahealth.olhie.client.features.FeatureCallbackHandler;
+import com.pronoiahealth.olhie.client.features.impl.LoggedInUserServerPingFeature;
+import com.pronoiahealth.olhie.client.features.impl.MainWindowResizeFeature;
+import com.pronoiahealth.olhie.client.features.impl.ScreenInactivityTimeoutFeature;
+import com.pronoiahealth.olhie.client.features.impl.SleepDetectionFeature;
+import com.pronoiahealth.olhie.client.features.impl.UnhandledExceptionHandlerFeature;
+import com.pronoiahealth.olhie.client.features.impl.WindowCloseTrappingFeature;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
 import com.pronoiahealth.olhie.client.pages.comments.CommentsDialog;
@@ -60,11 +49,8 @@ import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientUserUpdatedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.SyncPageToMenuEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
-import com.pronoiahealth.olhie.client.shared.events.loginout.LoggedInPingEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LoginResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LogoutRequestEvent;
-import com.pronoiahealth.olhie.client.shared.events.loginout.LogoutResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.news.NewsItemsRequestEvent;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.shared.vo.User;
@@ -194,23 +180,6 @@ public class MainPage extends AbstractComposite {
 	@UiField
 	public HTMLPanel reloadModalPlaceHolder;
 
-	/*
-	 * Used to time things on screen such as when a key is pressed.
-	 */
-	private Timer screenTimer;
-
-	@Inject
-	@ScreenTimeout
-	private Integer screenTimeout;
-
-	private HandlerRegistration screenTimeOutHandlerRegistration;
-
-	private Timer pingTimer;
-
-	@Inject
-	@PingFireTime
-	private Integer pingFireTime;
-
 	@Inject
 	private PageNavigator navigator;
 
@@ -230,13 +199,7 @@ public class MainPage extends AbstractComposite {
 	public DockLayoutPanel dockLayoutPanel;
 
 	@Inject
-	private Event<WindowResizeEvent> windowResizeEvent;
-
-	@Inject
 	private Event<ClientUserUpdatedEvent> clientUserUpdatedEvent;
-
-	@Inject
-	private Event<LoggedInPingEvent> loggedInPingEvent;
 
 	@Inject
 	private Event<NewsItemsRequestEvent> newsItemsRequestEvent;
@@ -247,9 +210,23 @@ public class MainPage extends AbstractComposite {
 	@Inject
 	private Event<LogoutRequestEvent> logoutRequestEvent;
 
-	private long lastPingTime;
+	@Inject
+	private UnhandledExceptionHandlerFeature unhandledExceptionHandlerFeature;
 
-	private long lastSystemTime;
+	@Inject
+	private ScreenInactivityTimeoutFeature screenInactivityTimeoutFeature;
+
+	@Inject
+	private WindowCloseTrappingFeature windowCloseTrappingFeature;
+	
+	@Inject
+	private MainWindowResizeFeature mainWindowResizeFeature;
+	
+	@Inject
+	private LoggedInUserServerPingFeature loggedInUserServerPingFeature;
+	
+	@Inject
+	private SleepDetectionFeature sleepDetectionFeature;
 
 	private static final int EAST_PANEL_WIDTH = 180;
 
@@ -279,50 +256,45 @@ public class MainPage extends AbstractComposite {
 	 * 1. Set up screen timer<br/>
 	 * 2. Initial sidebar menu <br/>
 	 * 3. Request news items <br/>
+	 * 4. Set up inactivity feature
+	 * 5. set up window resize feature
+	 * 6. setup window close trap feature
 	 */
 	@AfterInitialization
 	public void postInit() {
 
-		// CurrentTime
-		this.lastSystemTime = System.currentTimeMillis();
+		// Initialize features
+		// Unhandled errors
+		unhandledExceptionHandlerFeature.standUpAndActivate(null);
 
-		GWT.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-			@Override
-			public void onUncaughtException(Throwable e) {
-				// TODO
-			}
-		});
-
-		// Create timer that will call the observesClientLogoutRequestEvent
-		// if a logged in user does not access the mouse or keyboard within the
-		// provides screen timeout period.
-		screenTimer = new Timer() {
-			@Override
-			public void run() {
-				observesClientLogoutRequestEvent(null);
-			}
-		};
+		// screen timeout
+		screenInactivityTimeoutFeature
+				.addStandupCallbackHandler(new FeatureCallbackHandler() {
+					@Override
+					public void executeCallBack() {
+						observesClientLogoutRequestEvent(null);
+					}
+				});
+		screenInactivityTimeoutFeature.standUpAndActivate(null);
+		
+		// Window close trap
+		windowCloseTrappingFeature.standUpAndActivate(null);
 
 		// Not all GWT panel will resize when the window resizes
 		// Observing this event gives panel a chance to resize if necessary
-		Window.addResizeHandler(new ResizeHandler() {
+		mainWindowResizeFeature.standUpAndActivate(null);
+		
+		// Set up the server ping service. Don't start it yet
+		loggedInUserServerPingFeature.addStandupCallbackHandler(new FeatureCallbackHandler() {
 			@Override
-			public void onResize(ResizeEvent event) {
-				windowResizeEvent.fire(new WindowResizeEvent());
+			public void executeCallBack() {
+				observesClientLogoutRequestEvent(null);
 			}
 		});
-
-		// Called when window closing, user navigates from page, or user closes
-		// browser
-		Window.addCloseHandler(new CloseHandler<Window>() {
-			@Override
-			public void onClose(CloseEvent<Window> event) {
-				if (clientUserToken.isLoggedIn() == true) {
-					// windowCloseService.call().windowCloseAction();
-					windowCloseTrapped();
-				}
-			}
-		});
+		loggedInUserServerPingFeature.standUp(null);
+		
+		// Sleep timer
+		sleepDetectionFeature.standUpAndActivate(null);
 
 		// Footer
 		buildFooter();
@@ -396,31 +368,6 @@ public class MainPage extends AbstractComposite {
 	}
 
 	/**
-	 * Calls a jQuery method to send a synchronous rest message to the server to
-	 * indicate that the user, if logged in, should be marked as logged out. We
-	 * must use a synchronous method as Chrome will not handle asynchronous
-	 * calls in window closing events. FireFox and IE will, but this approach
-	 * works for Chrome as well as FireFox and IE.
-	 */
-	public static native void windowCloseTrapped() /*-{
-		$wnd.jQuery.ajax({
-			url : "/olhie/rest/windowclose/closeaction",
-			async : false,
-			contentType : "application/json; charset=utf-8",
-			dataType : "json",
-			data : ({}),
-			type : "POST",
-			timeout : 20000,
-			success : function() {
-				return true;
-			},
-			error : function() {
-				alert('Error');
-			}
-		});
-	}-*/;
-
-	/**
 	 * When the user logs out the ClientUserToken is updated, the ping service
 	 * is stopped, and the ClientUserUpdatedEvent is fired. This event is fired
 	 * from the Header class along with the LogoutRequestEvent. The
@@ -434,18 +381,8 @@ public class MainPage extends AbstractComposite {
 		clientUserToken.clear();
 		clientUserUpdatedEvent.fire(new ClientUserUpdatedEvent());
 		navigator.showDefaultPage();
-		cancelPing();
-		cancelScreenTimer();
-	}
-
-	/**
-	 * A message from the server telling the client that the user has logged out
-	 * 
-	 * @param logoutResponseEvent
-	 */
-	// TODO: Do we need this method
-	protected void observesLogoutResponseEvent(
-			@Observes LogoutResponseEvent logoutResponseEvent) {
+		loggedInUserServerPingFeature.deactivate();
+		screenInactivityTimeoutFeature.deactivate();
 	}
 
 	/**
@@ -463,8 +400,8 @@ public class MainPage extends AbstractComposite {
 		clientUserToken.setUserId(user.getUserId());
 		clientUserToken.setRole(user.getRole());
 		clientUserUpdatedEvent.fire(new ClientUserUpdatedEvent());
-		startPinging();
-		startScreenTimer();
+		loggedInUserServerPingFeature.activate();
+		screenInactivityTimeoutFeature.activate();
 	}
 
 	protected void observesSyncPageToMenuEvent(
@@ -475,79 +412,6 @@ public class MainPage extends AbstractComposite {
 		} else {
 			hideEast();
 		}
-	}
-
-	/**
-	 * After a user logs in start pinging the server. The ping functionality
-	 * also checks the last time a ping was sent against the current time. If
-	 * there is more than a 5 minute difference it is assumed the user put the
-	 * system to sleep. This will cause an automatic log out.
-	 */
-	private void startPinging() {
-		this.lastPingTime = new Date().getTime();
-		ping();
-		pingTimer = new Timer() {
-			@Override
-			public void run() {
-				long currentTime = (new Date()).getTime();
-
-				// If the difference is greater than 5 minutes then log the user
-				// out.
-				if (currentTime > (lastPingTime + (1000 * 60 * 5))) {
-					observesClientLogoutRequestEvent(null);
-				} else {
-					ping();
-					lastPingTime = currentTime;
-				}
-			}
-		};
-		pingTimer.scheduleRepeating(pingFireTime);
-	}
-
-	/**
-	 * After a user logs out the stop pinging
-	 */
-	private void cancelPing() {
-		pingTimer.cancel();
-	}
-
-	/**
-	 * Fire the LoggedInPingEvent
-	 */
-	private void ping() {
-		loggedInPingEvent.fire(new LoggedInPingEvent());
-	}
-
-	/**
-	 * Cancel the running screen handler
-	 */
-	private void cancelScreenTimer() {
-		if (screenTimeOutHandlerRegistration != null) {
-			screenTimeOutHandlerRegistration.removeHandler();
-			screenTimeOutHandlerRegistration = null;
-		}
-		screenTimer.cancel();
-	}
-
-	/**
-	 * Start the screen timeout handler. If the user does not move the mouse or
-	 * input anything into the app for the screen timeout period then the system
-	 * will automatically log the user out.
-	 */
-	private void startScreenTimer() {
-		// Cancel any current handler
-		cancelScreenTimer();
-
-		// Re-init
-		screenTimeOutHandlerRegistration = com.google.gwt.user.client.Event
-				.addNativePreviewHandler(new NativePreviewHandler() {
-					@Override
-					public void onPreviewNativeEvent(NativePreviewEvent event) {
-						screenTimer.cancel();
-						screenTimer.schedule(screenTimeout);
-					}
-				});
-		screenTimer.schedule(this.screenTimeout);
 	}
 
 	/**
@@ -580,21 +444,6 @@ public class MainPage extends AbstractComposite {
 						EAST_PANEL_WIDTH);
 				dockLayoutPanel.animate(1000);
 			}
-		}
-	}
-
-	/**
-	 * This method tries to detect when the system has been put to sleep for a
-	 * period of time that exceeds the server side timeout. If this happens the
-	 * page is reloaded. The time is set to 35 minutes (35*60*1000 milliseconds)
-	 */
-	@Timed(type = TimerType.REPEATING, interval = 30, timeUnit = TimeUnit.SECONDS)
-	private void longSleepCheck() {
-		long now = System.currentTimeMillis();
-		if (now - this.lastSystemTime > 2100000) {
-			Window.Location.reload();
-		} else {
-			this.lastSystemTime = now;
 		}
 	}
 }

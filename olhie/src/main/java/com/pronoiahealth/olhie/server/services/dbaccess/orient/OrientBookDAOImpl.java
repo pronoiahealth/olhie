@@ -429,10 +429,10 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 
 		// List is sorted in descending order so remove everthing but the first
 		// list element if mostRecentOnly is true
-		if (bResult != null && bResult.size() > 1 && mostRecentOnly == true) {
-			for (int i = 1; i <= bResult.size(); i++) {
-				bResult.remove(i);
-			}
+		if (bResult != null && bResult.size() > 0 && mostRecentOnly == true) {
+			Bookcomment comment =  bResult.get(0);
+			bResult.clear();
+			bResult.add(comment);
 		}
 		
 		// Create a detached list if required
