@@ -8,46 +8,52 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.shared.events.local;
+package com.pronoiahealth.olhie.client.shared.events.book;
 
-import org.jboss.errai.bus.client.api.Local;
+import org.jboss.errai.common.client.api.annotations.Portable;
+import org.jboss.errai.enterprise.client.cdi.api.Conversational;
+
+import com.pronoiahealth.olhie.client.shared.vo.Bookcomment;
 
 /**
- * ShowBookCommentModalEvent.java<br/>
+ * MostRecentUserBookCommentResponseEvent.java<br/>
  * Responsibilities:<br/>
- * 1. Show the BookComment Modal Dialog<br/>
- * 
+ * 1.
+ *
  * <p>
- * Fired By: <br/>
- * Observed By: <br/>
+ * Fired By: BookCommentRatingService class<br/>
+ * Observed By: AddBookCommentDialog <br/>
  * </p>
- * 
+ *
  * @author John DeStefano
  * @version 1.0
- * @since Jul 20, 2013
- * 
+ * @since Oct 23, 2013
+ *
  */
-@Local
-public class ShowBookCommentsModalEvent {
+@Portable
+@Conversational
+public class MostRecentUserBookCommentResponseEvent {
 	private String bookId;
-	private String bookTitle;
+	private Bookcomment comment;
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 */
-	public ShowBookCommentsModalEvent() {
+	public MostRecentUserBookCommentResponseEvent() {
 	}
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param bookId
+	 * @param comment
 	 */
-	public ShowBookCommentsModalEvent(String bookId, String bookTitle) {
+	public MostRecentUserBookCommentResponseEvent(String bookId,
+			Bookcomment comment) {
 		super();
 		this.bookId = bookId;
-		this.bookTitle = bookTitle;
+		this.comment = comment;
 	}
 
 	public String getBookId() {
@@ -58,11 +64,12 @@ public class ShowBookCommentsModalEvent {
 		this.bookId = bookId;
 	}
 
-	public String getBookTitle() {
-		return bookTitle;
+	public Bookcomment getComment() {
+		return comment;
 	}
 
-	public void setBookTitle(String bookTitle) {
-		this.bookTitle = bookTitle;
+	public void setComment(Bookcomment comment) {
+		this.comment = comment;
 	}
+
 }

@@ -52,7 +52,7 @@ public class CommentRatingButtonWidget extends Composite {
 	}
 	
 	public void setShowCommentRatingBtn() {
-		commentRatingBtn.setAttribute("style", "display: inline;");
+		commentRatingBtn.removeAttribute("style");
 	}
 
 }

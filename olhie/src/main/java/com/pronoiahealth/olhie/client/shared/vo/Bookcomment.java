@@ -50,6 +50,8 @@ public class Bookcomment {
 	
 	@NotNull
 	private String comment;
+	
+	private int rating;
 
 	public Bookcomment() {
 	}
@@ -88,5 +90,13 @@ public class Bookcomment {
 
 	public String getId() {
 		return id;
+	}
+
+	public int getRating() {
+		return rating;
+	}
+
+	public void setRating(int rating) {
+		this.rating = rating;
 	}
 }

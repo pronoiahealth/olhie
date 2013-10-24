@@ -894,7 +894,7 @@ public class NewBookPage extends AbstractPage {
 				|| pageState == NewBookPageStateEnum.LOGGED_IN_NOT_IN_MY_COLLECTION_STATE) {
 			this.showAddBookCommentModalEvent
 					.fire(new ShowAddBookCommentModalEvent(bookId,
-							this.currentBookDisplay.getBook().getBookTitle()));
+							this.currentBookDisplay.getBook().getBookTitle(), false));
 		}
 	}
 

@@ -31,7 +31,6 @@ import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 import com.pronoiahealth.olhie.client.shared.vo.Bookcomment;
-import com.pronoiahealth.olhie.client.shared.vo.Bookstarrating;
 import com.pronoiahealth.olhie.client.shared.vo.Comment;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
@@ -182,7 +181,11 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		int bookRating = getAvgBookRating(bookId);
 		int userBookRating = 0;
 		if (user != null) {
-			userBookRating = getUserBookRating(user.getUserId(), bookId);
+			List<Bookcomment> comment = getBookCommentsByBookIdUserId(bookId,
+					userId, true, false);
+			if (comment != null && comment.size() > 0) {
+				userBookRating = comment.get(0).getRating();
+			}
 		}
 
 		// Create BookDisplay
@@ -407,19 +410,37 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 * @param bookId
 	 * @param authorId
 	 * @param ooDbTx
+	 * @param mostRecentOnly
+	 *            - If true only return the single most recent result.
 	 * @param handleTransaction
 	 * @return
 	 * @throws Exception
 	 */
 	@Override
 	public List<Bookcomment> getBookCommentsByBookIdUserId(String bookId,
-			String authorId) throws Exception {
+			String authorId, boolean mostRecentOnly, boolean detach) throws Exception {
+
 		OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
-				"select from BookComment where bookId = :bId and authorId = :aId");
+				"select from BookComment where bookId = :bId and authorId = :aId order by createDT desc");
 		HashMap<String, String> bparams = new HashMap<String, String>();
 		bparams.put("bId", bookId);
 		bparams.put("aId", authorId);
 		List<Bookcomment> bResult = ooDbTx.command(bQuery).execute(bparams);
+
+		// List is sorted in descending order so remove everthing but the first
+		// list element if mostRecentOnly is true
+		if (bResult != null && bResult.size() > 1 && mostRecentOnly == true) {
+			for (int i = 1; i <= bResult.size(); i++) {
+				bResult.remove(i);
+			}
+		}
+		
+		// Create a detached list if required
+		if (detach == true && bResult != null) {
+			bResult = this.createDetachedRetLst(bResult);
+		}
+
+		// Return results
 		return bResult;
 	}
 
@@ -435,7 +456,8 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public Bookcomment addBookComment(String bookId, String authorId,
-			String comment, boolean handleTransaction) throws Exception {
+			String comment, int rating, boolean handleTransaction)
+			throws Exception {
 
 		if (handleTransaction == true) {
 			ooDbTx.begin(TXTYPE.OPTIMISTIC);
@@ -446,6 +468,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		com.setBookId(bookId);
 		com.setComment(comment);
 		com.setCreatedDT(new Date());
+		com.setRating(rating);
 		com = ooDbTx.save(com);
 
 		if (handleTransaction == true) {
@@ -473,39 +496,9 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		}
 	}
 
-	// ////////////////////////////////////////////////////////////////////////////////////////////
-
-	// Ratings
-	// //////////////////////////////////////////////////////////////////////////////////
 	/**
-	 * @param userId
-	 * @param bookId
-	 * @param ooDbTx
-	 * @return
-	 * @throws Exception
-	 */
-	@Override
-	public int getUserBookRating(String userId, String bookId) throws Exception {
-
-		int stars = 0;
-		OSQLSynchQuery<Bookstarrating> query = new OSQLSynchQuery<Bookstarrating>(
-				"select from Bookstarrating where bookId = :bookId and userId = :userId");
-		HashMap<String, String> uparams = new HashMap<String, String>();
-		uparams.put("bookId", bookId);
-		uparams.put("userId", userId);
-		List<Bookstarrating> resultList = ooDbTx.command(query)
-				.execute(uparams);
-		Bookstarrating current = null;
-
-		if (resultList != null && resultList.size() == 1) {
-			current = resultList.get(0);
-			stars = current.getStars();
-		}
-
-		return stars;
-	}
-
-	/**
+	 * Get the average rating. Don't include ratings of 0.
+	 * 
 	 * @param bookId
 	 * @param ooDbTx
 	 * @return
@@ -516,16 +509,15 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 
 		int stars = 0;
 
-		OSQLSynchQuery<Bookstarrating> query = new OSQLSynchQuery<Bookstarrating>(
-				"select from Bookstarrating where bookId = :bookId");
+		OSQLSynchQuery<Bookcomment> query = new OSQLSynchQuery<Bookcomment>(
+				"select from Bookcomment where bookId = :bookId and rating <> 0");
 		HashMap<String, String> uparams = new HashMap<String, String>();
 		uparams.put("bookId", bookId);
-		List<Bookstarrating> resultList = ooDbTx.command(query)
-				.execute(uparams);
+		List<Bookcomment> resultList = ooDbTx.command(query).execute(uparams);
 
 		if (resultList != null && resultList.size() > 0) {
-			for (Bookstarrating bookstarrating : resultList) {
-				stars += bookstarrating.getStars();
+			for (Bookcomment bookcomment : resultList) {
+				stars += bookcomment.getRating();
 			}
 			return Math.round(stars / resultList.size());
 		} else {
@@ -1041,53 +1033,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	// ///////////////////////////////////////////////////////////////////////////////////////////
 
 	// Comments
-	// ////////////////////////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#addBookRating(java.lang.String,
-	 *      java.lang.String, int)
-	 */
-	@Override
-	public Bookstarrating addUpdateBookRating(String userId, String bookId,
-			int rating) throws Exception {
-
-		try {
-			Date now = new Date();
-			ooDbTx.begin(TXTYPE.OPTIMISTIC);
-			// Find the book stars
-			OSQLSynchQuery<Bookstarrating> query = new OSQLSynchQuery<Bookstarrating>(
-					"select from Bookstarrating where bookId = :bookId and userId = :userId");
-			HashMap<String, String> uparams = new HashMap<String, String>();
-			uparams.put("bookId", bookId);
-			uparams.put("userId", userId);
-			List<Bookstarrating> resultList = ooDbTx.command(query).execute(
-					uparams);
-			Bookstarrating current = null;
-			if (resultList != null && resultList.size() == 1) {
-				// Got the book star rating
-				current = resultList.get(0);
-				current.setUpdatedDate(now);
-				current.setStars(rating);
-			} else {
-				current = new Bookstarrating();
-				current.setBookId(bookId);
-				current.setUserId(userId);
-				current.setStars(rating);
-				current.setUpdatedDate(now);
-			}
-
-			// Now save it
-			current = ooDbTx.save(current);
-			ooDbTx.commit();
-
-			// Return the Bookstarrating
-			return ooDbTx.detach(current, true);
-		} catch (Exception e) {
-			ooDbTx.rollback();
-			throw e;
-		}
-
-	}
+	// ///////////////////////////////////////////////////////////////////////////////////////////
 
 	// ///////////////////////////////////////////////////////////////////////////////////////////
 

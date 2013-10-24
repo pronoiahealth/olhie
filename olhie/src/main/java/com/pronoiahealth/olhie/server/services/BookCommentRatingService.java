@@ -24,9 +24,10 @@ import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.AddBookCommentRatingEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindCommentsEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindCommentsResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.MostRecentUserBookCommentEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.MostRecentUserBookCommentResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Bookcomment;
-import com.pronoiahealth.olhie.client.shared.vo.Bookstarrating;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
@@ -61,6 +62,9 @@ public class BookCommentRatingService {
 	@Inject
 	private Event<BookFindCommentsResponseEvent> bookFindCommentsResponseEvent;
 
+	@Inject
+	private Event<MostRecentUserBookCommentResponseEvent> mostRecentUserBookCommentResponseEvent;
+
 	/**
 	 * Constructor
 	 * 
@@ -85,14 +89,8 @@ public class BookCommentRatingService {
 
 			// Update the comments
 			if (comment != null && comment.length() > 0) {
-				bookDAO.addBookComment(bookId, userId, comment, true);
-			}
-
-			// Update the star rating
-			if (starRating != 0) {
-				// add/update the rating
-				Bookstarrating current = bookDAO.addUpdateBookRating(userId,
-						bookId, starRating);
+				bookDAO.addBookComment(bookId, userId, comment, starRating,
+						true);
 			}
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
@@ -139,4 +137,37 @@ public class BookCommentRatingService {
 		}
 	}
 
+	/**
+	 * Fires a return event which will provide the most recent comment left by
+	 * the logged in user.
+	 * 
+	 * @param mostRecentUserBookCommentEvent
+	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
+	protected void observesMostRecentUserBookCommentEvent(
+			@Observes MostRecentUserBookCommentEvent mostRecentUserBookCommentEvent) {
+		try {
+			// Parameters
+			String userId = userToken.getUserId();
+			String bookId = mostRecentUserBookCommentEvent.getBookId();
+
+			// Look it up, should only return 0 or 1 comments
+			Bookcomment retComment = null;
+			List<Bookcomment> comment = bookDAO.getBookCommentsByBookIdUserId(
+					bookId, userId, true, true);
+			if (comment != null && comment.size() > 0) {
+				retComment = comment.get(0);
+			}
+
+			// Fire a return response
+			mostRecentUserBookCommentResponseEvent
+					.fire(new MostRecentUserBookCommentResponseEvent(bookId,
+							retComment));
+		} catch (Exception e) {
+			String errMsg = e.getMessage();
+			log.log(Level.SEVERE, errMsg, e);
+			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
+		}
+
+	}
 }

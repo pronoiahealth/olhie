@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services.dbaccess.orient;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
@@ -73,6 +74,37 @@ public abstract class OrientBaseTxDAO {
 		if (ooDbTx != null) {
 			ooDbTx.close();
 		}
+	}
+
+	/**
+	 * Because of how Orient proxies returned POJO's they must be "detached" and
+	 * a non proxy instance returned. The JSON transport is not capable of
+	 * marshalling the proxied instances.
+	 * 
+	 * 
+	 * @param proxyLst
+	 * @return - Will return the unproxyed list of an empty list
+	 */
+	public <T> List<T> createDetachedRetLst(List<T> proxyLst) {
+		List<T> uLst = new ArrayList<T>();
+		if (proxyLst != null) {
+			for (T u : proxyLst) {
+				T dU = detachObject(u);
+				uLst.add(dU);
+			}
+		}
+		return uLst;
+	}
+
+	/**
+	 * Detachs User object from Orient. Returns a nonProxyed instance
+	 * 
+	 * @param user
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private <T> T detachObject(T obj) {
+		return (T) ooDbTx.detachAll(obj, true);
 	}
 
 }

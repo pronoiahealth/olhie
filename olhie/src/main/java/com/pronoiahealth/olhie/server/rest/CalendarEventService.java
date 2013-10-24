@@ -8,29 +8,32 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.pages;
+package com.pronoiahealth.olhie.server.rest;
 
-import com.google.gwt.core.shared.GWT;
-import com.google.gwt.query.client.GQuery;
-import com.google.gwt.query.client.Selector;
-import com.google.gwt.query.client.Selectors;
+import javax.servlet.ServletException;
+import javax.ws.rs.core.Response;
 
 /**
- * AppSelectors<br/>
+ * CalendarEventService.java<br/>
  * Responsibilities:<br/>
- * 1. Used with GQuery to pre-compile selectors<br/>
- *
+ * 1.
+ * 
  * @author John DeStefano
  * @version 1.0
- * @since May 26, 2013
- *
+ * @since Oct 22, 2013
+ * 
  */
-public interface AppSelectors extends Selectors {
-	public static AppSelectors INSTANCE = GWT.create(AppSelectors.class);
+public interface CalendarEventService {
 
-	@Selector(".center-background")
-	GQuery getCenterBackground();
-	
-	@Selector(".droppablePanel")
-	GQuery getAllDroppableWidgets();
+	/**
+	 * Respond with calendar events
+	 * 
+	 * @param start
+	 * @param end
+	 * @return
+	 * @throws ServletException
+	 */
+	public Response getCalendarEvents(String start, String end)
+			throws ServletException;
+
 }

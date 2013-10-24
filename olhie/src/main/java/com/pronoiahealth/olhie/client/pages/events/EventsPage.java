@@ -68,7 +68,7 @@ public class EventsPage extends AbstractPage {
 				right : "month,basicWeek,basicDay"
 			},
 			editable : false,
-			events : []
+			events : "rest/calendar-event/events"
 		});
 
 	}-*/;

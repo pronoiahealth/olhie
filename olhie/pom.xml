@@ -34,22 +34,18 @@
 		<version.org.codehaus.mojo.gwt.maven.plugin>2.5.1</version.org.codehaus.mojo.gwt.maven.plugin>
 
 		<!-- version.org.jboss.errai>3.0-SNAPSHOT</version.org.jboss.errai -->
-		<!-- version.org.jboss.errai>2.4.1-SNAPSHOT</version.org.jboss.errai -->
 		<version.org.jboss.errai>2.4.1.Final</version.org.jboss.errai>
 		<version.com.google.gwt>2.5.1</version.com.google.gwt>
 		<version.org.codehaus.mojo.gwt.maven.plugin>${version.com.google.gwt}</version.org.codehaus.mojo.gwt.maven.plugin>
 		<resteasy.version>2.3.2.Final</resteasy.version>
 		<!-- orientdb.version>1.3.0</orientdb.version -->
 		<orientdb.version>1.4.1</orientdb.version>
-		<!-- deltaspike.version>0.4-incubating-SNAPSHOT</deltaspike.version -->
-		<!-- deltaspike.version>0.4-SNAPSHOT</deltaspike.version  -->
 		<deltaspike.version>0.5</deltaspike.version>
 		<vectomatic.svg.version>0.5.7</vectomatic.svg.version>
 		<vectomatic.file.version>0.3.3</vectomatic.file.version>
 		<apache.fileupload.version>1.2.2</apache.fileupload.version>
 		<org.moxieapps.fileupload.version>1.1.0</org.moxieapps.fileupload.version>
 		<itext.version>4.2.0</itext.version>
-		<!-- gwt.bootstrap.version>2.2.1.0</gwt.bootstrap.version -->
 		<gwt.bootstrap.version>2.3.2.0-SNAPSHOT</gwt.bootstrap.version>
 		<slf4j.version>1.6.1</slf4j.version>
 		<dnd.version>3.2.0</dnd.version>
@@ -59,6 +55,9 @@
 		<version.gwt.log>3.2.1</version.gwt.log>
 		<apache.commons.imaging>1.1-SNAPSHOT</apache.commons.imaging>
 		<version.tooltip>1.1-SNAPSHOT</version.tooltip>
+		<version.gson>2.2.4</version.gson>
+		<gwtquery.draggable>1.0.4</gwtquery.draggable>
+		<gwtquery.droppable>1.0.8</gwtquery.droppable>
 	</properties>
 
 	<repositories>
@@ -366,13 +365,13 @@
 			<dependency>
 				<groupId>com.googlecode.gwtquery.plugins</groupId>
 				<artifactId>droppable-plugin</artifactId>
-				<version>1.0.8</version>
+				<version>${gwtquery.droppable}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>com.googlecode.gwtquery.plugins</groupId>
 				<artifactId>draggable-plugin</artifactId>
-				<version>1.0.4</version>
+				<version>${gwtquery.draggable}</version>
 			</dependency>
 
 			<!-- GWTQuery Ratings plgin -->
@@ -479,6 +478,11 @@
 				<groupId>com.arcbees.gquery</groupId>
 				<artifactId>tooltip</artifactId>
 				<version>${version.tooltip}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.code.gson</groupId>
+				<artifactId>gson</artifactId>
+				<version>${version.gson}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -887,6 +891,10 @@
 		<dependency>
 			<groupId>com.arcbees.gquery</groupId>
 			<artifactId>tooltip</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
 		</dependency>
 	</dependencies>
 

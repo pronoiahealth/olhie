@@ -47,7 +47,7 @@ public class OrientNewsItemDAOImpl extends OrientBaseTxDAO implements NewsItemDA
 		List<NewsItem> newsItems = ooDbTx.command(uQuery).execute();
 
 		// Convert return
-		newsItems = createRetLst(newsItems);
+		newsItems = createDetachedRetLst(newsItems);
 		if (newsItems == null) {
 			newsItems = new ArrayList<NewsItem>();
 		}
@@ -55,36 +55,4 @@ public class OrientNewsItemDAOImpl extends OrientBaseTxDAO implements NewsItemDA
 		// Return the news items
 		return newsItems;
 	}
-
-	/**
-	 * Because of how Orient proxies returned POJO's they must be "detached" and
-	 * a non proxy instance returned. The JSON transport is not capable of
-	 * marshalling the proxied instances.
-	 * 
-	 * 
-	 * @param proxyLst
-	 * @return - Will return the unproxyed list of an empty list
-	 */
-	private <T> List<T> createRetLst(List<T> proxyLst) {
-		List<T> uLst = new ArrayList<T>();
-		if (proxyLst != null) {
-			for (T u : proxyLst) {
-				T dU = detachUser(u);
-				uLst.add(dU);
-			}
-		}
-		return uLst;
-	}
-
-	/**
-	 * Detachs User object from Orient. Returns a nonProxyed instance
-	 * 
-	 * @param user
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	private <T> T detachUser(T obj) {
-		return (T) ooDbTx.detachAll(obj, true);
-	}
-
 }

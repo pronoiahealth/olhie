@@ -14,16 +14,11 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.shared.api.annotations.DataField;
-import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
-import com.google.gwt.dom.client.AnchorElement;
-import com.google.gwt.dom.client.EventTarget;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
 
@@ -60,10 +55,10 @@ public class MyCollectionButtonWidget extends Composite {
 	/**
 	 * 
 	 */
-	@PostConstruct
-	protected void postConstruct() {
-		DOM.sinkEvents(myCollectionBtn, Event.ONCLICK);
-	}
+	//@PostConstruct
+	//protected void postConstruct() {
+	//	DOM.sinkEvents(myCollectionBtn, Event.ONCLICK);
+	//}
 
 	public void setBtnId(String btnId) {
 		myCollectionBtn.setId(btnId + "_myCollectionBtnId");
@@ -72,14 +67,12 @@ public class MyCollectionButtonWidget extends Composite {
 	public void setAddToMyCollectionBtn(boolean displayOnly) {
 		myCollectionBtn.removeAttribute("style");
 		myCollectionBtn.setClassName("btn btn-mini btn-success bk-tocPage-myCollectionsBtn");
-		myCollectionBtn.setAttribute("title", "Add to My Collection");
 		myCollectionBtnIcon.setClassName("icon-thumbs-up");
 	}
 
 	public void setRemoveFromMyCollectionBtn(boolean displayOnly) {
 		myCollectionBtn.removeAttribute("style");
 		myCollectionBtn.setClassName("btn btn-mini btn-danger bk-tocPage-myCollectionsBtn");
-		myCollectionBtn.setAttribute("title", "Remove from My Collection");
 		myCollectionBtnIcon.setClassName("icon-thumbs-down");
 	}
 

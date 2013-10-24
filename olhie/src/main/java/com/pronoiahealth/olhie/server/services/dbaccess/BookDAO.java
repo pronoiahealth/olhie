@@ -20,7 +20,6 @@ import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 import com.pronoiahealth.olhie.client.shared.vo.Bookcomment;
-import com.pronoiahealth.olhie.client.shared.vo.Bookstarrating;
 import com.pronoiahealth.olhie.client.shared.vo.Comment;
 import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
 import com.pronoiahealth.olhie.server.services.TempThemeHolder;
@@ -161,7 +160,7 @@ public interface BookDAO extends BaseDAO {
 	 * @throws Exception
 	 */
 	public List<Bookcomment> getBookCommentsByBookIdUserId(String bookId,
-			String authorId) throws Exception;
+			String authorId, boolean mostRecentOnly, boolean detach) throws Exception;
 
 	/**
 	 * Add book comment
@@ -174,7 +173,7 @@ public interface BookDAO extends BaseDAO {
 	 * @return
 	 */
 	public Bookcomment addBookComment(String bookId, String authorId,
-			String comment, boolean handleTransaction) throws Exception;
+			String comment, int rating, boolean handleTransaction) throws Exception;
 
 	/**
 	 * Returns true if the book has comments, false otherwise
@@ -185,15 +184,6 @@ public interface BookDAO extends BaseDAO {
 	 * @throws Exception
 	 */
 	public boolean bookHasComments(String bookId) throws Exception;
-
-	/**
-	 * @param userId
-	 * @param bookId
-	 * @param ooDbTx
-	 * @return
-	 * @throws Exception
-	 */
-	public int getUserBookRating(String userId, String bookId) throws Exception;
 
 	/**
 	 * @param bookId
@@ -407,18 +397,6 @@ public interface BookDAO extends BaseDAO {
 	 * @throws Exception
 	 */
 	public Comment saveComment(Comment comment) throws Exception;
-
-	/**
-	 * Add a rating to a book
-	 * 
-	 * @param userId
-	 * @param bookId
-	 * @param rating
-	 * @return
-	 * @throws Exception
-	 */
-	public Bookstarrating addUpdateBookRating(String userId, String bookId,
-			int rating) throws Exception;
 
 	/**
 	 * Returns the author name (first then last).

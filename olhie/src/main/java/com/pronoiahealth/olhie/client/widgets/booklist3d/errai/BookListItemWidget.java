@@ -113,6 +113,7 @@ public class BookListItemWidget extends Composite {
 		Book book = bookDisplay.getBook();
 		String catColor = bookDisplay.getBookCategory().getColor();
 		String catColorTxt = bookDisplay.getBookCategory().getTextColor();
+		int rating = bookDisplay.getBookRating();
 		this.bookId = bookDisplay.getBook().getId();
 		this.bookTitle = bookDisplay.getBook().getBookTitle();
 
@@ -136,17 +137,17 @@ public class BookListItemWidget extends Composite {
 			if (rels.contains(UserBookRelationshipEnum.MYCOLLECTION)) {
 				myCollectionIndicator.setAddToMyCollectionBtn(true);
 				tocWidget.setMyCollectionBtnRemoveFromCollection(false);
+				tocWidget.setCommentRatingBtnShow();
 			} else if (rels.contains(UserBookRelationshipEnum.COAUTHOR)
 					|| rels.contains(UserBookRelationshipEnum.CREATOR)) {
 				myCollectionIndicator.setHideMyCollectionBtn();
 				tocWidget.setMyCollectionBtnHide();
+				tocWidget.setCommentRatingBtnHide();
 			} else {
 				myCollectionIndicator.setHideMyCollectionBtn();
 				tocWidget.setMyCollectionBtnAddToCollection(false);
+				tocWidget.setCommentRatingBtnShow();
 			}
-
-			// Set up comment button
-			tocWidget.setCommentRatingBtnShow();
 		} else {
 			myCollectionIndicator.setHideMyCollectionBtn();
 			tocWidget.setMyCollectionBtnHide();
@@ -193,10 +194,12 @@ public class BookListItemWidget extends Composite {
 
 		// Star rating
 		StarRating sr = new StarRating(5, true);
+		sr.setRating(rating);
 		Element srElem = sr.getElement();
 		srElem.setAttribute("style", "display: inline-block;");
 		ratingContainer.appendChild(srElem);
 
+		// Return the bookId;
 		return bookId;
 	}
 

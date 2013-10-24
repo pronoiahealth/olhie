@@ -21,12 +21,14 @@ import org.apache.deltaspike.core.api.config.ConfigProperty;
 import org.apache.deltaspike.core.api.provider.BeanProvider;
 
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
+import com.pronoiahealth.olhie.server.services.dbaccess.CalendarEventDAO;
 import com.pronoiahealth.olhie.server.services.dbaccess.LoggedInSessionDAO;
 import com.pronoiahealth.olhie.server.services.dbaccess.NewsItemDAO;
 import com.pronoiahealth.olhie.server.services.dbaccess.OfferDAO;
 import com.pronoiahealth.olhie.server.services.dbaccess.StartupDAO;
 import com.pronoiahealth.olhie.server.services.dbaccess.UserDAO;
 import com.pronoiahealth.olhie.server.services.dbaccess.orient.OrientBookDAOImpl;
+import com.pronoiahealth.olhie.server.services.dbaccess.orient.OrientCalendarEventDAOImpl;
 import com.pronoiahealth.olhie.server.services.dbaccess.orient.OrientLoggedInSessionDAOImpl;
 import com.pronoiahealth.olhie.server.services.dbaccess.orient.OrientNewsItemDAOImpl;
 import com.pronoiahealth.olhie.server.services.dbaccess.orient.OrientOfferDAOImpl;
@@ -155,7 +157,7 @@ public class DAOProducer {
 	}
 
 	/**
-	 * Startup DAO
+	 * NewsItem DAO
 	 * 
 	 * @return
 	 * @throws Exception
@@ -174,5 +176,27 @@ public class DAOProducer {
 			throw new DAOException("Could not produce a NewsItemDAO");
 		}
 	}
+	
+	/**
+	 * CalendarEvent DAO
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	@Produces
+	@DAO
+	public CalendarEventDAO getCalendarEventDAO() throws Exception {
+		if (dbImpl.equals("orient")) {
+			// Must return an injected bean and not one create with "new".
+			OrientCalendarEventDAOImpl impl = BeanProvider.getContextualReference(
+					OrientCalendarEventDAOImpl.class, true);
+			return impl;
+		} else {
+			log.log(Level.SEVERE,
+					"Could not produce a OrientCalendarEventDAOImpl implementation");
+			throw new DAOException("Could not produce a CalendarEventDAO");
+		}
+	}
+
 
 }

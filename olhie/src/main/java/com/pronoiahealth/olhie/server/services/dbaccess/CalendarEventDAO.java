@@ -8,29 +8,31 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.pages;
+package com.pronoiahealth.olhie.server.services.dbaccess;
 
-import com.google.gwt.core.shared.GWT;
-import com.google.gwt.query.client.GQuery;
-import com.google.gwt.query.client.Selector;
-import com.google.gwt.query.client.Selectors;
+import java.util.Date;
+import java.util.List;
+
+import com.pronoiahealth.olhie.client.shared.vo.CalendarEvent;
 
 /**
- * AppSelectors<br/>
+ * CalendarEventDAO.java<br/>
  * Responsibilities:<br/>
- * 1. Used with GQuery to pre-compile selectors<br/>
- *
+ * 1.
+ * 
  * @author John DeStefano
  * @version 1.0
- * @since May 26, 2013
- *
+ * @since Oct 22, 2013
+ * 
  */
-public interface AppSelectors extends Selectors {
-	public static AppSelectors INSTANCE = GWT.create(AppSelectors.class);
+public interface CalendarEventDAO extends BaseDAO {
 
-	@Selector(".center-background")
-	GQuery getCenterBackground();
-	
-	@Selector(".droppablePanel")
-	GQuery getAllDroppableWidgets();
+	/**
+	 * @param startDate
+	 * @param EndDate
+	 * @return
+	 * @throws Exception
+	 */
+	public List<CalendarEvent> getCalendarEventsBetweenDates(Date startDate,
+			Date endDate) throws Exception;
 }

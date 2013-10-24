@@ -7,23 +7,26 @@ public class ShowAddBookCommentModalEvent {
 
 	private String bookId;
 	private String bookTitle;
+	private boolean provideMostRecentComment;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 */
 	public ShowAddBookCommentModalEvent() {
 	}
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param bookId
 	 */
-	public ShowAddBookCommentModalEvent(String bookId, String bookTitle) {
+	public ShowAddBookCommentModalEvent(String bookId, String bookTitle,
+			boolean provideMostRecentComment) {
 		super();
 		this.bookId = bookId;
 		this.bookTitle = bookTitle;
+		this.provideMostRecentComment = provideMostRecentComment;
 	}
 
 	public String getBookId() {
@@ -42,4 +45,11 @@ public class ShowAddBookCommentModalEvent {
 		this.bookTitle = bookTitle;
 	}
 
+	public boolean isProvideMostRecentComment() {
+		return provideMostRecentComment;
+	}
+
+	public void setProvideMostRecentComment(boolean provideMostRecentComment) {
+		this.provideMostRecentComment = provideMostRecentComment;
+	}
 }

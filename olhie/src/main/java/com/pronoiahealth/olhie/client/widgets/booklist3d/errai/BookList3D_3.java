@@ -182,7 +182,7 @@ public class BookList3D_3 extends Composite {
 		BookListItemWidget bookListItemWidget = bliwMap.get(bookId);
 		String bookTitle = bookListItemWidget.getBookTitle();
 		showAddBookCommentModalEvent.fire(new ShowAddBookCommentModalEvent(
-				bookId, bookTitle));
+				bookId, bookTitle, true));
 	}
 
 	/**
@@ -259,7 +259,7 @@ public class BookList3D_3 extends Composite {
 				final GQuery tocPageMyCollectionsBtn = toc
 						.find("a.bk-tocPage-myCollectionsBtn");
 				final GQuery tocPageCommentRatingBtn = toc
-						.find("bk-tocPage-commentRatingBtn");
+						.find("a.bk-tocPage-commentRatingBtn");
 				final GQuery tocItems = page.find("div.bk-toc-item");
 				final GQuery tocLinks = page.find("div.bk-toc-link");
 				final GQuery downloadContentBtns = page

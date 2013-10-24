@@ -73,6 +73,7 @@ public class OlhieResourceInjector {
 		OlhieResources.INSTANCE.glasspanelspinnercss().ensureInjected();
 		OlhieResources.INSTANCE.carouselsliderwidgetcss().ensureInjected();
 		OlhieResources.INSTANCE.eventscss().ensureInjected();
+		OlhieResources.INSTANCE.jqueryuimincss();
 		OlhieResources.INSTANCE.fullcalendarcss().ensureInjected();
 		OlhieResources.INSTANCE.fullcalendarprintcss().ensureInjected();
 		/*injectResourceCssAsFile("gwt_overrides.css");*/

@@ -24,6 +24,8 @@ import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.github.gwtbootstrap.client.ui.event.ShownEvent;
 import com.github.gwtbootstrap.client.ui.event.ShownHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -31,7 +33,11 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.shared.events.book.AddBookCommentRatingEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.MostRecentUserBookCommentEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.MostRecentUserBookCommentResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowAddBookCommentModalEvent;
+import com.pronoiahealth.olhie.client.shared.vo.Bookcomment;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.widgets.rating.StarRating;
 import com.pronoiahealth.olhie.client.widgets.rating.StarRatingStarClickedHandler;
@@ -71,6 +77,9 @@ public class AddBookCommentDialog extends Composite {
 
 	@Inject
 	private Event<AddBookCommentRatingEvent> addBookCommentEvent;
+
+	@Inject
+	private Event<MostRecentUserBookCommentEvent> mostRecentUserBookCommentEvent;
 
 	@Inject
 	private ClientUserToken userToken;
@@ -128,7 +137,10 @@ public class AddBookCommentDialog extends Composite {
 	}
 
 	/**
-	 * Show the dialog
+	 * Show the dialog or fire a MostRecentUserBookCommentEvent to get the most
+	 * recent comment. The MostRecentUserBookCommentResponseEvent will be fired
+	 * back which will be processed by the
+	 * observesMostRecentUserBookCommentResponseEvent method.
 	 * 
 	 * @param showBookCommentModalEvent
 	 */
@@ -143,12 +155,58 @@ public class AddBookCommentDialog extends Composite {
 				bookTitle.length() > 30 ? bookTitle.substring(0, 29) + "..."
 						: bookTitle);
 
-		// Should we first check to see if this user has made a comment about
-		// this book?
-		// Call new BookFindUserCommentAndRatingForBookEvent
-		// ..........
+		// Should the most recent comment by the logged in user be displayed?
+		if (showAddBookCommentModalEvent.isProvideMostRecentComment() == true) {
+			mostRecentUserBookCommentEvent
+					.fire(new MostRecentUserBookCommentEvent(currentBookId));
+		} else {
+			commentModal.show();
+		}
+	}
 
+	/**
+	 * In the observesShowAddBookCommentModalEvent the
+	 * ShowAddBookCommentModalEvent may request that the most recent comment for
+	 * the currently logged in user be displayed in the dialog. If so this is
+	 * requested by firing the MostRecentUserBookCommentEvent which will
+	 * response with the MostRecentUserBookCommentResponseEvent. That response
+	 * will be processed in this method and the dialog displayed. It is possible
+	 * that the user has not made any comments for this book.
+	 * 
+	 * 
+	 * @param mostRecentUserBookCommentEvent
+	 */
+	protected void observesMostRecentUserBookCommentResponseEvent(
+			@Observes MostRecentUserBookCommentResponseEvent mostRecentUserBookCommentResponseEvent) {
+
+		String bookId = mostRecentUserBookCommentResponseEvent.getBookId();
+		Bookcomment bookComment = mostRecentUserBookCommentResponseEvent
+				.getComment();
+		if (bookId.equals(this.currentBookId) && bookComment != null) {
+			String myComments = "My comments from "
+					+ DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT)
+							.format(bookComment.getCreatedDT()) + ":\n"
+					+ bookComment.getComment();
+			comment.setText(myComments);
+			currentStarRating = bookComment.getRating();
+			starRating.setRating(currentStarRating);
+		}
+
+		// Show the dialog
 		commentModal.show();
+
+	}
+
+	/**
+	 * If a service error occurs (could in response to the
+	 * MostRecentUserBookCommentEvent event) then hide the dialog as the error
+	 * dialog will pop-up.
+	 * 
+	 * @param serviceErrorEvent
+	 */
+	protected void observesServiceErrorEvent(
+			@Observes ServiceErrorEvent serviceErrorEvent) {
+		commentModal.hide();
 	}
 
 	/**

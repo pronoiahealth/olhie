@@ -8,46 +8,47 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.shared.events.local;
+package com.pronoiahealth.olhie.client.shared.events.book;
 
-import org.jboss.errai.bus.client.api.Local;
+import org.jboss.errai.common.client.api.annotations.Portable;
+import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
 /**
- * ShowBookCommentModalEvent.java<br/>
+ * MostRecentUserBookCommentEvent.java<br/>
  * Responsibilities:<br/>
- * 1. Show the BookComment Modal Dialog<br/>
- * 
+ * 1.
+ *
  * <p>
- * Fired By: <br/>
- * Observed By: <br/>
+ * Fired By: AddBookCommentDialog class<br/>
+ * Observed By: BookCommentRatingService <br/>
  * </p>
  * 
  * @author John DeStefano
  * @version 1.0
- * @since Jul 20, 2013
- * 
+ * @since Oct 23, 2013
+ *
  */
-@Local
-public class ShowBookCommentsModalEvent {
+@Portable
+@Conversational
+public class MostRecentUserBookCommentEvent {
+	
 	private String bookId;
-	private String bookTitle;
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 */
-	public ShowBookCommentsModalEvent() {
+	public MostRecentUserBookCommentEvent() {
 	}
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param bookId
 	 */
-	public ShowBookCommentsModalEvent(String bookId, String bookTitle) {
+	public MostRecentUserBookCommentEvent(String bookId) {
 		super();
 		this.bookId = bookId;
-		this.bookTitle = bookTitle;
 	}
 
 	public String getBookId() {
@@ -56,13 +57,5 @@ public class ShowBookCommentsModalEvent {
 
 	public void setBookId(String bookId) {
 		this.bookId = bookId;
-	}
-
-	public String getBookTitle() {
-		return bookTitle;
-	}
-
-	public void setBookTitle(String bookTitle) {
-		this.bookTitle = bookTitle;
 	}
 }
