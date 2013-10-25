@@ -15,10 +15,18 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.Resource;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
+import javax.jms.MessageProducer;
+import javax.jms.Queue;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import com.lowagie.text.pdf.codec.Base64;
 import com.pronoiahealth.olhie.client.shared.annotations.New;
@@ -70,6 +78,18 @@ public class BookUpdateService {
 	@Inject
 	private Event<BookUpdateCommittedEvent> bookUpdateCommittedEvent;
 
+	//@Resource(mappedName = "queue/testQueue")
+	//private Queue queue;
+
+	/**
+	 * Optionally use a pooled connection factory for better performance
+	 * http://www
+	 * .mastertheboss.com/jboss-jms/jboss-as-7-sending-jms-messages-across
+	 * -java-ee-components
+	 */
+	//@Resource(mappedName = "java:/ConnectionFactory")
+	//private ConnectionFactory cf;
+
 	@Inject
 	@DAO
 	private BookDAO bookDAO;
@@ -102,7 +122,7 @@ public class BookUpdateService {
 
 			// Get the book
 			Book book = bookUpdateEvent.getBook();
-			
+
 			// Get current book from db
 			Book currentBook = bookDAO.getBookById(book.getId());
 
@@ -110,7 +130,7 @@ public class BookUpdateService {
 			BookCategory cat = holder.getCategoryByName(book.getCategory());
 			BookCover cover = holder.getCoverByName(book.getCoverName());
 			String authorName = bookDAO.getAuthorName(book.getAuthorId());
-			
+
 			// Is there a logo on the current book
 			String logoStr = currentBook.getBase64LogoData();
 
@@ -130,7 +150,7 @@ public class BookUpdateService {
 			currentBook.setKeywords(book.getKeywords());
 			currentBook.setCategory(book.getCategory());
 			currentBook.setCoverName(book.getCoverName());
-			
+
 			// Update the active
 			Date now = new Date();
 			boolean active = book.getActive();
@@ -140,15 +160,15 @@ public class BookUpdateService {
 			} else {
 				currentBook.setActDate(null);
 			}
-			
+
 			// image data
 			currentBook.setBase64FrontCover(coverMap.get(Cover.FRONT));
 			currentBook.setBase64BackCover(coverMap.get(Cover.BACK));
 			currentBook.setLastUpdated(now);
-			
+
 			// Solr updating
 			currentBook.setSolrUpdate(null);
-			
+
 			// Save it
 			currentBook = bookDAO.addBook(currentBook);
 
@@ -220,4 +240,48 @@ public class BookUpdateService {
 			serviceErrorEvent.fire(new ServiceErrorEvent(msg));
 		}
 	}
+
+	/*
+	private void enQueueAddUpdate(Book book) {
+		Connection connection = null;
+		Session session = null;
+		MessageProducer publisher = null;
+
+		try {
+			connection = cf.createConnection();
+			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+			publisher = session.createProducer(queue);
+			TextMessage msg = session.createTextMessage("");
+			publisher.send(msg);
+		} catch (Exception e) {
+			log.log(Level.SEVERE,
+					"Error processing add or update for book with id "
+							+ book.getId(), e);
+		} finally {
+			if (publisher != null) {
+				try {
+					publisher.close();
+				} catch (JMSException e) {
+					// Do nothing
+				}
+			}
+			
+			if (session != null) {
+				try {
+					session.close();
+				} catch (JMSException e) {
+					// Do nothing
+				}
+			}
+			
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (JMSException e) {
+					// Do nothing
+				}
+			}
+		}
+	}
+	*/
 }
