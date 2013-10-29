@@ -336,16 +336,26 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 * @throws Exception
 	 */
 	@Override
-	public void setLastUpdatedDT(String bookId, Date updateDT) throws Exception {
+	public void setLastUpdatedDT(String bookId, Date updateDT,
+			boolean runInTransaction) throws Exception {
 		if (bookId != null && bookId.length() > 0) {
 			try {
 				// Start transaction
-				ooDbTx.begin(TXTYPE.OPTIMISTIC);
+				if (runInTransaction == true) {
+					ooDbTx.begin(TXTYPE.OPTIMISTIC);
+				}
+
 				Book book = getBookById(bookId);
 				book.setLastUpdated(updateDT);
 				ooDbTx.save(book);
-				ooDbTx.commit();
+
+				if (runInTransaction == true) {
+					ooDbTx.commit();
+				}
 			} catch (Exception e) {
+				if (runInTransaction == true) {
+					ooDbTx.rollback();
+				}
 				throw e;
 			}
 		}
@@ -418,7 +428,8 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public List<Bookcomment> getBookCommentsByBookIdUserId(String bookId,
-			String authorId, boolean mostRecentOnly, boolean detach) throws Exception {
+			String authorId, boolean mostRecentOnly, boolean detach)
+			throws Exception {
 
 		OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
 				"select from BookComment where bookId = :bId and authorId = :aId order by createDT desc");
@@ -430,11 +441,11 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		// List is sorted in descending order so remove everthing but the first
 		// list element if mostRecentOnly is true
 		if (bResult != null && bResult.size() > 0 && mostRecentOnly == true) {
-			Bookcomment comment =  bResult.get(0);
+			Bookcomment comment = bResult.get(0);
 			bResult.clear();
 			bResult.add(comment);
 		}
-		
+
 		// Create a detached list if required
 		if (detach == true && bResult != null) {
 			bResult = this.createDetachedRetLst(bResult);
@@ -875,7 +886,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 			currentBad = ooDbTx.save(currentBad);
 
 			// Update the last updated attribute of the book
-			setLastUpdatedDT(bookId, new Date());
+			setLastUpdatedDT(bookId, new Date(), false);
 
 			// Commit changes
 			ooDbTx.commit();

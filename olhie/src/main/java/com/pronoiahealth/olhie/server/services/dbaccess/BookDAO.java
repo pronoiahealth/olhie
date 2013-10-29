@@ -55,8 +55,7 @@ public interface BookDAO extends BaseDAO {
 	 * @throws Exception
 	 */
 	public BookDisplay getBookDisplayByBook(Book book, String userId,
-			TempThemeHolder holder, boolean returnNonProxyed)
-			throws Exception;
+			TempThemeHolder holder, boolean returnNonProxyed) throws Exception;
 
 	/**
 	 * Eventually calls getBookDisplayByBook().
@@ -69,8 +68,7 @@ public interface BookDAO extends BaseDAO {
 	 * @throws Exception
 	 */
 	public BookDisplay getBookDisplayById(String bookId, String userId,
-			TempThemeHolder holder, boolean returnNonProxyed)
-			throws Exception;
+			TempThemeHolder holder, boolean returnNonProxyed) throws Exception;
 
 	/**
 	 * Gets a Book entity by the book id.
@@ -126,7 +124,8 @@ public interface BookDAO extends BaseDAO {
 	 * @param ooDbTx
 	 * @throws Exception
 	 */
-	public void setLastUpdatedDT(String bookId, Date updateDT) throws Exception;
+	public void setLastUpdatedDT(String bookId, Date updateDT,
+			boolean runInTransaction) throws Exception;
 
 	/**
 	 * @param userId
@@ -160,7 +159,8 @@ public interface BookDAO extends BaseDAO {
 	 * @throws Exception
 	 */
 	public List<Bookcomment> getBookCommentsByBookIdUserId(String bookId,
-			String authorId, boolean mostRecentOnly, boolean detach) throws Exception;
+			String authorId, boolean mostRecentOnly, boolean detach)
+			throws Exception;
 
 	/**
 	 * Add book comment
@@ -173,7 +173,8 @@ public interface BookDAO extends BaseDAO {
 	 * @return
 	 */
 	public Bookcomment addBookComment(String bookId, String authorId,
-			String comment, int rating, boolean handleTransaction) throws Exception;
+			String comment, int rating, boolean handleTransaction)
+			throws Exception;
 
 	/**
 	 * Returns true if the book has comments, false otherwise
@@ -373,7 +374,7 @@ public interface BookDAO extends BaseDAO {
 	 */
 	public Book addLogo(String bookId, String contentType, String data,
 			String fileName, long size) throws Exception;
-	
+
 	/**
 	 * Add logo and encoded front cover
 	 * 
@@ -386,8 +387,9 @@ public interface BookDAO extends BaseDAO {
 	 * @return
 	 * @throws Exception
 	 */
-	public Book addLogoAndFrontCover(String bookId, String contentType, String data,
-			String fileName, long size, String encodedFrontCover) throws Exception;
+	public Book addLogoAndFrontCover(String bookId, String contentType,
+			String data, String fileName, long size, String encodedFrontCover)
+			throws Exception;
 
 	/**
 	 * Saves a book comment

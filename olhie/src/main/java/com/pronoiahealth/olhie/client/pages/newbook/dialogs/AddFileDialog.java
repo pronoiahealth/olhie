@@ -43,6 +43,10 @@ import com.github.gwtbootstrap.client.ui.event.ShownHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -84,10 +88,16 @@ public class AddFileDialog extends Composite {
 	public TextBox description;
 
 	@UiField
+	public TextBox hoursOfWork;
+
+	@UiField
 	public ControlLabel uploadFileLbl;
 
 	@UiField
 	public ControlGroup descriptionCG;
+
+	@UiField
+	public ControlGroup hoursOfWorkCG;
 
 	@UiField
 	public Label noFileToUploadErr;
@@ -119,6 +129,19 @@ public class AddFileDialog extends Composite {
 	@PostConstruct
 	public void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
+
+		// Add keyboard handler to hours field
+		hoursOfWork.addKeyPressHandler(new KeyPressHandler() {
+			@Override
+			public void onKeyPress(KeyPressEvent event) {
+				int keyCode = event.getNativeEvent().getKeyCode();
+				char charCode = event.getCharCode();
+				if (!Character.isDigit(charCode)
+						&& (keyCode != KeyCodes.KEY_BACKSPACE)) {
+					((TextBox) event.getSource()).cancelKey();
+				}
+			}
+		});
 
 		// set focus
 		addFileModal.addShownHandler(new ShownHandler() {
@@ -333,6 +356,19 @@ public class AddFileDialog extends Composite {
 			descriptionCG.setType(ControlGroupType.ERROR);
 		}
 
+		// Check hours of work
+		String hours = hoursOfWork.getText();
+		if (hours == null || hours.length() == 0) {
+			hours = "0";
+		} else {
+			try {
+				int hoursRet = Integer.parseInt(hours);
+			} catch (Exception e) {
+				hasErrors = true;
+				hoursOfWorkCG.setType(ControlGroupType.ERROR);
+			}
+		}
+
 		// Check upload
 		int filesQueued = uploader.getStats().getFilesQueued();
 		if (filesQueued != 1) {
@@ -344,6 +380,7 @@ public class AddFileDialog extends Composite {
 		if (hasErrors == false) {
 			JSONObject params = new JSONObject();
 			params.put("description", new JSONString(desc));
+			params.put("hoursOfWork", new JSONString(hours));
 			params.put("bookId", new JSONString(this.currentBookId));
 			params.put("action", new JSONString(BookAssetActionType.NEW.name()));
 			uploader.setPostParams(params);
@@ -356,6 +393,7 @@ public class AddFileDialog extends Composite {
 	 */
 	private void clearErrors() {
 		descriptionCG.setType(ControlGroupType.NONE);
+		hoursOfWorkCG.setType(ControlGroupType.NONE);
 		noFileToUploadErr.setText("");
 	}
 
@@ -364,6 +402,7 @@ public class AddFileDialog extends Composite {
 	 */
 	private void clearFields() {
 		description.setText(null);
+		hoursOfWork.setText(null);
 		this.currentBookId = null;
 	}
 }

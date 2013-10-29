@@ -81,6 +81,7 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 
 				//FileItemFactory fileItemFactory = new FileItemFactory();
 				String description = null;
+				String hoursOfWork = null;
 				String bookId = null;
 				String action = null;
 				String contentType = null;
@@ -92,12 +93,15 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 				FileItemIterator iter = fileUpload.getItemIterator(req);
 				while(iter.hasNext()) {
 					FileItemStream item = iter.next();
-				    String name = item.getFieldName();
 				    InputStream stream = item.openStream();
 				    if (item.isFormField()) {
 						// description
 						if (item.getFieldName().equals("description")) {
 							description = Streams.asString(stream);
+						}
+						
+						if (item.getFieldName().equals("hoursOfWork")) {
+							hoursOfWork = Streams.asString(stream);
 						}
 
 						// BookId
