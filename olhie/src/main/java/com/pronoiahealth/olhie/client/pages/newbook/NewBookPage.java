@@ -52,6 +52,8 @@ import com.pronoiahealth.olhie.client.clientfactories.ViewableContentType;
 import com.pronoiahealth.olhie.client.navigation.AnonymousRole;
 import com.pronoiahealth.olhie.client.pages.AbstractPage;
 import com.pronoiahealth.olhie.client.pages.newbook.features.AddFileDialogHandlerFeature;
+import com.pronoiahealth.olhie.client.pages.newbook.features.AddLogoDialogHandlerFeature;
+import com.pronoiahealth.olhie.client.pages.newbook.features.NewAssetDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.constants.BookAssetDataType;
 import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
@@ -281,6 +283,12 @@ public class NewBookPage extends AbstractPage {
 	@Inject
 	private AddFileDialogHandlerFeature addFileDialogFeature;
 
+	@Inject
+	private NewAssetDialogHandlerFeature newAssetDialogFeature;
+
+	@Inject
+	private AddLogoDialogHandlerFeature addLogoDialogFeature;
+
 	/**
 	 * Default Constructor
 	 * 
@@ -393,7 +401,7 @@ public class NewBookPage extends AbstractPage {
 		buildLoggedInNotInMyCollectionButtons();
 		buildNotLoggedInButtons();
 	}
-	
+
 	/**
 	 * Author buttons
 	 */
@@ -592,8 +600,11 @@ public class NewBookPage extends AbstractPage {
 	 */
 	@PageHiding
 	protected void pageHidden() {
+		// Remove page features
 		addFileDialogFeature.deactivate();
-		
+		newAssetDialogFeature.deactivate();
+		addLogoDialogFeature.deactivate();
+
 		// Announce that the page is hidden
 		newBookPageHidingEvent.fire(new NewBookPageHidingEvent());
 	}
@@ -609,8 +620,11 @@ public class NewBookPage extends AbstractPage {
 
 	@PageShown
 	protected void pageShown() {
+		// Activate page features
 		addFileDialogFeature.activate();
-		
+		newAssetDialogFeature.activate();
+		addLogoDialogFeature.activate();
+
 		// Put the page components in view only state until the users role
 		// with the book is determined
 		bookListBookSelectedEvent.fire(new BookListBookSelectedEvent(bookId));
@@ -1089,7 +1103,7 @@ public class NewBookPage extends AbstractPage {
 	@Override
 	protected void onLoad() {
 		// Set up the addFileDialog
-		//addFileDialogFeature.standUpAndActivate(null);
+		// addFileDialogFeature.standUpAndActivate(null);
 
 		super.onLoad();
 	}
@@ -1097,7 +1111,7 @@ public class NewBookPage extends AbstractPage {
 	@Override
 	protected void onUnload() {
 		// Set up the addFileDialog
-		//addFileDialogFeature.tearDown();
+		// addFileDialogFeature.tearDown();
 		super.onUnload();
 	}
 

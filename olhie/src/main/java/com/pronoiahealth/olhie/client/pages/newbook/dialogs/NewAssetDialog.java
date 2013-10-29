@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.pages.newbook.dialogs;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -36,6 +37,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.ShowNewAssetModalEvent
  * @since Jun 11, 2013
  * 
  */
+@Dependent
 public class NewAssetDialog extends Composite {
 
 	@Inject
@@ -52,7 +54,7 @@ public class NewAssetDialog extends Composite {
 
 	@Inject
 	private Event<ShowAddFileModalEvent> showAddFileModalEvent;
-	
+
 	private String currentBookId;
 
 	/**

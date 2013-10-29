@@ -42,8 +42,8 @@ import com.pronoiahealth.olhie.client.features.impl.ViewBookassetDialogHandlerFe
 import com.pronoiahealth.olhie.client.features.impl.WindowCloseTrappingFeature;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
-import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddLogoDialog;
-import com.pronoiahealth.olhie.client.pages.newbook.dialogs.NewAssetDialog;
+//import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddLogoDialog;
+//import com.pronoiahealth.olhie.client.pages.newbook.dialogs.NewAssetDialog;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
@@ -97,18 +97,6 @@ public class MainPage extends AbstractComposite {
 
 	@Inject
 	Header navBar;
-
-	@Inject
-	NewAssetDialog newAssetDialog;
-
-	@Inject
-	AddLogoDialog addLogoDialog;
-
-	@UiField
-	public HTMLPanel newAssetModalPlaceHolder;
-
-	@UiField
-	public HTMLPanel addLogoDialogModalPlaceHolder;
 
 	@UiField
 	public HTMLPanel reloadModalPlaceHolder;
@@ -184,10 +172,10 @@ public class MainPage extends AbstractComposite {
 
 	@Inject
 	private ViewBookassetDialogHandlerFeature viewBookassetDialogFeature;
-	
+
 	@Inject
 	private ViewBookCommentsHandlerFeature viewBookCommentsDialogFeature;
-	
+
 	@Inject
 	private AddBookCommentsHandlerFeature addBookCommentDialogFeature;
 
@@ -282,13 +270,13 @@ public class MainPage extends AbstractComposite {
 
 		// View book asset
 		viewBookassetDialogFeature.standUpAndActivate(null);
-		
+
 		// View Comments
 		viewBookCommentsDialogFeature.standUpAndActivate(null);
-		
+
 		// Add comments
 		addBookCommentDialogFeature.standUpAndActivate(null);
-		
+
 		// Footer
 		buildFooter();
 
@@ -300,10 +288,6 @@ public class MainPage extends AbstractComposite {
 
 		// Header
 		buildNavBar();
-
-		// Add main screen dialogs
-		// Login, Comments, Register
-		buildMainScreenDialogs();
 
 		// Add navigation panel
 		navContent.add(navigator.getNavContentPanel());
@@ -339,14 +323,6 @@ public class MainPage extends AbstractComposite {
 	 */
 	private void buildRightSideBar() {
 		newsDisplayPlaceHolder.add(newsDisplay);
-	}
-
-	/**
-	 * Attach the login, comments, and register dialogs
-	 */
-	private void buildMainScreenDialogs() {
-		newAssetModalPlaceHolder.add(newAssetDialog);
-		addLogoDialogModalPlaceHolder.add(addLogoDialog);
 	}
 
 	/**

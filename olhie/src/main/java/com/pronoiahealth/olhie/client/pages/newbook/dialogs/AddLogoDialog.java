@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.pages.newbook.dialogs;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -64,6 +65,7 @@ import com.pronoiahealth.olhie.client.widgets.progressbar.ProgressBar;
  * @since Jun 28, 2013
  * 
  */
+@Dependent
 public class AddLogoDialog extends Composite {
 
 	@Inject
