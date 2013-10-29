@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.widgets;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 
@@ -18,7 +19,6 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.NamedFrame;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
@@ -36,6 +36,7 @@ import com.pronoiahealth.olhie.client.utils.Utils;
  * @since Jun 21, 2013
  * 
  */
+@Dependent
 public class DownloadFrame extends SimplePanel {
 	private NamedFrame iFrame;
 	private LoadHandler loadHandler;

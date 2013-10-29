@@ -8,9 +8,10 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.pages.newbook.dialogs;
+package com.pronoiahealth.olhie.client.features.dialogs;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -52,6 +53,7 @@ import com.pronoiahealth.olhie.client.widgets.rating.StarRatingStarClickedHandle
  * @since Jul 20, 2013
  * 
  */
+@Dependent
 public class AddBookCommentDialog extends Composite {
 
 	@Inject

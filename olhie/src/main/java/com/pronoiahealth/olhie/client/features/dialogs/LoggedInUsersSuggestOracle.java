@@ -1,4 +1,4 @@
-package com.pronoiahealth.olhie.client.pages.lookupuser;
+package com.pronoiahealth.olhie.client.features.dialogs;
 
 import java.util.ArrayList;
 import java.util.List;

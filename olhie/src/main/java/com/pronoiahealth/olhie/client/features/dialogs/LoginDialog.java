@@ -8,9 +8,10 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.pages.login;
+package com.pronoiahealth.olhie.client.features.dialogs;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -52,6 +53,7 @@ import com.pronoiahealth.olhie.client.shared.events.loginout.LoginResponseEvent;
  * @since May 25, 2013
  * 
  */
+@Dependent
 public class LoginDialog extends Composite {
 
 	@Inject

@@ -51,6 +51,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.clientfactories.ViewableContentType;
 import com.pronoiahealth.olhie.client.navigation.AnonymousRole;
 import com.pronoiahealth.olhie.client.pages.AbstractPage;
+import com.pronoiahealth.olhie.client.pages.newbook.features.AddFileDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.constants.BookAssetDataType;
 import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
@@ -277,6 +278,9 @@ public class NewBookPage extends AbstractPage {
 
 	private StarRating starRating;
 
+	@Inject
+	private AddFileDialogHandlerFeature addFileDialogFeature;
+
 	/**
 	 * Default Constructor
 	 * 
@@ -389,7 +393,7 @@ public class NewBookPage extends AbstractPage {
 		buildLoggedInNotInMyCollectionButtons();
 		buildNotLoggedInButtons();
 	}
-
+	
 	/**
 	 * Author buttons
 	 */
@@ -588,6 +592,9 @@ public class NewBookPage extends AbstractPage {
 	 */
 	@PageHiding
 	protected void pageHidden() {
+		addFileDialogFeature.deactivate();
+		
+		// Announce that the page is hidden
 		newBookPageHidingEvent.fire(new NewBookPageHidingEvent());
 	}
 
@@ -602,6 +609,8 @@ public class NewBookPage extends AbstractPage {
 
 	@PageShown
 	protected void pageShown() {
+		addFileDialogFeature.activate();
+		
 		// Put the page components in view only state until the users role
 		// with the book is determined
 		bookListBookSelectedEvent.fire(new BookListBookSelectedEvent(bookId));
@@ -894,7 +903,8 @@ public class NewBookPage extends AbstractPage {
 				|| pageState == NewBookPageStateEnum.LOGGED_IN_NOT_IN_MY_COLLECTION_STATE) {
 			this.showAddBookCommentModalEvent
 					.fire(new ShowAddBookCommentModalEvent(bookId,
-							this.currentBookDisplay.getBook().getBookTitle(), false));
+							this.currentBookDisplay.getBook().getBookTitle(),
+							false));
 		}
 	}
 
@@ -1075,4 +1085,20 @@ public class NewBookPage extends AbstractPage {
 			starRating.setReadOnly(false);
 		}
 	}
+
+	@Override
+	protected void onLoad() {
+		// Set up the addFileDialog
+		//addFileDialogFeature.standUpAndActivate(null);
+
+		super.onLoad();
+	}
+
+	@Override
+	protected void onUnload() {
+		// Set up the addFileDialog
+		//addFileDialogFeature.tearDown();
+		super.onUnload();
+	}
+
 }

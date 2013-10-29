@@ -24,26 +24,26 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.features.FeatureCallbackHandler;
+import com.pronoiahealth.olhie.client.features.impl.AddBookCommentsHandlerFeature;
+import com.pronoiahealth.olhie.client.features.impl.CommentsDialogHandlerFeature;
+import com.pronoiahealth.olhie.client.features.impl.DownloadWidgetHandlerFeature;
+import com.pronoiahealth.olhie.client.features.impl.ErrorDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.features.impl.LoggedInUserServerPingFeature;
+import com.pronoiahealth.olhie.client.features.impl.LoginDialogHandlingFeature;
+import com.pronoiahealth.olhie.client.features.impl.LookupUserDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.features.impl.MainWindowResizeFeature;
+import com.pronoiahealth.olhie.client.features.impl.NewBookDialogHandlerFeature;
+import com.pronoiahealth.olhie.client.features.impl.RegisterDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.features.impl.ScreenInactivityTimeoutFeature;
 import com.pronoiahealth.olhie.client.features.impl.SleepDetectionFeature;
 import com.pronoiahealth.olhie.client.features.impl.UnhandledExceptionHandlerFeature;
+import com.pronoiahealth.olhie.client.features.impl.ViewBookCommentsHandlerFeature;
+import com.pronoiahealth.olhie.client.features.impl.ViewBookassetDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.features.impl.WindowCloseTrappingFeature;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
-import com.pronoiahealth.olhie.client.pages.comments.CommentsDialog;
-import com.pronoiahealth.olhie.client.pages.error.ErrorDisplayDialog;
-import com.pronoiahealth.olhie.client.pages.login.LoginDialog;
-import com.pronoiahealth.olhie.client.pages.lookupuser.LookupUserDialog;
-import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddBookCommentDialog;
-import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddFileDialog;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddLogoDialog;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.NewAssetDialog;
-import com.pronoiahealth.olhie.client.pages.newbook.dialogs.NewBookDialog;
-import com.pronoiahealth.olhie.client.pages.newbook.dialogs.ViewBookCommentsDialog;
-import com.pronoiahealth.olhie.client.pages.newbook.dialogs.ViewBookassetDialog;
-import com.pronoiahealth.olhie.client.pages.register.RegisterDialog;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
@@ -54,7 +54,6 @@ import com.pronoiahealth.olhie.client.shared.events.loginout.LogoutRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.news.NewsItemsRequestEvent;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.shared.vo.User;
-import com.pronoiahealth.olhie.client.widgets.DownloadFrame;
 import com.pronoiahealth.olhie.client.widgets.newsdisplay.NewsDisplay;
 
 /**
@@ -100,82 +99,16 @@ public class MainPage extends AbstractComposite {
 	Header navBar;
 
 	@Inject
-	LoginDialog loginDialog;
-
-	@Inject
-	RegisterDialog registerDialog;
-
-	@Inject
-	CommentsDialog commentsDialog;
-
-	@Inject
-	ErrorDisplayDialog errorDisplayDialog;
-
-	@Inject
-	NewBookDialog newBookDialog;
-
-	@Inject
 	NewAssetDialog newAssetDialog;
 
 	@Inject
-	AddFileDialog addFileDialog;
-
-	@Inject
-	ViewBookassetDialog viewBookassetDialog;
-
-	@Inject
 	AddLogoDialog addLogoDialog;
-
-	@Inject
-	LookupUserDialog lookupUserDialog;
-
-	@Inject
-	DownloadFrame downloadFrame;
-
-	@Inject
-	AddBookCommentDialog addBookCommentDialog;
-
-	@Inject
-	ViewBookCommentsDialog viewBookCommentsDialog;
-
-	@UiField
-	public HTMLPanel loginModalPlaceHolder;
-
-	@UiField
-	public HTMLPanel errorModalPlaceHolder;
-
-	@UiField
-	public HTMLPanel registerModalPlaceHolder;
-
-	@UiField
-	public HTMLPanel commentsModalPlaceHolder;
-
-	@UiField
-	public HTMLPanel newBookModalPlaceHolder;
 
 	@UiField
 	public HTMLPanel newAssetModalPlaceHolder;
 
 	@UiField
-	public HTMLPanel addFileModalPlaceHolder;
-
-	@UiField
-	public HTMLPanel viewBookassetModalPlaceHolder;
-
-	@UiField
-	public HTMLPanel downloadFramePlaceHolder;
-
-	@UiField
 	public HTMLPanel addLogoDialogModalPlaceHolder;
-
-	@UiField
-	public HTMLPanel lookupUserModalPlaceHolder;
-
-	@UiField
-	public HTMLPanel viewBookCommentsPlaceHolder;
-
-	@UiField
-	public HTMLPanel addBookCommentPlaceHolder;
 
 	@UiField
 	public HTMLPanel reloadModalPlaceHolder;
@@ -218,15 +151,45 @@ public class MainPage extends AbstractComposite {
 
 	@Inject
 	private WindowCloseTrappingFeature windowCloseTrappingFeature;
-	
+
 	@Inject
 	private MainWindowResizeFeature mainWindowResizeFeature;
-	
+
 	@Inject
 	private LoggedInUserServerPingFeature loggedInUserServerPingFeature;
-	
+
 	@Inject
 	private SleepDetectionFeature sleepDetectionFeature;
+
+	@Inject
+	private LoginDialogHandlingFeature loginDialogFeature;
+
+	@Inject
+	private ErrorDialogHandlerFeature errorDialogFeature;
+
+	@Inject
+	private CommentsDialogHandlerFeature commentsDialogFeature;
+
+	@Inject
+	private RegisterDialogHandlerFeature registerDialogFeature;
+
+	@Inject
+	private NewBookDialogHandlerFeature newBookDialogFeature;
+
+	@Inject
+	private DownloadWidgetHandlerFeature downloadFeature;
+
+	@Inject
+	private LookupUserDialogHandlerFeature lookupUserDialogFeature;
+
+	@Inject
+	private ViewBookassetDialogHandlerFeature viewBookassetDialogFeature;
+	
+	@Inject
+	private ViewBookCommentsHandlerFeature viewBookCommentsDialogFeature;
+	
+	@Inject
+	private AddBookCommentsHandlerFeature addBookCommentDialogFeature;
 
 	private static final int EAST_PANEL_WIDTH = 180;
 
@@ -256,9 +219,8 @@ public class MainPage extends AbstractComposite {
 	 * 1. Set up screen timer<br/>
 	 * 2. Initial sidebar menu <br/>
 	 * 3. Request news items <br/>
-	 * 4. Set up inactivity feature
-	 * 5. set up window resize feature
-	 * 6. setup window close trap feature
+	 * 4. Set up inactivity feature 5. set up window resize feature 6. setup
+	 * window close trap feature
 	 */
 	@AfterInitialization
 	public void postInit() {
@@ -276,26 +238,57 @@ public class MainPage extends AbstractComposite {
 					}
 				});
 		screenInactivityTimeoutFeature.standUpAndActivate(null);
-		
+
 		// Window close trap
 		windowCloseTrappingFeature.standUpAndActivate(null);
 
 		// Not all GWT panel will resize when the window resizes
 		// Observing this event gives panel a chance to resize if necessary
 		mainWindowResizeFeature.standUpAndActivate(null);
-		
+
 		// Set up the server ping service. Don't start it yet
-		loggedInUserServerPingFeature.addStandupCallbackHandler(new FeatureCallbackHandler() {
-			@Override
-			public void executeCallBack() {
-				observesClientLogoutRequestEvent(null);
-			}
-		});
+		loggedInUserServerPingFeature
+				.addStandupCallbackHandler(new FeatureCallbackHandler() {
+					@Override
+					public void executeCallBack() {
+						observesClientLogoutRequestEvent(null);
+					}
+				});
 		loggedInUserServerPingFeature.standUp(null);
-		
+
 		// Sleep timer
 		sleepDetectionFeature.standUpAndActivate(null);
 
+		// Login dialog
+		loginDialogFeature.standUpAndActivate(null);
+
+		// Error Dialog
+		errorDialogFeature.standUpAndActivate(null);
+
+		// Comment dialog
+		commentsDialogFeature.standUpAndActivate(null);
+
+		// Register Dialog
+		registerDialogFeature.standUpAndActivate(null);
+
+		// Register
+		newBookDialogFeature.standUpAndActivate(null);
+
+		// Download
+		downloadFeature.standUpAndActivate(null);
+
+		// Look up user
+		lookupUserDialogFeature.standUpAndActivate(null);
+
+		// View book asset
+		viewBookassetDialogFeature.standUpAndActivate(null);
+		
+		// View Comments
+		viewBookCommentsDialogFeature.standUpAndActivate(null);
+		
+		// Add comments
+		addBookCommentDialogFeature.standUpAndActivate(null);
+		
 		// Footer
 		buildFooter();
 
@@ -352,19 +345,8 @@ public class MainPage extends AbstractComposite {
 	 * Attach the login, comments, and register dialogs
 	 */
 	private void buildMainScreenDialogs() {
-		loginModalPlaceHolder.add(loginDialog);
-		registerModalPlaceHolder.add(registerDialog);
-		commentsModalPlaceHolder.add(commentsDialog);
-		errorModalPlaceHolder.add(errorDisplayDialog);
-		newBookModalPlaceHolder.add(newBookDialog);
 		newAssetModalPlaceHolder.add(newAssetDialog);
-		addFileModalPlaceHolder.add(addFileDialog);
-		viewBookassetModalPlaceHolder.add(viewBookassetDialog);
-		downloadFramePlaceHolder.add(downloadFrame);
-		lookupUserModalPlaceHolder.add(lookupUserDialog);
 		addLogoDialogModalPlaceHolder.add(addLogoDialog);
-		addBookCommentPlaceHolder.add(addBookCommentDialog);
-		viewBookCommentsPlaceHolder.add(viewBookCommentsDialog);
 	}
 
 	/**

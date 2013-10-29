@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -131,6 +132,11 @@ public class BookCasePage extends AbstractPage {
 		// });
 
 	}
+	
+	@PreDestroy
+	protected void preDestroy() {
+		gSpinner.getElement();
+	}
 
 	/**
 	 * When the page is shown ask the server for the list of books
@@ -222,6 +228,5 @@ public class BookCasePage extends AbstractPage {
 			@Observes ClientErrorEvent clientErrorEvent) {
 		// Set the spinner visible
 		gSpinner.setVisible(false);
-		// spinner.setVisible(false);
 	}
 }

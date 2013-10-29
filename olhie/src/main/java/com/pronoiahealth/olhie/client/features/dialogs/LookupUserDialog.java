@@ -8,9 +8,10 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.pages.lookupuser;
+package com.pronoiahealth.olhie.client.features.dialogs;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -36,6 +37,7 @@ import com.pronoiahealth.olhie.client.shared.events.offers.CreateOfferEvent;
 import com.pronoiahealth.olhie.client.shared.vo.ConnectedUser;
 import com.pronoiahealth.olhie.client.widgets.suggestoracle.GenericMultiWordSuggestion;
 
+@Dependent
 public class LookupUserDialog extends Composite {
 
 	@Inject
