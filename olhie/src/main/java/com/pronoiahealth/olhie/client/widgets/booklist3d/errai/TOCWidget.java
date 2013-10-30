@@ -63,11 +63,11 @@ public class TOCWidget extends Composite {
 	 *            - 1 based
 	 * @param itemDesc
 	 */
-	public void addItem(int count, String itemDesc) {
+	public void addItem(int count, String itemDesc, int hoursOfWork) {
 		Element div = DOM.createDiv();
 		div.setClassName("bk-toc-item");
 		div.setAttribute("item-ref", "" + count);
-		div.setInnerText("" + count + ". " + itemDesc);
+		div.setInnerText("" + count + ". " + itemDesc + " (" + hoursOfWork + " hrs)");
 		tocItems.appendChild(div);
 	}
 

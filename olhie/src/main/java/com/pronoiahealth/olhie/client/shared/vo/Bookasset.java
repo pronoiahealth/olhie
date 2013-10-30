@@ -59,6 +59,8 @@ public class Bookasset {
 	
 	private Long size;
 	
+	private int hoursOfWork;
+	
 	@NotNull
 	private String base64Data;
 	
@@ -142,5 +144,13 @@ public class Bookasset {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public int getHoursOfWork() {
+		return hoursOfWork;
+	}
+
+	public void setHoursOfWork(int hoursOfWork) {
+		this.hoursOfWork = hoursOfWork;
 	}
 }

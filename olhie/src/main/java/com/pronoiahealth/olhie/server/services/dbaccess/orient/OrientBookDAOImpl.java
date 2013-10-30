@@ -156,6 +156,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		List<Bookassetdescription> retBaResults = new ArrayList<Bookassetdescription>();
 		// Need to detach them. We don't want to pull back the entire object
 		// tree
+		int bookHoursOfWork = 0;
 		if (baResult != null) {
 			for (Bookassetdescription bad : baResult) {
 				if (bad.getRemoved().booleanValue() == false) {
@@ -169,6 +170,9 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 					retBa.setId(ba.getId());
 					retBa.setContentType(ba.getContentType());
 					retBa.setItemType(ba.getItemType());
+					int hoursOfWork = ba.getHoursOfWork();
+					retBa.setHoursOfWork(hoursOfWork);
+					bookHoursOfWork = bookHoursOfWork + hoursOfWork;
 					ArrayList<Bookasset> retbookAssets = new ArrayList<Bookasset>();
 					retbookAssets.add(retBa);
 					retBad.setBookAssets(retbookAssets);
@@ -190,7 +194,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 
 		// Create BookDisplay
 		BookDisplay bookDisplay = new BookDisplay(book, cover, cat, authorName,
-				retBaResults, bookRating, userBookRating);
+				retBaResults, bookRating, userBookRating, bookHoursOfWork);
 
 		// Logo?
 		String logoFileName = book.getLogoFileName();
@@ -952,7 +956,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	@Override
 	public void addUpdateBookasset(String description, String bookId,
 			String contentType, String data, String action, String fileName,
-			long size) throws Exception {
+			long size, int hoursOfWork) throws Exception {
 		if (BookAssetActionType.valueOf(action).equals(BookAssetActionType.NEW)) {
 			// Find Book
 			OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
@@ -997,6 +1001,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 				ba.setItemType(BookAssetDataType.FILE.name());
 				ba.setSize(size);
 				ba.setBase64Data(data);
+				ba.setHoursOfWork(hoursOfWork);
 				ba = ooDbTx.save(ba);
 				ooDbTx.commit();
 			} catch (Exception e) {

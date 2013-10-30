@@ -85,6 +85,9 @@ public class BookListItemWidget extends Composite {
 	@DataField("ratingContainer")
 	private Element ratingContainer = DOM.createDiv();
 
+	@DataField("bookHoursOfWork")
+	private Element bookHoursOfWork = DOM.createDiv();
+
 	@Inject
 	private Instance<BookContentWidget> bookContentInstance;
 
@@ -174,7 +177,7 @@ public class BookListItemWidget extends Composite {
 			bContent.setDescription(desc, val == null ? true : false,
 					currentAssetId, val == null ? "" : val);
 			bookPage.appendChild(bContent.getElement());
-			tocWidget.addItem(counter++, desc);
+			tocWidget.addItem(counter++, desc, currentAsset.getHoursOfWork());
 		}
 
 		// Back cover
@@ -198,6 +201,9 @@ public class BookListItemWidget extends Composite {
 		Element srElem = sr.getElement();
 		srElem.setAttribute("style", "display: inline-block;");
 		ratingContainer.appendChild(srElem);
+
+		// Book hours of work
+		bookHoursOfWork.setInnerText("" + bookDisplay.getBookHoursOfWork());
 
 		// Return the bookId;
 		return bookId;

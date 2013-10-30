@@ -39,6 +39,7 @@ public class BookDisplay {
 	private int bookRating;
 	private int userBookRating;
 	private List<Bookassetdescription> bookAssetDescriptions;
+	private int bookHoursOfWork;
 
 	/**
 	 * 
@@ -55,9 +56,9 @@ public class BookDisplay {
 	 */
 	public BookDisplay(Book book, BookCover bookCover, BookCategory bookCategory, String authorFullName,
 			List<Bookassetdescription> bookAssetDescriptions, int bookRating,
-			int userBookRating) {
+			int userBookRating, int bookHoursOfWork) {
 		this(book, bookCover, bookCategory, authorFullName, bookAssetDescriptions, false,
-				false, bookRating, userBookRating);
+				false, bookRating, userBookRating, bookHoursOfWork);
 	}
 
 	/**
@@ -75,7 +76,7 @@ public class BookDisplay {
 	 */
 	public BookDisplay(Book book, BookCover bookCover, BookCategory bookCategory, String authorFullName,
 			List<Bookassetdescription> bookAssetDescriptions, boolean bookLogo,
-			boolean hasComments, int bookRating, int userBookRating) {
+			boolean hasComments, int bookRating, int userBookRating, int bookHoursOfWork) {
 		super();
 		this.book = book;
 		this.bookCover = bookCover;
@@ -87,6 +88,7 @@ public class BookDisplay {
 		this.bookLogo = bookLogo;
 		this.bookRating = bookRating;
 		this.userBookRating = userBookRating;
+		this.bookHoursOfWork = bookHoursOfWork;
 	}
 
 	public Book getBook() {
@@ -168,5 +170,13 @@ public class BookDisplay {
 
 	public void setBookCategory(BookCategory bookCategory) {
 		this.bookCategory = bookCategory;
+	}
+
+	public int getBookHoursOfWork() {
+		return bookHoursOfWork;
+	}
+
+	public void setBookHoursOfWork(int bookHoursOfWork) {
+		this.bookHoursOfWork = bookHoursOfWork;
 	}
 }

@@ -11,14 +11,26 @@
 				<g:HorizontalPanel styleName="ph-NewBook-NewAssetDialog-AssetTypesPanel">
 					<g:FocusPanel ui:field="addFile">
 						<g:HTMLPanel styleName="ph-NewBook-NewAssetDialog-Add-Elements">
-							<b:Icon type="FILE_ALT" iconSize="LARGE"></b:Icon>
+							<b:Icon type="FILE_ALT" iconSize="FOUR_TIMES"></b:Icon>
 							<g:Label>File</g:Label>
 						</g:HTMLPanel>
 					</g:FocusPanel>
 					<g:FocusPanel ui:field="addLink">
 						<g:HTMLPanel styleName="ph-NewBook-NewAssetDialog-Add-Elements">
-							<b:Icon type="LINK" iconSize="LARGE"></b:Icon>
+							<b:Icon type="LINK" iconSize="FOUR_TIMES" muted="true"></b:Icon>
 							<g:Label>Link</g:Label>
+						</g:HTMLPanel>
+					</g:FocusPanel>
+					<g:FocusPanel ui:field="addVideo">
+						<g:HTMLPanel styleName="ph-NewBook-NewAssetDialog-Add-Elements">
+							<b:Icon type="FILM" iconSize="FOUR_TIMES" muted="true"></b:Icon>
+							<g:Label>Video</g:Label>
+						</g:HTMLPanel>
+					</g:FocusPanel>
+					<g:FocusPanel ui:field="addOlhieDoc">
+						<g:HTMLPanel styleName="ph-NewBook-NewAssetDialog-Add-Elements">
+							<b:Icon type="FILE_TEXT" iconSize="FOUR_TIMES" muted="true"></b:Icon>
+							<g:Label>Olhie Document</g:Label>
 						</g:HTMLPanel>
 					</g:FocusPanel>
 				</g:HorizontalPanel>

@@ -61,7 +61,7 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 	@Inject
 	public BookAssetUploadServiceImpl() {
 	}
-	
+
 	/**
 	 * Receive an upload book assest
 	 * 
@@ -79,9 +79,9 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 			boolean isMultipart = ServletFileUpload.isMultipartContent(req);
 			if (isMultipart == true) {
 
-				//FileItemFactory fileItemFactory = new FileItemFactory();
+				// FileItemFactory fileItemFactory = new FileItemFactory();
 				String description = null;
-				String hoursOfWork = null;
+				String hoursOfWorkStr = null;
 				String bookId = null;
 				String action = null;
 				String contentType = null;
@@ -91,17 +91,17 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 				ServletFileUpload fileUpload = new ServletFileUpload();
 				fileUpload.setSizeMax(FILE_SIZE_LIMIT);
 				FileItemIterator iter = fileUpload.getItemIterator(req);
-				while(iter.hasNext()) {
+				while (iter.hasNext()) {
 					FileItemStream item = iter.next();
-				    InputStream stream = item.openStream();
-				    if (item.isFormField()) {
+					InputStream stream = item.openStream();
+					if (item.isFormField()) {
 						// description
 						if (item.getFieldName().equals("description")) {
 							description = Streams.asString(stream);
 						}
-						
+
 						if (item.getFieldName().equals("hoursOfWork")) {
-							hoursOfWork = Streams.asString(stream);
+							hoursOfWorkStr = Streams.asString(stream);
 						}
 
 						// BookId
@@ -114,7 +114,7 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 							action = Streams.asString(stream);
 						}
 
-				    } else {
+					} else {
 						if (item != null) {
 							contentType = item.getContentType();
 							fileName = item.getName();
@@ -126,10 +126,26 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 							size = bytes.length;
 							data = Base64.encodeBytes(bytes);
 						}
-				    }
+					}
 				}
-				bookDAO.addUpdateBookasset(description, bookId, contentType, data, action,
-						fileName, size);
+
+				// convert the hoursOfWork
+				int hoursOfWork = 0;
+				if (hoursOfWorkStr != null) {
+					try {
+						hoursOfWork = Integer.parseInt(hoursOfWorkStr);
+					} catch (Exception e) {
+						log.log(Level.WARNING,
+								"Could not conver "
+										+ hoursOfWorkStr
+										+ " to an int in BookAssetUploadServiceImpl. Converting to 0.");
+						hoursOfWork = 0;
+					}
+				}
+
+				// Add to the database
+				bookDAO.addUpdateBookasset(description, bookId, contentType,
+						data, action, fileName, size, hoursOfWork);
 			}
 			return "OK";
 		} catch (Exception e) {
@@ -145,46 +161,3 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 		}
 	}
 }
-
-/*
- * DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
- * fileItemFactory.setRepository(new File(
- * "/Users/johndestefano/tempFileUpload")); ServletFileUpload fileUpload = new
- * ServletFileUpload( fileItemFactory); fileUpload.setSizeMax(FILE_SIZE_LIMIT);
- * 
- * List<FileItem> items = fileUpload.parseRequest(req);
- * 
- * FileItem fileItem = null; String description = null; String bookId = null;
- * String action = null; for (FileItem item : items) { if (item.isFormField()) {
- * if (log.isLoggable(Level.FINEST)) { log.log(Level.INFO,
- * "Received form field:"); log.log(Level.INFO, "Name: " + item.getFieldName());
- * log.log(Level.INFO, "Value: " + item.getString()); }
- * 
- * // description if (item.getFieldName().equals("description")) { description =
- * item.getString(); }
- * 
- * // BookId if (item.getFieldName().equals("bookId")) { bookId =
- * item.getString(); }
- * 
- * // action if (item.getFieldName().equals("action")) { action =
- * item.getString(); }
- * 
- * } else { if (log.isLoggable(Level.FINEST)) { log.log(Level.INFO,
- * "Received file:"); log.log(Level.INFO, "Name: " + item.getName());
- * log.log(Level.INFO, "Size: " + item.getSize()); } fileItem = item; }
- * 
- * if (!item.isFormField()) { if (item.getSize() > FILE_SIZE_LIMIT) { throw new
- * FileUploadException( "File size exceeds limit"); }
- * 
- * if (!item.isInMemory()) { item.delete(); } } }
- * 
- * // Now process file long size = 0; String contentType = null; String data =
- * null; String fileName = null; if (fileItem != null) { contentType =
- * fileItem.getContentType(); size = fileItem.getSize(); fileName =
- * fileItem.getName(); InputStream in = fileItem.getInputStream();
- * ByteArrayOutputStream bos = new ByteArrayOutputStream(); IOUtils.copy(in,
- * bos); byte[] bytes = bos.toByteArray(); // fileItem.get(); data =
- * Base64.encodeBytes(bytes); }
- * 
- * this.addToDB(description, bookId, contentType, data, action, fileName, size);
- */

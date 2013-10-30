@@ -52,6 +52,12 @@ public class NewAssetDialog extends Composite {
 	@UiField
 	public FocusPanel addLink;
 
+	@UiField
+	public FocusPanel addVideo;
+
+	@UiField
+	public FocusPanel addOlhieDoc;
+
 	@Inject
 	private Event<ShowAddFileModalEvent> showAddFileModalEvent;
 
@@ -92,7 +98,14 @@ public class NewAssetDialog extends Composite {
 
 	@UiHandler("addLink")
 	public void handleAddLinkClick(ClickEvent click) {
+	}
 
+	@UiHandler("addVideo")
+	public void handleAddVideoClick(ClickEvent click) {
+	}
+
+	@UiHandler("addOlhieDoc")
+	public void handleAddOlhieDocClick(ClickEvent click) {
 	}
 
 }

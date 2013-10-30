@@ -160,6 +160,7 @@
 .ph-NewBook-NewAssetDialog-Add-Elements {
 	/*border: 1px solid #000;*/
 	display: inline-block;
+	text-align: center;
 	margin: 15px;
 	cursor: pointer;
 }

@@ -359,7 +359,7 @@ public interface BookDAO extends BaseDAO {
 	 */
 	public void addUpdateBookasset(String description, String bookId,
 			String contentType, String data, String action, String fileName,
-			long size) throws Exception;
+			long size, int hoursOfWork) throws Exception;
 
 	/**
 	 * Add logo
