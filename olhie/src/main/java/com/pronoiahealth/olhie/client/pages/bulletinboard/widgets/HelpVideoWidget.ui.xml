@@ -7,11 +7,14 @@
 	<b:Hero ui:field="hero">
 		<b:Heading size="2">Learn how to use Olhie</b:Heading>
 		<b:Paragraph>
-			<b:SplitDropdownButton text="Select a help topic"
+			<b:SplitDropdownButton ui:field="helpTopic" text="Select a help topic"
 				icon="MAGIC">
-				<b:NavLink>Test 1</b:NavLink>
-				<b:NavLink>Test 2</b:NavLink>
+				<!-- b:NavLink name="Introduction">Introduction</b:NavLink>
+				<b:NavLink>Test 2</b:NavLink -->
 			</b:SplitDropdownButton>
+		</b:Paragraph>
+		<b:Paragraph>
+			<g:HTML ui:field="topicTitle"></g:HTML>
 		</b:Paragraph>
 		<g:HTMLPanel>
 			<g:Frame ui:field="videoFrame" height="481px" width="604px"></g:Frame>

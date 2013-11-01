@@ -19,11 +19,11 @@ import com.google.gwt.i18n.client.Messages;
  * MessageFormatResources.java<br/>
  * Responsibilities:<br/>
  * 1. Used for safe message display throughout application<br/>
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since May 26, 2013
- *
+ * 
  */
 @Generate(format = "com.google.gwt.i18n.rebind.format.PropertiesFormat")
 @DefaultLocale("en_US")
@@ -45,5 +45,8 @@ public interface MessageFormatResources extends Messages {
 
 	@DefaultMessage("Rating: {0}")
 	String setBookRating(String title);
+
+	@DefaultMessage("<strong>Topic: {0}</strong>")
+	String setHelpTopicTitle(String title);
 
 }
