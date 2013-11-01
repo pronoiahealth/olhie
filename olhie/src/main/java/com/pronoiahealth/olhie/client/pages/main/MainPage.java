@@ -28,6 +28,7 @@ import com.pronoiahealth.olhie.client.features.impl.AddBookCommentsHandlerFeatur
 import com.pronoiahealth.olhie.client.features.impl.CommentsDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.features.impl.DownloadWidgetHandlerFeature;
 import com.pronoiahealth.olhie.client.features.impl.ErrorDialogHandlerFeature;
+import com.pronoiahealth.olhie.client.features.impl.EventCalendarRequestHandlerFeature;
 import com.pronoiahealth.olhie.client.features.impl.LoggedInUserServerPingFeature;
 import com.pronoiahealth.olhie.client.features.impl.LoginDialogHandlingFeature;
 import com.pronoiahealth.olhie.client.features.impl.LookupUserDialogHandlerFeature;
@@ -42,8 +43,6 @@ import com.pronoiahealth.olhie.client.features.impl.ViewBookassetDialogHandlerFe
 import com.pronoiahealth.olhie.client.features.impl.WindowCloseTrappingFeature;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
-//import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddLogoDialog;
-//import com.pronoiahealth.olhie.client.pages.newbook.dialogs.NewAssetDialog;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
@@ -179,6 +178,9 @@ public class MainPage extends AbstractComposite {
 	@Inject
 	private AddBookCommentsHandlerFeature addBookCommentDialogFeature;
 
+	@Inject
+	private EventCalendarRequestHandlerFeature eventCalendarRequestHandlerFeature;
+
 	private static final int EAST_PANEL_WIDTH = 180;
 
 	/**
@@ -276,6 +278,9 @@ public class MainPage extends AbstractComposite {
 
 		// Add comments
 		addBookCommentDialogFeature.standUpAndActivate(null);
+
+		// create a request to add an event to the event calendar
+		eventCalendarRequestHandlerFeature.standUpAndActivate(null);
 
 		// Footer
 		buildFooter();

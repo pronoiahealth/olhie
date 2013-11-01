@@ -147,6 +147,15 @@ public class NewBookDialog extends Composite {
 	public CheckBox publishCB;
 
 	@UiField
+	public TextBox interfacePlatformTB;
+
+	@UiField
+	public TextBox interfaceSourceSystemTB;
+
+	@UiField
+	public TextBox interfaceRecievingSystemTB;
+
+	@UiField
 	public Label bookDisplayTitle;
 
 	@UiField
@@ -195,6 +204,7 @@ public class NewBookDialog extends Composite {
 		publishCB.setStyleName("ph-NewBook-Published-CB", true);
 		bookCoverDropDown.getMenuWiget().setStyleName(
 				"ph-NewBook-BookCover-SplitButton", true);
+		newBookForm.addStyleName("ph-NewBook-Modal-Form");
 
 		// Set up click events
 		// When the user clicks one of the categories then set the text of the
@@ -207,7 +217,11 @@ public class NewBookDialog extends Composite {
 					IconAnchor a = (IconAnchor) obj;
 
 					// Update the label in the drop down
-					catagoryDropDown.setText(a.getName());
+					String catName = a.getName();
+					catagoryDropDown.setText(catName);
+					
+					// Update the interface fields
+					configureInterfaceDataEntry(catName);
 
 					// update the book display
 					String binderColor = a.getElement().getAttribute(
@@ -381,6 +395,10 @@ public class NewBookDialog extends Composite {
 		// Get the lists
 		bookCategoryListRequestEvent.fire(new BookCategoryListRequestEvent());
 		bookCoverListRequestEvent.fire(new BookCoverListRequestEvent());
+
+		// Set up interface entry
+		clearInterfaceData();
+		allowInterfaceDataEntry(false);
 	}
 
 	private void setFormForEdit(Book theBook) {
@@ -396,6 +414,10 @@ public class NewBookDialog extends Composite {
 		// Get the lists
 		bookCategoryListRequestEvent.fire(new BookCategoryListRequestEvent());
 		bookCoverListRequestEvent.fire(new BookCoverListRequestEvent());
+
+		// Check to see if the category is interface
+		String cat = catagoryDropDown.getText().trim();
+		configureInterfaceDataEntry(cat);
 	}
 
 	/**
@@ -510,13 +532,46 @@ public class NewBookDialog extends Composite {
 	 */
 	protected void observersShowNewBookModalEvent(
 			@Observes ShowNewBookModalEvent showNewBookModalEvent) {
+		// Reset the form
+		resetFormForNewMode();
+		
+		// Is there a book
 		Book theBook = showNewBookModalEvent.getEditBook();
 		if (theBook != null) {
 			setFormForEdit(theBook);
-		} else {
-			resetFormForNewMode();
-		}
+		} 
+		
+		// Show the dialog
 		show();
+	}
+
+	private void configureInterfaceDataEntry(String catName) {
+		if (catName.equals("Interface")) {
+			allowInterfaceDataEntry(true);
+		} else {
+			clearInterfaceData();
+			allowInterfaceDataEntry(false);
+		}
+	}
+
+	/**
+	 * Enables/Disables interface data entry
+	 * 
+	 * @param allow
+	 */
+	private void allowInterfaceDataEntry(boolean allow) {
+		interfacePlatformTB.setEnabled(allow);
+		interfaceSourceSystemTB.setEnabled(allow);
+		interfaceRecievingSystemTB.setEnabled(allow);
+	}
+
+	/**
+	 * Clears the data in the interface specific fields
+	 */
+	private void clearInterfaceData() {
+		interfacePlatformTB.setText(null);
+		interfaceSourceSystemTB.setText(null);
+		interfaceRecievingSystemTB.setText(null);
 	}
 
 }

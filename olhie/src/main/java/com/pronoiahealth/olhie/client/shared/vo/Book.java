@@ -62,13 +62,13 @@ public class Book {
 
 	@NotNull
 	private Date createdDate;
-	
+
 	@NotNull
 	private Date lastUpdated;
 
 	@NotNull
 	private Boolean active = Boolean.FALSE;
-	
+
 	private Date solrUpdate;
 
 	private Date actDate;
@@ -76,15 +76,24 @@ public class Book {
 	@NotNull
 	@Size(min = 6, max = 20, message = "Must be between 6 and 20 characters")
 	private String authorId;
-	
+
 	private String base64FrontCover;
-	
+
 	private String base64BackCover;
-	
+
 	private String base64LogoData;
-	
+
 	@Size(max = 250, message = "File names can only be 250 characters long.")
 	private String logoFileName;
+
+	@Size(max = 75, message = "Maximum of 75 characters.")
+	private String interfacePlatform;
+
+	@Size(max = 75, message = "Maximum of 75 characters.")
+	private String interfaceSendingSystem;
+
+	@Size(max = 75, message = "Maximum of 75 characters.")
+	private String interfaceRecievingSystem;
 
 	private List<Bookassetdescription> bookDescriptions;
 
@@ -97,21 +106,30 @@ public class Book {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param bookTitle
 	 * @param introduction
 	 * @param keywords
 	 * @param category
 	 * @param coverName
+	 * @param interfacePlatform
+	 * @param interfaceSendingSystem
+	 * @param interfaceRecievingSystem
+	 * @param active
 	 */
 	public Book(String bookTitle, String introduction, String keywords,
-			String category, String coverName, boolean active) {
+			String category, String coverName, String interfacePlatform,
+			String interfaceSendingSystem, String interfaceRecievingSystem,
+			boolean active) {
 		super();
 		this.bookTitle = bookTitle;
 		this.introduction = introduction;
 		this.keywords = keywords;
 		this.category = category;
 		this.coverName = coverName;
+		this.interfacePlatform = interfacePlatform;
+		this.interfaceRecievingSystem = interfaceRecievingSystem;
+		this.interfaceSendingSystem = interfaceSendingSystem;
 		this.active = active;
 	}
 
@@ -249,5 +267,29 @@ public class Book {
 
 	public void setBase64BackCover(String base64BackCover) {
 		this.base64BackCover = base64BackCover;
+	}
+
+	public String getInterfacePlatform() {
+		return interfacePlatform;
+	}
+
+	public void setInterfacePlatform(String interfacePlatform) {
+		this.interfacePlatform = interfacePlatform;
+	}
+
+	public String getInterfaceSendingSystem() {
+		return interfaceSendingSystem;
+	}
+
+	public void setInterfaceSendingSystem(String interfaceSendingSystem) {
+		this.interfaceSendingSystem = interfaceSendingSystem;
+	}
+
+	public String getInterfaceRecievingSystem() {
+		return interfaceRecievingSystem;
+	}
+
+	public void setInterfaceRecievingSystem(String interfaceRecievingSystem) {
+		this.interfaceRecievingSystem = interfaceRecievingSystem;
 	}
 }

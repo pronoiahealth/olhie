@@ -32,10 +32,7 @@ public class CarouselSliderWidget extends Composite {
 
 	private void attachedGQuery() {
 		// settings
-		final GQuery slider = $(".ph-carousel-slider", carouselContainer); // class
-																			// or
-																			// id
-																			// of
+		final GQuery slider = $(".ph-carousel-slider", carouselContainer); 
 		final String slide = "li"; // could also use 'img' if you're not using a
 		final int transition_time = 1000; // 1 second
 		final int time_between_slides = 4000; // 4 seconds

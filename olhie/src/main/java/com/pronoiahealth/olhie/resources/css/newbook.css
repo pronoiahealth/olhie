@@ -112,6 +112,12 @@
 	max-height: 800px;
 }
 
+.ph-NewBook-Modal-Form {
+	height: 380px;
+	padding-bottom: 10px;
+	padding-top: 10px;
+}
+
 .ph-NewBook-Error-Msg {
 	color: red;
 	font-size: smaller;

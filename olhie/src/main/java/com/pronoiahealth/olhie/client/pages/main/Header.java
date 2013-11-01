@@ -36,6 +36,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowCommentsModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowEditProfileModalEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowEventCalendarRequestDialogEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowFindLoggedInUserEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowLoginModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewBookModalEvent;
@@ -64,7 +65,7 @@ public class Header extends Composite {
 	 */
 	@Inject
 	private PageNavigator nav;
-	
+
 	@UiField
 	public Brand navBarBrand;
 
@@ -91,6 +92,9 @@ public class Header extends Composite {
 
 	@UiField
 	public NavLink findLoggedInUserMenuItemLink;
+
+	@UiField
+	public NavLink requestAddCalendarEventMenuItemLink;
 
 	@UiField
 	public VerticalDivider regBookAddDivider;
@@ -125,6 +129,9 @@ public class Header extends Composite {
 	@Inject
 	private Event<ShowFindLoggedInUserEvent> showFindLoggedInUserEvent;
 
+	@Inject
+	private Event<ShowEventCalendarRequestDialogEvent> showEventCalendarRequestDialogEvent;
+
 	/**
 	 * Default Constructor
 	 * 
@@ -142,7 +149,7 @@ public class Header extends Composite {
 		// Add formatting to Add link
 		addBookLink.getAnchor().getElement()
 				.setAttribute("style", "padding: 0px");
-		
+
 		// Set logo image in brand.
 		// Brand currently does not support this easily
 		ImageElement imgElem = Document.get().createImageElement();
@@ -216,6 +223,12 @@ public class Header extends Composite {
 	@UiHandler("findLoggedInUserMenuItemLink")
 	public void findLoggedInUserMenuItemLinkClicked(ClickEvent event) {
 		showFindLoggedInUserEvent.fire(new ShowFindLoggedInUserEvent());
+	}
+
+	@UiHandler("requestAddCalendarEventMenuItemLink")
+	public void requestAddCalendarEventMenuItemLinkClicked(ClickEvent event) {
+		showEventCalendarRequestDialogEvent
+				.fire(new ShowEventCalendarRequestDialogEvent());
 	}
 
 	/**

@@ -1,0 +1,21 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
+	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base' xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'
+	xmlns:chzn='urn:import:com.watopi.chosen.client.gwt'>
+
+	<b:Hero ui:field="hero">
+		<b:Heading size="2">Learn how to use Olhie</b:Heading>
+		<b:Paragraph>
+			<b:SplitDropdownButton text="Select a help topic"
+				icon="MAGIC">
+				<b:NavLink>Test 1</b:NavLink>
+				<b:NavLink>Test 2</b:NavLink>
+			</b:SplitDropdownButton>
+		</b:Paragraph>
+		<g:HTMLPanel>
+			<g:Frame ui:field="videoFrame" height="481px" width="604px"></g:Frame>
+		</g:HTMLPanel>
+	</b:Hero>
+
+</ui:UiBinder>

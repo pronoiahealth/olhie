@@ -15,18 +15,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.annotation.Resource;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
 
 import com.lowagie.text.pdf.codec.Base64;
 import com.pronoiahealth.olhie.client.shared.annotations.New;
@@ -150,6 +142,9 @@ public class BookUpdateService {
 			currentBook.setKeywords(book.getKeywords());
 			currentBook.setCategory(book.getCategory());
 			currentBook.setCoverName(book.getCoverName());
+			currentBook.setInterfacePlatform(book.getInterfacePlatform());
+			currentBook.setInterfaceSendingSystem(book.getInterfaceSendingSystem());
+			currentBook.setInterfaceRecievingSystem(book.getInterfaceRecievingSystem());
 
 			// Update the active
 			Date now = new Date();
@@ -224,6 +219,8 @@ public class BookUpdateService {
 					&& book.getActive().booleanValue() == true) {
 				book.setActDate(now);
 			}
+						
+			// Save the book
 			book = bookDAO.addBook(book);
 
 			// Add the UserBookRelationship

@@ -37,6 +37,7 @@ import com.pronoiahealth.olhie.client.pages.AbstractPage;
 import com.pronoiahealth.olhie.client.pages.AppSelectors;
 import com.pronoiahealth.olhie.client.pages.bulletinboard.widgets.CarouselSliderWidget;
 import com.pronoiahealth.olhie.client.pages.bulletinboard.widgets.CurrentStatusWidget;
+import com.pronoiahealth.olhie.client.pages.bulletinboard.widgets.HelpVideoWidget;
 import com.pronoiahealth.olhie.client.widgets.dnd.DroppablePanel;
 
 /**
@@ -66,6 +67,9 @@ public class BulletinboardPage extends AbstractPage {
 
 	@Inject
 	private CarouselSliderWidget carouselWidget;
+	
+	@Inject
+	private HelpVideoWidget helpVideoWidget;
 
 	/**
 	 * Constructor
@@ -80,6 +84,8 @@ public class BulletinboardPage extends AbstractPage {
 	@PostConstruct
 	private void postConstruct() {
 		createAddDraggableWidgetToDroppablePanel(col1, statusWidget,
+				".draggableWidget");
+		createAddDraggableWidgetToDroppablePanel(col2, helpVideoWidget,
 				".draggableWidget");
 		createAddDraggableWidgetToDroppablePanel(col2, carouselWidget,
 				".draggableWidget");

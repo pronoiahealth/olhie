@@ -51,7 +51,7 @@
 		<dnd.version>3.2.0</dnd.version>
 		<version.gwt.recaptcha>1.0.0.Beta2</version.gwt.recaptcha>
 		<version.gwtquery>1.3.3</version.gwtquery>
-		<version.gwtquery.chosen>1.1.0</version.gwtquery.chosen>
+		<version.gwtquery.chosen>1.2.0</version.gwtquery.chosen>
 		<version.gwt.log>3.2.1</version.gwt.log>
 		<apache.commons.imaging>1.1-SNAPSHOT</apache.commons.imaging>
 		<version.tooltip>1.1-SNAPSHOT</version.tooltip>
@@ -438,11 +438,12 @@
 			</dependency>
 
 			<!-- gwtquery plugin chosen -->
-			<dependency>
+			<!-- dependency>
+				<groupId>com.watopi</groupId>
 				<groupId>com.watopi</groupId>
 				<artifactId>gwtchosen</artifactId>
 				<version>${version.gwtquery.chosen}</version>
-			</dependency>
+			</dependency -->
 			<dependency>
 				<groupId>org.jboss.resteasy</groupId>
 				<artifactId>resteasy-cdi</artifactId>
@@ -483,6 +484,11 @@
 				<groupId>com.google.code.gson</groupId>
 				<artifactId>gson</artifactId>
 				<version>${version.gson}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.github.jdramaix</groupId>
+				<artifactId>gwtchosen</artifactId>
+				<version>${version.gwtquery.chosen}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -855,10 +861,10 @@
 		</dependency>
 
 		<!-- gwtquery plugin chosen -->
-		<dependency>
+		<!-- dependency>
 			<groupId>com.watopi</groupId>
 			<artifactId>gwtchosen</artifactId>
-		</dependency>
+		</dependency -->
 		<!-- dependency>
 			<groupId>org.mortbay.jetty</groupId>
 			<artifactId>jetty-util5</artifactId>
@@ -899,6 +905,10 @@
 		<dependency>
 			<groupId>org.jboss.spec.javax.jms</groupId>
 			<artifactId>jboss-jms-api_1.1_spec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.jdramaix</groupId>
+			<artifactId>gwtchosen</artifactId>
 		</dependency>
 	</dependencies>
 

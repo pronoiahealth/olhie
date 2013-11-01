@@ -30,6 +30,7 @@
 							Profile</b:NavLink>
 						<b:Divider></b:Divider>
 						<b:NavLink ui:field="findLoggedInUserMenuItemLink" icon="COMMENT">Start a Chat</b:NavLink>
+						<b:NavLink ui:field="requestAddCalendarEventMenuItemLink" icon="CALENDAR">Add Event</b:NavLink>
 					</b:Dropdown>
 				</b:NavPills>
 			</b:Nav>

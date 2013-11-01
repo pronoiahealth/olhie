@@ -44,12 +44,39 @@
 									<b:ControlLabel>Cover Design:</b:ControlLabel>
 									<b:SplitDropdownButton ui:field="bookCoverDropDown"
 										dropup="true" text="Select a book cover">
-											
+
 									</b:SplitDropdownButton>
 								</b:ControlGroup>
 							</b:Column>
 							<b:Column size="4">
 								<b:CheckBox ui:field="publishCB" checked="false">Publish</b:CheckBox>
+							</b:Column>
+						</b:FluidRow>
+						<b:FluidRow>
+							<b:Label>For Interfaces:</b:Label>
+						</b:FluidRow>
+						<!-- Interface extras -->
+						<b:FluidRow>
+							<b:Column size="4">
+								<b:ControlGroup ui:field="interfacePlatformCG">
+									<b:ControlLabel>Interface Platform:</b:ControlLabel>
+									<b:TextBox ui:field="interfacePlatformTB" width="150px"
+										enabled="false"></b:TextBox>
+								</b:ControlGroup>
+							</b:Column>
+							<b:Column size="4">
+								<b:ControlGroup ui:field="interfaceSourceSystemCG">
+									<b:ControlLabel>Source System:</b:ControlLabel>
+									<b:TextBox ui:field="interfaceSourceSystemTB" width="150px"
+										enabled="false"></b:TextBox>
+								</b:ControlGroup>
+							</b:Column>
+							<b:Column size="4">
+								<b:ControlGroup ui:field="interfaceRecievingSystemCG">
+									<b:ControlLabel>Recieving System:</b:ControlLabel>
+									<b:TextBox ui:field="interfaceRecievingSystemTB"
+										width="150px" enabled="false"></b:TextBox>
+								</b:ControlGroup>
 							</b:Column>
 						</b:FluidRow>
 					</b:WellForm>
