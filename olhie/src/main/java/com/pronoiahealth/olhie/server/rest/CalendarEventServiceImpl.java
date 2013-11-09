@@ -48,6 +48,9 @@ import com.pronoiahealth.olhie.server.services.dbaccess.CalendarEventDAO;
 @Path("/calendar-event")
 public class CalendarEventServiceImpl implements CalendarEventService {
 
+	/**
+	 * Protect non thread safe SimpleDateFormat that returns and ISO date format
+	 */
 	private static final ThreadLocal<SimpleDateFormat> dtFormat = new ThreadLocal<SimpleDateFormat>() {
 		@Override
 		protected SimpleDateFormat initialValue() {

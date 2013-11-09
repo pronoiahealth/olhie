@@ -3,7 +3,8 @@
 	background-image: url("Olhie/images/corkboard.jpg");
 	background-image: url("Olhie/images/Bulletinboardbackgrnd.png");
 	background-repeat: repeat;*/
-	background: url("Olhie/images/Homebackground.jpg") no-repeat center center fixed;
+	background: url("Olhie/images/Homebackground.jpg") no-repeat center
+		center fixed;
 	webkit-background-size: cover;
 	moz-background-size: cover;
 	o-background-size: cover;
@@ -12,15 +13,15 @@
 }
 
 .ph-BulletinBoard-Scrollup {
-    width:40px;
-    height:40px;
-    opacity:0.3;
-    position:fixed;
-    bottom:50px;
-    right:250px;
-    display:none;
-    text-indent:-9999px;
-    background: url("Olhie/images/icon_top.png") no-repeat;
+	width: 40px;
+	height: 40px;
+	opacity: 0.3;
+	position: fixed;
+	bottom: 50px;
+	right: 250px;
+	display: none;
+	text-indent: -9999px;
+	background: url("Olhie/images/icon_top.png") no-repeat;
 }
 
 /*

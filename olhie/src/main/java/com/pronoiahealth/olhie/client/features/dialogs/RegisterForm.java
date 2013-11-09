@@ -111,20 +111,18 @@ public class RegisterForm extends Composite {
 	/**
 	 * 
 	 */
-	public void prepareEdit()
-	{
+	public void prepareEdit() {
 		userId.setReadOnly(true);
 		pwd.setVisible(false);
 		pwdLbl.setVisible(false);
 		pwdRepeat.setVisible(false);
 		pwdRepeatLbl.setVisible(false);
 	}
-	
+
 	/**
 	 * 
 	 */
-	public void prepareRegister()
-	{
+	public void prepareRegister() {
 		userId.setReadOnly(false);
 		pwd.setVisible(true);
 		pwdLbl.setVisible(true);
@@ -133,7 +131,7 @@ public class RegisterForm extends Composite {
 		pwdLbl.setText("Password:");
 		pwdRepeatLbl.setText("Retype Password:");
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -146,7 +144,7 @@ public class RegisterForm extends Composite {
 		pwd.setText(form.getPwd());
 		pwdRepeat.setText(form.getPwdRepeat());
 	}
-	
+
 	/**
 	 * Clear form
 	 */
@@ -247,8 +245,8 @@ public class RegisterForm extends Composite {
 	public void setUserIdAlreadyInUse() {
 		userIdErr.setText("This userid is already in use.");
 	}
-	
+
 	public void setFocusOnFirstName() {
 		firstName.setFocus(true);
-	}	
+	}
 }

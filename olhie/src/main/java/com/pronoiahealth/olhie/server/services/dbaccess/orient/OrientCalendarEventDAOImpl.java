@@ -15,31 +15,35 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
+import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
 import com.pronoiahealth.olhie.client.shared.vo.CalendarEvent;
+import com.pronoiahealth.olhie.client.shared.vo.CalendarRequest;
 import com.pronoiahealth.olhie.server.services.dbaccess.CalendarEventDAO;
 
 /**
  * OrientCalendarEventDAOImpl.java<br/>
  * Responsibilities:<br/>
  * 1.
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since Oct 22, 2013
- *
+ * 
  */
-public class OrientCalendarEventDAOImpl extends OrientBaseTxDAO implements CalendarEventDAO {
+public class OrientCalendarEventDAOImpl extends OrientBaseTxDAO implements
+		CalendarEventDAO {
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 */
 	public OrientCalendarEventDAOImpl() {
 	}
 
 	/**
 	 * 
-	 * @see com.pronoiahealth.olhie.server.services.dbaccess.CalendarEventDAO#getCalendarEventsBetweenDates(java.util.Date, java.util.Date)
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.CalendarEventDAO#getCalendarEventsBetweenDates(java.util.Date,
+	 *      java.util.Date)
 	 */
 	@Override
 	public List<CalendarEvent> getCalendarEventsBetweenDates(Date startDate,
@@ -49,14 +53,32 @@ public class OrientCalendarEventDAOImpl extends OrientBaseTxDAO implements Calen
 		HashMap<String, Object> baparams = new HashMap<String, Object>();
 		baparams.put("startDate", startDate);
 		baparams.put("endDate", endDate);
-		List<CalendarEvent> baResult = ooDbTx.command(baQuery).execute(
-				baparams);
+		List<CalendarEvent> baResult = ooDbTx.command(baQuery)
+				.execute(baparams);
 		if (baResult != null && baResult.size() > 0) {
 			return createDetachedRetLst(baResult);
 		} else {
 			return baResult;
 		}
-		
+
 	}
 
+	/**
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.CalendarEventDAO#saveNewCalendarRequest(com.pronoiahealth.olhie.client.shared.vo.CalendarRequest)
+	 */
+	@Override
+	public CalendarRequest saveNewCalendarRequest(CalendarRequest calReq)
+			throws Exception {
+		try {
+			ooDbTx.begin(TXTYPE.OPTIMISTIC);
+			calReq.setDateSubmitted(new Date());
+			calReq = ooDbTx.save(calReq);
+			ooDbTx.commit();
+			return ooDbTx.detach(calReq, true);
+		} catch (Exception e) {
+			ooDbTx.rollback();
+			throw e;
+		}
+
+	}
 }

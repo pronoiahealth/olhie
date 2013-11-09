@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  * Copyright (c) 2013 Pronoia Health LLC.
  * All rights reserved. This program and the accompanying materials
@@ -8,7 +7,8 @@
  *
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
- *******************************************************************************/package com.pronoiahealth.olhie.client.shared.vo;
+ *******************************************************************************/
+package com.pronoiahealth.olhie.client.shared.vo;
 
 import java.util.Date;
 

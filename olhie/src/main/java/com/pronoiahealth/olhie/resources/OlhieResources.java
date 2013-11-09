@@ -137,6 +137,10 @@ public interface OlhieResources extends ClientBundle {
 	@CssResource.NotStrict
 	CssResource jqueryuimincss();
 	
+	@Source("com/pronoiahealth/olhie/resources/css/animate.min.css")
+	@CssResource.NotStrict
+	CssResource animatemincss();
+	
 	//@Source("com/pronoiahealth/olhie/resources/css/custom_icons.css")
 	//@CssResource.NotStrict
 	//CssResource customiconscss();

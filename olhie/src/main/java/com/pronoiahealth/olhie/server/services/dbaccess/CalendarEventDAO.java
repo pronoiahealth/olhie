@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pronoiahealth.olhie.client.shared.vo.CalendarEvent;
+import com.pronoiahealth.olhie.client.shared.vo.CalendarRequest;
 
 /**
  * CalendarEventDAO.java<br/>
@@ -35,4 +36,13 @@ public interface CalendarEventDAO extends BaseDAO {
 	 */
 	public List<CalendarEvent> getCalendarEventsBetweenDates(Date startDate,
 			Date endDate) throws Exception;
+
+
+	/**
+	 * @param calReq
+	 * @return the saved CalendarRequest
+	 * @throws Exception
+	 */
+	public CalendarRequest saveNewCalendarRequest(CalendarRequest calReq)
+			throws Exception;
 }

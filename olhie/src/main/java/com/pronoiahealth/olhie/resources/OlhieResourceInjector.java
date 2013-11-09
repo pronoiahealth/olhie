@@ -76,6 +76,7 @@ public class OlhieResourceInjector {
 		OlhieResources.INSTANCE.jqueryuimincss();
 		OlhieResources.INSTANCE.fullcalendarcss().ensureInjected();
 		OlhieResources.INSTANCE.fullcalendarprintcss().ensureInjected();
+		OlhieResources.INSTANCE.animatemincss().ensureInjected();
 		/*injectResourceCssAsFile("gwt_overrides.css");*/
 	}
 

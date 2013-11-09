@@ -16,31 +16,24 @@
 					<b:ControlLabel for="title">Title: </b:ControlLabel>
 					<b:Controls>
 						<b:TextBox ui:field="title" placeholder="Event Title"
-							controlGroup="{titleGroup}" errorLabel="{titleErrors}" />
+							controlGroup="{titleGroup}" errorLabel="{titleErrors}" maxLength="300"/>
 						<b:HelpInline ui:field="titleErrors"></b:HelpInline>
-					</b:Controls>
-				</b:ControlGroup>
-				<b:ControlGroup ui:field="eventStartDateTimeGroup">
-					<b:ControlLabel for="eventStartDateTime">Event Start: </b:ControlLabel>
-					<b:Controls>
-						<bd:DateBoxAppended ui:field="eventStartDateTime" format="mm/dd/yyyy"
-							autoClose="true" icon="CALENDAR"/>
-						<b:HelpInline ui:field="eventStartDateTimeErrors"></b:HelpInline>
-					</b:Controls>
-				</b:ControlGroup>
-				<b:ControlGroup ui:field="eventStartTimeGroup">
-					<b:ControlLabel for="eventStartTime">Event End: </b:ControlLabel>
-					<b:Controls>
-						<bt:TimeBoxAppended ui:field="eventStartTime"/>
-						<b:HelpInline ui:field="eventStartTimeErrors"></b:HelpInline>
 					</b:Controls>
 				</b:ControlGroup>
 				<b:ControlGroup ui:field="eventDescriptionGroup">
 					<b:ControlLabel for="eventDescription">Description: </b:ControlLabel>
 					<b:Controls>
-						<b:TextArea ui:field="eventDescription" placeholder="Give the event details"
+						<b:TextArea ui:field="eventDescription" placeholder="Start time, duration, timezone, purpose"
 							controlGroup="{eventDescriptionGroup}" errorLabel="{eventDescriptionErrors}"></b:TextArea>
 						<b:HelpInline ui:field="eventDescriptionErrors"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup ui:field="contactEmailGroup">
+					<b:ControlLabel for="contactEmail">Contact Email: </b:ControlLabel>
+					<b:Controls>
+						<b:TextBox ui:field="contactEmail" placeholder="contact email"
+							controlGroup="{contactEmailGroup}" errorLabel="{contactEmailErrors}" />
+						<b:HelpInline ui:field="contactEmailErrors"></b:HelpInline>
 					</b:Controls>
 				</b:ControlGroup>
 			</b:Fieldset>

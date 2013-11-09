@@ -50,6 +50,7 @@ public class CarouselSliderWidget extends Composite {
 		effectTimer = new Timer() {
 			@Override
 			public void run() {
+				//slides.stop();
 				int i = slides.index(slider.find(slide + ".active").elements()[0]);
 				slides.eq(i).removeClass("active");
 				slides.eq(i).fadeOut(transition_time);
@@ -61,5 +62,13 @@ public class CarouselSliderWidget extends Composite {
 			}
 		};
 		effectTimer.scheduleRepeating(time_between_slides + transition_time);
+	}
+
+	@Override
+	protected void onUnload() {
+		super.onUnload();
+		
+		// Cancel timer
+		effectTimer.cancel();
 	}
 }

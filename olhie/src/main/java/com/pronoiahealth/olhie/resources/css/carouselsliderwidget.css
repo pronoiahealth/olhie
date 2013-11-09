@@ -35,3 +35,56 @@
 .ph-carousel-caption p {
 	margin-bottom: 0
 }
+
+.box {
+  /*background-color: #61ab20;*/
+  margin: 0 auto;
+  width: 60px;
+  height: 40px;
+  position: relative;
+  /*box-shadow: inset 0 0 3px #000;*/
+  /*border-radius: 5px;
+  border: 1px solid #111;*/
+  overflow: hidden;
+}
+
+.box div {
+  display: block;
+  width: 15px;
+  height: 15px;
+  background-image: url("Olhie/images/OLHIE_20x20.png");
+  background-repeat: no-repeat;
+  /*border-radius: 50%;
+  background-color: #3673cf;
+  box-shadow: inset -2px -2px 2px rgba(0,0,0,.6), 5px 5px 2px rgba(0,0,0,.04);*/
+  position: absolute;
+  -webkit-animation: moveX 2.05s linear 0s infinite alternate, moveY 2.4s linear 0s infinite alternate;
+  -moz-animation: moveX 2.05s linear 0s infinite alternate, moveY 2.4s linear 0s infinite alternate;
+  -o-animation: moveX 2.05s linear 0s infinite alternate, moveY 2.4s linear 0s infinite alternate;
+  animation: moveX 2.05s linear 0s infinite alternate, moveY 2.4s linear 0s infinite alternate;
+}
+
+@-webkit-keyframes moveX {
+  from { left: 0; } to { left: 40px; }
+}
+@-moz-keyframes moveX {
+  from { left: 0; } to { left: 40px; }
+}
+@-o-keyframes moveX {
+  from { left: 0; } to { left: 40px; }
+}
+@keyframes moveX {
+  from { left: 0; } to { left: 40px; }
+}
+@-webkit-keyframes moveY {
+  from { top: 0; } to { top: 20px; }
+}
+@-moz-keyframes moveY {
+  from { top: 0; } to { top: 20px; }
+}
+@-o-keyframes moveY {
+  from { top: 0; } to { top: 20px; }
+}
+@keyframes moveY {
+  from { top: 0; } to { top: 20px; }
+}
