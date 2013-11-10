@@ -156,6 +156,9 @@
 	-moz-backface-visibility: hidden;
 	backface-visibility: hidden;
 	z-index: 9;
+	background: url('Olhie/images/book_page_texture.jpg');
+	background-size: contain;
+	background-repeat: no-repeat;
 }
 
 .bk-list li .bk-front,.bk-list li .bk-back,.bk-list li .bk-front>div {
@@ -300,7 +303,7 @@
 	right: 20px;
 	padding: 30px;
 	overflow: auto;
-	background: #fff;
+	/*background: #fff;*/
 	opacity: 0;
 	pointer-events: none;
 	-webkit-backface-visibility: hidden;

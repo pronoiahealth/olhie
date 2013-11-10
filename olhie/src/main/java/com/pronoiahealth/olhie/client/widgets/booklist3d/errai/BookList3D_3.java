@@ -12,6 +12,7 @@ package com.pronoiahealth.olhie.client.widgets.booklist3d.errai;
 
 import static com.arcbees.gquery.tooltip.client.Tooltip.Tooltip;
 import static com.google.gwt.query.client.GQuery.$;
+import static com.google.gwt.query.client.plugins.Effects.Effects;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import com.google.gwt.query.client.Function;
 import com.google.gwt.query.client.GQuery;
 import com.google.gwt.query.client.css.CSS;
+import com.google.gwt.query.client.plugins.Effects;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
