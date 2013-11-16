@@ -1,4 +1,14 @@
-package com.pronoiahealth.olhie.client.pages.newbook;
+/*******************************************************************************
+ * Copyright (c) 2013 Pronoia Health LLC.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Pronoia Health LLC - initial API and implementation
+ *******************************************************************************/
+package com.pronoiahealth.olhie.client.pages.newbook.widgets;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -13,6 +23,20 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 
+/**
+ * BaseBookassetActionButtonWidget.java<br/>
+ * Responsibilities:<br/>
+ * 1. Servers as the base class for book asset action buttons (download, view,
+ * remove). <br/>
+ * 2. Specific actions are handled by sub classes. <br/>
+ * 3. Those classes should set the iconName, buttonStyle, and title in the
+ * constructor. Injection could be used.<br/>
+ * 
+ * @author John DeStefano
+ * @version 1.0
+ * @since Nov 16, 2013
+ * 
+ */
 @Templated("ButtonWidget.html#root")
 public class BaseBookassetActionButtonWidget extends Composite {
 
@@ -23,17 +47,31 @@ public class BaseBookassetActionButtonWidget extends Composite {
 	@DataField
 	private Element buttonIcon = DOM.createElement("i");
 
+	/**
+	 * Bootstrap icon name
+	 */
 	protected String iconName;
-	
+
+	/**
+	 * Warn (btn-warn), info (btn-info), success, etc.. as in Bootstrap buttons
+	 */
 	protected String buttonStyle;
-	
+
+	/**
+	 * The tool tip text
+	 */
 	protected String title;
 
+	/**
+	 * Constructor
+	 * 
+	 */
 	public BaseBookassetActionButtonWidget() {
 	}
 
 	/**
-	 * Sets icon. Depends on icon name string being set in constructor
+	 * Sets icon, buttonStyle (info, warn, etc..), and tooltip[ title. Depends
+	 * on icon name string being set in constructor
 	 */
 	@PostConstruct
 	protected final void postConstruct() {
@@ -57,7 +95,13 @@ public class BaseBookassetActionButtonWidget extends Composite {
 		// Return the element to be bound latter
 		return button.getElement();
 	}
-	
+
+	/**
+	 * Add tooltip using GwtBootstrap
+	 * 
+	 * 
+	 * @param message
+	 */
 	protected void setTooltip(String message) {
 		Tooltip tip = new Tooltip();
 		tip.setWidget(button);
@@ -65,6 +109,12 @@ public class BaseBookassetActionButtonWidget extends Composite {
 		tip.setPlacement(Placement.TOP);
 		tip.setContainer("body");
 		tip.reconfigure();
+	}
+	
+	@Override
+	protected void onLoad() {
+		// TODO Auto-generated method stub
+		super.onLoad();
 	}
 
 }

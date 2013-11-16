@@ -8,7 +8,7 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.pages.newbook;
+package com.pronoiahealth.olhie.client.pages.newbook.widgets;
 
 import static com.google.gwt.query.client.GQuery.$;
 import gwtquery.plugins.draggable.client.events.BeforeDragStartEvent;
@@ -35,6 +35,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.clientfactories.ViewableContentType;
+import com.pronoiahealth.olhie.client.pages.newbook.NewBookMessages;
 import com.pronoiahealth.olhie.client.shared.constants.BookAssetDataType;
 import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
@@ -42,7 +43,9 @@ import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 /**
  * BookItemDisplay.java<br/>
  * Responsibilities:<br/>
- * 1.
+ * 1. Creates a Book item widget which contains the order number of the item,
+ * its description, and a set of appropriate action buttons (download, view,
+ * remove).
  * 
  * @author John DeStefano
  * @version 1.0
@@ -81,6 +84,9 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 		}
 	}
 
+	/**
+	 * Used of all instances
+	 */
 	private static DraggablePositionHandler HANDLER = new DraggablePositionHandler();
 
 	private static final DateTimeFormat dtf = DateTimeFormat
@@ -89,9 +95,6 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 	@Inject
 	@ViewableContentType
 	private Map<String, String> viewableContentType;
-
-	// @DataField
-	// private Element root = DOM.createDiv();
 
 	@DataField
 	private Element itemDescriptionContainer = DOM.createDiv();
@@ -147,14 +150,15 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 		Bookasset ba = bad.getBookAssets().get(0);
 		String baId = ba.getId();
 		String badId = bad.getId();
+
+		// Create the buttons and add to the buttonGroupContainer
 		makeButtonGroupInButtonGroupContainer(ba.getContentType(),
 				ba.getItemType(), badId, baId, downloadClickHandler,
 				removeClickHandler, viewClickHandler);
 
 		// Set the data
-		this.itemOrderContainer.appendChild(itemPosLbl.getElement());
-		// this.buttonGroupContainer.appendChild(btns.getElement());
-		this.itemDescriptionContainer.appendChild(itemDescLbl.getElement());
+		itemOrderContainer.appendChild(itemPosLbl.getElement());
+		itemDescriptionContainer.appendChild(itemDescLbl.getElement());
 	}
 
 	/**
@@ -206,7 +210,7 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 			final BookassetActionClickCallbackHandler downloadClickHandler,
 			final BookassetActionClickCallbackHandler removeClickHandler,
 			final BookassetActionClickCallbackHandler viewClickHandler) {
-		
+
 		// Download button
 		BookAssetDataType itemType = BookAssetDataType.valueOf(itemTypeStr);
 		if (itemType.equals(BookAssetDataType.FILE)) {
@@ -232,8 +236,8 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 			dButQry.bind(Event.ONCLICK, new Function() {
 				@Override
 				public boolean f(Event e) {
-					return viewClickHandler.handleButtonClick(e, badId,
-							baId, val);
+					return viewClickHandler.handleButtonClick(e, badId, baId,
+							val);
 				}
 			});
 		}
@@ -245,13 +249,16 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 		dButQry.bind(Event.ONCLICK, new Function() {
 			@Override
 			public boolean f(Event e) {
-				return removeClickHandler.handleButtonClick(e, null, baId,
-						null);
+				return removeClickHandler
+						.handleButtonClick(e, null, baId, null);
 			}
 		});
 
 	}
 
+	/**
+	 * Called in construct to perform drag and drop configuration.
+	 */
 	private void setup() {
 		// opacity of the portlet during the drag
 		setDraggingOpacity(new Float(0.8));

@@ -53,6 +53,8 @@ import com.pronoiahealth.olhie.client.pages.AbstractPage;
 import com.pronoiahealth.olhie.client.pages.newbook.features.AddFileDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.pages.newbook.features.AddLogoDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.pages.newbook.features.NewAssetDialogHandlerFeature;
+import com.pronoiahealth.olhie.client.pages.newbook.widgets.BookItemDisplay;
+import com.pronoiahealth.olhie.client.pages.newbook.widgets.BookassetActionClickCallbackHandler;
 import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindResponseEvent;
