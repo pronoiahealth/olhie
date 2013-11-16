@@ -106,9 +106,6 @@ public class Header extends Composite {
 	private ClientUserToken clientUserToken;
 
 	@Inject
-	private Event<LogoutRequestEvent> logoutRequestEvent;
-
-	@Inject
 	private Event<ClientLogoutRequestEvent> clientLogoutRequestEvent;
 
 	@Inject
@@ -211,8 +208,7 @@ public class Header extends Composite {
 	 */
 	@UiHandler("logoutMenuItemLink")
 	public void logoutMenuItemLinkClicked(ClickEvent event) {
-		clientLogoutRequestEvent.fire(new ClientLogoutRequestEvent());
-		logoutRequestEvent.fire(new LogoutRequestEvent());
+		clientLogoutRequestEvent.fire(new ClientLogoutRequestEvent(true));
 	}
 
 	@UiHandler("editProfileMenuLink")
@@ -255,7 +251,6 @@ public class Header extends Composite {
 	protected void observesNewBookPageHidingEvent(
 			@Observes NewBookPageHidingEvent newBookPageHidingEvent) {
 		showAddBook();
-		// showAddBookPersonDivider();
 	}
 
 	/**

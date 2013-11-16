@@ -210,7 +210,9 @@ public class OfferHandler {
 
 	/**
 	 * When user logs out stop subscription. Only logged in users can receive
-	 * offers.
+	 * offers. There is a similar observer in the main class that handles
+	 * various view elements as well as informing the server that the client wishes to
+	 * log out.
 	 * 
 	 * @param clientLogoutResponseEvent
 	 */

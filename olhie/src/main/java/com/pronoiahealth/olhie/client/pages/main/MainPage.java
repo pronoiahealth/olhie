@@ -224,7 +224,8 @@ public class MainPage extends AbstractComposite {
 				.addStandupCallbackHandler(new FeatureCallbackHandler() {
 					@Override
 					public void executeCallBack() {
-						observesClientLogoutRequestEvent(null);
+						observesClientLogoutRequestEvent(new ClientLogoutRequestEvent(
+								true));
 					}
 				});
 		screenInactivityTimeoutFeature.standUpAndActivate(null);
@@ -340,12 +341,17 @@ public class MainPage extends AbstractComposite {
 	 * @param logoutResponseEvent
 	 */
 	protected void observesClientLogoutRequestEvent(
-			@Observes ClientLogoutRequestEvent clientLogoutResponseEvent) {
+			@Observes ClientLogoutRequestEvent clientLogoutRequestEvent) {
 		clientUserToken.clear();
 		clientUserUpdatedEvent.fire(new ClientUserUpdatedEvent());
 		navigator.showDefaultPage();
 		loggedInUserServerPingFeature.deactivate();
 		screenInactivityTimeoutFeature.deactivate();
+
+		// If required, tell the server
+		if (clientLogoutRequestEvent.isTellServer() == true) {
+			logoutRequestEvent.fire(new LogoutRequestEvent());
+		}
 	}
 
 	/**

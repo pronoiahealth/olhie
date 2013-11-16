@@ -29,7 +29,7 @@ import com.pronoiahealth.olhie.client.clientfactories.PageRoleMap;
 import com.pronoiahealth.olhie.client.pages.bookcase.BookCasePage;
 import com.pronoiahealth.olhie.client.pages.bulletinboard.BulletinboardPage;
 import com.pronoiahealth.olhie.client.pages.events.EventsPage;
-import com.pronoiahealth.olhie.client.pages.newbook.NewBookPage;
+import com.pronoiahealth.olhie.client.pages.newbook.NewBookPage_2;
 import com.pronoiahealth.olhie.client.pages.search.SearchPage;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
@@ -78,7 +78,7 @@ public class PageNavigator {
 	private TransitionTo<SearchPage> showSearchPage;
 
 	@Inject
-	private TransitionTo<NewBookPage> showNewBookPage;
+	private TransitionTo<NewBookPage_2> showNewBookPage;
 	
 	@Inject
 	private Event<SyncPageToMenuEvent> syncPageToMenuEvent; 
@@ -151,7 +151,8 @@ public class PageNavigator {
 			break;
 		}
 
-		case NewBookPage: {
+		//case NewBookPage: {
+		case NewBookPage_2: {
 			if (state == null) {
 				showNewBookPage.go();
 			} else {

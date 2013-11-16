@@ -58,7 +58,7 @@ import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.constants.BookAssetDataType;
 import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
-import com.pronoiahealth.olhie.client.shared.events.book.BookFindByIdEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.FindAuthorsBookByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedResponseEvent;
@@ -237,7 +237,7 @@ public class NewBookPage extends AbstractPage {
 
 	@Inject
 	@NewBook
-	private Event<BookFindByIdEvent> bookFindByIdEvent;
+	private Event<FindAuthorsBookByIdEvent> bookFindByIdEvent;
 
 	@UiField
 	public HTMLPanel buttonGrpHolder;
@@ -693,7 +693,7 @@ public class NewBookPage extends AbstractPage {
 		// Test to see if the book id's match
 		// If so ask for updated data
 		if (id != null && id.equals(bookId)) {
-			bookFindByIdEvent.fire(new BookFindByIdEvent(bookId));
+			bookFindByIdEvent.fire(new FindAuthorsBookByIdEvent(bookId));
 		}
 	}
 

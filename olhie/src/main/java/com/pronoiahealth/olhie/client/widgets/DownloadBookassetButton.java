@@ -23,6 +23,8 @@ import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.constants.Placement;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 
 /**
  * DownloadBookassetIcon.java<br/>
@@ -53,6 +55,16 @@ public class DownloadBookassetButton extends Button {
 		tip.setContainer("body");
 		tip.reconfigure();
 	}
+	
+	
+
+	@Override
+	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
+		// TODO Auto-generated method stub
+		return super.addMouseOverHandler(handler);
+	}
+
+
 
 	public void setBookassetId(String id) {
 		this.getElement().setAttribute("bookassetId", id);

@@ -55,6 +55,9 @@ public class Bookassetdescription {
 
 	@NotNull
 	private String bookId;
+	
+	// @NotNull
+	private int position;
 
 	private List<Bookasset> bookAssets;
 
@@ -127,5 +130,13 @@ public class Bookassetdescription {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public int getPosition() {
+		return position;
+	}
+
+	public void setPosition(int position) {
+		this.position = position;
 	}
 }

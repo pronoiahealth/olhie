@@ -25,6 +25,10 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  * @author Julien Dramaix (julien.dramaix@gmail.com)
  * 
+ * <p>
+ * Additional customizations added - John DeStefano
+ * </p>
+ * 
  */
 public class DroppablePanel extends DroppableWidget<FlowPanel> {
 
@@ -40,14 +44,26 @@ public class DroppablePanel extends DroppableWidget<FlowPanel> {
 		innerPanel.add(w);
 	}
 
+	/**
+	 * Initialize the panel style and class. The class names defines the drop
+	 * target used by gwtQuery dnd.
+	 */
 	private void init() {
 		innerPanel = new FlowPanel();
-		innerPanel
-				.getElement()
-				.setAttribute(
-						"style",
-						"padding-bottom: 20px; width: 570px; float: left; margin-left: 10px;");
 		innerPanel.addStyleName("droppablePanel");
+
+		// Default
+		setPanelStyle("padding-bottom: 20px; width: 570px; float: left; margin-left: 10px;");
+	}
+
+	/**
+	 * Set the style of the panel. Should define the bottom padding, width,
+	 * float, and left margin.
+	 * 
+	 * @param styleStr
+	 */
+	public void setPanelStyle(String styleStr) {
+		innerPanel.getElement().setAttribute("style", styleStr);
 	}
 
 	/**
@@ -60,7 +76,7 @@ public class DroppablePanel extends DroppableWidget<FlowPanel> {
 	}
 
 	/**
-	 * Register drop handler !
+	 * Register drop handler
 	 */
 	private void setupDrop() {
 		SortableDragAndDropHandler sortableHandler = new SortableDragAndDropHandler(

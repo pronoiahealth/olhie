@@ -21,5 +21,5 @@ package com.pronoiahealth.olhie.client.shared.constants;
  * 
  */
 public enum NavEnum {
-	BulletinboardPage, EventsPage, BookCasePage, SearchPage, NewBookPage;
+	BulletinboardPage, EventsPage, BookCasePage, SearchPage, NewBookPage, NewBookPage_2;
 }

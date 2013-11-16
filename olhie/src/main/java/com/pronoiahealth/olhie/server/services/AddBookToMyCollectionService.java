@@ -96,8 +96,7 @@ public class AddBookToMyCollectionService {
 			String bookId = addBookToMyCollectionEvent.getBookId();
 			Book book = null;
 
-			if (!role.equals(SecurityRoleEnum.ANONYMOUS.toString())
-					&& loggedIn == true && userId.length() > 0) {
+			if (loggedIn == true && userId.length() > 0) {
 
 				// Need the Book
 				book = bookDAO.getBookById(bookId);

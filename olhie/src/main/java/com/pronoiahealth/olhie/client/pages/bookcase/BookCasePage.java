@@ -119,7 +119,8 @@ public class BookCasePage extends AbstractPage {
 				if (bookId != null) {
 					Multimap<String, Object> map = ArrayListMultimap.create();
 					map.put("bookId", bookId);
-					nav.performTransition(NavEnum.NewBookPage.toString(), map);
+					//nav.performTransition(NavEnum.NewBookPage.toString(), map);
+					nav.performTransition(NavEnum.NewBookPage_2.toString(), map);
 				}
 			}
 		};

@@ -30,14 +30,14 @@ import org.jboss.errai.enterprise.client.cdi.api.Conversational;
  */
 @Portable
 @Conversational
-public class BookFindByIdEvent {
+public class FindAuthorsBookByIdEvent {
 	private String bookId;
 
 	/**
 	 * Constructor
 	 *
 	 */
-	public BookFindByIdEvent() {
+	public FindAuthorsBookByIdEvent() {
 	}
 
 	/**
@@ -45,7 +45,7 @@ public class BookFindByIdEvent {
 	 *
 	 * @param bookId
 	 */
-	public BookFindByIdEvent(String bookId) {
+	public FindAuthorsBookByIdEvent(String bookId) {
 		super();
 		this.bookId = bookId;
 	}

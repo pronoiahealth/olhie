@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
-import com.pronoiahealth.olhie.client.shared.events.book.BookFindByIdEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.FindAuthorsBookByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
@@ -78,14 +78,15 @@ public class BookFindService {
 	/**
 	 * Finds a book and then fires a response with the found book. "Finding" a
 	 * book will bring it into view for the user. This means the
-	 * UserBookRelationship's lastViewedDT must be updated.
+	 * UserBookRelationship's lastViewedDT must be updated. This method will
+	 * return a servi e exception if the loggedin user is not the author or
+	 * co-author of the book.
 	 * 
 	 * @param bookFindByIdEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
-			SecurityRoleEnum.ANONYMOUS })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
 	protected void observesBookNewFindByIdEvent(
-			@Observes @NewBook BookFindByIdEvent bookFindByIdEvent) {
+			@Observes @NewBook FindAuthorsBookByIdEvent bookFindByIdEvent) {
 		try {
 			String bookId = bookFindByIdEvent.getBookId();
 			String userId = userToken.getUserId();
@@ -99,9 +100,16 @@ public class BookFindService {
 					.getActiveBookRealtionshipForUser(userId,
 							userToken.getLoggedIn(), bookId);
 
+			// The logged in user must be the author or co-author of the book
+			if (!(rels.contains(UserBookRelationshipEnum.CREATOR) == true)
+					&& !(rels.contains(UserBookRelationshipEnum.COAUTHOR) == true)) {
+				throw new Exception(
+						"Must be the book author or co-author to edit it!");
+			}
+
 			// Update the last viewed date on the user book relationship
-			bookDAO.setLastViewedOnUserBookRelationship(userId,
-					bookId, new Date());
+			bookDAO.setLastViewedOnUserBookRelationship(userId, bookId,
+					new Date());
 
 			// Is the user asking for the book the author or co-author
 			boolean authorSelected = bookDAO.isAuthorSelected(userId, bookId,
@@ -110,7 +118,6 @@ public class BookFindService {
 			// Fire the event
 			bookFindResponseEvent.fire(new BookFindResponseEvent(bookDisplay,
 					rels, authorSelected));
-
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);
