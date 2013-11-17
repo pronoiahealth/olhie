@@ -314,8 +314,7 @@ public class NewBookPage_2 extends AbstractPage {
 		starRatingPanel.add(starRating);
 
 		// Configure and add droppable panel
-		itemsDndContainer
-				.setPanelStyle("padding-bottom: 5px; width: 100%; height: 90%; float: left; margin-left: 5px;");
+		itemsDndContainer.setPanelClass("ph-NewBook-ItemsListBox", true);
 		addTOCElementContainer.add(itemsDndContainer);
 
 		// handler for clicking download button on a BookItemDisplay

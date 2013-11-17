@@ -159,6 +159,31 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 		// Set the data
 		itemOrderContainer.appendChild(itemPosLbl.getElement());
 		itemDescriptionContainer.appendChild(itemDescLbl.getElement());
+
+		// Add mouse over and mosue ot handler
+		// Mouse over add background
+		// Mouse oue remove it
+		$(itemDescLbl.getElement()).bind(Event.ONMOUSEOVER, new Function() {
+			@Override
+			public boolean f(Event e) {
+				$(e).parent().parent().parent().parent()
+						.addClass("ph-NewBook-ItemsListBox-BookItem-Highlight");
+				return super.f(e);
+			}
+		});
+
+		$(itemDescLbl.getElement()).bind(Event.ONMOUSEOUT, new Function() {
+			@Override
+			public boolean f(Event e) {
+				$(e).parent()
+						.parent()
+						.parent()
+						.parent()
+						.removeClass(
+								"ph-NewBook-ItemsListBox-BookItem-Highlight");
+				return super.f(e);
+			}
+		});
 	}
 
 	/**

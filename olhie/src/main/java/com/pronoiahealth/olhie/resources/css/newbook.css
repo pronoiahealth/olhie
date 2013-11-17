@@ -90,7 +90,7 @@
 
 .ph-NewBook-TOC-Container {
 	float: left;
-	width: 85%;
+	width: 90%;
 	overflow-y: auto;
 }
 
@@ -98,6 +98,47 @@
 	font-family: 'Source Code Pro';
 	/*font-family: "Swanky and Moo Moo", cursive;*/
 	font-size: 16px;
+	padding: 15px;
+	width: 90%;
+	height: 90%;
+	float: left;
+	margin: 0 auto;
+	background-color: #fff;
+	-webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px
+		rgba(0, 0, 0, 0.1);
+	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px
+		rgba(0, 0, 0, 0.1);
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px
+		rgba(0, 0, 0, 0.1);
+}
+
+.ph-NewBook-Introduction-Hero-IntroductionTxt:before,.ph-NewBook-Introduction-Hero-IntroductionTxt:after {
+	position: absolute;
+	width: 40%;
+	height: 10px;
+	content: ' ';
+	left: 12px;
+	bottom: 12px;
+	background: transparent;
+	-webkit-transform: skew(-5deg) rotate(-5deg);
+	-moz-transform: skew(-5deg) rotate(-5deg);
+	-ms-transform: skew(-5deg) rotate(-5deg);
+	-o-transform: skew(-5deg) rotate(-5deg);
+	transform: skew(-5deg) rotate(-5deg);
+	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+	-moz-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+	z-index: -1;
+}
+
+.ph-NewBook-Introduction-Hero-IntroductionTxt:after {
+	left: auto;
+	right: 12px;
+	-webkit-transform: skew(5deg) rotate(5deg);
+	-moz-transform: skew(5deg) rotate(5deg);
+	-ms-transform: skew(5deg) rotate(5deg);
+	-o-transform: skew(5deg) rotate(5deg);
+	transform: skew(5deg) rotate(5deg);
 }
 
 .ph-NewBook-Modal {
@@ -177,12 +218,12 @@
 }
 
 .ph-NewBook-AddFileDialog-ProgressLabel {
-    font-family: Arial, sans-serif;
-    font-size: 12px;
+	font-family: Arial, sans-serif;
+	font-size: 12px;
 }
 
 .ph-NewBook-AddFileDialog-NoFileToUploadErr {
-	 color: red;
+	color: red;
 }
 
 .ph-NewBook-Published-CB {
@@ -227,7 +268,7 @@
 
 .ph-NewBook-ViewComments-CommentsContainer {
 	height: 350px;
-	overflow-y: auto; 
+	overflow-y: auto;
 }
 
 .ph-NewBook-ViewComments-BoxShade {
@@ -241,4 +282,83 @@
 	-khtml-border-radius: 3px;
 	border-radius: 3px;
 	box-shadow: 2px 2px 2px #888888;
+}
+
+.ph-NewBook-ItemsListBox {
+	/*position: relative;
+	width: 500px;
+	padding: 50px;
+	*/
+	padding: 15px;
+	width: 90%;
+	height: 90%;
+	float: left;
+	margin: 0 auto;
+	background-color: #fff;
+	-webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px
+		rgba(0, 0, 0, 0.1);
+	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px
+		rgba(0, 0, 0, 0.1);
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px
+		rgba(0, 0, 0, 0.1);
+}
+
+.ph-NewBook-ItemsListBox:before,.ph-NewBook-ItemsListBox:after {
+	position: absolute;
+	width: 40%;
+	height: 10px;
+	content: ' ';
+	left: 12px;
+	bottom: 12px;
+	background: transparent;
+	-webkit-transform: skew(-5deg) rotate(-5deg);
+	-moz-transform: skew(-5deg) rotate(-5deg);
+	-ms-transform: skew(-5deg) rotate(-5deg);
+	-o-transform: skew(-5deg) rotate(-5deg);
+	transform: skew(-5deg) rotate(-5deg);
+	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+	-moz-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+	z-index: -1;
+}
+
+.ph-NewBook-ItemsListBox:after {
+	left: auto;
+	right: 12px;
+	-webkit-transform: skew(5deg) rotate(5deg);
+	-moz-transform: skew(5deg) rotate(5deg);
+	-ms-transform: skew(5deg) rotate(5deg);
+	-o-transform: skew(5deg) rotate(5deg);
+	transform: skew(5deg) rotate(5deg);
+}
+
+/*
+.ph-NewBook-ItemsListBox-BookItem {
+	padding-bottom: 10px;
+	width: 100%;
+	float: left;
+	margin: 0 auto;
+	cursor: pointer;
+	background-color: #fff;
+}
+*/
+
+.ph-NewBook-ItemsListBox-BookItem {
+	cursor: pointer;
+	width: 95%;
+	padding: 10px;
+	margin-bottom: 10px;
+}
+
+.ph-NewBook-ItemsListBox-BookItem-Highlight {
+	background-color: #BDBDCF;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	border-radius: 3px;
+	box-shadow: 2px 2px 2px #888888;
+	-webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
 }

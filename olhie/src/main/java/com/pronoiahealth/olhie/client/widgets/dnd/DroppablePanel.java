@@ -25,9 +25,9 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  * @author Julien Dramaix (julien.dramaix@gmail.com)
  * 
- * <p>
- * Additional customizations added - John DeStefano
- * </p>
+ *         <p>
+ *         Additional customizations added - John DeStefano
+ *         </p>
  * 
  */
 public class DroppablePanel extends DroppableWidget<FlowPanel> {
@@ -64,6 +64,21 @@ public class DroppablePanel extends DroppableWidget<FlowPanel> {
 	 */
 	public void setPanelStyle(String styleStr) {
 		innerPanel.getElement().setAttribute("style", styleStr);
+	}
+
+	/**
+	 * Set the class name for the contained panel.<br/>
+	 * 
+	 * if override is true the default style is removed
+	 * 
+	 * @param cssClassName
+	 */
+	public void setPanelClass(String cssClassName, boolean override) {
+		innerPanel.getElement().setClassName(cssClassName);
+
+		if (override == true) {
+			setPanelStyle("");
+		}
 	}
 
 	/**
