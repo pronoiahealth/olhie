@@ -74,7 +74,6 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 			// "detach" visually the element of the parent
 			$(event.getDraggable()).css("position", "absolute").css("opacity",
 					"0.5");
-
 		}
 
 		public void onDragStop(DragStopEvent event) {
@@ -114,6 +113,29 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 	@Inject
 	private RemoveAssetButtonWidget removeAssetBtn;
 
+	@Inject
+	private BookdescriptionDetailButtonWidget assetDetailBtn;
+
+	private String baId;
+
+	private String badId;
+
+	private String contentType;
+
+	private String itemName;
+
+	private Label itemPosLbl;
+
+	private Label itemDescLbl;
+
+	private int hoursOfWork;
+
+	private String createDt;
+
+	private String fileName;
+
+	private String fileSize;
+
 	/**
 	 * Constructor
 	 * 
@@ -131,30 +153,34 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 	 * @param itemDescription
 	 * @param buttonGroup
 	 */
-	public void setData(Bookassetdescription bad,
+	public void initData(Bookassetdescription bad,
+			BookassetActionClickCallbackHandler assetDetailClickHandler,
 			BookassetActionClickCallbackHandler downloadClickHandler,
 			BookassetActionClickCallbackHandler removeClickHandler,
 			BookassetActionClickCallbackHandler viewClickHandler) {
 		// item Position
-		Widget itemPosLbl = createCellWidget(NewBookMessages.INSTANCE
-				.createTOCNumber("" + (bad.getPosition())));
-		String createdDt = dtf.format(bad.getCreatedDate());
+		itemPosLbl = createLabel(NewBookMessages.INSTANCE.createTOCNumber(""
+				+ (bad.getPosition())));
+		createDt = dtf.format(bad.getCreatedDate());
 		setupPopover(itemPosLbl,
-				NewBookMessages.INSTANCE.setCreatedDateText(createdDt),
+				NewBookMessages.INSTANCE.setCreatedDateText(createDt),
 				"Details");
 
 		// Item Description
-		Widget itemDescLbl = createCellWidget(bad.getDescription());
+		itemDescLbl = createLabel(bad.getDescription());
 
 		// Button Group
 		Bookasset ba = bad.getBookAssets().get(0);
-		String baId = ba.getId();
-		String badId = bad.getId();
+		baId = ba.getId();
+		badId = bad.getId();
+		hoursOfWork = ba.getHoursOfWork();
+		contentType = ba.getContentType();
+		itemName = ba.getItemName();
 
 		// Create the buttons and add to the buttonGroupContainer
 		makeButtonGroupInButtonGroupContainer(ba.getContentType(),
-				ba.getItemType(), badId, baId, downloadClickHandler,
-				removeClickHandler, viewClickHandler);
+				ba.getItemType(), badId, baId, assetDetailClickHandler,
+				downloadClickHandler, removeClickHandler, viewClickHandler);
 
 		// Set the data
 		itemOrderContainer.appendChild(itemPosLbl.getElement());
@@ -193,33 +219,26 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 	 * @param message
 	 * @param heading
 	 */
-	private Popover setupPopover(Widget w, String message, String heading) {
+	private void setupPopover(Widget w, String message, String heading) {
 		Popover popover = new Popover();
 		popover.setWidget(w);
 		popover.setText(message);
 		popover.setHeading(heading);
-		popover.setPlacement(Placement.TOP);
+		popover.setPlacement(Placement.RIGHT);
 		popover.setContainer("body");
 		popover.reconfigure();
-		return popover;
 	}
 
 	/**
-	 * Create cell widget for a cell
+	 * Create label
 	 * 
-	 * @param cellObject
+	 * @param str
 	 * @return
 	 */
-	private Widget createCellWidget(Object cellObject) {
-		Widget widget = null;
-		if (cellObject instanceof Widget) {
-			widget = (Widget) cellObject;
-		} else {
-			Label l = new Label(cellObject.toString());
-			l.setWordWrap(true);
-			widget = l;
-		}
-		return widget;
+	private Label createLabel(String str) {
+		Label l = new Label(str);
+		l.setWordWrap(true);
+		return l;
 	}
 
 	/**
@@ -232,14 +251,45 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 	 */
 	private void makeButtonGroupInButtonGroupContainer(String contentType,
 			String itemTypeStr, final String badId, final String baId,
+			final BookassetActionClickCallbackHandler assetDetailClickHandler,
 			final BookassetActionClickCallbackHandler downloadClickHandler,
 			final BookassetActionClickCallbackHandler removeClickHandler,
 			final BookassetActionClickCallbackHandler viewClickHandler) {
 
+		// Detail button
+		Element adBut = assetDetailBtn.bindButton();
+		buttonGroupContainer.appendChild(adBut);
+		GQuery adButQry = $(adBut);
+		adButQry.bind(Event.ONCLICK, new Function() {
+			@Override
+			public boolean f(Event e) {
+				return assetDetailClickHandler.handleButtonClick(e, badId,
+						baId, null);
+			}
+		});
+
+		// On mouse over cause icon to spin
+		adButQry.bind(Event.ONMOUSEOVER, new Function() {
+			@Override
+			public boolean f(Event e) {
+				$(e).children().addClass("icon-spin");
+				return false;
+			}
+		});
+
+		// On mouse out cause icon to stop spinning
+		adButQry.bind(Event.ONMOUSEOUT, new Function() {
+			@Override
+			public boolean f(Event e) {
+				$(e).children().removeClass("icon-spin");
+				return false;
+			}
+		});
+
 		// Download button
 		BookAssetDataType itemType = BookAssetDataType.valueOf(itemTypeStr);
 		if (itemType.equals(BookAssetDataType.FILE)) {
-			Element dBut = downloadAssetBtn.setAndBind(baId);
+			Element dBut = downloadAssetBtn.bindButton();
 			buttonGroupContainer.appendChild(dBut);
 
 			GQuery dButQry = $(dBut);
@@ -250,28 +300,65 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 							baId, null);
 				}
 			});
+
+			// On mouse over cause icon to spin
+			dButQry.bind(Event.ONMOUSEOVER, new Function() {
+				@Override
+				public boolean f(Event e) {
+					$(e).children().addClass("icon-spin");
+					return false;
+				}
+			});
+
+			// On mouse out cause icon to stop spinning
+			dButQry.bind(Event.ONMOUSEOUT, new Function() {
+				@Override
+				public boolean f(Event e) {
+					$(e).children().removeClass("icon-spin");
+					return false;
+				}
+			});
 		}
 
 		// Can this content be viewed in an iFrame
 		final String val = viewableContentType.get(contentType);
 		if (val != null) {
-			Element vBut = viewAssetBtn.setAndBind(baId);
+			Element vBut = viewAssetBtn.bindButton();
 			buttonGroupContainer.appendChild(vBut);
-			GQuery dButQry = $(vBut);
-			dButQry.bind(Event.ONCLICK, new Function() {
+			GQuery vButQry = $(vBut);
+			vButQry.bind(Event.ONCLICK, new Function() {
 				@Override
 				public boolean f(Event e) {
 					return viewClickHandler.handleButtonClick(e, badId, baId,
 							val);
 				}
 			});
+
+			// On mouse over cause icon to spin
+			vButQry.bind(Event.ONMOUSEOVER, new Function() {
+				@Override
+				public boolean f(Event e) {
+					$(e).children().addClass("icon-spin");
+					return false;
+				}
+			});
+
+			// On mouse out cause icon to stop spinning
+			vButQry.bind(Event.ONMOUSEOUT, new Function() {
+				@Override
+				public boolean f(Event e) {
+					$(e).children().removeClass("icon-spin");
+					return false;
+				}
+			});
+
 		}
 
 		// Remove button
-		Element rBut = removeAssetBtn.setAndBind(baId);
+		Element rBut = removeAssetBtn.bindButton();
 		buttonGroupContainer.appendChild(rBut);
-		GQuery dButQry = $(rBut);
-		dButQry.bind(Event.ONCLICK, new Function() {
+		GQuery rButQry = $(rBut);
+		rButQry.bind(Event.ONCLICK, new Function() {
 			@Override
 			public boolean f(Event e) {
 				return removeClickHandler
@@ -279,6 +366,23 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 			}
 		});
 
+		// On mouse over cause icon to spin
+		rButQry.bind(Event.ONMOUSEOVER, new Function() {
+			@Override
+			public boolean f(Event e) {
+				$(e).children().addClass("icon-spin");
+				return false;
+			}
+		});
+
+		// On mouse out cause icon to stop spinning
+		rButQry.bind(Event.ONMOUSEOUT, new Function() {
+			@Override
+			public boolean f(Event e) {
+				$(e).children().removeClass("icon-spin");
+				return false;
+			}
+		});
 	}
 
 	/**
@@ -296,4 +400,24 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 		addDragStopHandler(HANDLER);
 	}
 
+	/**
+	 * Reset the item position label
+	 * 
+	 * @param str
+	 */
+	public void setItemPosLbl(String str) {
+		if (itemPosLbl != null) {
+			itemPosLbl.setText(NewBookMessages.INSTANCE.createTOCNumber(""
+					+ str));
+		}
+	}
+
+	/**
+	 * Return the book asset id set through calling the initData method.
+	 * 
+	 * @return
+	 */
+	public String getBaId() {
+		return baId;
+	}
 }

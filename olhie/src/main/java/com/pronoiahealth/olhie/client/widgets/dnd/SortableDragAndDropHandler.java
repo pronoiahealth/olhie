@@ -69,7 +69,6 @@ public class SortableDragAndDropHandler implements DropEventHandler,
 		final DraggableWidget<?> draggable = event.getDraggableWidget();
 		panel.insert(draggable, placeHolderIndex);
 		reset();
-
 	}
 
 	/**

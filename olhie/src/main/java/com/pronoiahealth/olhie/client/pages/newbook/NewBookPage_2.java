@@ -52,14 +52,17 @@ import com.pronoiahealth.olhie.client.navigation.AuthorRole;
 import com.pronoiahealth.olhie.client.pages.AbstractPage;
 import com.pronoiahealth.olhie.client.pages.newbook.features.AddFileDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.pages.newbook.features.AddLogoDialogHandlerFeature;
+import com.pronoiahealth.olhie.client.pages.newbook.features.BookDescriptionDetailDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.pages.newbook.features.NewAssetDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.pages.newbook.widgets.BookItemDisplay;
 import com.pronoiahealth.olhie.client.pages.newbook.widgets.BookassetActionClickCallbackHandler;
+import com.pronoiahealth.olhie.client.pages.newbook.widgets.NewBookDroppablePanel;
 import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.BookdescriptionDetailRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.FindAuthorsBookByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.RemoveBookassetdescriptionEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.RemoveBookassetdescriptionResponseEvent;
@@ -81,7 +84,6 @@ import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.utils.Utils;
-import com.pronoiahealth.olhie.client.widgets.dnd.DroppablePanel;
 import com.pronoiahealth.olhie.client.widgets.rating.StarRating;
 
 /**
@@ -139,7 +141,7 @@ public class NewBookPage_2 extends AbstractPage {
 	public FluidRow createdPublishedCategoryRow;
 
 	@UiField
-	public HTML createdPublishedCategoryLbl;
+	public HTML createdPublishedCategoryHrsLbl;
 
 	@UiField
 	public Heading introductionHeader;
@@ -169,7 +171,7 @@ public class NewBookPage_2 extends AbstractPage {
 	public HTMLPanel addTOCElementContainer;
 
 	@Inject
-	private DroppablePanel itemsDndContainer;
+	private NewBookDroppablePanel itemsDndContainer;
 
 	@UiField
 	public NavPills tocAddElementContainer;
@@ -217,6 +219,9 @@ public class NewBookPage_2 extends AbstractPage {
 	private Event<RemoveBookFromMyCollectionEvent> removeBookFromMyCollectionEvent;
 
 	@Inject
+	private Event<BookdescriptionDetailRequestEvent> bookdescriptionDetailRequestEvent;
+
+	@Inject
 	@NewBook
 	private Event<FindAuthorsBookByIdEvent> bookFindByIdEvent;
 
@@ -245,6 +250,8 @@ public class NewBookPage_2 extends AbstractPage {
 
 	public Button removeFromCollectionBookButton;
 
+	private BookassetActionClickCallbackHandler assetDetailClickHandler;
+
 	private BookassetActionClickCallbackHandler downloadClickHandler;
 
 	private BookassetActionClickCallbackHandler removeClickHandler;
@@ -261,6 +268,9 @@ public class NewBookPage_2 extends AbstractPage {
 
 	@Inject
 	private AddLogoDialogHandlerFeature addLogoDialogFeature;
+
+	@Inject
+	private BookDescriptionDetailDialogHandlerFeature bookDescriptionDetailDialogHandlerFeature;
 
 	@Inject
 	private Instance<BookItemDisplay> bookItemDisplayFactory;
@@ -283,7 +293,7 @@ public class NewBookPage_2 extends AbstractPage {
 		authorLbl.setStyleName("ph-NewBook-Author", true);
 		createdPublishedCategoryRow.setStyleName(
 				"ph-NewBook-Created-Published-Category-Row", true);
-		createdPublishedCategoryLbl.setStyleName(
+		createdPublishedCategoryHrsLbl.setStyleName(
 				"ph-NewBook-Created-Published-Category", true);
 		introductionHeader.setStyleName(
 				"ph-NewBook-Introduction-Hero-Introduction-Header", true);
@@ -324,6 +334,19 @@ public class NewBookPage_2 extends AbstractPage {
 					com.google.gwt.user.client.Event e, String baDescId,
 					String baId, String viewType) {
 				downloadBookAssetEvent.fire(new DownloadBookAssetEvent(baId));
+				return false;
+			}
+		};
+
+		// handler for clicking asset detail on a BookItemDisplay
+		this.assetDetailClickHandler = new BookassetActionClickCallbackHandler() {
+			@Override
+			public boolean handleButtonClick(
+					com.google.gwt.user.client.Event e, String baDescId,
+					String baId, String viewType) {
+				bookdescriptionDetailRequestEvent
+						.fire(new BookdescriptionDetailRequestEvent(baDescId,
+								baId));
 				return false;
 			}
 		};
@@ -369,7 +392,7 @@ public class NewBookPage_2 extends AbstractPage {
 	private void buildAndSetAuthorBtns() {
 		// Buttons for author or co-author
 		authorBtns = new ButtonGroup();
-		
+
 		// logo
 		logoBookButton = createButton("", IconType.PICTURE, ButtonType.PRIMARY,
 				ButtonSize.SMALL);
@@ -463,6 +486,7 @@ public class NewBookPage_2 extends AbstractPage {
 		addFileDialogFeature.deactivate();
 		newAssetDialogFeature.deactivate();
 		addLogoDialogFeature.deactivate();
+		bookDescriptionDetailDialogHandlerFeature.deactivate();
 
 		// Announce that the page is hidden
 		newBookPageHidingEvent.fire(new NewBookPageHidingEvent());
@@ -483,6 +507,7 @@ public class NewBookPage_2 extends AbstractPage {
 		addFileDialogFeature.activate();
 		newAssetDialogFeature.activate();
 		addLogoDialogFeature.activate();
+		bookDescriptionDetailDialogHandlerFeature.activate();
 
 		// Call for the book by its ID
 		bookListBookSelectedEvent.fire(new BookListBookSelectedEvent(bookId));
@@ -572,9 +597,10 @@ public class NewBookPage_2 extends AbstractPage {
 				.getCreatedDate()) : "";
 		String publDateFt = book.getActDate() != null ? dtf.format(book
 				.getActDate()) : "Not yet published";
-		createdPublishedCategoryLbl.setHTML(NewBookMessages.INSTANCE
-				.setCreatedPublishedCategoryLbl(createdDateFt, publDateFt,
-						book.getCategory()));
+		createdPublishedCategoryHrsLbl.setHTML(NewBookMessages.INSTANCE
+				.setCreatedPublishedCategoryLbl(
+						currentBookDisplay.getBookHoursOfWork(), createdDateFt,
+						publDateFt, book.getCategory()));
 
 		// Set the logo if there
 		if (bookDisplay.isBookLogo() == true) {
@@ -598,8 +624,8 @@ public class NewBookPage_2 extends AbstractPage {
 		for (int i = 0; i < descriptions.size(); i++) {
 			Bookassetdescription bad = descriptions.get(i);
 			BookItemDisplay item = bookItemDisplayFactory.get();
-			item.setData(bad, downloadClickHandler, removeClickHandler,
-					viewClickHandler);
+			item.initData(bad, assetDetailClickHandler, downloadClickHandler,
+					removeClickHandler, viewClickHandler);
 			itemsDndContainer.addWidget(item);
 		}
 

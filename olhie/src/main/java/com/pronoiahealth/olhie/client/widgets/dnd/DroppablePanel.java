@@ -94,11 +94,29 @@ public class DroppablePanel extends DroppableWidget<FlowPanel> {
 	 * Register drop handler
 	 */
 	private void setupDrop() {
-		SortableDragAndDropHandler sortableHandler = new SortableDragAndDropHandler(
-				innerPanel);
+		SortableDragAndDropHandler sortableHandler = getSortableDragAndDropHandler();
 		addDropHandler(sortableHandler);
 		addOutDroppableHandler(sortableHandler);
 		addOverDroppableHandler(sortableHandler);
+	}
+
+	/**
+	 * Returns the default new SortableDragAndDropHandler. This can be
+	 * overridden in subclasses to provide different behavior.
+	 * 
+	 * @return
+	 */
+	protected SortableDragAndDropHandler getSortableDragAndDropHandler() {
+		return new SortableDragAndDropHandler(getInnerPanel());
+	}
+
+	/**
+	 * Returns the inner FlowPanel
+	 * 
+	 * @return
+	 */
+	public FlowPanel getInnerPanel() {
+		return innerPanel;
 	}
 
 }

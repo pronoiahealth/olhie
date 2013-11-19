@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
@@ -44,6 +45,9 @@ import com.pronoiahealth.olhie.client.widgets.rating.StarRating;
  */
 @Templated("BookListItemWidget.html#bookListItem")
 public class BookListItemWidget extends Composite {
+
+	private static final DateTimeFormat dtf = DateTimeFormat
+			.getFormat("MM/dd/yyyy");
 
 	@Inject
 	private ClientUserToken clientToken;
@@ -174,10 +178,15 @@ public class BookListItemWidget extends Composite {
 			// Can this content be viewed in an iFrame?
 			// If its in the viewable content map it can
 			String val = viewableContentType.get(contentType);
-			bContent.setDescription(desc, val == null ? true : false,
-					currentAssetId, val == null ? "" : val);
+			String addedDate = dtf.format(currentAsset.getCreatedDate());
+			int hrsWork = currentAsset.getHoursOfWork();
+			String hrsStr = hrsWork == 0 ? "Hours not available" : "" + hrsWork + " hrs";
+			bContent.setDescription(desc, addedDate,
+					hrsStr,
+					val == null ? true : false, currentAssetId,
+					val == null ? "" : val);
 			bookPage.appendChild(bContent.getElement());
-			tocWidget.addItem(counter++, desc, currentAsset.getHoursOfWork());
+			tocWidget.addItem(counter++, desc, hrsStr);
 		}
 
 		// Back cover

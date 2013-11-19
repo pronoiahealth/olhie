@@ -3,7 +3,7 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
 	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base'>
 
-	<b:Modal ui:field="commentModal" title="Add a comment"
+	<b:Modal ui:field="addCommentModal" title="Add a comment"
 		backdrop="STATIC" keyboard="true" animation="true">
 
 		<!-- Comment form -->

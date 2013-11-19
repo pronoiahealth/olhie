@@ -167,6 +167,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 					retBad.setId(bad.getId());
 					Bookasset ba = bad.getBookAssets().get(0);
 					Bookasset retBa = new Bookasset();
+					retBa.setCreatedDate(ba.getCreatedDate());
 					retBa.setId(ba.getId());
 					retBa.setContentType(ba.getContentType());
 					retBa.setItemType(ba.getItemType());

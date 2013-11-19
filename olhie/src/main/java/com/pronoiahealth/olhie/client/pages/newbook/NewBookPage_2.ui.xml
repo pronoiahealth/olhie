@@ -24,7 +24,7 @@
 			</b:FluidRow>
 			<b:FluidRow ui:field="createdPublishedCategoryRow">
 				<b:Heading ui:field="authorLbl" size="4">Author: </b:Heading>
-				<g:HTML ui:field="createdPublishedCategoryLbl"></g:HTML>
+				<g:HTML ui:field="createdPublishedCategoryHrsLbl"></g:HTML>
 			</b:FluidRow>
 		</b:FluidContainer>
 		<g:HTMLPanel styleName="ph-NewBook-Container-Intro-Column">

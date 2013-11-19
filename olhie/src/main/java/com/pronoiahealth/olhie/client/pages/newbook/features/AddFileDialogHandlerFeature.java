@@ -13,10 +13,6 @@ package com.pronoiahealth.olhie.client.pages.newbook.features;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.jboss.errai.ioc.client.container.IOC;
-import org.jboss.errai.ioc.client.container.async.AsyncBeanManager;
-
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.features.AbstractWidgetBasedListenerClientFeature;
 import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddFileDialog;

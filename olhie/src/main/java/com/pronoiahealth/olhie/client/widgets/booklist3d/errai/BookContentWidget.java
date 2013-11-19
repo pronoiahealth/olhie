@@ -21,36 +21,51 @@ import com.google.gwt.user.client.ui.Composite;
  * BookContent.java<br/>
  * Responsibilities:<br/>
  * 1.
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since Sep 30, 2013
- *
+ * 
  */
 @Templated("#bookContent")
 public class BookContentWidget extends Composite {
 
 	@DataField("bookContentDesc")
 	private Element bookContentDesc = DOM.createElement("p");
-	
+
 	@DataField("bookItemDownloadBtn")
 	private Element bookItemDownloadBtn = DOM.createAnchor();
-	
+
 	@DataField("bookItemViewBtn")
 	private Element bookItemViewBtn = DOM.createAnchor();
 
+	@DataField("addedDate")
+	private Element addedDate = DOM.createDiv();
+
+	@DataField("itemType")
+	private Element itemType = DOM.createDiv();
+
+	@DataField("creationHrs")
+	private Element creationHrs = DOM.createDiv();
+
 	/**
 	 * Constructor
-	 *
+	 * 
 	 */
 	public BookContentWidget() {
 	}
-	
+
 	/**
 	 * @param desc
 	 */
-	public void setDescription(String desc, boolean downLoadOnly, String assetId, String assetType) {
+	public void setDescription(String desc, String addedDateStr,
+			String hrs, boolean downLoadOnly, String assetId,
+			String assetType) {
+		addedDate.setInnerText(addedDateStr);
+		itemType.setInnerText(assetType);
 		bookContentDesc.setInnerText(desc);
+		creationHrs.setInnerText(hrs);
+		
 		if (downLoadOnly == true) {
 			bookItemViewBtn.setAttribute("disabled", "true");
 		}

@@ -744,8 +744,9 @@ public class NewBookPage extends AbstractPage {
 		String publDateFt = book.getActDate() != null ? dtf.format(book
 				.getActDate()) : "Not yet published";
 		createdPublishedCategoryLbl.setHTML(NewBookMessages.INSTANCE
-				.setCreatedPublishedCategoryLbl(createdDateFt, publDateFt,
-						book.getCategory()));
+				.setCreatedPublishedCategoryLbl(
+						currentBookDisplay.getBookHoursOfWork(), createdDateFt,
+						publDateFt, book.getCategory()));
 
 		// Set the logo if there
 		if (bookDisplay.isBookLogo() == true) {

@@ -31,8 +31,8 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 public interface NewBookMessages extends Messages {
 	public static NewBookMessages INSTANCE = GWT.create(NewBookMessages.class);
 
-	@DefaultMessage("Created: {0}  Published: {1}  Category: {2}")
-	SafeHtml setCreatedPublishedCategoryLbl(String created, String published, String category);
+	@DefaultMessage("Hours to create: {0} Created: {1}  Published: {2}  Category: {3}")
+	SafeHtml setCreatedPublishedCategoryLbl(int hrsToCreate, String created, String published, String category);
 	
 	@DefaultMessage("{0}")
 	SafeHtml setIntroductionText(String txt);

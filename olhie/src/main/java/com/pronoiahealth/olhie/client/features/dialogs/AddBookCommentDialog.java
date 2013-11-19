@@ -60,7 +60,7 @@ public class AddBookCommentDialog extends Composite {
 	UiBinder<Widget, AddBookCommentDialog> binder;
 
 	@UiField
-	public Modal commentModal;
+	public Modal addCommentModal;
 
 	@UiField
 	public Legend legendTxt;
@@ -105,7 +105,7 @@ public class AddBookCommentDialog extends Composite {
 	@PostConstruct
 	public void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
-		commentModal.setStyleName("ph-BookComment-Modal", true);
+		addCommentModal.setStyleName("ph-BookComment-Modal", true);
 
 		// Rating widget
 		// Create star rating
@@ -126,7 +126,7 @@ public class AddBookCommentDialog extends Composite {
 		starRatingPanel.add(starRating);
 
 		// Set focus
-		commentModal.addShownHandler(new ShownHandler() {
+		addCommentModal.addShownHandler(new ShownHandler() {
 			@Override
 			public void onShown(ShownEvent shownEvent) {
 				comment.setFocus(true);
@@ -162,7 +162,7 @@ public class AddBookCommentDialog extends Composite {
 			mostRecentUserBookCommentEvent
 					.fire(new MostRecentUserBookCommentEvent(currentBookId));
 		} else {
-			commentModal.show();
+			addCommentModal.show();
 		}
 	}
 
@@ -195,7 +195,7 @@ public class AddBookCommentDialog extends Composite {
 		}
 
 		// Show the dialog
-		commentModal.show();
+		addCommentModal.show();
 
 	}
 
@@ -208,7 +208,7 @@ public class AddBookCommentDialog extends Composite {
 	 */
 	protected void observesServiceErrorEvent(
 			@Observes ServiceErrorEvent serviceErrorEvent) {
-		commentModal.hide();
+		addCommentModal.hide();
 	}
 
 	/**
@@ -220,7 +220,7 @@ public class AddBookCommentDialog extends Composite {
 	public void saveButtonClicked(ClickEvent event) {
 		String commentTxt = comment.getText();
 		if (commentTxt != null && commentTxt.length() > 0) {
-			commentModal.hide();
+			addCommentModal.hide();
 			addBookCommentEvent.fire(new AddBookCommentRatingEvent(
 					currentBookId, commentTxt, currentStarRating));
 		} else {

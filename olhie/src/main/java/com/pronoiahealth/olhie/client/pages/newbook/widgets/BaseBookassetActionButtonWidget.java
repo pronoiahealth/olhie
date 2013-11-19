@@ -89,9 +89,7 @@ public class BaseBookassetActionButtonWidget extends Composite {
 	 * @param bookassetid
 	 * @return
 	 */
-	public Element setAndBind(String bookassetid) {
-		button.getElement().setAttribute("bookassetid", bookassetid);
-
+	public Element bindButton() {
 		// Return the element to be bound latter
 		return button.getElement();
 	}
@@ -110,7 +108,7 @@ public class BaseBookassetActionButtonWidget extends Composite {
 		tip.setContainer("body");
 		tip.reconfigure();
 	}
-	
+
 	@Override
 	protected void onLoad() {
 		// TODO Auto-generated method stub
