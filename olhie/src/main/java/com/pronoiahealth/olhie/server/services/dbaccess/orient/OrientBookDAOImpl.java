@@ -965,6 +965,8 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	}
 
 	/**
+	 * Only handles new (additions) right now.
+	 * 
 	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#addUpdateBookasset(java.lang.String,
 	 *      java.lang.String, java.lang.String, java.lang.String,
 	 *      java.lang.String, java.lang.String, long)
@@ -993,6 +995,15 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 			Bookassetdescription bad = new Bookassetdescription();
 			try {
 				ooDbTx.begin(TXTYPE.OPTIMISTIC);
+				// Its new so should have the next position number
+				// Ithe list is null or ) in size that means the book has no
+				// bookassetdescriptions. In that case the item being added is
+				// in position 1.
+				int pos = 1;
+				List<Bookassetdescription> bads = book.getBookDescriptions();
+				if (bads != null && bads.size() > 0) {
+					pos = bads.size() + 1;
+				}
 				bad.setBookId(bookId);
 				bad.setCreatedDate(now);
 				bad.setDescription(description);
