@@ -10,13 +10,21 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages.newbook.widgets;
 
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+
+import com.pronoiahealth.olhie.client.shared.events.book.UpdateBookassetdescriptionOrderEvent;
 import com.pronoiahealth.olhie.client.widgets.dnd.DroppablePanel;
 import com.pronoiahealth.olhie.client.widgets.dnd.SortableDragAndDropHandler;
 
 /**
  * CustomDroppablePanel.java<br/>
  * Responsibilities:<br/>
- * 1.
+ * 1. Provide a drop panel and handle movement and reording of of dropped items.<br/>
+ * 2. Tell the server if the order has changed.<br/>
  * 
  * @author John DeStefano
  * @version 1.0
@@ -24,6 +32,14 @@ import com.pronoiahealth.olhie.client.widgets.dnd.SortableDragAndDropHandler;
  * 
  */
 public class NewBookDroppablePanel extends DroppablePanel {
+
+	@Inject
+	private Event<UpdateBookassetdescriptionOrderEvent> updateBookassetdescriptionOrderEvent;
+
+	/**
+	 * Used to tell the server the order has changed
+	 */
+	private BookassetdescriptionReorderHanlder bookassetdescriptionReorderHanlder;
 
 	/**
 	 * Constructor
@@ -39,7 +55,18 @@ public class NewBookDroppablePanel extends DroppablePanel {
 	 */
 	@Override
 	protected SortableDragAndDropHandler getSortableDragAndDropHandler() {
-		return new NewBookSortableDragAndDropHandler(getInnerPanel());
+		// Construct this here as the super class calls it to initialize the
+		// drag and drop handler
+		this.bookassetdescriptionReorderHanlder = new BookassetdescriptionReorderHanlder() {
+			@Override
+			public void handleReorder(Map<String, Integer> posMap) {
+				updateBookassetdescriptionOrderEvent
+						.fire(new UpdateBookassetdescriptionOrderEvent(posMap));
+			}
+		};
+
+		return new NewBookSortableDragAndDropHandler(getInnerPanel(),
+				bookassetdescriptionReorderHanlder);
 	}
 
 }

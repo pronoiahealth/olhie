@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -151,7 +153,8 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		BookCategory cat = holder.getCategoryByName(book.getCategory());
 
 		// Get a list of Bookassetdescriptions
-		List<Bookassetdescription> baResult = getBookassetdescriptionByBookId(bookId);
+		List<Bookassetdescription> baResult = getBookassetdescriptionByBookId(
+				bookId, true);
 
 		List<Bookassetdescription> retBaResults = new ArrayList<Bookassetdescription>();
 		// Need to detach them. We don't want to pull back the entire object
@@ -165,6 +168,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 					retBad.setCreatedDate(bad.getCreatedDate());
 					retBad.setDescription(bad.getDescription());
 					retBad.setId(bad.getId());
+					retBad.setPosition(bad.getPosition());
 					Bookasset ba = bad.getBookAssets().get(0);
 					Bookasset retBa = new Bookasset();
 					retBa.setCreatedDate(ba.getCreatedDate());
@@ -271,11 +275,22 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public List<Bookassetdescription> getBookassetdescriptionByBookId(
-			String bookId) throws Exception {
-		OSQLSynchQuery<Bookassetdescription> baQuery = new OSQLSynchQuery<Bookassetdescription>(
-				"select from Bookassetdescription where bookId = :bId");
-		HashMap<String, String> baparams = new HashMap<String, String>();
+			String bookId, boolean activeOnly) throws Exception {
+
+		OSQLSynchQuery<Bookassetdescription> baQuery = null;
+
+		// Set up parameter map
+		HashMap<String, Object> baparams = new HashMap<String, Object>();
 		baparams.put("bId", bookId);
+
+		if (activeOnly == true) {
+			baQuery = new OSQLSynchQuery<Bookassetdescription>(
+					"select from Bookassetdescription where bookId = :bId and removed = :rem order by position");
+			baparams.put("rem", Boolean.FALSE);
+		} else {
+			baQuery = new OSQLSynchQuery<Bookassetdescription>(
+					"select from Bookassetdescription where bookId = :bId order by position");
+		}
 		List<Bookassetdescription> baResult = ooDbTx.command(baQuery).execute(
 				baparams);
 		return baResult;
@@ -1161,4 +1176,74 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		book.setSolrUpdate(null);
 		return book;
 	}
+
+	/**
+	 * Returns the Bookassetdescription from the book asset id
+	 * 
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#getBookassetdescription(java.lang.String)
+	 */
+	@Override
+	public Bookassetdescription getBookassetdescription(String badId)
+			throws Exception {
+		OSQLSynchQuery<Bookasset> bQuery = new OSQLSynchQuery<Bookasset>(
+				"select from Bookassetdescription where @rid = :bId");
+		HashMap<String, String> bparams = new HashMap<String, String>();
+		bparams.put("bId", badId);
+		List<Bookassetdescription> bResult = ooDbTx.command(bQuery).execute(
+				bparams);
+		Bookassetdescription bookassetdescription = null;
+		if (bResult != null && bResult.size() == 1) {
+			bookassetdescription = bResult.get(0);
+		} else {
+			bookassetdescription = null;
+		}
+
+		return bookassetdescription;
+	}
+
+	/**
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#updateBookassetdescriptionPosition(java.util.Map)
+	 */
+	@Override
+	public void updateBookassetdescriptionPosition(
+			Map<String, Integer> positionMap) throws Exception {
+		try {
+			// Start a transaction since we are updating data
+			ooDbTx.begin(TXTYPE.OPTIMISTIC);
+
+			// Look up each book description and update its position
+			for (Entry<String, Integer> entry : positionMap.entrySet()) {
+				String badId = entry.getKey();
+				Integer badPos = entry.getValue();
+
+				Bookassetdescription bad = getBookassetdescription(badId);
+				bad.setPosition(badPos);
+				bad = ooDbTx.save(bad);
+			}
+
+			// Commit all the changes
+			ooDbTx.commit();
+		} catch (Exception e) {
+			ooDbTx.rollback();
+			throw e;
+		}
+	}
+
+	/**
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#isUserAuthorOrCoauthorOfBook(java.lang.String,
+	 *      java.lang.String)
+	 */
+	@Override
+	public boolean isUserAuthorOrCoauthorOfBook(String userId, String bookId)
+			throws Exception {
+		Set<UserBookRelationshipEnum> relSetEnum = getUserBookRelationshipByUserIdBookId(
+				bookId, userId, true);
+		if (relSetEnum.contains(UserBookRelationshipEnum.CREATOR)
+				|| relSetEnum.contains(UserBookRelationshipEnum.COAUTHOR)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 }

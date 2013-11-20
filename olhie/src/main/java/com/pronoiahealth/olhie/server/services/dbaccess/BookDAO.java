@@ -12,6 +12,7 @@ package com.pronoiahealth.olhie.server.services.dbaccess;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
@@ -84,12 +85,14 @@ public interface BookDAO extends BaseDAO {
 	 * Gets the contents of a book.
 	 * 
 	 * @param bookId
+	 * @param activeOnly
+	 *            - Return only active Bookassetdescription
 	 * @param ooDbTx
 	 * @return
 	 * @throws Exception
 	 */
 	public List<Bookassetdescription> getBookassetdescriptionByBookId(
-			String bookId) throws Exception;
+			String bookId, boolean activeOnly) throws Exception;
 
 	/**
 	 * Gets a list of books that matches the title or partial title. If either
@@ -407,4 +410,34 @@ public interface BookDAO extends BaseDAO {
 	 * @throws Exception
 	 */
 	public String getAuthorName(String authorId) throws Exception;
+
+	/**
+	 * Returns a Bookassetdescription from the book asset description id
+	 * 
+	 * @param bodId
+	 * @return
+	 * @throws Exception
+	 */
+	public Bookassetdescription getBookassetdescription(String badId)
+			throws Exception;
+
+	/**
+	 * Updates the position indicator for a book description
+	 * 
+	 * @param positionMap
+	 * @throws Exception
+	 */
+	public void updateBookassetdescriptionPosition(
+			Map<String, Integer> positionMap) throws Exception;
+
+	/**
+	 * Tests to see if the user is the author or co-author of a book
+	 * 
+	 * @param userId
+	 * @param bookId
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean isUserAuthorOrCoauthorOfBook(String userId, String bookId)
+			throws Exception;
 }

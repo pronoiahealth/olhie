@@ -57,7 +57,7 @@ public class BookDescriptionDetailDialog extends Composite {
 	public Legend legendTxt;
 
 	@UiField
-	public TextBox adddedDate;
+	public TextBox addedDate;
 
 	@UiField
 	public TextBox hoursToCreate;
@@ -79,7 +79,8 @@ public class BookDescriptionDetailDialog extends Composite {
 	public void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
 		bookDescriptionModal.setStyleName("ph-NewBook-Modal", true);
-		bookDescriptionModal.setStyleName("ph-NewBook-BookdescriptionDetail-Modal-Size", true);
+		bookDescriptionModal.setStyleName(
+				"ph-NewBook-BookdescriptionDetail-Modal-Size", true);
 
 		// Set focus
 		bookDescriptionModal.addShownHandler(new ShownHandler() {
@@ -115,13 +116,15 @@ public class BookDescriptionDetailDialog extends Composite {
 		String addedDateStr = bookdescriptionDetailResponseEvent
 				.getCreationDate();
 		if (addedDateStr != null) {
-			adddedDate.setText(addedDateStr);
+			addedDate.setText(addedDateStr);
 		}
 
 		// Hrs
 		String hrsStr = bookdescriptionDetailResponseEvent.getCreationHrs();
 		if (hrsStr != null) {
-			hoursToCreate.setText(hrsStr);
+			hoursToCreate
+					.setText(hrsStr.equals("0") == true ? "Hours not available"
+							: hrsStr);
 		}
 
 		// Type

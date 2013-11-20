@@ -24,8 +24,6 @@ import javax.inject.Inject;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
-import com.github.gwtbootstrap.client.ui.Popover;
-import com.github.gwtbootstrap.client.ui.constants.Placement;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.query.client.Function;
 import com.google.gwt.query.client.GQuery;
@@ -136,6 +134,8 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 
 	private String fileSize;
 
+	private int itemDescriptionPos;
+
 	/**
 	 * Constructor
 	 * 
@@ -160,11 +160,8 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 			BookassetActionClickCallbackHandler viewClickHandler) {
 		// item Position
 		itemPosLbl = createLabel(NewBookMessages.INSTANCE.createTOCNumber(""
-				+ (bad.getPosition())));
+				+ bad.getPosition()));
 		createDt = dtf.format(bad.getCreatedDate());
-		setupPopover(itemPosLbl,
-				NewBookMessages.INSTANCE.setCreatedDateText(createDt),
-				"Details");
 
 		// Item Description
 		itemDescLbl = createLabel(bad.getDescription());
@@ -176,6 +173,7 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 		hoursOfWork = ba.getHoursOfWork();
 		contentType = ba.getContentType();
 		itemName = ba.getItemName();
+		itemDescriptionPos = bad.getPosition();
 
 		// Create the buttons and add to the buttonGroupContainer
 		makeButtonGroupInButtonGroupContainer(ba.getContentType(),
@@ -210,23 +208,6 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 				return super.f(e);
 			}
 		});
-	}
-
-	/**
-	 * Sets a popover on a widget
-	 * 
-	 * @param w
-	 * @param message
-	 * @param heading
-	 */
-	private void setupPopover(Widget w, String message, String heading) {
-		Popover popover = new Popover();
-		popover.setWidget(w);
-		popover.setText(message);
-		popover.setHeading(heading);
-		popover.setPlacement(Placement.RIGHT);
-		popover.setContainer("body");
-		popover.reconfigure();
 	}
 
 	/**
@@ -419,5 +400,33 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 	 */
 	public String getBaId() {
 		return baId;
+	}
+
+	/**
+	 * Return the book asset description id set through calling the initData
+	 * method.
+	 * 
+	 * @return
+	 */
+	public String getBadId() {
+		return badId;
+	}
+
+	public void setBadId(String badId) {
+		this.badId = badId;
+	}
+
+	public int getItemDescriptionPos() {
+		return itemDescriptionPos;
+	}
+
+	/**
+	 * Return the book description relative position number used for ordering
+	 * set through calling the initData method.
+	 * 
+	 * @param itemDescriptionPos
+	 */
+	public void setItemDescriptionPos(int itemDescriptionPos) {
+		this.itemDescriptionPos = itemDescriptionPos;
 	}
 }

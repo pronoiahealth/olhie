@@ -35,13 +35,18 @@ import com.pronoiahealth.olhie.client.widgets.dnd.SortableDragAndDropHandler;
 public class NewBookSortableDragAndDropHandler extends
 		SortableDragAndDropHandler {
 
+	private BookassetdescriptionReorderHanlder bookassetdescriptionReorderHanlder;
+
 	/**
 	 * Constructor
 	 * 
 	 * @param panel
 	 */
-	public NewBookSortableDragAndDropHandler(FlowPanel panel) {
+	public NewBookSortableDragAndDropHandler(
+			FlowPanel panel,
+			BookassetdescriptionReorderHanlder bookassetdescriptionReorderHanlder) {
 		super(panel);
+		this.bookassetdescriptionReorderHanlder = bookassetdescriptionReorderHanlder;
 	}
 
 	/**
@@ -57,7 +62,7 @@ public class NewBookSortableDragAndDropHandler extends
 		// Change numbering
 		Widget w = event.getDroppableWidget().asWidget();
 		if (w instanceof NewBookDroppablePanel) {
-			Map<Integer, String> assetOrderMap = new HashMap<Integer, String>();
+			Map<String, Integer> assetOrderMap = new HashMap<String, Integer>();
 			NewBookDroppablePanel dp = (NewBookDroppablePanel) w;
 			FlowPanel fp = dp.getInnerPanel();
 			int cnt = fp.getWidgetCount();
@@ -66,17 +71,24 @@ public class NewBookSortableDragAndDropHandler extends
 				Widget bidW = fp.getWidget(i);
 				if (bidW instanceof BookItemDisplay) {
 					BookItemDisplay bid = (BookItemDisplay) bidW;
-					
-					// Reset the number
-					bid.setItemPosLbl("" + (i+1));
 
-					// Save in map
-					assetOrderMap.put(i, bid.getBaId());
+					// Reset the number if different
+					int itemPosNumb = bid.getItemDescriptionPos();
+					int displayLineNumb = i + 1;
+					if (itemPosNumb != displayLineNumb) {
+						bid.setItemPosLbl("" + (i + 1));
+
+						// Save in map
+						assetOrderMap.put(bid.getBadId(), displayLineNumb);
+					}
 				}
 			}
 
 			// Send map to server for update. If there is a problem the server
 			// will respond with an error caught by the Server error feature
+			if (assetOrderMap.size() > 0) {
+				bookassetdescriptionReorderHanlder.handleReorder(assetOrderMap);
+			}
 		}
 	}
 }

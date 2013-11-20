@@ -18,6 +18,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.github.gwtbootstrap.client.ui.Icon;
 import com.google.common.collect.Multimap;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -74,10 +75,10 @@ public class AppNavMenu extends UnorderedListWidget {
 
 		// Create desktop screen and search
 		clear();
-
+		
 		// Bulletin board
 		SideBarNavWidget navWidget = new SideBarNavWidget(
-				NavEnum.BulletinboardPage.toString(), "", "", "icon-book",
+				NavEnum.BulletinboardPage.toString(), "", "", "icon-bullseye",
 				"Bulletin Board");
 		addSideBarNavWidget(navWidget);
 		
@@ -96,6 +97,11 @@ public class AppNavMenu extends UnorderedListWidget {
 		syncMenuWithPage(currentPage);
 	}
 
+	/**
+	 * Observes for the client user update event
+	 * 
+	 * @param clientUserUpdatedEvent
+	 */
 	public void observesCleintUserTokenUpdatedEvent(
 			@Observes ClientUserUpdatedEvent clientUserUpdatedEvent) {
 

@@ -13,20 +13,20 @@
 				<b:ControlGroup ui:field="addedDateGroup">
 					<b:ControlLabel for="addedDate">Added Date:</b:ControlLabel>
 					<b:Controls>
-						<b:TextBox ui:field="adddedDate" controlGroup="{addedDateGroup}"
-							readOnly="true" />
+						<b:TextBox ui:field="addedDate" controlGroup="{addedDateGroup}"
+							enabled="false" />
 					</b:Controls>
 				</b:ControlGroup>
 				<b:ControlGroup ui:field="hoursToCreateGroup">
 					<b:ControlLabel for="hoursToCreate">Hours to Create:</b:ControlLabel>
 					<b:Controls>
-						<b:TextBox ui:field="hoursToCreate" controlGroup="{hoursToCreateGroup}" readOnly="true" />
+						<b:TextBox ui:field="hoursToCreate" controlGroup="{hoursToCreateGroup}" enabled="false" />
 					</b:Controls>
 				</b:ControlGroup>
 				<b:ControlGroup ui:field="assetTypeGroup">
 					<b:ControlLabel for="assetType">Type:</b:ControlLabel>
 					<b:Controls>
-						<b:TextBox ui:field="assetType" controlGroup="{assetTypeGroup}" readOnly="true"/>
+						<b:TextBox ui:field="assetType" controlGroup="{assetTypeGroup}" enabled="false"/>
 					</b:Controls>
 				</b:ControlGroup>
 			</b:Fieldset>

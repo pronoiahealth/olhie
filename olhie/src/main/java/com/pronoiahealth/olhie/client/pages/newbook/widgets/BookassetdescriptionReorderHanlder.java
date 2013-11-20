@@ -8,20 +8,24 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.resources;
+package com.pronoiahealth.olhie.client.pages.newbook.widgets;
 
-import com.google.gwt.core.shared.GWT;
-import com.google.gwt.resources.client.ClientBundle;
+import java.util.Map;
 
 /**
- * Images used by components. Saves some space and download bandwidth.<br/>
- * 
+ * BookassetdescriptionReorderHanlder.java<br/>
+ * Responsibilities:<br/>
+ * 1.
+ *
  * @author John DeStefano
  * @version 1.0
- * @since 5/24/2013
- * 
+ * @since Nov 19, 2013
+ *
  */
-public interface ImageResourceBundle extends ClientBundle {
-	public static final ImageResourceBundle INSTANCE = GWT
-			.create(ImageResourceBundle.class);
+public interface BookassetdescriptionReorderHanlder {
+	
+	/**
+	 * @param posMap
+	 */
+	public void handleReorder(Map<String, Integer> posMap);
 }
