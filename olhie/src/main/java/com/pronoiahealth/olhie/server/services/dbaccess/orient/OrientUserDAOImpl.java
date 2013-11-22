@@ -141,4 +141,29 @@ public class OrientUserDAOImpl extends OrientBaseTxDAO implements UserDAO {
 		}
 	}
 
+	/**
+	 * 
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.UserDAO#resetUserPwd(java.lang.String,
+	 *      java.lang.String)
+	 */
+	@Override
+	public void resetUserPwd(String userId, String newPwd) throws Exception {
+
+		// Get the detached password from the databse
+		Password pwd = this.getPwdByUserId(userId);
+
+		// Save the new data
+		ooDbTx.begin(TXTYPE.OPTIMISTIC);
+		try {
+			SaltedPassword passSalt = SecurityUtils
+					.genSaltedPasswordAndSalt(newPwd);
+			pwd.setPwdDigest(passSalt.getPwdDigest());
+			pwd.setPwdSalt(passSalt.getSalt());
+			ooDbTx.save(pwd);
+			ooDbTx.commit();
+		} catch (Exception e) {
+			ooDbTx.rollback();
+			throw e;
+		}
+	}
 }

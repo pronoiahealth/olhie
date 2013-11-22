@@ -21,12 +21,15 @@ import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.Form;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.NavLink;
+import com.github.gwtbootstrap.client.ui.NavPills;
 import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.github.gwtbootstrap.client.ui.event.ShownEvent;
 import com.github.gwtbootstrap.client.ui.event.ShownHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -37,6 +40,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowLoginModalEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowPasswordRecoveryDialogEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LoginErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LoginRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LoginResponseEvent;
@@ -84,6 +88,12 @@ public class LoginDialog extends Composite {
 	public HelpInline passwordErrors;
 
 	@UiField
+	public NavPills forgotPwdLnkContainer;
+
+	@UiField
+	public NavLink forgotPwdLnk;
+
+	@UiField
 	public Button loginButton;
 
 	@UiField
@@ -92,6 +102,13 @@ public class LoginDialog extends Composite {
 	@Inject
 	private Event<LoginRequestEvent> loginRequestEvent;
 
+	@Inject
+	private Event<ShowPasswordRecoveryDialogEvent> showPasswordRecoveryDialogEvent;
+
+	/**
+	 * Constructor
+	 * 
+	 */
 	public LoginDialog() {
 	}
 
@@ -125,6 +142,22 @@ public class LoginDialog extends Composite {
 		};
 		username.addKeyDownHandler(keyDownHandler);
 		password.addKeyDownHandler(keyDownHandler);
+
+		// Align forgot pwd link
+		forgotPwdLnkContainer.setStyleName("pull-left", true);
+
+		// Added handler for forgotPwd
+		forgotPwdLnk.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				String userName = username.getText();
+				loginModal.hide();
+
+				// Open the recover dialog
+				showPasswordRecoveryDialogEvent
+						.fire(new ShowPasswordRecoveryDialogEvent(userName));
+			}
+		});
 	}
 
 	/**

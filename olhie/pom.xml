@@ -58,6 +58,7 @@
 		<version.gson>2.2.4</version.gson>
 		<gwtquery.draggable>1.0.4</gwtquery.draggable>
 		<gwtquery.droppable>1.0.8</gwtquery.droppable>
+		<commons.email>1.3.2</commons.email>
 	</properties>
 
 	<repositories>
@@ -490,6 +491,11 @@
 				<artifactId>gwtchosen</artifactId>
 				<version>${version.gwtquery.chosen}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-email</artifactId>
+				<version>${commons.email}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -909,6 +915,10 @@
 		<dependency>
 			<groupId>com.github.jdramaix</groupId>
 			<artifactId>gwtchosen</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-email</artifactId>
 		</dependency>
 	</dependencies>
 

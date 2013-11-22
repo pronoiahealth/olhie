@@ -81,4 +81,12 @@ public interface UserDAO extends BaseDAO {
 	 */
 	public void updateUser(String userId, String lastName, String firstName,
 			SecurityRoleEnum role, String email) throws Exception;
+
+	/**
+	 * Used to change just the users password
+	 * 
+	 * @param userId
+	 * @param newPwd
+	 */
+	public void resetUserPwd(String userId, String newPwd) throws Exception;
 }

@@ -13,62 +13,49 @@ package com.pronoiahealth.olhie.client.shared.events.local;
 import org.jboss.errai.bus.client.api.Local;
 import org.jboss.errai.common.client.api.annotations.NonPortable;
 
-import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
-import com.pronoiahealth.olhie.client.shared.vo.Book;
-
 /**
- * ShowNewBookModalEvent.java<br/>
+ * ShowPasswordRecoveryDialogEvent.java<br/>
  * Responsibilities:<br/>
- * 1. Fired to show the New Book Dialog.<br/>
+ * 1.
  * 
  * <p>
- * Fired Form: Header class<br/>
- * Observed By: NewBookDialog class<br/>
+ * Fired By: LoginDialog<br/>
+ * Observed By: PasswordRecoveryDialog<br/>
  * </p>
- *
+ * 
  * @author John DeStefano
  * @version 1.0
- * @since Jun 5, 2013
- *
+ * @since Nov 22, 2013
+ * 
  */
 @Local
 @NonPortable
-public class ShowNewBookModalEvent {
-	private ModeEnum mode;
-	private Book editBook;
+public class ShowPasswordRecoveryDialogEvent {
+	private String userId;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 */
-	public ShowNewBookModalEvent() {
+	public ShowPasswordRecoveryDialogEvent() {
 	}
 
 	/**
 	 * Constructor
-	 *
-	 * @param mode
-	 * @param editBook
+	 * 
+	 * @param userId
 	 */
-	public ShowNewBookModalEvent(ModeEnum mode, Book editBook) {
+	public ShowPasswordRecoveryDialogEvent(String userId) {
 		super();
-		this.mode = mode;
-		this.editBook = editBook;
-	}
-	
-	public ModeEnum getMode() {
-		return mode;
+		this.userId = userId;
 	}
 
-	public void setMode(ModeEnum mode) {
-		this.mode = mode;
+	public String getUserId() {
+		return userId;
 	}
 
-	public Book getEditBook() {
-		return editBook;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
-	public void setEditBook(Book editBook) {
-		this.editBook = editBook;
-	}
 }

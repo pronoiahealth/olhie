@@ -34,6 +34,7 @@ import com.pronoiahealth.olhie.client.features.impl.LoginDialogHandlingFeature;
 import com.pronoiahealth.olhie.client.features.impl.LookupUserDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.features.impl.MainWindowResizeFeature;
 import com.pronoiahealth.olhie.client.features.impl.NewBookDialogHandlerFeature;
+import com.pronoiahealth.olhie.client.features.impl.PasswordRecoveryDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.features.impl.RegisterDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.features.impl.ScreenInactivityTimeoutFeature;
 import com.pronoiahealth.olhie.client.features.impl.SleepDetectionFeature;
@@ -180,6 +181,9 @@ public class MainPage extends AbstractComposite {
 
 	@Inject
 	private EventCalendarRequestHandlerFeature eventCalendarRequestHandlerFeature;
+	
+	@Inject 
+	private PasswordRecoveryDialogHandlerFeature passwordRecoveryDialogHandlerFeature;
 
 	private static final int EAST_PANEL_WIDTH = 180;
 
@@ -282,6 +286,9 @@ public class MainPage extends AbstractComposite {
 
 		// create a request to add an event to the event calendar
 		eventCalendarRequestHandlerFeature.standUpAndActivate(null);
+		
+		// Password Recovery feature
+		passwordRecoveryDialogHandlerFeature.standUpAndActivate(null);
 
 		// Footer
 		buildFooter();
