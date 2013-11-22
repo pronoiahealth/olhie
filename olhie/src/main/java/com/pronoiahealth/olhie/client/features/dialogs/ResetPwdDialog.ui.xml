@@ -1,0 +1,35 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
+	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base' xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'>
+
+	<b:Modal ui:field="resetPwdModal" title="Reset Password" backdrop="STATIC"
+		keyboard="true" animation="true">
+		<b:Form ui:field="resetPwdForm" type="HORIZONTAL">
+			<b:Fieldset ui:field="controlFieldset">
+				<b:Legend>Enter new password</b:Legend>
+				<b:ControlGroup ui:field="passwordGroup">
+					<b:ControlLabel for="password">Password: </b:ControlLabel>
+					<b:Controls>
+						<b:PasswordTextBox ui:field="password"
+							placeholder="New password" controlGroup="{passwordGroup}" errorLabel="{passwordErrors}" />
+						<b:HelpInline ui:field="passwordErrors"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup ui:field="reEnterPasswordGroup">
+					<b:ControlLabel for="reEnterPassword">Re-Enter Password: </b:ControlLabel>
+					<b:Controls>
+						<b:PasswordTextBox ui:field="reEnterPassword"
+							placeholder="Re-enter new password" controlGroup="{reEnterPasswordGroup}" errorLabel="{reEnterPasswordErrors}" />
+						<b:HelpInline ui:field="reEnterPasswordErrors"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+			</b:Fieldset>
+		</b:Form>
+		<b:ModalFooter>
+			<b:Button ui:field="resetPwdButton" type="PRIMARY" text="Change"
+				icon="PENCIL" />
+		</b:ModalFooter>
+	</b:Modal>
+
+</ui:UiBinder>

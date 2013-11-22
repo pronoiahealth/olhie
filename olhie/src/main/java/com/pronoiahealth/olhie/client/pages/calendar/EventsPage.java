@@ -8,7 +8,7 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.pages.events;
+package com.pronoiahealth.olhie.client.pages.calendar;
 
 import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -37,9 +37,14 @@ public class EventsPage extends AbstractPage {
 	public EventsPage() {
 	}
 
+	/**
+	 * Always call the super method. Adds the jQuery calendar widget to the
+	 * screen and initializes it.
+	 * 
+	 * @see com.pronoiahealth.olhie.client.pages.AbstractPage#onLoad()
+	 */
 	@Override
 	protected void onLoad() {
-		// TODO Auto-generated method stub
 		super.onLoad();
 
 		// Add background
@@ -52,14 +57,22 @@ public class EventsPage extends AbstractPage {
 		addCalendar();
 	}
 
+	/**
+	 * Destroys the jQuery calendar object
+	 * 
+	 * @see com.pronoiahealth.olhie.client.pages.AbstractPage#onUnload()
+	 */
 	@Override
 	protected void onUnload() {
 		super.onUnload();
-		
+
 		// Remove the calendar
 		destroyCalendar();
 	}
 
+	/**
+	 * Native method to attach calendar
+	 */
 	private native void addCalendar() /*-{
 		$wnd.jQuery('#olhieEventsCalendar').fullCalendar({
 			header : {
@@ -73,6 +86,9 @@ public class EventsPage extends AbstractPage {
 
 	}-*/;
 
+	/**
+	 * Native method to destroy calendar
+	 */
 	private native void destroyCalendar() /*-{
 		$wnd.jQuery('#olhieEventsCalendar').fullCalendar("destroy");
 	}-*/;

@@ -20,12 +20,14 @@ import javax.inject.Inject;
 
 import org.jboss.errai.cdi.server.events.EventConversationContext;
 
+import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LoginErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LoginRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.loginout.LoginResponseEvent;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.dataaccess.vo.Password;
+import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.SecurityUtils;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
 import com.pronoiahealth.olhie.server.services.dbaccess.UserDAO;
@@ -79,6 +81,7 @@ public class LoginService {
 	 * 
 	 * @param loginRequestEvent
 	 */
+	@SecureAccess({ SecurityRoleEnum.ANONYMOUS })
 	public void observesLoginRequestEvent(
 			@Observes LoginRequestEvent loginRequestEvent) {
 		User user = null;

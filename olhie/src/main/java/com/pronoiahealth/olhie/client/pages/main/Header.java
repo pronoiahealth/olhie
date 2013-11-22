@@ -41,7 +41,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.ShowFindLoggedInUserEv
 import com.pronoiahealth.olhie.client.shared.events.local.ShowLoginModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewBookModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowRegisterModalEvent;
-import com.pronoiahealth.olhie.client.shared.events.loginout.LogoutRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowResetPwdModalEvent;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 
 /**
@@ -91,6 +91,9 @@ public class Header extends Composite {
 	public NavLink editProfileMenuLink;
 
 	@UiField
+	public NavLink changePwdMenuLink;
+
+	@UiField
 	public NavLink findLoggedInUserMenuItemLink;
 
 	@UiField
@@ -128,6 +131,9 @@ public class Header extends Composite {
 
 	@Inject
 	private Event<ShowEventCalendarRequestDialogEvent> showEventCalendarRequestDialogEvent;
+
+	@Inject
+	private Event<ShowResetPwdModalEvent> showResetPwdModalEvent;
 
 	/**
 	 * Default Constructor
@@ -211,16 +217,41 @@ public class Header extends Composite {
 		clientLogoutRequestEvent.fire(new ClientLogoutRequestEvent(true));
 	}
 
+	/**
+	 * Cause the edit profile dialog to show
+	 * 
+	 * @param event
+	 */
 	@UiHandler("editProfileMenuLink")
 	public void editProfileMenuLinkClicked(ClickEvent event) {
 		showEditProfileEvent.fire(new ShowEditProfileModalEvent());
 	}
 
+	/**
+	 * Causes the re-set password dialog to show
+	 * 
+	 * @param event
+	 */
+	@UiHandler("changePwdMenuLink")
+	public void resetPwdMenuLinkClicked(ClickEvent event) {
+		showResetPwdModalEvent.fire(new ShowResetPwdModalEvent());
+	}
+
+	/**
+	 * Causes the logged in user dialog to show
+	 * 
+	 * @param event
+	 */
 	@UiHandler("findLoggedInUserMenuItemLink")
 	public void findLoggedInUserMenuItemLinkClicked(ClickEvent event) {
 		showFindLoggedInUserEvent.fire(new ShowFindLoggedInUserEvent());
 	}
 
+	/**
+	 * Causes the add calendar event dialog to show
+	 * 
+	 * @param event
+	 */
 	@UiHandler("requestAddCalendarEventMenuItemLink")
 	public void requestAddCalendarEventMenuItemLinkClicked(ClickEvent event) {
 		showEventCalendarRequestDialogEvent

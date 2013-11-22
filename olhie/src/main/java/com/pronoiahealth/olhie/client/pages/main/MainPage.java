@@ -36,6 +36,7 @@ import com.pronoiahealth.olhie.client.features.impl.MainWindowResizeFeature;
 import com.pronoiahealth.olhie.client.features.impl.NewBookDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.features.impl.PasswordRecoveryDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.features.impl.RegisterDialogHandlerFeature;
+import com.pronoiahealth.olhie.client.features.impl.ResetPwdDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.features.impl.ScreenInactivityTimeoutFeature;
 import com.pronoiahealth.olhie.client.features.impl.SleepDetectionFeature;
 import com.pronoiahealth.olhie.client.features.impl.UnhandledExceptionHandlerFeature;
@@ -184,6 +185,9 @@ public class MainPage extends AbstractComposite {
 	
 	@Inject 
 	private PasswordRecoveryDialogHandlerFeature passwordRecoveryDialogHandlerFeature;
+	
+	@Inject
+	private ResetPwdDialogHandlerFeature resetPwdDialogHandlerFeature;
 
 	private static final int EAST_PANEL_WIDTH = 180;
 
@@ -289,6 +293,9 @@ public class MainPage extends AbstractComposite {
 		
 		// Password Recovery feature
 		passwordRecoveryDialogHandlerFeature.standUpAndActivate(null);
+		
+		// Add a change password feature
+		resetPwdDialogHandlerFeature.standUpAndActivate(null);
 
 		// Footer
 		buildFooter();

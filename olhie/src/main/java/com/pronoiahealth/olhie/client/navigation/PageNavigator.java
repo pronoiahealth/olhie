@@ -28,7 +28,7 @@ import com.pronoiahealth.olhie.client.clientfactories.DefaultAppPage;
 import com.pronoiahealth.olhie.client.clientfactories.PageRoleMap;
 import com.pronoiahealth.olhie.client.pages.bookcase.BookCasePage;
 import com.pronoiahealth.olhie.client.pages.bulletinboard.BulletinboardPage;
-import com.pronoiahealth.olhie.client.pages.events.EventsPage;
+import com.pronoiahealth.olhie.client.pages.calendar.EventsPage;
 import com.pronoiahealth.olhie.client.pages.newbook.NewBookPage_2;
 import com.pronoiahealth.olhie.client.pages.search.SearchPage;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;

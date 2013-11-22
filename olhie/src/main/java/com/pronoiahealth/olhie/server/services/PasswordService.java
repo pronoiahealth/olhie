@@ -20,11 +20,15 @@ import javax.inject.Inject;
 
 import org.apache.deltaspike.core.api.config.ConfigProperty;
 
+import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.registration.RecoverPwdRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.registration.RecoverPwdResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.registration.UpdatePwdRequestEvent;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
+import com.pronoiahealth.olhie.server.security.SecureAccess;
+import com.pronoiahealth.olhie.server.security.ServerUserToken;
 import com.pronoiahealth.olhie.server.services.dbaccess.UserDAO;
 
 /**
@@ -38,10 +42,13 @@ import com.pronoiahealth.olhie.server.services.dbaccess.UserDAO;
  * 
  */
 @RequestScoped
-public class PasswordRecoveryService {
+public class PasswordService {
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private ServerUserToken userToken;
 
 	@Inject
 	@DAO
@@ -67,7 +74,7 @@ public class PasswordRecoveryService {
 	 * Constructor
 	 * 
 	 */
-	public PasswordRecoveryService() {
+	public PasswordService() {
 	}
 
 	/**
@@ -75,6 +82,7 @@ public class PasswordRecoveryService {
 	 * 
 	 * @param recoverPwdEvent
 	 */
+	@SecureAccess({ SecurityRoleEnum.ANONYMOUS })
 	protected void observesRecoverPwdEvent(
 			@Observes RecoverPwdRequestEvent recoverPwdEvent) {
 		try {
@@ -116,9 +124,36 @@ public class PasswordRecoveryService {
 								"We can't connect to your email server. You can try again or contact the administrator at "
 										+ supportEmail + "."));
 			}
-			
+
 			// Tell the user that the password has been reset
 			recoverPwdResponseEvt.fire(new RecoverPwdResponseEvent(true, null));
+		} catch (Exception e) {
+			String errMsg = e.getMessage();
+			log.log(Level.SEVERE, errMsg, e);
+			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
+		}
+	}
+
+	/**
+	 * Updates a users password. Assumes some kind of check for validity happens
+	 * on the front end
+	 * 
+	 * @param updatePwdRequestEvent
+	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.REGISTERED })
+	protected void observesUpdatePwdRequestEvent(
+			@Observes UpdatePwdRequestEvent updatePwdRequestEvent) {
+
+		try {
+			// Get the users id out of the session
+			String userId = userToken.getUserId();
+
+			// Get the new password
+			String newPwd = updatePwdRequestEvent.getNewPwd();
+
+			// Reset the password
+			userDAO.resetUserPwd(userId, newPwd);
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);

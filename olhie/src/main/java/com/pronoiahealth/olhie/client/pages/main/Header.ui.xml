@@ -26,8 +26,8 @@
 					<b:NavLink ui:field="loginLink">Log-In</b:NavLink>
 					<b:Dropdown ui:field="personDropDown" text="Dropdown example">
 						<b:NavLink ui:field="logoutMenuItemLink" icon="CIRCLE_ARROW_RIGHT">Logout</b:NavLink>
-						<b:NavLink ui:field="editProfileMenuLink" icon="EDIT">Edit
-							Profile</b:NavLink>
+						<b:NavLink ui:field="editProfileMenuLink" icon="EDIT">Edit Profile</b:NavLink>
+						<b:NavLink ui:field="changePwdMenuLink" icon="UNLINK">Change Password</b:NavLink>
 						<b:Divider></b:Divider>
 						<b:NavLink ui:field="findLoggedInUserMenuItemLink" icon="COMMENT">Start a Chat</b:NavLink>
 						<b:NavLink ui:field="requestAddCalendarEventMenuItemLink" icon="CALENDAR">Add Event</b:NavLink>
