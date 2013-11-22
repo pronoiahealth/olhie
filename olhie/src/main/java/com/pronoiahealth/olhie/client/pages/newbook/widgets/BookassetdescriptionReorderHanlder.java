@@ -27,5 +27,5 @@ public interface BookassetdescriptionReorderHanlder {
 	/**
 	 * @param posMap
 	 */
-	public void handleReorder(Map<String, Integer> posMap);
+	public void handleReorder();
 }

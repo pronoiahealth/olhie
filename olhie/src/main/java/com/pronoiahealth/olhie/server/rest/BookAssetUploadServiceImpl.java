@@ -35,6 +35,7 @@ import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.exceptions.FileUploadException;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
+import com.pronoiahealth.olhie.server.security.ServerUserToken;
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
 
 /**
@@ -51,6 +52,9 @@ import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
 public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 	@Inject
 	private Logger log;
+
+	@Inject
+	private ServerUserToken userToken;
 
 	private long FILE_SIZE_LIMIT = 50 * 1024 * 1024; // 50 MiB
 
@@ -143,9 +147,20 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 					}
 				}
 
+				// Verify that the session user is the author or co-author of
+				// the book. They would be the only ones who could add to the
+				// book.
+				String userId = userToken.getUserId();
+				boolean isAuthor = bookDAO.isUserAuthorOrCoauthorOfBook(userId,
+						bookId);
+				if (isAuthor == false) {
+					throw new Exception("The user " + userId
+							+ " is not the author or co-author of the book.");
+				}
+
 				// Add to the database
 				bookDAO.addUpdateBookasset(description, bookId, contentType,
-						data, action, fileName, size, hoursOfWork);
+						data, action, fileName, size, hoursOfWork, userId);
 			}
 			return "OK";
 		} catch (Exception e) {

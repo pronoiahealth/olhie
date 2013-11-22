@@ -18,7 +18,8 @@ import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 /**
  * UpdateBookassetdescriptionOrderEvent.java<br/>
  * Responsibilities:<br/>
- * 1.
+ * 1. Updates the position for the Bookassetdescriptions in a Book.</br>
+ * 2. Optionally inactivate a Bookassetdescrition.</br>
  * 
  * <p>
  * Fired By: NewBookDroppablePanel<br/>
@@ -32,15 +33,16 @@ import org.jboss.errai.enterprise.client.cdi.api.Conversational;
  */
 @Portable
 @Conversational
-public class UpdateBookassetdescriptionOrderEvent {
+public class UpdateBookassetdescriptionsForBookEvent {
 
 	private Map<String, Integer> posMap;
+	private String badIdToRemove;
 
 	/**
 	 * Constructor
 	 * 
 	 */
-	public UpdateBookassetdescriptionOrderEvent() {
+	public UpdateBookassetdescriptionsForBookEvent() {
 	}
 
 	/**
@@ -48,9 +50,22 @@ public class UpdateBookassetdescriptionOrderEvent {
 	 * 
 	 * @param posMap
 	 */
-	public UpdateBookassetdescriptionOrderEvent(Map<String, Integer> posMap) {
+	public UpdateBookassetdescriptionsForBookEvent(Map<String, Integer> posMap) {
 		super();
 		this.posMap = posMap;
+	}
+
+	/**
+	 * Constructor
+	 *
+	 * @param posMap
+	 * @param badIdToRemove
+	 */
+	public UpdateBookassetdescriptionsForBookEvent(Map<String, Integer> posMap,
+			String badIdToRemove) {
+		super();
+		this.posMap = posMap;
+		this.badIdToRemove = badIdToRemove;
 	}
 
 	public Map<String, Integer> getPosMap() {
@@ -59,5 +74,13 @@ public class UpdateBookassetdescriptionOrderEvent {
 
 	public void setPosMap(Map<String, Integer> posMap) {
 		this.posMap = posMap;
+	}
+
+	public String getBadIdToRemove() {
+		return badIdToRemove;
+	}
+
+	public void setBadIdToRemove(String badIdToRemove) {
+		this.badIdToRemove = badIdToRemove;
 	}
 }

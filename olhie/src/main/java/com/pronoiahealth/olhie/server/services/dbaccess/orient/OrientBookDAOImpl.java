@@ -297,6 +297,22 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	}
 
 	/**
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#getBookdescriptionCnt(java.lang.String,
+	 *      boolean)
+	 */
+	@Override
+	public int getBookdescriptionCnt(String bookId, boolean activeOnly)
+			throws Exception {
+		List<Bookassetdescription> lst = getBookassetdescriptionByBookId(
+				bookId, activeOnly);
+		if (lst != null) {
+			return lst.size();
+		} else {
+			return 0;
+		}
+	}
+
+	/**
 	 * Gets a list of books that matches the title or partial title. If either
 	 * startPos and limit are 0 then all books that match will be returned.
 	 * 
@@ -974,21 +990,9 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	@Override
 	public void addUpdateBookasset(String description, String bookId,
 			String contentType, String data, String action, String fileName,
-			long size, int hoursOfWork) throws Exception {
+			long size, int hoursOfWork, String userId) throws Exception {
 		if (BookAssetActionType.valueOf(action).equals(BookAssetActionType.NEW)) {
-			// Find Book
-			OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
-					"select from Book where @rid = :bId");
-			HashMap<String, String> bparams = new HashMap<String, String>();
-			bparams.put("bId", bookId);
-			List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
-			Book book = null;
-			if (bResult != null && bResult.size() == 1) {
-				book = bResult.get(0);
-			} else {
-				throw new Exception(String.format(
-						"Could not find Book for id %s", bookId));
-			}
+			int activeAssetCnt = getBookdescriptionCnt(bookId, true); 
 
 			// Create Bookassetdescription
 			Date now = new Date();
@@ -999,15 +1003,11 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 				// Ithe list is null or ) in size that means the book has no
 				// bookassetdescriptions. In that case the item being added is
 				// in position 1.
-				int pos = 1;
-				List<Bookassetdescription> bads = book.getBookDescriptions();
-				if (bads != null && bads.size() > 0) {
-					pos = bads.size() + 1;
-				}
 				bad.setBookId(bookId);
 				bad.setCreatedDate(now);
 				bad.setDescription(description);
 				bad.setRemoved(Boolean.FALSE);
+				bad.setPosition(++activeAssetCnt);
 				bad = ooDbTx.save(bad);
 				ooDbTx.commit();
 			} catch (Exception e) {
@@ -1020,7 +1020,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 			Bookasset ba = new Bookasset();
 			try {
 				ooDbTx.begin(TXTYPE.OPTIMISTIC);
-				ba.setAuthorId(book.getAuthorId());
+				ba.setAuthorId(userId);
 				ba.setBookassetdescriptionId(bad.getId());
 				ba.setContentType(contentType);
 				ba.setCreatedDate(now);

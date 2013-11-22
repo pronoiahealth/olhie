@@ -105,7 +105,7 @@ public class BaseBookassetActionButtonWidget extends Composite {
 		tip.setWidget(button);
 		tip.setText(message);
 		tip.setPlacement(Placement.TOP);
-		tip.setContainer("body");
+		//tip.setContainer("body");
 		tip.reconfigure();
 	}
 

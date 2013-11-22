@@ -18,21 +18,19 @@
 							styleName="ph-NewBook-RatingWidget-Container">
 						</g:HTMLPanel>
 					</g:HTMLPanel>
-					<g:HTMLPanel ui:field="buttonGrpHolder" styleName="ph-NewBook-EditCurrentBook-Button-Container">
+					<g:HTMLPanel ui:field="buttonGrpHolder"
+						styleName="ph-NewBook-EditCurrentBook-Button-Container">
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</b:FluidRow>
 			<b:FluidRow ui:field="createdPublishedCategoryRow">
 				<b:Heading ui:field="authorLbl" size="4">Author: </b:Heading>
-				<g:HTML ui:field="createdPublishedCategoryHrsLbl"></g:HTML>
 			</b:FluidRow>
 		</b:FluidContainer>
 		<g:HTMLPanel styleName="ph-NewBook-Container-Intro-Column">
 			<b:Hero ui:field="introductionHero">
 				<b:Heading ui:field="introductionHeader" size="4">Introduction</b:Heading>
-				<g:HTMLPanel ui:field="logoImageDisplayDiv">
-					<b:Image ui:field="logoImageDisplay"></b:Image>
-				</g:HTMLPanel>
+				<g:HTMLPanel ui:field="bookIntroductionDetailWidgetContainer"></g:HTMLPanel>
 				<g:ScrollPanel ui:field="introductionPanel">
 					<g:HTML ui:field="introductionTxt"></g:HTML>
 				</g:ScrollPanel>

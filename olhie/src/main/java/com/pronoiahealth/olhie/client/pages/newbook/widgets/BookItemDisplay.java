@@ -343,7 +343,7 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 			@Override
 			public boolean f(Event e) {
 				return removeClickHandler
-						.handleButtonClick(e, null, baId, null);
+						.handleButtonClick(e, badId, baId, null);
 			}
 		});
 
@@ -386,10 +386,11 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 	 * 
 	 * @param str
 	 */
-	public void setItemPosLbl(String str) {
+	public void setItemPosLbl(int pos) {
 		if (itemPosLbl != null) {
+			itemDescriptionPos = pos;
 			itemPosLbl.setText(NewBookMessages.INSTANCE.createTOCNumber(""
-					+ str));
+					+ pos));
 		}
 	}
 

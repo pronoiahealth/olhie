@@ -95,6 +95,18 @@ public interface BookDAO extends BaseDAO {
 			String bookId, boolean activeOnly) throws Exception;
 
 	/**
+	 * Return the number of Bookassetdescriptions for a book. May return 0 if
+	 * non are present.
+	 * 
+	 * @param bookId
+	 * @param activeOnly
+	 * @return
+	 * @throws Exception
+	 */
+	public int getBookdescriptionCnt(String bookId, boolean activeOnly)
+			throws Exception;
+
+	/**
 	 * Gets a list of books that matches the title or partial title. If either
 	 * startPos and limit are 0 then all books that match will be returned.
 	 * 
@@ -357,12 +369,13 @@ public interface BookDAO extends BaseDAO {
 	 *            - NEW or REVISE, Only NEW works currently
 	 * @param fileName
 	 * @param size
+	 * @param userId - The user adding the asset description
 	 * @return
 	 * @throws Exception
 	 */
 	public void addUpdateBookasset(String description, String bookId,
 			String contentType, String data, String action, String fileName,
-			long size, int hoursOfWork) throws Exception;
+			long size, int hoursOfWork, String userId) throws Exception;
 
 	/**
 	 * Add logo

@@ -62,33 +62,7 @@ public class NewBookSortableDragAndDropHandler extends
 		// Change numbering
 		Widget w = event.getDroppableWidget().asWidget();
 		if (w instanceof NewBookDroppablePanel) {
-			Map<String, Integer> assetOrderMap = new HashMap<String, Integer>();
-			NewBookDroppablePanel dp = (NewBookDroppablePanel) w;
-			FlowPanel fp = dp.getInnerPanel();
-			int cnt = fp.getWidgetCount();
-			for (int i = 0; i < cnt; i++) {
-				// if the child is a BookItemDisplay
-				Widget bidW = fp.getWidget(i);
-				if (bidW instanceof BookItemDisplay) {
-					BookItemDisplay bid = (BookItemDisplay) bidW;
-
-					// Reset the number if different
-					int itemPosNumb = bid.getItemDescriptionPos();
-					int displayLineNumb = i + 1;
-					if (itemPosNumb != displayLineNumb) {
-						bid.setItemPosLbl("" + (i + 1));
-
-						// Save in map
-						assetOrderMap.put(bid.getBadId(), displayLineNumb);
-					}
-				}
-			}
-
-			// Send map to server for update. If there is a problem the server
-			// will respond with an error caught by the Server error feature
-			if (assetOrderMap.size() > 0) {
-				bookassetdescriptionReorderHanlder.handleReorder(assetOrderMap);
-			}
+			bookassetdescriptionReorderHanlder.handleReorder();
 		}
 	}
 }

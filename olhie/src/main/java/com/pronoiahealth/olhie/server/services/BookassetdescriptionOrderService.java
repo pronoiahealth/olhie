@@ -21,7 +21,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
-import com.pronoiahealth.olhie.client.shared.events.book.UpdateBookassetdescriptionOrderEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.UpdateBookassetdescriptionsForBookEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
@@ -69,13 +69,13 @@ public class BookassetdescriptionOrderService {
 	 * @param updateBookassetdescriptionOrderEvent
 	 */
 	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
-	protected void observersUpdateBookassetdescriptionOrderEvent(
-			@Observes UpdateBookassetdescriptionOrderEvent updateBookassetdescriptionOrderEvent) {
+	protected void observersUpdateBookassetdescriptionsForBookEvent(
+			@Observes UpdateBookassetdescriptionsForBookEvent updateBookassetdescriptionsForBookEvent) {
 		try {
 			// The user must be the author or co-author of the book being
 			// updated
 			String userId = userToken.getUserId();
-			Map<String, Integer> posMap = updateBookassetdescriptionOrderEvent
+			Map<String, Integer> posMap = updateBookassetdescriptionsForBookEvent
 					.getPosMap();
 			if (posMap != null && posMap.size() > 0) {
 				// Check entries for authorship
@@ -93,6 +93,16 @@ public class BookassetdescriptionOrderService {
 
 				// Update checked entries
 				bookDAO.updateBookassetdescriptionPosition(posMap);
+
+				// Check if a bookassetdescription has been removed
+				String badId = updateBookassetdescriptionsForBookEvent
+						.getBadIdToRemove();
+				if (badId != null && badId.length() > 0) {
+					// inactivate the bad
+					Bookassetdescription bad = bookDAO
+							.inactivateBookAssetDescriptionFromBook(userId,
+									badId);
+				}
 			}
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
