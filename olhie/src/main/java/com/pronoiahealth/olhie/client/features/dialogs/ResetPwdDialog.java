@@ -119,11 +119,12 @@ public class ResetPwdDialog extends Composite {
 		// Clear previous errors
 		clearErrors();
 
-		// Hide dialog
-		resetPwdModal.hide();
-
 		// Validate and submit
 		if (hasSubmissionErrors() == false) {
+			// Hide dialog
+			resetPwdModal.hide();
+
+			// Tell the server
 			updatePwdRequestEvent.fire(new UpdatePwdRequestEvent(password
 					.getText()));
 		}
@@ -159,25 +160,21 @@ public class ResetPwdDialog extends Composite {
 
 		// This may be over kill but at least its consistent with the
 		// registration form process
-		RegistrationForm form = new RegistrationForm();
-		form.setPwd(password.getValue());
-
 		Validator validator = Validation.buildDefaultValidatorFactory()
 				.getValidator();
 		Set<ConstraintViolation<RegistrationForm>> violations = validator
-				.validateValue(RegistrationForm.class, "pwd", "", Default.class);
+				.validateValue(RegistrationForm.class, "pwd", password.getText(), Default.class);
+		// Check the password for match against the password regEx (defined on
+		// the RegistrationForm value object)
+		for (ConstraintViolation<RegistrationForm> cv : violations) {
+			String prop = cv.getPropertyPath().toString();
+			if (prop.equals("pwd")) {
+				passwordErrors.setText(cv.getMessage());
+				passwordGroup.setType(ControlGroupType.ERROR);
+				ret = true;
+			}
+		}
 
-		/**
-		 * Set<ConstraintViolation<RegistrationForm>> violations = validator
-		 * .validate(form);
-		 * 
-		 * // Check the password for match against the password regEx (defined
-		 * on // the RegistrationForm value object) for
-		 * (ConstraintViolation<RegistrationForm> cv : violations) { String prop
-		 * = cv.getPropertyPath().toString(); if (prop.equals("pwd")) {
-		 * passwordErrors.setText(cv.getMessage());
-		 * passwordGroup.setType(ControlGroupType.ERROR); ret = true; } }
-		 */
 		// The password and the re typed password must match
 		if (!password.getValue().equals(reEnterPassword.getValue())) {
 			reEnterPasswordErrors

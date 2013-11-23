@@ -5,12 +5,15 @@
 	xmlns:chzn='urn:import:com.watopi.chosen.client.gwt'>
 
 	<b:Hero ui:field="hero">
+		<g:HTMLPanel width="100%">
+			<div style="width: 40px; margin: 0 auto;">
+				<img src="Olhie/images/Pushpin.gif" />
+			</div>
+		</g:HTMLPanel>
 		<b:Heading size="2">Learn how to use Olhie</b:Heading>
 		<b:Paragraph>
 			<b:SplitDropdownButton ui:field="helpTopic" text="Select a help topic"
 				icon="MAGIC">
-				<!-- b:NavLink name="Introduction">Introduction</b:NavLink>
-				<b:NavLink>Test 2</b:NavLink -->
 			</b:SplitDropdownButton>
 		</b:Paragraph>
 		<b:Paragraph>

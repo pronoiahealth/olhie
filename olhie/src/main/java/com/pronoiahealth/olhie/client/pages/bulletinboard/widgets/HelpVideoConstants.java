@@ -19,17 +19,25 @@ import com.google.gwt.i18n.client.Constants;
  * HelpVideoConstants.java<br/>
  * Responsibilities:<br/>
  * 1.
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since Nov 1, 2013
- *
+ * 
  */
 public interface HelpVideoConstants extends Constants {
 	public static final HelpVideoConstants INSTANCE = GWT
 			.create(HelpVideoConstants.class);
-	
-	Map<String, String> urlMap();
-	
-	String[] displayList();
+
+	Map<String, String> helpUrlMap();
+
+	String[] helpDisplayList();
+
+	Map<String, String> overviewUrlMap();
+
+	String[] overviewDisplayList();
+
+	Map<String, String> introductionUrlMap();
+
+	String[] introductionDisplayList();
 }

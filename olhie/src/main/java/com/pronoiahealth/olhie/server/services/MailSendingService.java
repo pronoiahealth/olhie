@@ -41,7 +41,7 @@ public class MailSendingService {
 	private String smtpSever;
 
 	@Inject
-	@ConfigProperty(name = "MAIL_FROM_PWD", defaultValue = "jjdestef3@gmail.com")
+	@ConfigProperty(name = "MAIL_FROM_ADDRESS", defaultValue = "jjdestef3@gmail.com")
 	private String fromAddress;
 
 	@Inject

@@ -52,12 +52,12 @@ public class RegistrationForm {
 	private String userId;
 
 	@NotNull
-	@Size(min = 1, max = 50)
+	@Size(min = 1, max = 32)
 	@Pattern(regexp = "^((?=.*[^a-zA-Z])(?=.*[a-z])(?=.*[A-Z])(?!.*\\s).{8,})$", message = "Password must contain one upercase, one lowercase, and one non-alpha, and be at least 8 characters long")
 	private String pwd;
 	
 	@NotNull
-	@Size(min = 1, max = 50)
+	@Size(min = 1, max = 32)
 	@Pattern(regexp = "^((?=.*[^a-zA-Z])(?=.*[a-z])(?=.*[A-Z])(?!.*\\s).{8,})$", message = "Password must contain one upercase, one lowercase, and one non-alpha, and be at least 8 characters long")
 	private String pwdRepeat;
 

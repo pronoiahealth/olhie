@@ -144,6 +144,7 @@ public class PasswordRecoveryDialog extends Composite {
 	 */
 	public void show(String userId) {
 		pwdRecoverForm.reset();
+		clearErrors();
 		if (userId != null) {
 			username.setText(userId);
 		}

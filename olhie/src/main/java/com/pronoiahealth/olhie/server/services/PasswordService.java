@@ -123,6 +123,7 @@ public class PasswordService {
 								false,
 								"We can't connect to your email server. You can try again or contact the administrator at "
 										+ supportEmail + "."));
+				return;
 			}
 
 			// Tell the user that the password has been reset
