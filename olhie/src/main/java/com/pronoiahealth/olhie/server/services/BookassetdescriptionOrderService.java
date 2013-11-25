@@ -93,16 +93,15 @@ public class BookassetdescriptionOrderService {
 
 				// Update checked entries
 				bookDAO.updateBookassetdescriptionPosition(posMap);
+			}
 
-				// Check if a bookassetdescription has been removed
-				String badId = updateBookassetdescriptionsForBookEvent
-						.getBadIdToRemove();
-				if (badId != null && badId.length() > 0) {
-					// inactivate the bad
-					Bookassetdescription bad = bookDAO
-							.inactivateBookAssetDescriptionFromBook(userId,
-									badId);
-				}
+			// Check if a bookassetdescription has been removed
+			String badId = updateBookassetdescriptionsForBookEvent
+					.getBadIdToRemove();
+			if (badId != null && badId.length() > 0) {
+				// inactivate the bad
+				Bookassetdescription bad = bookDAO
+						.inactivateBookAssetDescriptionFromBook(userId, badId);
 			}
 		} catch (Exception e) {
 			String errMsg = e.getMessage();

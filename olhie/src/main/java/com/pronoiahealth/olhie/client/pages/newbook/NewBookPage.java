@@ -48,7 +48,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.pronoiahealth.olhie.client.clientfactories.ViewableContentType;
+import com.pronoiahealth.olhie.client.clientfactories.FileTypeViewableContent;
 import com.pronoiahealth.olhie.client.navigation.AnonymousRole;
 import com.pronoiahealth.olhie.client.pages.AbstractPage;
 import com.pronoiahealth.olhie.client.pages.newbook.features.AddFileDialogHandlerFeature;
@@ -128,8 +128,8 @@ public class NewBookPage extends AbstractPage {
 	private ClientUserToken clientUser;
 
 	@Inject
-	@ViewableContentType
-	private Map<String, String> viewableContentType;
+	@FileTypeViewableContent
+	private Map<String, String> fileTypeviewableContent;
 
 	@Inject
 	UiBinder<Widget, NewBookPage> binder;
@@ -824,7 +824,7 @@ public class NewBookPage extends AbstractPage {
 		}
 
 		// Can this content be viewed in an iFrame
-		String val = viewableContentType.get(contentType);
+		String val = fileTypeviewableContent.get(contentType);
 		if (val != null) {
 			btns.add(new ViewBookassetButton(viewClickHandler, baId, val));
 		}

@@ -20,11 +20,10 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
-import com.pronoiahealth.olhie.client.shared.events.book.FindAuthorsBookByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.FindAuthorsBookByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
@@ -86,7 +85,7 @@ public class BookFindService {
 	 */
 	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
 	protected void observesBookNewFindByIdEvent(
-			@Observes @NewBook FindAuthorsBookByIdEvent bookFindByIdEvent) {
+			@Observes FindAuthorsBookByIdEvent bookFindByIdEvent) {
 		try {
 			String bookId = bookFindByIdEvent.getBookId();
 			String userId = userToken.getUserId();

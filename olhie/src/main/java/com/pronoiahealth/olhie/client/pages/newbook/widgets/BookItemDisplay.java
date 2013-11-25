@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.query.client.Function;
 import com.google.gwt.query.client.GQuery;
 import com.google.gwt.user.client.DOM;
@@ -32,7 +31,7 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import com.pronoiahealth.olhie.client.clientfactories.ViewableContentType;
+import com.pronoiahealth.olhie.client.clientfactories.FileTypeViewableContent;
 import com.pronoiahealth.olhie.client.pages.newbook.NewBookMessages;
 import com.pronoiahealth.olhie.client.shared.constants.BookAssetDataType;
 import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
@@ -86,12 +85,9 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 	 */
 	private static DraggablePositionHandler HANDLER = new DraggablePositionHandler();
 
-	private static final DateTimeFormat dtf = DateTimeFormat
-			.getFormat("MM/dd/yyyy");
-
 	@Inject
-	@ViewableContentType
-	private Map<String, String> viewableContentType;
+	@FileTypeViewableContent
+	private Map<String, String> fileTypeviewableContent;
 
 	@DataField
 	private Element itemDescriptionContainer = DOM.createDiv();
@@ -101,6 +97,9 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 
 	@DataField
 	private Element buttonGroupContainer = DOM.createDiv();
+
+	@DataField
+	private Element itemIcon = DOM.createDiv();
 
 	@Inject
 	private DownloadAssetButtonWidget downloadAssetBtn;
@@ -114,25 +113,18 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 	@Inject
 	private BookdescriptionDetailButtonWidget assetDetailBtn;
 
+	@Inject
+	private LinkToAssetButtonWidget linkToAssetButtonWidget;
+
 	private String baId;
 
 	private String badId;
 
-	private String contentType;
-
-	private String itemName;
+	private String itemType;
 
 	private Label itemPosLbl;
 
 	private Label itemDescLbl;
-
-	private int hoursOfWork;
-
-	private String createDt;
-
-	private String fileName;
-
-	private String fileSize;
 
 	private int itemDescriptionPos;
 
@@ -161,7 +153,6 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 		// item Position
 		itemPosLbl = createLabel(NewBookMessages.INSTANCE.createTOCNumber(""
 				+ bad.getPosition()));
-		createDt = dtf.format(bad.getCreatedDate());
 
 		// Item Description
 		itemDescLbl = createLabel(bad.getDescription());
@@ -170,23 +161,29 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 		Bookasset ba = bad.getBookAssets().get(0);
 		baId = ba.getId();
 		badId = bad.getId();
-		hoursOfWork = ba.getHoursOfWork();
-		contentType = ba.getContentType();
-		itemName = ba.getItemName();
 		itemDescriptionPos = bad.getPosition();
+		itemType = ba.getItemType();
+
+		// Type Icon
+		Element icon = DOM.createElement("i");
+		String iconClass = BookAssetDataType.valueOf(itemType)
+				.getBootstrapClass();
+		icon.setClassName(iconClass);
+		itemIcon.appendChild(icon);
 
 		// Create the buttons and add to the buttonGroupContainer
 		makeButtonGroupInButtonGroupContainer(ba.getContentType(),
-				ba.getItemType(), badId, baId, assetDetailClickHandler,
-				downloadClickHandler, removeClickHandler, viewClickHandler);
+				ba.getItemType(), ba.getLinkRef(), badId, baId,
+				assetDetailClickHandler, downloadClickHandler,
+				removeClickHandler, viewClickHandler);
 
 		// Set the data
 		itemOrderContainer.appendChild(itemPosLbl.getElement());
 		itemDescriptionContainer.appendChild(itemDescLbl.getElement());
 
-		// Add mouse over and mosue ot handler
+		// Add mouse over and mouse out handler
 		// Mouse over add background
-		// Mouse oue remove it
+		// Mouse out remove it
 		$(itemDescLbl.getElement()).bind(Event.ONMOUSEOVER, new Function() {
 			@Override
 			public boolean f(Event e) {
@@ -231,7 +228,8 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 	 * @return
 	 */
 	private void makeButtonGroupInButtonGroupContainer(String contentType,
-			String itemTypeStr, final String badId, final String baId,
+			String itemTypeStr, String hRef, final String badId,
+			final String baId,
 			final BookassetActionClickCallbackHandler assetDetailClickHandler,
 			final BookassetActionClickCallbackHandler downloadClickHandler,
 			final BookassetActionClickCallbackHandler removeClickHandler,
@@ -268,22 +266,52 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 		});
 
 		// Download button
-		BookAssetDataType itemType = BookAssetDataType.valueOf(itemTypeStr);
-		if (itemType.equals(BookAssetDataType.FILE)) {
-			Element dBut = downloadAssetBtn.bindButton();
-			buttonGroupContainer.appendChild(dBut);
+		BookAssetDataType dt = BookAssetDataType.valueOf(itemTypeStr);
+		if (dt == BookAssetDataType.FILE || dt == BookAssetDataType.VIDEO) {
+			BookAssetDataType itemType = BookAssetDataType.valueOf(itemTypeStr);
+			if (itemType.equals(BookAssetDataType.FILE)) {
+				Element dBut = downloadAssetBtn.bindButton();
+				buttonGroupContainer.appendChild(dBut);
 
-			GQuery dButQry = $(dBut);
-			dButQry.bind(Event.ONCLICK, new Function() {
-				@Override
-				public boolean f(Event e) {
-					return downloadClickHandler.handleButtonClick(e, null,
-							baId, null);
-				}
-			});
+				GQuery dButQry = $(dBut);
+				dButQry.bind(Event.ONCLICK, new Function() {
+					@Override
+					public boolean f(Event e) {
+						return downloadClickHandler.handleButtonClick(e, null,
+								baId, null);
+					}
+				});
+
+				// On mouse over cause icon to spin
+				dButQry.bind(Event.ONMOUSEOVER, new Function() {
+					@Override
+					public boolean f(Event e) {
+						$(e).children().addClass("icon-spin");
+						return false;
+					}
+				});
+
+				// On mouse out cause icon to stop spinning
+				dButQry.bind(Event.ONMOUSEOUT, new Function() {
+					@Override
+					public boolean f(Event e) {
+						$(e).children().removeClass("icon-spin");
+						return false;
+					}
+				});
+			}
+		}
+
+		// Link button
+		if (dt == BookAssetDataType.LINK && hRef != null && hRef.length() > 0) {
+			linkToAssetButtonWidget.setLink(hRef);
+			Element lBut = linkToAssetButtonWidget.bindButton();
+			buttonGroupContainer.appendChild(lBut);
+
+			GQuery lButQry = $(lBut);
 
 			// On mouse over cause icon to spin
-			dButQry.bind(Event.ONMOUSEOVER, new Function() {
+			lButQry.bind(Event.ONMOUSEOVER, new Function() {
 				@Override
 				public boolean f(Event e) {
 					$(e).children().addClass("icon-spin");
@@ -292,7 +320,7 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 			});
 
 			// On mouse out cause icon to stop spinning
-			dButQry.bind(Event.ONMOUSEOUT, new Function() {
+			lButQry.bind(Event.ONMOUSEOUT, new Function() {
 				@Override
 				public boolean f(Event e) {
 					$(e).children().removeClass("icon-spin");
@@ -302,7 +330,7 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 		}
 
 		// Can this content be viewed in an iFrame
-		final String val = viewableContentType.get(contentType);
+		final String val = fileTypeviewableContent.get(contentType);
 		if (val != null) {
 			Element vBut = viewAssetBtn.bindButton();
 			buttonGroupContainer.appendChild(vBut);
@@ -342,8 +370,8 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 		rButQry.bind(Event.ONCLICK, new Function() {
 			@Override
 			public boolean f(Event e) {
-				return removeClickHandler
-						.handleButtonClick(e, badId, baId, null);
+				return removeClickHandler.handleButtonClick(e, badId, baId,
+						null);
 			}
 		});
 

@@ -62,6 +62,8 @@ public class BaseBookassetActionButtonWidget extends Composite {
 	 */
 	protected String title;
 
+	protected String hRef;
+
 	/**
 	 * Constructor
 	 * 
@@ -70,8 +72,8 @@ public class BaseBookassetActionButtonWidget extends Composite {
 	}
 
 	/**
-	 * Sets icon, buttonStyle (info, warn, etc..), and tooltip[ title. Depends
-	 * on icon name string being set in constructor
+	 * Sets icon, buttonStyle (info, warn, etc..), and tooltip title. Depends on
+	 * icon name string being set in constructor
 	 */
 	@PostConstruct
 	protected final void postConstruct() {
@@ -79,12 +81,16 @@ public class BaseBookassetActionButtonWidget extends Composite {
 		button.getElement().setAttribute("data-original-title", title);
 		button.getElement().setAttribute("title", title);
 		buttonIcon.setClassName(iconName);
+		if (hRef != null) {
+			button.setHref(hRef);
+			button.setTarget("_blank");
+		}
 		setTooltip(title);
 	}
 
 	/**
-	 * Call this method before adding this widget to the DOM to set its
-	 * properties
+	 * This will return the element (anchor) for the configure link. Useful when
+	 * adding this widget to the DOM tree. properties
 	 * 
 	 * @param bookassetid
 	 * @return
@@ -92,6 +98,17 @@ public class BaseBookassetActionButtonWidget extends Composite {
 	public Element bindButton() {
 		// Return the element to be bound latter
 		return button.getElement();
+	}
+
+	/**
+	 * Set the hRef for this link with a target 0f _blank.
+	 * 
+	 * @param hRefLink
+	 */
+	public void setLink(String hRefLink) {
+		this.hRef = hRefLink;
+		button.setHref(hRef);
+		button.setTarget("_blank");
 	}
 
 	/**
@@ -105,14 +122,7 @@ public class BaseBookassetActionButtonWidget extends Composite {
 		tip.setWidget(button);
 		tip.setText(message);
 		tip.setPlacement(Placement.TOP);
-		//tip.setContainer("body");
+		// tip.setContainer("body");
 		tip.reconfigure();
 	}
-
-	@Override
-	protected void onLoad() {
-		// TODO Auto-generated method stub
-		super.onLoad();
-	}
-
 }

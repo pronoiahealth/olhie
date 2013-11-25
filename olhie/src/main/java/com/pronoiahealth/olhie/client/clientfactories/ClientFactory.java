@@ -43,7 +43,7 @@ import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
  */
 @ApplicationScoped
 public class ClientFactory {
-	private Map<String, String> viewableContentTypeLst;
+	private Map<String, String> fileTypeViewableContentLst;
 
 	public ClientFactory() {
 	}
@@ -181,15 +181,15 @@ public class ClientFactory {
 	 * @return
 	 */
 	@Produces
-	@ViewableContentType
-	public Map<String, String> getViewableContentTypeMap() {
-		if (viewableContentTypeLst == null) {
-			viewableContentTypeLst = new HashMap<String, String>();
-			viewableContentTypeLst.put("application/pdf", "PDF");
-			viewableContentTypeLst.put("text/html", "HTML");
-			viewableContentTypeLst.put("text/plain", "TEXT");
+	@FileTypeViewableContent
+	public Map<String, String> getFileTypeViewableContentMap() {
+		if (fileTypeViewableContentLst == null) {
+			fileTypeViewableContentLst = new HashMap<String, String>();
+			fileTypeViewableContentLst.put("application/pdf", "PDF");
+			fileTypeViewableContentLst.put("text/html", "HTML");
+			fileTypeViewableContentLst.put("text/plain", "TEXT");
 		}
-		return viewableContentTypeLst;
+		return fileTypeViewableContentLst;
 	}
 
 }

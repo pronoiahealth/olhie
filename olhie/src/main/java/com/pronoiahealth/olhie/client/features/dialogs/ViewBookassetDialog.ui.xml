@@ -6,7 +6,7 @@
 	<b:Modal ui:field="viewBookassetModal" title="View Content"
 		backdrop="STATIC" keyboard="true" animation="true">
 
-		<g:HTMLPanel ui:field="viewBookassetPanel" height="600px" width="100%"
+		<g:HTMLPanel ui:field="viewBookassetPanel"
 			styleName="ph-ViewBookassetDialog-ErrorMsg-Container">
 		</g:HTMLPanel>
 

@@ -69,7 +69,8 @@ public class ViewBookassetDialog extends Composite {
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
 		viewBookassetModal.setStyleName("ph-ViewBookassetDialog-Modal", true);
-		viewBookassetModal.setStyleName("ph-ViewBookassetDialog-Modal-Size", true);;
+		viewBookassetModal.setStyleName("ph-ViewBookassetDialog-Modal-Size", true);
+		viewBookassetPanel.getParent().getElement().setAttribute("style", "max-height: none;");
 	}
 
 	/**
@@ -99,7 +100,7 @@ public class ViewBookassetDialog extends Composite {
 		iFrame = new NamedFrame("view");
 		iFrame.getElement().setId("viewFrame");
 		iFrame.setWidth("100%");
-		iFrame.setHeight("590px");
+		iFrame.setHeight("400px");
 		viewBookassetPanel.add(iFrame);
 		iFrame.setUrl(uri);
 	}

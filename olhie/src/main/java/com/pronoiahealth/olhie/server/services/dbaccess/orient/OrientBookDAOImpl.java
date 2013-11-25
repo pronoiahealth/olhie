@@ -175,6 +175,8 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 					retBa.setId(ba.getId());
 					retBa.setContentType(ba.getContentType());
 					retBa.setItemType(ba.getItemType());
+					retBa.setLinkRef(ba.getLinkRef());
+					retBa.setEmbededLinkRef(ba.getEmbededLinkRef());
 					int hoursOfWork = ba.getHoursOfWork();
 					retBa.setHoursOfWork(hoursOfWork);
 					bookHoursOfWork = bookHoursOfWork + hoursOfWork;
@@ -989,10 +991,11 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public void addUpdateBookasset(String description, String bookId,
-			String contentType, String data, String action, String fileName,
-			long size, int hoursOfWork, String userId) throws Exception {
+			String contentType, String itemType, String data, String action,
+			String fileName, String linkRef, String embededLinkRef, long size,
+			int hoursOfWork, String userId) throws Exception {
 		if (BookAssetActionType.valueOf(action).equals(BookAssetActionType.NEW)) {
-			int activeAssetCnt = getBookdescriptionCnt(bookId, true); 
+			int activeAssetCnt = getBookdescriptionCnt(bookId, true);
 
 			// Create Bookassetdescription
 			Date now = new Date();
@@ -1018,14 +1021,22 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 
 			// Bookasset and add to bad list
 			Bookasset ba = new Bookasset();
+			BookAssetDataType itemTypeData = BookAssetDataType
+					.valueOf(itemType);
 			try {
 				ooDbTx.begin(TXTYPE.OPTIMISTIC);
 				ba.setAuthorId(userId);
 				ba.setBookassetdescriptionId(bad.getId());
 				ba.setContentType(contentType);
 				ba.setCreatedDate(now);
-				ba.setItemName(fileName);
-				ba.setItemType(BookAssetDataType.FILE.name());
+				if (itemTypeData == BookAssetDataType.LINK
+						|| itemTypeData == BookAssetDataType.YOUTUBE) {
+					ba.setLinkRef(linkRef);
+					ba.setEmbededLinkRef(embededLinkRef);
+				} else {
+					ba.setItemName(fileName);
+				}
+				ba.setItemType(itemType);
 				ba.setSize(size);
 				ba.setBase64Data(data);
 				ba.setHoursOfWork(hoursOfWork);

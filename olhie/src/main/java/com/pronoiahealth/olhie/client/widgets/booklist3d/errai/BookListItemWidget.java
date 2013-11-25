@@ -23,7 +23,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
-import com.pronoiahealth.olhie.client.clientfactories.ViewableContentType;
+import com.pronoiahealth.olhie.client.clientfactories.FileTypeViewableContent;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
@@ -99,8 +99,8 @@ public class BookListItemWidget extends Composite {
 	private TOCWidget tocWidget;
 
 	@Inject
-	@ViewableContentType
-	private Map<String, String> viewableContentType;
+	@FileTypeViewableContent
+	private Map<String, String> fileViewableContent;
 
 	private String bookId;
 
@@ -174,17 +174,20 @@ public class BookListItemWidget extends Composite {
 			BookContentWidget bContent = bookContentInstance.get();
 			Bookasset currentAsset = bookAssetDesc.getBookAssets().get(0);
 			String contentType = currentAsset.getContentType();
+			String itemType = currentAsset.getItemType();
 			String currentAssetId = currentAsset.getId();
+			String linkRef = currentAsset.getLinkRef();
+
 			// Can this content be viewed in an iFrame?
 			// If its in the viewable content map it can
-			String val = viewableContentType.get(contentType);
+			String val = fileViewableContent.get(contentType);
 			String addedDate = dtf.format(currentAsset.getCreatedDate());
 			int hrsWork = currentAsset.getHoursOfWork();
-			String hrsStr = hrsWork == 0 ? "Hours not available" : "" + hrsWork + " hrs";
-			bContent.setDescription(desc, addedDate,
-					hrsStr,
-					val == null ? true : false, currentAssetId,
-					val == null ? "" : val);
+			String hrsStr = hrsWork == 0 ? "Hours not available" : "" + hrsWork
+					+ " hrs";
+			bContent.setDescription(desc, addedDate, hrsStr, val == null ? true
+					: false, currentAssetId, val == null ? "" : val, itemType,
+					linkRef);
 			bookPage.appendChild(bContent.getElement());
 			tocWidget.addItem(counter++, desc, hrsStr);
 		}

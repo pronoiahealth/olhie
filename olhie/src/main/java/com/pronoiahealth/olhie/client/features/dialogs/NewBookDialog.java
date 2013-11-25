@@ -328,27 +328,10 @@ public class NewBookDialog extends Composite {
 				panel.getElement().setAttribute("img-url", cover.getImgUrl());
 				bookCoverDropDown.getMenuWiget().add(link);
 
-				/*
-				 * NavLink link = new NavLink();
-				 * link.setCustomIconStyle(cover.getCustomIcon());
-				 * link.setHref("#"); link.setText(cover.getCoverName());
-				 * link.addClickHandler(coverClickedHandler);
-				 * bookCoverDropDown.getMenuWiget().add(link);
-				 */
 				if (mode.equals(ModeEnum.EDIT)
 						&& cover.getCoverName().equals(book.getCoverName())) {
 					largeBookWidget.setBackground(cover.getImgUrl());
 				}
-
-				/*
-				 * BookCoverListWidget nav = new BookCoverListWidget(cover);
-				 * nav.addClickHandler(coverClickedHandler);
-				 * bookCoverDropDown.getMenuWiget().add(nav);
-				 * 
-				 * If editing set the backgroup if (mode.equals(ModeEnum.EDIT)
-				 * && cover.getCoverName().equals(book.getCoverName())) {
-				 * largeBookWidget.setBackground(cover.getImgUrl()); }
-				 */
 			}
 		}
 	}
@@ -363,7 +346,27 @@ public class NewBookDialog extends Composite {
 		newBookModal.hide();
 		Multimap<String, Object> map = ArrayListMultimap.create();
 		map.put("bookId", bookUpdateCommittedEvent.getBookId());
-		nav.performTransition(NavEnum.NewBookPage.toString(), map);
+		nav.performTransition(NavEnum.NewBookPage_2.toString(), map);
+	}
+	
+	/**
+	 * Shows the modal dialog. If we are editing then sync up the model.
+	 * 
+	 * @param showNewBookModalEvent
+	 */
+	protected void observersShowNewBookModalEvent(
+			@Observes ShowNewBookModalEvent showNewBookModalEvent) {
+		// Reset the form
+		resetFormForNewMode();
+		
+		// Is there a book
+		Book theBook = showNewBookModalEvent.getEditBook();
+		if (theBook != null) {
+			setFormForEdit(theBook);
+		} 
+		
+		// Show the dialog
+		show();
 	}
 
 	/**
@@ -523,26 +526,6 @@ public class NewBookDialog extends Composite {
 	public Book getUnwrappedModelData() {
 		return (Book) ((BindableProxy<RegistrationForm>) dataBinder.getModel())
 				.unwrap();
-	}
-
-	/**
-	 * Shows the modal dialog. If we are editing then sync up the model.
-	 * 
-	 * @param showNewBookModalEvent
-	 */
-	protected void observersShowNewBookModalEvent(
-			@Observes ShowNewBookModalEvent showNewBookModalEvent) {
-		// Reset the form
-		resetFormForNewMode();
-		
-		// Is there a book
-		Book theBook = showNewBookModalEvent.getEditBook();
-		if (theBook != null) {
-			setFormForEdit(theBook);
-		} 
-		
-		// Show the dialog
-		show();
 	}
 
 	private void configureInterfaceDataEntry(String catName) {

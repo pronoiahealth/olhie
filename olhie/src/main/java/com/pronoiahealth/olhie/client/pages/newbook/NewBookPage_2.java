@@ -48,6 +48,7 @@ import com.pronoiahealth.olhie.client.navigation.AuthorRole;
 import com.pronoiahealth.olhie.client.pages.AbstractPage;
 import com.pronoiahealth.olhie.client.pages.newbook.features.AddFileDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.pages.newbook.features.AddLogoDialogHandlerFeature;
+import com.pronoiahealth.olhie.client.pages.newbook.features.AddYouTubeDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.pages.newbook.features.BookDescriptionDetailDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.pages.newbook.features.NewAssetDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.pages.newbook.widgets.BookIntroductionDetailWidget;
@@ -189,7 +190,6 @@ public class NewBookPage_2 extends AbstractPage {
 	private Event<ShowNewAssetModalEvent> showNewAssetModalEvent;
 
 	@Inject
-	@NewBook
 	private Event<FindAuthorsBookByIdEvent> bookFindByIdEvent;
 
 	@UiField
@@ -231,6 +231,9 @@ public class NewBookPage_2 extends AbstractPage {
 	@Inject
 	private BookDescriptionDetailDialogHandlerFeature bookDescriptionDetailDialogHandlerFeature;
 
+	@Inject
+	private AddYouTubeDialogHandlerFeature addYouTubeDialogHandlerFeature;
+
 	/**
 	 * Default Constructor
 	 * 
@@ -264,7 +267,7 @@ public class NewBookPage_2 extends AbstractPage {
 		// Build button groups
 		buildAndSetAuthorBtns();
 
-		//
+		// Book introduction
 		bookIntroductionDetailWidgetContainer.add(bookIntroductionDetailWidget);
 
 		// Create star rating
@@ -382,6 +385,7 @@ public class NewBookPage_2 extends AbstractPage {
 		newAssetDialogFeature.deactivate();
 		addLogoDialogFeature.deactivate();
 		bookDescriptionDetailDialogHandlerFeature.deactivate();
+		addYouTubeDialogHandlerFeature.deactivate();
 
 		// Announce that the page is hidden
 		newBookPageHidingEvent.fire(new NewBookPageHidingEvent());
@@ -403,6 +407,7 @@ public class NewBookPage_2 extends AbstractPage {
 		newAssetDialogFeature.activate();
 		addLogoDialogFeature.activate();
 		bookDescriptionDetailDialogHandlerFeature.activate();
+		addYouTubeDialogHandlerFeature.activate();
 
 		// Call for the book by its ID
 		bookListBookSelectedEvent.fire(new BookListBookSelectedEvent(bookId));
@@ -422,7 +427,7 @@ public class NewBookPage_2 extends AbstractPage {
 	}
 
 	/**
-	 * Watches for the book content update event. If the book id matchs the one
+	 * Watches for the book content update event. If the book id matches the one
 	 * showing then asks for the new data.
 	 * 
 	 * @param bookContentUpdatedEvent
@@ -489,15 +494,15 @@ public class NewBookPage_2 extends AbstractPage {
 		bookTitle.setText(book.getBookTitle());
 		authorLbl.setText("by " + bookDisplay.getAuthorFullName());
 
-		// Set the book inreoduction detail panel
+		// Set the book introduction detail panel
 		String createdDateFt = book.getCreatedDate() != null ? dtf.format(book
 				.getCreatedDate()) : "";
 		String publDateFt = book.getActDate() != null ? dtf.format(book
 				.getActDate()) : "Not yet published";
 		bookIntroductionDetailWidget.setData(
 				Utils.buildRestServiceForBookFrontCoverDownloadLink(bookId),
-				createdDateFt, publDateFt, book.getCategory(),
-				"" + currentBookDisplay.getBookHoursOfWork());
+				createdDateFt, publDateFt, book.getCategory(), ""
+						+ currentBookDisplay.getBookHoursOfWork());
 
 		// Introduction text
 		introductionTxt.setHTML(NewBookMessages.INSTANCE

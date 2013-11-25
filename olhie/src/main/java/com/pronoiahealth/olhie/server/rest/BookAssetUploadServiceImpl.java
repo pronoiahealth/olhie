@@ -31,6 +31,7 @@ import org.apache.commons.fileupload.util.Streams;
 import org.apache.commons.io.IOUtils;
 
 import com.lowagie.text.pdf.codec.Base64;
+import com.pronoiahealth.olhie.client.shared.constants.BookAssetDataType;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.exceptions.FileUploadException;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
@@ -160,7 +161,8 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 
 				// Add to the database
 				bookDAO.addUpdateBookasset(description, bookId, contentType,
-						data, action, fileName, size, hoursOfWork, userId);
+						BookAssetDataType.FILE.toString(), data, action,
+						fileName, null, null, size, hoursOfWork, userId);
 			}
 			return "OK";
 		} catch (Exception e) {

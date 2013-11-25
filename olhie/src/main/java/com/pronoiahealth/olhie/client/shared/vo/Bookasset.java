@@ -49,8 +49,7 @@ public class Bookasset {
 	@Size(min=1, max=50, message="Must be between 1 and 50 characters.")
 	private String itemType;
 
-	@NotNull
-	@Size(min=1, max=250, message="Must be between 1 and 250 characters.")
+	@Size(max=250, message="Must be between 1 and 250 characters.")
 	private String itemName;
 	
 	@NotNull
@@ -61,11 +60,16 @@ public class Bookasset {
 	
 	private int hoursOfWork;
 	
-	@NotNull
 	private String base64Data;
 	
 	@NotNull
 	private String bookassetdescriptionId;
+	
+	@Size(max=250, message="Can be upto 250 characters.")
+	private String linkRef;
+	
+	@Size(max=250, message="Can be upto 512 characters.")
+	private String embededLinkRef;
 	
 	/**
 	 * Constructor
@@ -152,5 +156,21 @@ public class Bookasset {
 
 	public void setHoursOfWork(int hoursOfWork) {
 		this.hoursOfWork = hoursOfWork;
+	}
+
+	public String getLinkRef() {
+		return linkRef;
+	}
+
+	public void setLinkRef(String linkRef) {
+		this.linkRef = linkRef;
+	}
+
+	public String getEmbededLinkRef() {
+		return embededLinkRef;
+	}
+
+	public void setEmbededLinkRef(String embededLinkRef) {
+		this.embededLinkRef = embededLinkRef;
 	}
 }

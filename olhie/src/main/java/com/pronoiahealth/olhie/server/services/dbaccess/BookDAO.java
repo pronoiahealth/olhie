@@ -369,13 +369,15 @@ public interface BookDAO extends BaseDAO {
 	 *            - NEW or REVISE, Only NEW works currently
 	 * @param fileName
 	 * @param size
-	 * @param userId - The user adding the asset description
+	 * @param userId
+	 *            - The user adding the asset description
 	 * @return
 	 * @throws Exception
 	 */
 	public void addUpdateBookasset(String description, String bookId,
-			String contentType, String data, String action, String fileName,
-			long size, int hoursOfWork, String userId) throws Exception;
+			String contentType, String itemType, String data, String action,
+			String fileName, String linkRef, String embededLinkRef, long size,
+			int hoursOfWork, String userId) throws Exception;
 
 	/**
 	 * Add logo

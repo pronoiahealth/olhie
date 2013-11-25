@@ -15,36 +15,52 @@
 		<div style="height: 265px; overflow: auto;">
 			<p data-field="bookContentDesc">Test file 2</p>
 			<p>
-				<div style="display: table;">
-					<div style="display: table-row;">
-						<div style="display: table-cell; text-align: right;">Added:&nbsp;</div>
-						<div data-field="addedDate" style="display: table-cell;">10/10/13</div>
-					</div>
-					<div style="display: table-row;">
-						<div style="display: table-cell; text-align: right;">Type:&nbsp;</div>
-						<div data-field="itemType" style="display: table-cell;">PDF</div>
-					</div>
-					<div style="display: table-row;">
-						<div style="display: table-cell; text-align: right;">Hours:&nbsp;</div>
-						<div data-field="creationHrs" style="display: table-cell;">25 hrs</div>
+			<div style="display: table;">
+				<div style="display: table-row;">
+					<div style="display: table-cell; text-align: right;">Added:&nbsp;</div>
+					<div data-field="addedDate" style="display: table-cell;">10/10/13</div>
+				</div>
+				<div style="display: table-row;">
+					<div style="display: table-cell; text-align: right;">Class:&nbsp;</div>
+					<div style="display: table-cell;">
+						<span><i data-field="buttonIcon" class=""></i></span>
 					</div>
 				</div>
+				<div style="display: table-row;">
+					<div style="display: table-cell; text-align: right;">Type:&nbsp;</div>
+					<div data-field="contentType" style="display: table-cell;"></div>
+				</div>
+				<div style="display: table-row;">
+					<div style="display: table-cell; text-align: right;">Hours:&nbsp;</div>
+					<div data-field="creationHrs" style="display: table-cell;">25
+						hrs</div>
+				</div>
+			</div>
 			</p>
 		</div>
 		<div style="text-align: center;">
 			<div data-field="bookItemBtns">
-				<div style="width: 27px; float: left;">
-					<a data-field="bookItemDownloadBtn" href="javascript:;"
-						class="btn btn-mini btn-info bk-download-btn" bookassetid="#11:4"
-						data-original-title="Download" title="Download" rel="tooltip">
-						<i class="icon-cloud-download"></i>
-					</a>
+				<div style="width: 27px; height: 23px; float: left;">
+					<div>
+						<a data-field="bookItemDownloadBtn" href="javascript:;"
+							class="btn btn-mini btn-info bk-download-btn" bookassetid="#11:4"
+							data-original-title="Download" title="Download" rel="tooltip">
+							<i class="icon-cloud-download"></i>
+						</a>
+					</div>
+					<div>
+						<a data-field="bookItemLinkBtn" href="javascript:;"
+							class="btn btn-mini btn-info" bookassetid="#11:4"
+							data-original-title="Download" title="Link" rel="tooltip"> <i
+							class="icon-link"></i>
+						</a>
+					</div>
 				</div>
-				<div style="width: 27px; float: right;">
+				<div style="width: 27px; height: 23px; float: right;">
 					<a data-field="bookItemViewBtn" href="javascript:;"
-						class="btn btn-mini btn-success bk-view-btn" bookassetid="#11:4" viewable-content-key=""
-						data-original-title="View item." title="View item." rel="tooltip">
-						<i class="icon-eye-open"></i>
+						class="btn btn-mini btn-success bk-view-btn" bookassetid="#11:4"
+						viewable-content-key="" data-original-title="View item."
+						title="View item." rel="tooltip"> <i class="icon-eye-open"></i>
 					</a>
 				</div>
 			</div>

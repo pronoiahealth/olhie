@@ -18,7 +18,8 @@ import com.google.gwt.i18n.client.Constants;
 /**
  * HelpVideoConstants.java<br/>
  * Responsibilities:<br/>
- * 1.
+ * 1. Constants used for the HelpVideoWidget. This class maps the contents of
+ * the HelpVideoConstants.properties file.<br/>
  * 
  * @author John DeStefano
  * @version 1.0

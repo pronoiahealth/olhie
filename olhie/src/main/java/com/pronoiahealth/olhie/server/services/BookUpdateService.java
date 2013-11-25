@@ -237,48 +237,4 @@ public class BookUpdateService {
 			serviceErrorEvent.fire(new ServiceErrorEvent(msg));
 		}
 	}
-
-	/*
-	private void enQueueAddUpdate(Book book) {
-		Connection connection = null;
-		Session session = null;
-		MessageProducer publisher = null;
-
-		try {
-			connection = cf.createConnection();
-			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-			publisher = session.createProducer(queue);
-			TextMessage msg = session.createTextMessage("");
-			publisher.send(msg);
-		} catch (Exception e) {
-			log.log(Level.SEVERE,
-					"Error processing add or update for book with id "
-							+ book.getId(), e);
-		} finally {
-			if (publisher != null) {
-				try {
-					publisher.close();
-				} catch (JMSException e) {
-					// Do nothing
-				}
-			}
-			
-			if (session != null) {
-				try {
-					session.close();
-				} catch (JMSException e) {
-					// Do nothing
-				}
-			}
-			
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (JMSException e) {
-					// Do nothing
-				}
-			}
-		}
-	}
-	*/
 }
