@@ -46,7 +46,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -61,8 +60,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.pages.newbook.NewBookConstants;
 import com.pronoiahealth.olhie.client.pages.newbook.NewBookMessages;
 import com.pronoiahealth.olhie.client.shared.constants.BookAssetActionType;
+import com.pronoiahealth.olhie.client.shared.constants.BookAssetDataType;
 import com.pronoiahealth.olhie.client.shared.events.local.BookContentUpdatedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowAddFileModalEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowAddVideoModalEvent;
 import com.pronoiahealth.olhie.client.widgets.progressbar.ProgressBar;
 
 /**
@@ -76,10 +77,10 @@ import com.pronoiahealth.olhie.client.widgets.progressbar.ProgressBar;
  * 
  */
 @Dependent
-public class AddFileDialog extends Composite {
+public class AddFileVideoDialog extends Composite {
 
 	@Inject
-	UiBinder<Widget, AddFileDialog> binder;
+	UiBinder<Widget, AddFileVideoDialog> binder;
 
 	@UiField
 	public Modal addFileModal;
@@ -116,6 +117,12 @@ public class AddFileDialog extends Composite {
 
 	private String currentBookId;
 
+	private static final String fileTitle = "What file do you want to add?";
+
+	private static final String videoTitle = "What video do you want to add?";
+
+	private String dataType;
+
 	@Inject
 	private Event<BookContentUpdatedEvent> bookContentUpdatedEvent;
 
@@ -123,7 +130,7 @@ public class AddFileDialog extends Composite {
 	 * Constructor
 	 * 
 	 */
-	public AddFileDialog() {
+	public AddFileVideoDialog() {
 	}
 
 	@PostConstruct
@@ -275,6 +282,10 @@ public class AddFileDialog extends Composite {
 					}
 				});
 
+		if (dataType.equals(BookAssetDataType.VIDEO.toString())) {
+			uploader.setFileTypes("*.mp4");
+		}
+
 		uploadContainer.add(uploader);
 		uploadContainer.add(progressBar);
 	}
@@ -321,7 +332,21 @@ public class AddFileDialog extends Composite {
 	 */
 	protected void observesShowAddFileModalEvent(
 			@Observes ShowAddFileModalEvent showAddFileModalEvent) {
+		addFileModal.setTitle(fileTitle);
+		dataType = BookAssetDataType.FILE.toString();
 		showModal(showAddFileModalEvent.getBookId());
+	}
+
+	/**
+	 * Watches for an event to tell this component to show the contained dialog
+	 * 
+	 * @param showAddFileModalEvent
+	 */
+	protected void observesShowAddVideoModalEvent(
+			@Observes ShowAddVideoModalEvent showAddVideoModalEvent) {
+		addFileModal.setTitle(videoTitle);
+		dataType = BookAssetDataType.VIDEO.toString();
+		showModal(showAddVideoModalEvent.getBookId());
 	}
 
 	/**
@@ -383,6 +408,7 @@ public class AddFileDialog extends Composite {
 			params.put("hoursOfWork", new JSONString(hours));
 			params.put("bookId", new JSONString(this.currentBookId));
 			params.put("action", new JSONString(BookAssetActionType.NEW.name()));
+			params.put("dataType", new JSONString(dataType));
 			uploader.setPostParams(params);
 			uploader.startUpload();
 		}

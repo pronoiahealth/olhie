@@ -15,32 +15,36 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.features.AbstractWidgetBasedListenerClientFeature;
-import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddFileVideoDialog;
+import com.pronoiahealth.olhie.client.pages.newbook.dialogs.AddLinkDialog;
 
 /**
- * AddFileDialogHandlerFeature.java<br/>
+ * AddLinkDialogHandlerFeature.java<br/>
  * Responsibilities:<br/>
  * 1.
- * 
+ *
  * @author John DeStefano
  * @version 1.0
- * @since Oct 28, 2013
- * 
+ * @since Nov 25, 2013
+ *
  */
-public class AddFileDialogHandlerFeature extends
+public class AddLinkDialogHandlerFeature extends
 		AbstractWidgetBasedListenerClientFeature {
 
 	@Inject
-	private Instance<AddFileVideoDialog> instFactory;
+	private Instance<AddLinkDialog> instFactory;
 
 	/**
 	 * Constructor
-	 * 
-	 * @param dialog
+	 *
 	 */
-	public AddFileDialogHandlerFeature() {
+	public AddLinkDialogHandlerFeature() {
 	}
-	
+
+	/**
+	 * Get an instance of the AddLinkDialog
+	 * 
+	 * @see com.pronoiahealth.olhie.client.features.AbstractWidgetBasedListenerClientFeature#getNewWidget()
+	 */
 	@Override
 	protected Widget getNewWidget() {
 		return instFactory.get();

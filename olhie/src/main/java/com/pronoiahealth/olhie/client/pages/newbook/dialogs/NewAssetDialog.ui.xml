@@ -17,7 +17,7 @@
 					</g:FocusPanel>
 					<g:FocusPanel ui:field="addLink">
 						<g:HTMLPanel styleName="ph-NewBook-NewAssetDialog-Add-Elements">
-							<b:Icon type="LINK" iconSize="FOUR_TIMES" muted="true"></b:Icon>
+							<b:Icon type="LINK" iconSize="FOUR_TIMES"></b:Icon>
 							<g:Label>Link</g:Label>
 						</g:HTMLPanel>
 					</g:FocusPanel>
@@ -29,7 +29,7 @@
 					</g:FocusPanel>
 					<g:FocusPanel ui:field="addVideo">
 						<g:HTMLPanel styleName="ph-NewBook-NewAssetDialog-Add-Elements">
-							<b:Icon type="FILM" iconSize="FOUR_TIMES" muted="true"></b:Icon>
+							<b:Icon type="FILM" iconSize="FOUR_TIMES"></b:Icon>
 							<g:Label>Video</g:Label>
 						</g:HTMLPanel>
 					</g:FocusPanel>

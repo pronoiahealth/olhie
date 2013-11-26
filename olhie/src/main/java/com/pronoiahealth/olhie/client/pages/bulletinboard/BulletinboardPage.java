@@ -27,6 +27,7 @@ import javax.inject.Inject;
 
 import org.jboss.errai.ui.nav.client.local.DefaultPage;
 import org.jboss.errai.ui.nav.client.local.Page;
+import org.jboss.errai.ui.nav.client.local.PageShowing;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
@@ -67,7 +68,7 @@ public class BulletinboardPage extends AbstractPage {
 
 	@Inject
 	private CarouselSliderWidget carouselWidget;
-	
+
 	@Inject
 	private HelpVideoWidget helpVideoWidget;
 
@@ -148,6 +149,12 @@ public class BulletinboardPage extends AbstractPage {
 		panel.addWidget(dw);
 	}
 
+	@PageShowing
+	protected void onPageShowing() {
+		// Set the background which will make the containing div overflow
+		setPageBackgroundClass("ph-BulletinBoard-Background");
+	}
+
 	/**
 	 * Set-up<br/>
 	 * 1. Screen back ground<br/>
@@ -158,9 +165,6 @@ public class BulletinboardPage extends AbstractPage {
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-
-		// Set the background which will make the containing div overflow
-		setPageBackgroundClass("ph-BulletinBoard-Background");
 
 		// Bind to the root div of this page
 		addFullPageScrolling();

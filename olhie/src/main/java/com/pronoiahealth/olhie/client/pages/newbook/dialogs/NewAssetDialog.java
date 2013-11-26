@@ -25,6 +25,8 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowAddFileModalEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowAddLinkModalEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ShowAddVideoModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowAddYouTubeModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewAssetModalEvent;
 
@@ -67,6 +69,12 @@ public class NewAssetDialog extends Composite {
 
 	@Inject
 	private Event<ShowAddYouTubeModalEvent> showAddYouTubeModalEvent;
+	
+	@Inject
+	private Event<ShowAddLinkModalEvent> showAddLinkModalEvent;
+	
+	@Inject
+	private Event<ShowAddVideoModalEvent> showAddVideoModalEvent;
 
 	private String currentBookId;
 
@@ -105,6 +113,9 @@ public class NewAssetDialog extends Composite {
 
 	@UiHandler("addLink")
 	public void handleAddLinkClick(ClickEvent click) {
+		newAssetModal.hide();
+		showAddLinkModalEvent.fire(new ShowAddLinkModalEvent(
+				currentBookId));
 	}
 
 	@UiHandler("addYouTube")
@@ -116,6 +127,9 @@ public class NewAssetDialog extends Composite {
 
 	@UiHandler("addVideo")
 	public void handleAddVideoClick(ClickEvent click) {
+		newAssetModal.hide();
+		showAddVideoModalEvent.fire(new ShowAddVideoModalEvent(
+				currentBookId));
 	}
 
 	@UiHandler("addOlhieDoc")

@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.widgets.booklist3d.errai;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -36,6 +37,9 @@ public class TOCWidget extends Composite {
 
 	@DataField("tocItems")
 	private Element tocItems = DOM.createDiv();
+	
+	@DataField("tocItemsTable")
+	private Element tocItemsTable = DOM.createDiv();
 
 	@Inject
 	@DataField("myCollectionButtonContainer")
@@ -44,6 +48,9 @@ public class TOCWidget extends Composite {
 	@Inject
 	@DataField("commentRatingButtonContainer")
 	private CommentRatingButtonWidget commentRatingButtonContainer;
+	
+	@Inject
+	private Instance<TOCDescriptionItemWidget> tOCDescriptionItemWidgetFac;
 	
 
 	/**
@@ -59,16 +66,17 @@ public class TOCWidget extends Composite {
 	}
 
 	/**
-	 * @param count
-	 *            - 1 based
+	 * @param count - 1 based
 	 * @param itemDesc
 	 */
 	public void addItem(int count, String itemDesc, String hoursOfWork) {
-		Element div = DOM.createDiv();
-		div.setClassName("bk-toc-item");
-		div.setAttribute("item-ref", "" + count);
-		div.setInnerText("" + count + ". " + itemDesc + " (" + hoursOfWork + ")");
-		tocItems.appendChild(div);
+		TOCDescriptionItemWidget widget = tOCDescriptionItemWidgetFac.get();
+		//widget.setData(count, itemDesc, hoursOfWork);
+		//Element div = DOM.createDiv();
+		//div.setClassName("bk-toc-item");
+		//div.setAttribute("item-ref", "" + count);
+		//div.setInnerText("" + count + ". " + itemDesc + " (" + hoursOfWork + ")");
+		tocItemsTable.appendChild(widget.setData(count, itemDesc, hoursOfWork));
 	}
 
 	/**

@@ -47,13 +47,13 @@ import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.AuthorRole;
 import com.pronoiahealth.olhie.client.pages.AbstractPage;
 import com.pronoiahealth.olhie.client.pages.newbook.features.AddFileDialogHandlerFeature;
+import com.pronoiahealth.olhie.client.pages.newbook.features.AddLinkDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.pages.newbook.features.AddLogoDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.pages.newbook.features.AddYouTubeDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.pages.newbook.features.BookDescriptionDetailDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.pages.newbook.features.NewAssetDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.pages.newbook.widgets.BookIntroductionDetailWidget;
 import com.pronoiahealth.olhie.client.pages.newbook.widgets.NewBookDroppablePanel;
-import com.pronoiahealth.olhie.client.shared.annotations.NewBook;
 import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedEvent;
@@ -234,6 +234,9 @@ public class NewBookPage_2 extends AbstractPage {
 	@Inject
 	private AddYouTubeDialogHandlerFeature addYouTubeDialogHandlerFeature;
 
+	@Inject
+	private AddLinkDialogHandlerFeature addLinkDialogHandlerFeature;
+
 	/**
 	 * Default Constructor
 	 * 
@@ -376,7 +379,8 @@ public class NewBookPage_2 extends AbstractPage {
 
 	/**
 	 * When the page is hiding tell the Header so it can add the new book button
-	 * back to the menu.
+	 * back to the menu. Also, deactivate all the features activated in
+	 * pageShown.
 	 */
 	@PageHiding
 	protected void pageHidden() {
@@ -386,6 +390,7 @@ public class NewBookPage_2 extends AbstractPage {
 		addLogoDialogFeature.deactivate();
 		bookDescriptionDetailDialogHandlerFeature.deactivate();
 		addYouTubeDialogHandlerFeature.deactivate();
+		addLinkDialogHandlerFeature.deactivate();
 
 		// Announce that the page is hidden
 		newBookPageHidingEvent.fire(new NewBookPageHidingEvent());
@@ -400,6 +405,9 @@ public class NewBookPage_2 extends AbstractPage {
 		newBookPageShowingEvent.fire(new NewBookPageShowingEvent());
 	}
 
+	/**
+	 * Load features when page shown
+	 */
 	@PageShown
 	protected void pageShown() {
 		// Activate page features
@@ -408,6 +416,7 @@ public class NewBookPage_2 extends AbstractPage {
 		addLogoDialogFeature.activate();
 		bookDescriptionDetailDialogHandlerFeature.activate();
 		addYouTubeDialogHandlerFeature.activate();
+		addLinkDialogHandlerFeature.activate();
 
 		// Call for the book by its ID
 		bookListBookSelectedEvent.fire(new BookListBookSelectedEvent(bookId));

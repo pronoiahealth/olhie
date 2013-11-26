@@ -89,6 +89,7 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 				String hoursOfWorkStr = null;
 				String bookId = null;
 				String action = null;
+				String dataType = null;
 				String contentType = null;
 				String data = null;
 				String fileName = null;
@@ -117,6 +118,11 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 						// action
 						if (item.getFieldName().equals("action")) {
 							action = Streams.asString(stream);
+						}
+						
+						// datatype
+						if (item.getFieldName().equals("dataType")) {
+							dataType = Streams.asString(stream);
 						}
 
 					} else {
@@ -161,7 +167,7 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 
 				// Add to the database
 				bookDAO.addUpdateBookasset(description, bookId, contentType,
-						BookAssetDataType.FILE.toString(), data, action,
+						BookAssetDataType.valueOf(dataType).toString(), data, action,
 						fileName, null, null, size, hoursOfWork, userId);
 			}
 			return "OK";
