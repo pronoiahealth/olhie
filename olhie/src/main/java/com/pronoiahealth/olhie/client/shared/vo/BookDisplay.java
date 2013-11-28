@@ -40,6 +40,8 @@ public class BookDisplay {
 	private int userBookRating;
 	private List<Bookassetdescription> bookAssetDescriptions;
 	private int bookHoursOfWork;
+	private int totalCost;
+	private boolean userIsAuthorCoAuthor;
 
 	/**
 	 * 
@@ -56,9 +58,9 @@ public class BookDisplay {
 	 */
 	public BookDisplay(Book book, BookCover bookCover, BookCategory bookCategory, String authorFullName,
 			List<Bookassetdescription> bookAssetDescriptions, int bookRating,
-			int userBookRating, int bookHoursOfWork) {
+			int userBookRating, int bookHoursOfWork, int totalCost, boolean userIsAuthorCoAuthor) {
 		this(book, bookCover, bookCategory, authorFullName, bookAssetDescriptions, false,
-				false, bookRating, userBookRating, bookHoursOfWork);
+				false, bookRating, userBookRating, bookHoursOfWork, totalCost, userIsAuthorCoAuthor);
 	}
 
 	/**
@@ -76,7 +78,7 @@ public class BookDisplay {
 	 */
 	public BookDisplay(Book book, BookCover bookCover, BookCategory bookCategory, String authorFullName,
 			List<Bookassetdescription> bookAssetDescriptions, boolean bookLogo,
-			boolean hasComments, int bookRating, int userBookRating, int bookHoursOfWork) {
+			boolean hasComments, int bookRating, int userBookRating, int bookHoursOfWork, int totalCost, boolean userIsAuthorCoAuthor) {
 		super();
 		this.book = book;
 		this.bookCover = bookCover;
@@ -89,6 +91,8 @@ public class BookDisplay {
 		this.bookRating = bookRating;
 		this.userBookRating = userBookRating;
 		this.bookHoursOfWork = bookHoursOfWork;
+		this.totalCost = totalCost;
+		this.userIsAuthorCoAuthor = userIsAuthorCoAuthor;
 	}
 
 	public Book getBook() {
@@ -178,5 +182,21 @@ public class BookDisplay {
 
 	public void setBookHoursOfWork(int bookHoursOfWork) {
 		this.bookHoursOfWork = bookHoursOfWork;
+	}
+
+	public boolean isUserIsAuthorCoAuthor() {
+		return userIsAuthorCoAuthor;
+	}
+
+	public void setUserIsAuthorCoAuthor(boolean userIsAuthorCoAuthor) {
+		this.userIsAuthorCoAuthor = userIsAuthorCoAuthor;
+	}
+
+	public int getTotalCost() {
+		return totalCost;
+	}
+
+	public void setTotalCost(int totalCost) {
+		this.totalCost = totalCost;
 	}
 }

@@ -14,8 +14,6 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,7 +29,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import com.lowagie.text.pdf.codec.Base64;
-import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.exceptions.FileDownloadException;
 import com.pronoiahealth.olhie.client.shared.vo.Bookasset;

@@ -8,23 +8,35 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.pages.newbook.widgets;
+package com.pronoiahealth.olhie.client.shared.events.book;
 
+import org.jboss.errai.common.client.api.annotations.Portable;
+import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
 /**
- * BookassetdescriptionReorderHanlder.java<br/>
+ * LeavingSearchPageEvent.java<br/>
  * Responsibilities:<br/>
  * 1.
  *
+ *
+ * <p>
+ * Fired By: SearchPage when page is hidden<br/>
+ * Observed By: BookSearchService<br/>
+ * </p>
+ * 
  * @author John DeStefano
  * @version 1.0
- * @since Nov 19, 2013
+ * @since Nov 27, 2013
  *
  */
-public interface BookassetdescriptionReorderHanlder {
-	
+@Portable
+@Conversational
+public class LeavingSearchPageEvent {
+
 	/**
-	 * @param posMap
+	 * Constructor
+	 *
 	 */
-	public void handleReorder();
+	public LeavingSearchPageEvent() {
+	}
 }

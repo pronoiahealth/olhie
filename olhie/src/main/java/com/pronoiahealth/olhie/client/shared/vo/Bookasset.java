@@ -60,6 +60,8 @@ public class Bookasset {
 	
 	private int hoursOfWork;
 	
+	private int cost;
+	
 	private String base64Data;
 	
 	@NotNull
@@ -172,5 +174,13 @@ public class Bookasset {
 
 	public void setEmbededLinkRef(String embededLinkRef) {
 		this.embededLinkRef = embededLinkRef;
+	}
+
+	public int getCost() {
+		return cost;
+	}
+
+	public void setCost(int cost) {
+		this.cost = cost;
 	}
 }

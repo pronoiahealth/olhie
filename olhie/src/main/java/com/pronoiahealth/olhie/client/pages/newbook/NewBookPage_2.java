@@ -285,6 +285,9 @@ public class NewBookPage_2 extends AbstractPage {
 		// Configure and add droppable panel
 		itemsDndContainer.setPanelClass("ph-NewBook-ItemsListBox", true);
 		addTOCElementContainer.add(itemsDndContainer);
+
+		// Set page background to the book cover background
+		setPageBackgroundClass("ph-NewBook-Background");
 	}
 
 	/**
@@ -494,8 +497,8 @@ public class NewBookPage_2 extends AbstractPage {
 	 * @param bookDisplay
 	 */
 	private void setCurrentBookInDisplay(BookDisplay bookDisplay) {
-		// Set page background to the book cover background
-		setPageBackgroundStyle(bookDisplay.getBookCover().getImgUrl());
+		// Check to see if the current user is the author
+		boolean isUserAuthorOrCoAuthor = bookDisplay.isUserIsAuthorCoAuthor();
 
 		// Set the fields
 		this.currentBookDisplay = bookDisplay;
@@ -517,7 +520,8 @@ public class NewBookPage_2 extends AbstractPage {
 		introductionTxt.setHTML(NewBookMessages.INSTANCE
 				.setIntroductionText(book.getIntroduction()));
 
-		itemsDndContainer.setDescriptionItems(bookDisplay);
+		itemsDndContainer.setDescriptionItems(bookDisplay,
+				isUserAuthorOrCoAuthor);
 
 		// Set star rating here
 		starRating.setRating(bookDisplay.getBookRating());
@@ -529,8 +533,21 @@ public class NewBookPage_2 extends AbstractPage {
 			authorViewCommentsButton.setEnabled(false);
 		}
 
+		setControlVisibility(isUserAuthorOrCoAuthor);
+
 		// Adjust display size
 		adjustSize();
+	}
+
+	/**
+	 * Sets control visibility based on the user being the author of the book
+	 * 
+	 * @param isUserAuthorOrCoAuthor
+	 */
+	private void setControlVisibility(boolean isUserAuthorOrCoAuthor) {
+		authorBtns.setVisible(isUserAuthorOrCoAuthor);
+		tocAddElementContainer.setVisible(isUserAuthorOrCoAuthor);
+
 	}
 
 	/**

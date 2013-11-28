@@ -12,9 +12,6 @@ package com.pronoiahealth.olhie.client.pages.newbook.widgets;
 
 import gwtquery.plugins.droppable.client.events.DropEvent;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.widgets.dnd.SortableDragAndDropHandler;

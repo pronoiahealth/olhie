@@ -20,9 +20,12 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.apache.deltaspike.core.api.config.ConfigProperty;
+
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.BookSearchEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookSearchResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.LeavingSearchPageEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
@@ -56,6 +59,13 @@ public class BookSearchService {
 
 	@Inject
 	private ServerUserToken userToken;
+
+	@Inject
+	private SearchResultHolder srchRsltHolder;
+	
+	@Inject
+	@ConfigProperty(name = "SEARCH_PAGE_SIZE")
+	private Integer searchPageSize;
 
 	@Inject
 	private Event<BookSearchResponseEvent> bookSearchResponseEvent;
@@ -136,7 +146,17 @@ public class BookSearchService {
 			log.log(Level.SEVERE, errMsg, e);
 			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
 		}
+	}
 
+	/**
+	 * Fired when the user navigates away from the SearchPage. When this happens
+	 * the users session scoped SearchResultHolder token is cleared.
+	 * 
+	 * @param leavingSearchPageEvent
+	 */
+	protected void observesLeavingSearchPageEvent(
+			@Observes LeavingSearchPageEvent leavingSearchPageEvent) {
+		srchRsltHolder.clear();
 	}
 
 }

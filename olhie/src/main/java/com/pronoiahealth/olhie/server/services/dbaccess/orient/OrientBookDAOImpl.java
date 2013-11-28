@@ -105,8 +105,10 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		// We need to check that if the book is not yet published only an
 		// author or co-author can see it.
 		User user = null;
+		boolean isUserAuthorOrCoAuthor = false;
 		if (userId != null && userId.length() > 0) {
 			user = this.getUserByUserId(userId);
+			isUserAuthorOrCoAuthor = isUserAuthorOrCoauthorOfBook(userId, bookId);
 		}
 		boolean canView = false;
 		if (book.getActive() == false) {
@@ -160,6 +162,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		// Need to detach them. We don't want to pull back the entire object
 		// tree
 		int bookHoursOfWork = 0;
+		int totalCost = 0;
 		if (baResult != null) {
 			for (Bookassetdescription bad : baResult) {
 				if (bad.getRemoved().booleanValue() == false) {
@@ -179,7 +182,10 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 					retBa.setEmbededLinkRef(ba.getEmbededLinkRef());
 					int hoursOfWork = ba.getHoursOfWork();
 					retBa.setHoursOfWork(hoursOfWork);
+					int cost = ba.getCost();
+					retBa.setCost(cost);
 					bookHoursOfWork = bookHoursOfWork + hoursOfWork;
+					totalCost = totalCost + cost;
 					ArrayList<Bookasset> retbookAssets = new ArrayList<Bookasset>();
 					retbookAssets.add(retBa);
 					retBad.setBookAssets(retbookAssets);
@@ -201,7 +207,8 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 
 		// Create BookDisplay
 		BookDisplay bookDisplay = new BookDisplay(book, cover, cat, authorName,
-				retBaResults, bookRating, userBookRating, bookHoursOfWork);
+				retBaResults, bookRating, userBookRating, bookHoursOfWork, totalCost,
+				isUserAuthorOrCoAuthor);
 
 		// Logo?
 		String logoFileName = book.getLogoFileName();
@@ -430,6 +437,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		return authorSelected;
 	}
 
+	// ///////////////////////////////////////////////////////////////////////////
 	// Comments
 	// ///////////////////////////////////////////////////////////////////////////
 
@@ -442,13 +450,17 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 * @throws Exception
 	 */
 	@Override
-	public List<Bookcomment> getBookCommentsByBookId(String bookId)
+	public List<Bookcomment> getBookCommentsByBookId(String bookId, boolean detach)
 			throws Exception {
 		OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
 				"select from BookComment where bookId = :bId order by createDT desc");
 		HashMap<String, String> bparams = new HashMap<String, String>();
 		bparams.put("bId", bookId);
 		List<Bookcomment> bResult = ooDbTx.command(bQuery).execute(bparams);
+		
+		if (detach == true && bResult != null && bResult.size() > 0) {
+			bResult = createDetachedRetLst(bResult);
+		} 
 		return bResult;
 	}
 
@@ -537,7 +549,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 * @throws Exception
 	 */
 	public boolean bookHasComments(String bookId) throws Exception {
-		List<Bookcomment> comments = getBookCommentsByBookId(bookId);
+		List<Bookcomment> comments = getBookCommentsByBookId(bookId, false);
 		if (comments != null && comments.size() > 0) {
 			return true;
 		} else {

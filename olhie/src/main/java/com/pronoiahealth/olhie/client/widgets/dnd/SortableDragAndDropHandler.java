@@ -16,22 +16,21 @@
 package com.pronoiahealth.olhie.client.widgets.dnd;
 
 import static com.google.gwt.query.client.GQuery.$;
+import gwtquery.plugins.draggable.client.events.DragEvent;
+import gwtquery.plugins.draggable.client.events.DragEvent.DragEventHandler;
+import gwtquery.plugins.draggable.client.gwt.DraggableWidget;
+import gwtquery.plugins.droppable.client.events.DropEvent;
+import gwtquery.plugins.droppable.client.events.DropEvent.DropEventHandler;
+import gwtquery.plugins.droppable.client.events.OutDroppableEvent;
+import gwtquery.plugins.droppable.client.events.OutDroppableEvent.OutDroppableEventHandler;
+import gwtquery.plugins.droppable.client.events.OverDroppableEvent;
+import gwtquery.plugins.droppable.client.events.OverDroppableEvent.OverDroppableEventHandler;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import gwtquery.plugins.draggable.client.events.DragEvent;
-import gwtquery.plugins.draggable.client.events.DragEvent.DragEventHandler;
-import gwtquery.plugins.draggable.client.gwt.DraggableWidget;
-import gwtquery.plugins.droppable.client.events.DropEvent;
-import gwtquery.plugins.droppable.client.events.OutDroppableEvent;
-import gwtquery.plugins.droppable.client.events.OverDroppableEvent;
-import gwtquery.plugins.droppable.client.events.DropEvent.DropEventHandler;
-import gwtquery.plugins.droppable.client.events.OutDroppableEvent.OutDroppableEventHandler;
-import gwtquery.plugins.droppable.client.events.OverDroppableEvent.OverDroppableEventHandler;
 
 /**
  * All logic of the drag and drop operation is contained in this class.

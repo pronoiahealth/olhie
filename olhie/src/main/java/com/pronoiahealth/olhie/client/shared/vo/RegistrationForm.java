@@ -60,6 +60,12 @@ public class RegistrationForm {
 	@Size(min = 1, max = 32)
 	@Pattern(regexp = "^((?=.*[^a-zA-Z])(?=.*[a-z])(?=.*[A-Z])(?!.*\\s).{8,})$", message = "Password must contain one upercase, one lowercase, and one non-alpha, and be at least 8 characters long")
 	private String pwdRepeat;
+	
+	@Size(max = 75, message="75 chracters allowed.")
+	private String organization;
+	
+	@NotNull
+	private boolean author;
 
 	/**
 	 * Constructor
@@ -114,5 +120,21 @@ public class RegistrationForm {
 
 	public void setPwdRepeat(String pwdRepeat) {
 		this.pwdRepeat = pwdRepeat;
+	}
+
+	public String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
+
+	public boolean isAuthor() {
+		return author;
+	}
+
+	public void setAuthor(boolean author) {
+		this.author = author;
 	}
 }

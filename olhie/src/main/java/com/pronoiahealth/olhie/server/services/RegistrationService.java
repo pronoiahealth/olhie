@@ -109,7 +109,7 @@ public class RegistrationService {
 
 			// Add user
 			userDAO.addUser(userId, form.getLastName(), form.getFirstName(),
-					SecurityRoleEnum.AUTHOR, form.getEmail(), form.getPwd());
+					SecurityRoleEnum.AUTHOR, form.getEmail(), form.getPwd(), form.getOrganization(), form.isAuthor());
 
 			// Fire the good response event
 			registrationResponseEvent.fire(new RegistrationResponseEvent());
@@ -138,6 +138,8 @@ public class RegistrationService {
 				form.setLastName(user.getLastName());
 				form.setFirstName(user.getFirstName());
 				form.setEmail(user.getEmail());
+				form.setOrganization(user.getOrganization());
+				form.setAuthor(user.isRequestedAuthor());
 
 				// Fire the good response event
 				loadProfileResponseEvent
@@ -164,7 +166,7 @@ public class RegistrationService {
 
 		try {
 			userDAO.updateUser(userId, form.getLastName(), form.getFirstName(),
-					SecurityRoleEnum.AUTHOR, form.getEmail());
+					SecurityRoleEnum.AUTHOR, form.getEmail(), form.getOrganization(), form.isAuthor());
 
 			// Fire the good response event
 			registrationResponseEvent.fire(new RegistrationResponseEvent());

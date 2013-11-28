@@ -55,19 +55,19 @@ public interface UserDAO extends BaseDAO {
 	public Password getPwdByUserId(String userId) throws Exception;
 
 	/**
-	 * Add a user
-	 * 
 	 * @param userId
 	 * @param lastName
 	 * @param firstName
 	 * @param role
 	 * @param email
-	 * @param password
-	 * @return
+	 * @param pwd
+	 * @param organization
+	 * @param requestAuthor
 	 * @throws Exception
 	 */
 	public void addUser(String userId, String lastName, String firstName,
-			SecurityRoleEnum role, String email, String pwd) throws Exception;
+			SecurityRoleEnum role, String email, String pwd,
+			String organization, boolean requestAuthor) throws Exception;
 
 	/**
 	 * Update the user
@@ -80,7 +80,8 @@ public interface UserDAO extends BaseDAO {
 	 * @throws Exception
 	 */
 	public void updateUser(String userId, String lastName, String firstName,
-			SecurityRoleEnum role, String email) throws Exception;
+			SecurityRoleEnum role, String email, String organization,
+			boolean requestAuthor) throws Exception;
 
 	/**
 	 * Used to change just the users password

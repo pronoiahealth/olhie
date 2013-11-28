@@ -1,3 +1,12 @@
+.ph-NewBook-Background {
+	background: url("Olhie/images/newbookbkgrnd.jpg") no-repeat center
+		center fixed;
+	webkit-background-size: cover;
+	moz-background-size: cover;
+	o-background-size: cover;
+	background-size: cover;
+
+
 .ph-NewBook-Container {
 	overflow: auto;
 }
@@ -285,11 +294,10 @@
 }
 
 .ph-NewBook-ViewComments-BoxShade {
-	background-color: yellow;
+	background-color: #BCF1F0;
 	width: 95%;
 	margin-bottom: 5px;
-	padding-top: 3px;
-	padding-bottom: 3px;
+	padding: 10px;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
 	-khtml-border-radius: 3px;

@@ -83,7 +83,8 @@ public class OrientUserDAOImpl extends OrientBaseTxDAO implements UserDAO {
 	 */
 	@Override
 	public void addUser(String userId, String lastName, String firstName,
-			SecurityRoleEnum role, String email, String pwd) throws Exception {
+			SecurityRoleEnum role, String email, String pwd,
+			String organization, boolean requestAuthor) throws Exception {
 		ooDbTx.begin(TXTYPE.OPTIMISTIC);
 		try {
 			// Create a User object and add it to the database
@@ -93,6 +94,8 @@ public class OrientUserDAOImpl extends OrientBaseTxDAO implements UserDAO {
 			user.setRole(role.getName());
 			user.setEmail(email);
 			user.setUserId(userId);
+			user.setOrganization(organization);
+			user.setRequestedAuthor(requestAuthor);
 			ooDbTx.save(user);
 
 			// Password
@@ -108,6 +111,7 @@ public class OrientUserDAOImpl extends OrientBaseTxDAO implements UserDAO {
 			ooDbTx.commit();
 		} catch (Exception e) {
 			ooDbTx.rollback();
+			throw e;
 		}
 	}
 
@@ -119,7 +123,8 @@ public class OrientUserDAOImpl extends OrientBaseTxDAO implements UserDAO {
 	 */
 	@Override
 	public void updateUser(String userId, String lastName, String firstName,
-			SecurityRoleEnum role, String email) throws Exception {
+			SecurityRoleEnum role, String email, String organization,
+			boolean requestAuthor) throws Exception {
 		// Look up user
 		User user = getUserByUserId(userId);
 		if (user == null) {
@@ -133,6 +138,13 @@ public class OrientUserDAOImpl extends OrientBaseTxDAO implements UserDAO {
 			user.setLastName(lastName);
 			user.setRole(role.getName());
 			user.setEmail(email);
+			user.setOrganization(organization);
+
+			// if the user has already requested to be an author then don't
+			// change
+			if (user.isRequestedAuthor() == false) {
+				user.setRequestedAuthor(requestAuthor);
+			}
 			ooDbTx.save(user);
 			ooDbTx.commit();
 		} catch (Exception e) {

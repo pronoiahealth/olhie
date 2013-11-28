@@ -66,6 +66,12 @@ public class User {
 	@NotEmpty
 	@Email
 	private String email;
+	
+	@Size(max = 75, message="75 chracters allowed.")
+	private String organization;
+	
+	@NotNull
+	private boolean requestedAuthor;
 
 	/**
 	 * Default Constructor
@@ -124,5 +130,21 @@ public class User {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
+
+	public boolean isRequestedAuthor() {
+		return requestedAuthor;
+	}
+
+	public void setRequestedAuthor(boolean requestedAuthor) {
+		this.requestedAuthor = requestedAuthor;
 	}
 }

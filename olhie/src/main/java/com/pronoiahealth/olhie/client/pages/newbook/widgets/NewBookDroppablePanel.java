@@ -223,7 +223,8 @@ public class NewBookDroppablePanel extends DroppablePanel {
 	 * 
 	 * @param bookDisplay
 	 */
-	public void setDescriptionItems(BookDisplay bookDisplay) {
+	public void setDescriptionItems(BookDisplay bookDisplay,
+			boolean isUserAuthorOrCoAuthor) {
 		// Clear the panel if anything is there
 		getOriginalWidget().clear();
 
@@ -235,7 +236,8 @@ public class NewBookDroppablePanel extends DroppablePanel {
 			Bookassetdescription bad = descriptions.get(i);
 			BookItemDisplay item = bookItemDisplayFactory.get();
 			item.initData(bad, assetDetailClickHandler, downloadClickHandler,
-					removeClickHandler, viewClickHandler);
+					isUserAuthorOrCoAuthor == true ? removeClickHandler : null,
+					viewClickHandler);
 			addWidget(item);
 		}
 	}

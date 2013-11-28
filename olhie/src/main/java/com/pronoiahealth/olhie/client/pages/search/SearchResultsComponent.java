@@ -73,6 +73,9 @@ public class SearchResultsComponent extends AbstractComposite {
 	public FluidRow searchResultsHeader;
 
 	@UiField
+	public HTMLPanel pagerContainer;
+
+	@UiField
 	public ScrollPanel searchResultsContainerList;
 
 	@UiField
@@ -83,6 +86,9 @@ public class SearchResultsComponent extends AbstractComposite {
 	private BookSelectCallBack bookSelectCallBack;
 
 	private BookList3D_3 bookList3D;
+
+	@Inject
+	private SearchPagerWidget pagerWidget;
 
 	/**
 	 * Constructor
@@ -119,6 +125,9 @@ public class SearchResultsComponent extends AbstractComposite {
 				nav.performTransition(NavEnum.NewBookPage.toString(), map);
 			}
 		};
+
+		// Attach the pager widget
+		pagerContainer.getElement().appendChild(pagerWidget.configure());
 	}
 
 	/**

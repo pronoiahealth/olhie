@@ -117,18 +117,11 @@ public class BookCommentRatingService {
 
 			// Get the list
 			List<Bookcomment> comments = bookDAO
-					.getBookCommentsByBookId(bookId);
-
-			// Transfer the comments to the return list
-			if (comments != null && comments.size() > 0) {
-				for (Bookcomment comment : comments) {
-					retLst.add(comment.getComment());
-				}
-			}
+					.getBookCommentsByBookId(bookId, true);
 
 			// Fire the list back
 			bookFindCommentsResponseEvent
-					.fire(new BookFindCommentsResponseEvent(bookId, retLst));
+					.fire(new BookFindCommentsResponseEvent(bookId, comments));
 
 		} catch (Exception e) {
 			String errMsg = e.getMessage();

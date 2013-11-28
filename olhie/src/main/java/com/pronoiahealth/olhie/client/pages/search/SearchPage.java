@@ -11,11 +11,12 @@
 package com.pronoiahealth.olhie.client.pages.search;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.apache.deltaspike.core.api.config.ConfigProperty;
 import org.jboss.errai.ui.nav.client.local.Page;
+import org.jboss.errai.ui.nav.client.local.PageHidden;
 
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -23,21 +24,22 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.AnonymousRole;
 import com.pronoiahealth.olhie.client.pages.AbstractPage;
+import com.pronoiahealth.olhie.client.shared.events.book.LeavingSearchPageEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 
 /**
  * SearchPage.java<br/>
  * Responsibilities:<br/>
  * 1. Shows Search page<br/>
- * 2. Fires the SearchPageLoadedEvent<br/> 
- *
+ * 2. Fires the SearchPageLoadedEvent<br/>
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since May 26, 2013
- *
+ * 
  */
 @SuppressWarnings("cdi-ambiguous-dependency")
-@Page(role={AnonymousRole.class})
+@Page(role = { AnonymousRole.class })
 public class SearchPage extends AbstractPage {
 
 	@Inject
@@ -58,9 +60,12 @@ public class SearchPage extends AbstractPage {
 	@Inject
 	private Event<SearchPageLoadedEvent> searchPageLoadedEvent;
 
+	@Inject
+	private Event<LeavingSearchPageEvent> leavingSearchPageEvent;
+
 	/**
 	 * Constructor
-	 *
+	 * 
 	 */
 	public SearchPage() {
 	}
@@ -73,6 +78,15 @@ public class SearchPage extends AbstractPage {
 		initWidget(binder.createAndBindUi(this));
 		searchPlaceHolder.add(searchComponent);
 		searchResultsPlaceHolder.add(searchResultsComponent);
+	}
+
+	/**
+	 * When the page is hidden the user is navigating away. Fire the
+	 * LeavingSearchPageEvent to tell the BookSearchService.
+	 */
+	@PageHidden
+	protected void pageHidden() {
+		leavingSearchPageEvent.fire(new LeavingSearchPageEvent());
 	}
 
 	@Override

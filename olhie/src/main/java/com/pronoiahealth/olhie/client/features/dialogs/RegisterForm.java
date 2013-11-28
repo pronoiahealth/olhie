@@ -23,6 +23,7 @@ import org.jboss.errai.ui.shared.api.annotations.Bound;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
+import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
@@ -95,6 +96,24 @@ public class RegisterForm extends Composite {
 	@DataField
 	private Label pwdRepeatErr;
 
+	@Inject
+	@DataField
+	private Label organizationErr;
+
+	@Inject
+	@Bound
+	@DataField
+	private TextBox organization;
+
+	@Inject
+	@DataField
+	private Label authorLbl;
+
+	@Inject
+	@Bound
+	@DataField
+	private CheckBox author;
+
 	private DataBinder<RegistrationForm> formBinder;
 
 	/**
@@ -111,16 +130,25 @@ public class RegisterForm extends Composite {
 	/**
 	 * 
 	 */
-	public void prepareEdit() {
+	public void prepareEdit(boolean hideAuthor) {
 		userId.setReadOnly(true);
 		pwd.setVisible(false);
 		pwdLbl.setVisible(false);
 		pwdRepeat.setVisible(false);
 		pwdRepeatLbl.setVisible(false);
+
+		if (hideAuthor == true) {
+			author.setVisible(false);
+			authorLbl.setVisible(false);
+		} else {
+			author.setVisible(true);
+			authorLbl.setVisible(true);
+		}
 	}
 
 	/**
-	 * 
+	 * Prepare for editing. If the user has already requested to be an author
+	 * the hide the check box.
 	 */
 	public void prepareRegister() {
 		userId.setReadOnly(false);
@@ -130,10 +158,12 @@ public class RegisterForm extends Composite {
 		pwdRepeatLbl.setVisible(true);
 		pwdLbl.setText("Password:");
 		pwdRepeatLbl.setText("Retype Password:");
+		author.setVisible(true);
+		authorLbl.setVisible(true);
 	}
 
 	/**
-	 * 
+	 * Populate the form
 	 */
 	public void populateForm() {
 		RegistrationForm form = getUnwrappedModelData();
@@ -143,6 +173,8 @@ public class RegisterForm extends Composite {
 		userId.setText(form.getUserId());
 		pwd.setText(form.getPwd());
 		pwdRepeat.setText(form.getPwdRepeat());
+		organization.setText(form.getOrganization());
+		author.setValue(form.isAuthor());
 	}
 
 	/**
@@ -163,6 +195,8 @@ public class RegisterForm extends Composite {
 		userId.setText("");
 		pwd.setText("");
 		pwdRepeat.setText("");
+		organization.setText("");
+		author.setValue(Boolean.FALSE);
 	}
 
 	/**
@@ -175,6 +209,7 @@ public class RegisterForm extends Composite {
 		userIdErr.setText("");
 		pwdErr.setText("");
 		pwdRepeatErr.setText("");
+		organizationErr.setText("");
 	}
 
 	/**
@@ -215,7 +250,14 @@ public class RegisterForm extends Composite {
 				userIdErr.setText(cv.getMessage());
 			} else if (prop.equals("pwd")) {
 				pwdErr.setText(cv.getMessage());
+			} else if (prop.equals("organization")) {
+				organizationErr.setText(cv.getMessage());
 			}
+		}
+		
+		Boolean authorBVal = author.getValue();
+		if (authorBVal == null) {
+			author.setValue(Boolean.FALSE);
 		}
 
 		if (!pwd.getValue().equals(pwdRepeat.getValue())) {

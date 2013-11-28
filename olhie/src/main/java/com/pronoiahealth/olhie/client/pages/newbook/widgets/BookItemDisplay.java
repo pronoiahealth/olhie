@@ -364,34 +364,37 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 		}
 
 		// Remove button
-		Element rBut = removeAssetBtn.bindButton();
-		buttonGroupContainer.appendChild(rBut);
-		GQuery rButQry = $(rBut);
-		rButQry.bind(Event.ONCLICK, new Function() {
-			@Override
-			public boolean f(Event e) {
-				return removeClickHandler.handleButtonClick(e, badId, baId,
-						null);
-			}
-		});
+		// Only show if the user is the author or co-author
+		if (removeClickHandler != null) {
+			Element rBut = removeAssetBtn.bindButton();
+			buttonGroupContainer.appendChild(rBut);
+			GQuery rButQry = $(rBut);
+			rButQry.bind(Event.ONCLICK, new Function() {
+				@Override
+				public boolean f(Event e) {
+					return removeClickHandler.handleButtonClick(e, badId, baId,
+							null);
+				}
+			});
 
-		// On mouse over cause icon to spin
-		rButQry.bind(Event.ONMOUSEOVER, new Function() {
-			@Override
-			public boolean f(Event e) {
-				$(e).children().addClass("icon-spin");
-				return false;
-			}
-		});
+			// On mouse over cause icon to spin
+			rButQry.bind(Event.ONMOUSEOVER, new Function() {
+				@Override
+				public boolean f(Event e) {
+					$(e).children().addClass("icon-spin");
+					return false;
+				}
+			});
 
-		// On mouse out cause icon to stop spinning
-		rButQry.bind(Event.ONMOUSEOUT, new Function() {
-			@Override
-			public boolean f(Event e) {
-				$(e).children().removeClass("icon-spin");
-				return false;
-			}
-		});
+			// On mouse out cause icon to stop spinning
+			rButQry.bind(Event.ONMOUSEOUT, new Function() {
+				@Override
+				public boolean f(Event e) {
+					$(e).children().removeClass("icon-spin");
+					return false;
+				}
+			});
+		}
 	}
 
 	/**

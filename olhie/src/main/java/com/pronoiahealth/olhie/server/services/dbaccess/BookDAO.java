@@ -160,7 +160,7 @@ public interface BookDAO extends BaseDAO {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Bookcomment> getBookCommentsByBookId(String bookId)
+	public List<Bookcomment> getBookCommentsByBookId(String bookId, boolean detach)
 			throws Exception;
 
 	/**

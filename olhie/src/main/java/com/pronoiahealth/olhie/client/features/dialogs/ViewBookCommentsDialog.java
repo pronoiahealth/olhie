@@ -16,20 +16,25 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Modal;
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindCommentsEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindCommentsResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowBookCommentsModalEvent;
+import com.pronoiahealth.olhie.client.shared.vo.Bookcomment;
 
 /**
  * ViewBookCommentsDialog.java<br/>
@@ -53,6 +58,8 @@ public class ViewBookCommentsDialog extends Composite {
 	@UiField
 	public HTMLPanel commentsContainer;
 
+	private Element commentsTable;
+
 	@UiField
 	public Button closeButton;
 
@@ -61,6 +68,9 @@ public class ViewBookCommentsDialog extends Composite {
 
 	private String currentBookId;
 
+	@Inject
+	private Instance<BookCommentRowWidget> bookCommentRowWidgetFac;
+
 	/**
 	 * Constructor
 	 * 
@@ -68,9 +78,16 @@ public class ViewBookCommentsDialog extends Composite {
 	public ViewBookCommentsDialog() {
 	}
 
+	/**
+	 * Build the commentTable element
+	 */
 	@PostConstruct
 	public void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
+		commentsTable = DOM.createDiv();
+		commentsTable.setAttribute("style", "display: table;");
+		commentsTable.setClassName("ph-NewBook-ViewComments-BoxShade");
+		commentsContainer.getElement().appendChild(commentsTable);
 	}
 
 	/**
@@ -80,7 +97,6 @@ public class ViewBookCommentsDialog extends Composite {
 	 */
 	protected void observesShowBookCommentsModalEvent(
 			@Observes ShowBookCommentsModalEvent showShowBookCommentsModalEvent) {
-		commentsContainer.clear();
 		currentBookId = showShowBookCommentsModalEvent.getBookId();
 		viewCommentModal.show();
 
@@ -95,24 +111,20 @@ public class ViewBookCommentsDialog extends Composite {
 	 */
 	protected void observesBookFindCommentsResponseEvent(
 			@Observes BookFindCommentsResponseEvent bookFindCommentsResponseEvent) {
-		List<String> retLst = bookFindCommentsResponseEvent.getComments();
+		// Clear the table
+		Node node = null;
+		while ((node = commentsTable.getFirstChild()) != null) {
+			commentsTable.removeChild(node);
+		}
+
+		List<Bookcomment> retLst = bookFindCommentsResponseEvent.getComments();
 		if (retLst != null && retLst.size() > 0) {
-			for (String str : retLst) {
-				commentsContainer.add(createPanel(str));
+			for (Bookcomment comment : retLst) {
+				BookCommentRowWidget row = bookCommentRowWidgetFac.get();
+				commentsTable.appendChild(row.setData(comment.getComment(),
+						comment.getRating()));
 			}
 		}
-	}
-
-	/**
-	 * Create an item for the list
-	 * 
-	 * @param txt
-	 * @return
-	 */
-	private HTMLPanel createPanel(String txt) {
-		HTMLPanel panel = new HTMLPanel(txt);
-		panel.setStyleName("ph-NewBook-ViewComments-BoxShade", true);
-		return panel;
 	}
 
 	/**

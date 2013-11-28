@@ -8,6 +8,7 @@
 
 		<g:HTMLPanel ui:field="commentsContainer"
 			styleName="ph-NewBook-ViewComments-CommentsContainer">
+			<div style="display: table;"></div>
 		</g:HTMLPanel>
 
 		<b:ModalFooter>

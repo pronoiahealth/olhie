@@ -15,6 +15,8 @@ import java.util.List;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
+import com.pronoiahealth.olhie.client.shared.vo.Bookcomment;
+
 /**
  * BookFindCommentsResponseEvent.java<br/>
  * Responsibilities:<br/>
@@ -34,7 +36,7 @@ import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 @Conversational
 public class BookFindCommentsResponseEvent {
 	private String bookId;
-	private List<String> comments;
+	private List<Bookcomment> comments;
 
 	/**
 	 * Constructor
@@ -45,11 +47,12 @@ public class BookFindCommentsResponseEvent {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param bookId
 	 * @param comments
 	 */
-	public BookFindCommentsResponseEvent(String bookId, List<String> comments) {
+	public BookFindCommentsResponseEvent(String bookId,
+			List<Bookcomment> comments) {
 		super();
 		this.bookId = bookId;
 		this.comments = comments;
@@ -63,11 +66,11 @@ public class BookFindCommentsResponseEvent {
 		this.bookId = bookId;
 	}
 
-	public List<String> getComments() {
+	public List<Bookcomment> getComments() {
 		return comments;
 	}
 
-	public void setComments(List<String> comments) {
+	public void setComments(List<Bookcomment> comments) {
 		this.comments = comments;
 	}
 }

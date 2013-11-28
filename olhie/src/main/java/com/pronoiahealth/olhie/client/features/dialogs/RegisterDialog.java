@@ -220,7 +220,7 @@ public class RegisterDialog extends Composite {
 		blankForm.setPwdRepeat("Aaaaaaaa8"); // TODO: remove validation bypass -- not actually read
 		updateState = true;
 		regForm.populateForm();
-		regForm.prepareEdit();
+		regForm.prepareEdit(populatedForm.isAuthor());
 		regForm.setFocusOnFirstName();
 		registerModal.show();
 	}

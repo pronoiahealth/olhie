@@ -10,13 +10,10 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services.dbaccess;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import com.pronoiahealth.olhie.client.shared.constants.OfferTypeEnum;
 import com.pronoiahealth.olhie.client.shared.vo.LoggedInSession;
-import com.pronoiahealth.olhie.client.shared.vo.Offer;
 
 /**
  * LoggedInSessionDAO.java<br/>

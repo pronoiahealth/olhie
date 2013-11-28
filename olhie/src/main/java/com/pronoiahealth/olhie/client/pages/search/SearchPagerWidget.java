@@ -8,23 +8,40 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.pages.newbook.widgets;
+package com.pronoiahealth.olhie.client.pages.search;
 
+import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.Templated;
+
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.ui.Composite;
 
 /**
- * BookassetdescriptionReorderHanlder.java<br/>
+ * SearchPagerWidget.java<br/>
  * Responsibilities:<br/>
  * 1.
- *
+ * 
  * @author John DeStefano
  * @version 1.0
- * @since Nov 19, 2013
- *
+ * @since Nov 27, 2013
+ * 
  */
-public interface BookassetdescriptionReorderHanlder {
-	
+@Templated("#pager")
+public class SearchPagerWidget extends Composite {
+
+	@DataField
+	private Element pager = DOM.createDiv();
+
 	/**
-	 * @param posMap
+	 * Constructor
+	 * 
 	 */
-	public void handleReorder();
+	public SearchPagerWidget() {
+	}
+
+	public Element configure() {
+		return pager;
+	}
+
 }
