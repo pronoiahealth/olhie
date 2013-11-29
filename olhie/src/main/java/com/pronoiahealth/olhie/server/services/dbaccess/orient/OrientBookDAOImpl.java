@@ -108,7 +108,8 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		boolean isUserAuthorOrCoAuthor = false;
 		if (userId != null && userId.length() > 0) {
 			user = this.getUserByUserId(userId);
-			isUserAuthorOrCoAuthor = isUserAuthorOrCoauthorOfBook(userId, bookId);
+			isUserAuthorOrCoAuthor = isUserAuthorOrCoauthorOfBook(userId,
+					bookId);
 		}
 		boolean canView = false;
 		if (book.getActive() == false) {
@@ -207,8 +208,8 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 
 		// Create BookDisplay
 		BookDisplay bookDisplay = new BookDisplay(book, cover, cat, authorName,
-				retBaResults, bookRating, userBookRating, bookHoursOfWork, totalCost,
-				isUserAuthorOrCoAuthor);
+				retBaResults, bookRating, userBookRating, bookHoursOfWork,
+				totalCost, isUserAuthorOrCoAuthor);
 
 		// Logo?
 		String logoFileName = book.getLogoFileName();
@@ -271,6 +272,24 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 			return bResult.get(0);
 		} else {
 			throw new Exception("Could not find book.");
+		}
+	}
+
+	/**
+	 * From the submitted list of books ids get the associated book objects
+	 * 
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#getBooksByIdLst(java.util.List)
+	 */
+	@Override
+	public List<Book> getBooksByIdLst(List<String> booksIdLst) throws Exception {
+		String qryStr = "select from Book where @rid in " + booksIdLst + " and active = true";
+		OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(qryStr);
+		HashMap<String, String> bparams = new HashMap<String, String>();
+		List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
+		if (bResult != null) {
+			return bResult;
+		} else {
+			throw new Exception("Could not find any books.");
 		}
 	}
 
@@ -450,17 +469,17 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 * @throws Exception
 	 */
 	@Override
-	public List<Bookcomment> getBookCommentsByBookId(String bookId, boolean detach)
-			throws Exception {
+	public List<Bookcomment> getBookCommentsByBookId(String bookId,
+			boolean detach) throws Exception {
 		OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
 				"select from BookComment where bookId = :bId order by createDT desc");
 		HashMap<String, String> bparams = new HashMap<String, String>();
 		bparams.put("bId", bookId);
 		List<Bookcomment> bResult = ooDbTx.command(bQuery).execute(bparams);
-		
+
 		if (detach == true && bResult != null && bResult.size() > 0) {
 			bResult = createDetachedRetLst(bResult);
-		} 
+		}
 		return bResult;
 	}
 

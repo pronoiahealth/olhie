@@ -80,6 +80,15 @@ public interface BookDAO extends BaseDAO {
 	 * @throws Exception
 	 */
 	public Book getBookById(String bookId) throws Exception;
+	
+	/**
+	 * Get the Books in the id list
+	 * 
+	 * @param booksIdLst
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Book> getBooksByIdLst(List<String> booksIdLst) throws Exception;
 
 	/**
 	 * Gets the contents of a book.

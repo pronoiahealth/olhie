@@ -11,33 +11,39 @@
 	type="text/css"></link>
 </head>
 <body>
-	<div data-field="pager" style="display: table;">
+	<div data-field="pager" class="searchPager"
+		style="display: table; margin: auto;">
 		<div style="display: table-row;">
 			<div style="display: table-cell;">
-				<a href="javascript:;" class="btn btn-link disabled"
-					id="" data-original-title="Previous page" title="">
-						<i class="icon-fast-backward"></i>
+				<a href="javascript:;" class="btn btn-link searchPagerFirstPage"
+					id="" data-original-title="First page" title="First page"
+					rel="tooltip" style="background-color: transparent;"> <i
+					class="icon-fast-backward"></i>
 				</a>
 			</div>
 			<div style="display: table-cell;">
-				<a href="javascript:;" class="btn btn-link disabled"
-					id="" data-original-title="Previous page" title="">
-						<i class="icon-step-backward"></i>
+				<a href="javascript:;" class="btn btn-link searchPagerPreviousPage"
+					id="" data-original-title="Previous page" title="Previous page"
+					rel="tooltip" style="background-color: transparent;"> <i
+					class="icon-step-backward"></i>
 				</a>
 			</div>
 			<div style="display: table-cell;">
-				<a href="javascript:;" class="btn btn-link disabled"
-					id="" data-original-title="Previous page" title="">
-						<i class="icon-step-forward"></i>
+				<a href="javascript:;" class="btn btn-link searchPagerNextPage"
+					id="" data-original-title="Previous page" title="Next page"
+					rel="tooltip" style="background-color: transparent;"> <i
+					class="icon-step-forward"></i>
 				</a>
 			</div>
 			<div style="display: table-cell;">
-				<a href="javascript:;" class="btn btn-link disabled"
-					id="" data-original-title="Previous page" title="">
-						<i class="icon-fast-forward"></i>
-				</a>
+				<a href="javascript:;" class="btn btn-link searchPagerLastPage"
+					id="" data-original-title="Previous page" title="Last page"
+					rel="tooltip" style="background-color: transparent;"><i
+					class="icon-fast-forward"></i> </a>
 			</div>
-			<div style="display: table-cell">(1-10 of 25)</div>
+			<div class="ph-SearchResults-Pager-Text searchPagerPageDisplay"
+				style="display: table-cell; border: solid 20px transparent;">(1-10
+				of 25)</div>
 		</div>
 	</div>
 </body>

@@ -8,27 +8,22 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.pages.search;
-
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.Messages;
+package com.pronoiahealth.olhie.client.shared.constants;
 
 /**
- * SearchMessages.java<br/>
+ * SearchPageActionEnum.java<br/>
  * Responsibilities:<br/>
  * 1.
  *
  * @author John DeStefano
  * @version 1.0
- * @since Jul 31, 2013
+ * @since Nov 29, 2013
  *
  */
-public interface SearchMessages extends Messages {
-	public static SearchMessages INSTANCE = GWT.create(SearchMessages.class);
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-	@DefaultMessage("Search Results (showing {0} of {1})")
-	String searchResultsReturned(int numbRet, int total);
-	
-	@DefaultMessage("({0} to {1} of {2} result(s))")
-	String searchPagerResultsReturned(int startIdx, int endIdx , int total);
+@Portable
+public enum SearchPageActionEnum {
+	FIRST, PREVIOUS, NEXT, LAST, UPDATE_STATE;
+
 }

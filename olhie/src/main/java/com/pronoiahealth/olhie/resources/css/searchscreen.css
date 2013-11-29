@@ -65,6 +65,13 @@
 	vertical-align: top;
 }
 
+.ph-SearchResults-Pager-Text {
+	font-family: 'Source Code Pro';
+	/*font-family: "Swanky and Moo Moo", cursive;*/
+	font-size: 16px;
+	font-weight: bolder;
+}
+
 .ph-SearchResults-Header-CntList {
 	margin-bottom: 10px;
 }

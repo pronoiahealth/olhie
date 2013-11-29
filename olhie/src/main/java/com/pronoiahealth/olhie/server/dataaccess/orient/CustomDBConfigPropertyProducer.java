@@ -32,12 +32,12 @@ import org.apache.deltaspike.core.spi.config.BaseConfigPropertyProducer;
  * 
  */
 @ApplicationScoped
-public class CustomConfigPropertyProducer extends BaseConfigPropertyProducer {
+public class CustomDBConfigPropertyProducer extends BaseConfigPropertyProducer {
 
 	/**
 	 * Default Constructor
 	 */
-	public CustomConfigPropertyProducer() {
+	public CustomDBConfigPropertyProducer() {
 	}
 
 	/**

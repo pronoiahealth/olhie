@@ -21,6 +21,7 @@ import org.jboss.errai.ioc.client.container.async.AsyncBeanDef;
 import org.jboss.errai.ioc.client.container.async.AsyncBeanManager;
 import org.jboss.errai.ioc.client.container.async.CreationalCallback;
 
+import com.github.gwtbootstrap.client.ui.Column;
 import com.github.gwtbootstrap.client.ui.FluidRow;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.google.common.collect.ArrayListMultimap;
@@ -33,8 +34,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
+import com.pronoiahealth.olhie.client.shared.constants.SearchPageActionEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.BookSearchEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookSearchResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.SearchPageNavigationResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
@@ -71,6 +74,9 @@ public class SearchResultsComponent extends AbstractComposite {
 
 	@UiField
 	public FluidRow searchResultsHeader;
+
+	@UiField
+	public Column pagerContainerCol;
 
 	@UiField
 	public HTMLPanel pagerContainer;
@@ -126,6 +132,10 @@ public class SearchResultsComponent extends AbstractComposite {
 			}
 		};
 
+		// Set pager column style
+		pagerContainerCol.getElement().setAttribute("style",
+				"text-align: center;");
+
 		// Attach the pager widget
 		pagerContainer.getElement().appendChild(pagerWidget.configure());
 	}
@@ -144,16 +154,42 @@ public class SearchResultsComponent extends AbstractComposite {
 		// Display the books, if nothing is returned the display a message
 		List<BookDisplay> lst = event.getBookDisplayList();
 		if (lst != null && lst.size() > 0) {
-			int total = event.getTotalInResultSet();
-			int returned = lst.size();
-			resultsLbl.setText(SearchMessages.INSTANCE.searchResultsReturned(
-					returned, total));
 			cleanUpAndInitBookList3D(bookList3D, lst);
 		} else {
 			resultsLbl.setText(SearchConstants.INSTANCE.searchResults());
 			Label noBooksLbl = new Label(SearchConstants.INSTANCE.noResults());
 			noBooksLbl.setStyleName("ph-SearchResults-NoResults-Lbl");
 			searchResultsContainerList.add(noBooksLbl);
+		}
+	}
+
+	/**
+	 * Similar actions to the observesBookSearchResponseEvent except the
+	 * SearchPageNavigationResponseEvent as a result of the user navigating
+	 * through an already returned search result set.
+	 * 
+	 * 
+	 * @param searchPageNavigationResponseEvent
+	 */
+	protected void observesSearchPageNavigationResponseEvent(
+			@Observes SearchPageNavigationResponseEvent searchPageNavigationResponseEvent) {
+		// This component does not handle the UPDATE_STATE action
+		if (searchPageNavigationResponseEvent.getRequestedAction() != SearchPageActionEnum.UPDATE_STATE) {
+			// Hide spinner
+			gSpinner.setVisible(false);
+
+			// Display the books, if nothing is returned the display a message
+			List<BookDisplay> lst = searchPageNavigationResponseEvent
+					.getBookDisplays();
+			if (lst != null && lst.size() > 0) {
+				cleanUpAndInitBookList3D(bookList3D, lst);
+			} else {
+				resultsLbl.setText(SearchConstants.INSTANCE.searchResults());
+				Label noBooksLbl = new Label(
+						SearchConstants.INSTANCE.noResults());
+				noBooksLbl.setStyleName("ph-SearchResults-NoResults-Lbl");
+				searchResultsContainerList.add(noBooksLbl);
+			}
 		}
 	}
 
@@ -222,13 +258,16 @@ public class SearchResultsComponent extends AbstractComposite {
 		searchResultsContainerList.clear();
 	}
 
+	/**
+	 * Dynamically adjusts the page size
+	 */
 	private void adjustSize() {
 		if (isAttached() == true) {
 			// Difference from window height
 			int wndHeight = this.getPageContainerHeight();
 
 			// 128 is search at top + Search results label + footer at bottom
-			int newSearchResultsScrollerHeight = wndHeight - 128;
+			int newSearchResultsScrollerHeight = wndHeight - 188;
 			searchResultsContainerList.setSize("100%", ""
 					+ newSearchResultsScrollerHeight + "px");
 		}

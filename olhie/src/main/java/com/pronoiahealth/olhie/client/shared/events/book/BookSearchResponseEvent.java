@@ -37,6 +37,7 @@ import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 public class BookSearchResponseEvent {
 	private int totalInResultSet;
 	private List<BookDisplay> bookDisplayList;
+	private int searchPageSize;
 
 	/**
 	 * Constructor
@@ -49,10 +50,11 @@ public class BookSearchResponseEvent {
 	 * @param bookList
 	 */
 	public BookSearchResponseEvent(List<BookDisplay> bookDisplayList,
-			int totalInResultSet) {
+			int totalInResultSet, int searchPageSize) {
 		super();
 		this.bookDisplayList = bookDisplayList;
 		this.totalInResultSet = totalInResultSet;
+		this.searchPageSize = searchPageSize;
 	}
 
 	public List<BookDisplay> getBookDisplayList() {
@@ -71,4 +73,11 @@ public class BookSearchResponseEvent {
 		this.totalInResultSet = totalInResultSet;
 	}
 
+	public int getSearchPageSize() {
+		return searchPageSize;
+	}
+
+	public void setSearchPageSize(int searchPageSize) {
+		this.searchPageSize = searchPageSize;
+	}
 }
