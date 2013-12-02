@@ -44,6 +44,8 @@ import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEve
 import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
+import com.pronoiahealth.olhie.client.utils.BookList3DCreationalHandler;
+import com.pronoiahealth.olhie.client.utils.Utils;
 import com.pronoiahealth.olhie.client.widgets.GlassPanelSpinner;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.BookSelectCallBack;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3D_3;
@@ -154,7 +156,12 @@ public class SearchResultsComponent extends AbstractComposite {
 		// Display the books, if nothing is returned the display a message
 		List<BookDisplay> lst = event.getBookDisplayList();
 		if (lst != null && lst.size() > 0) {
-			cleanUpAndInitBookList3D(bookList3D, lst);
+			Utils.cleanUpAndInitBookList3D(bookList3D, lst, new BookList3DCreationalHandler() {
+				@Override
+				public void bookListCreationalCallback(BookList3D_3 currentBookList3D) {
+					setCurrentBookList3D(currentBookList3D);
+				}
+			});
 		} else {
 			resultsLbl.setText(SearchConstants.INSTANCE.searchResults());
 			Label noBooksLbl = new Label(SearchConstants.INSTANCE.noResults());
@@ -182,7 +189,12 @@ public class SearchResultsComponent extends AbstractComposite {
 			List<BookDisplay> lst = searchPageNavigationResponseEvent
 					.getBookDisplays();
 			if (lst != null && lst.size() > 0) {
-				cleanUpAndInitBookList3D(bookList3D, lst);
+				Utils.cleanUpAndInitBookList3D(bookList3D, lst, new BookList3DCreationalHandler() {
+					@Override
+					public void bookListCreationalCallback(BookList3D_3 currentBookList3D) {
+						setCurrentBookList3D(currentBookList3D);
+					}
+				});
 			} else {
 				resultsLbl.setText(SearchConstants.INSTANCE.searchResults());
 				Label noBooksLbl = new Label(
@@ -273,6 +285,7 @@ public class SearchResultsComponent extends AbstractComposite {
 		}
 	}
 
+	/*
 	private void cleanUpAndInitBookList3D(BookList3D_3 bl,
 			final List<BookDisplay> books) {
 
@@ -294,11 +307,11 @@ public class SearchResultsComponent extends AbstractComposite {
 			}
 		});
 	}
+	*/
 
 	private void setCurrentBookList3D(BookList3D_3 currentBookList3D) {
 		this.bookList3D = currentBookList3D;
 		searchResultsContainerList.clear();
 		searchResultsContainerList.add(bookList3D);
 	}
-
 }

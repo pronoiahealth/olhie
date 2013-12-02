@@ -26,12 +26,15 @@
 }
 
 .ph-Bookcase-Marker .gwt-TabLayoutPanel {
+	
 }
 
 .ph-Bookcase-Marker .gwt-TabLayoutPanelTabs {
+	
 }
 
 .ph-Bookcase-Marker .gwt-TabLayoutPanelTabs {
+	
 }
 
 .ph-Bookcase-Marker .gwt-TabLayoutPanelContent {
@@ -73,7 +76,8 @@
 	background-image: url("Olhie/images/BookShelf-backgrnd.png");
 	background-repeat: repeat;
 	padding-top: 30px;*/
-	background: url("Olhie/images/libraryBackground.png") no-repeat center center fixed;
+	background: url("Olhie/images/libraryBackground.png") no-repeat center
+		center fixed;
 	webkit-background-size: cover;
 	moz-background-size: cover;
 	o-background-size: cover;
@@ -91,10 +95,57 @@
 	/*background: white;
 	background-image: url("Olhie/images/myCollectionBg.png");
 	background-repeat: repeat;*/
-	background: url("Olhie/images/MyCollection-background.png") no-repeat center center fixed;
+	background: url("Olhie/images/MyCollection-background.png") no-repeat
+		center center fixed;
 	webkit-background-size: cover;
 	moz-background-size: cover;
 	o-background-size: cover;
 	background-size: cover;
 	padding-top: 30px;
+}
+
+.ph-Bookcase-BookCase-Frame {
+	-moz-border-bottom-colors: none;
+	-moz-border-left-colors: none;
+	-moz-border-right-colors: none;
+	-moz-border-top-colors: none;
+	border-color: #2E1A12;
+	border-image: url("Olhie/images/wood1.png") 100 100 100 100;
+	border-style: solid;
+	border-width: 20px;
+	box-shadow: 1px 1px 10px #000000;
+	float: left;
+	margin: 10px;
+	width: 500px;
+	height: 600px;
+	background: url("Olhie/images/wood.jpg") repeat;
+}
+
+.ph-Bookcase-Sortable {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	width: 600px;
+}
+
+.ph-Bookcase-Sortable li {
+	margin: 3px 3px 3px 0;
+	padding: 1px;
+	float: left;
+	width: 100px;
+	height: 140px;
+	text-align: center;
+	border: transparent;
+	background: transparent;
+}
+
+.ph-Bookcase-BookDetail-Panel {
+	padding-top: 30px;
+	padding-left: 30px;
+}
+
+.ph-Bookcase-Heading-Text {
+	margin-left: 25px;
+	font-size: 24px;
+	font-weight: bold;
 }

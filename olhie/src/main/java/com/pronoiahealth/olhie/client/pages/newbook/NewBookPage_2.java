@@ -10,6 +10,9 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages.newbook;
 
+import static com.arcbees.gquery.tooltip.client.Tooltip.Tooltip;
+import static com.google.gwt.query.client.GQuery.$;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -29,14 +32,13 @@ import com.github.gwtbootstrap.client.ui.Hero;
 import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.NavPills;
 import com.github.gwtbootstrap.client.ui.PageHeader;
-import com.github.gwtbootstrap.client.ui.Tooltip;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
-import com.github.gwtbootstrap.client.ui.constants.Placement;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.query.client.GQuery;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -54,6 +56,7 @@ import com.pronoiahealth.olhie.client.pages.newbook.features.BookDescriptionDeta
 import com.pronoiahealth.olhie.client.pages.newbook.features.NewAssetDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.pages.newbook.widgets.BookIntroductionDetailWidget;
 import com.pronoiahealth.olhie.client.pages.newbook.widgets.NewBookDroppablePanel;
+import com.pronoiahealth.olhie.client.shared.constants.BookImageSizeEnum;
 import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedEvent;
@@ -299,7 +302,7 @@ public class NewBookPage_2 extends AbstractPage {
 
 		// logo
 		logoBookButton = createButton("", IconType.PICTURE, ButtonType.PRIMARY,
-				ButtonSize.SMALL);
+				ButtonSize.SMALL, "Add a Logo image");
 		logoBookButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -307,12 +310,14 @@ public class NewBookPage_2 extends AbstractPage {
 						currentBookDisplay.getBook().getId()));
 			}
 		});
-		createTooltip(logoBookButton, "Add a Logo image", Placement.TOP);
+		GQuery q = $(logoBookButton.getElement());
+		$(logoBookButton.getElement()).as(Tooltip).tooltip();
 		authorBtns.add(logoBookButton);
+		// createTooltip(logoBookButton, "Add a Logo image", Placement.TOP);
 
 		// comments
 		authorViewCommentsButton = createButton("", IconType.COMMENTS,
-				ButtonType.PRIMARY, ButtonSize.SMALL);
+				ButtonType.PRIMARY, ButtonSize.SMALL, "View book comments");
 		authorViewCommentsButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -321,13 +326,14 @@ public class NewBookPage_2 extends AbstractPage {
 						currentBookDisplay.getBook().getBookTitle()));
 			}
 		});
-		createTooltip(authorViewCommentsButton, "View book comments",
-				Placement.TOP);
 		authorBtns.add(authorViewCommentsButton);
+		// createTooltip(authorViewCommentsButton, "View book comments",
+		// Placement.TOP);
+		$(authorViewCommentsButton.getElement()).as(Tooltip).tooltip();
 
 		// Edit
 		editBookButton = createButton("", IconType.EDIT, ButtonType.PRIMARY,
-				ButtonSize.SMALL);
+				ButtonSize.SMALL, "Edit the Book details");
 		editBookButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -335,8 +341,10 @@ public class NewBookPage_2 extends AbstractPage {
 						ModeEnum.EDIT, currentBookDisplay.getBook()));
 			}
 		});
-		createTooltip(editBookButton, "Edit the Book details", Placement.TOP);
 		authorBtns.add(editBookButton);
+		// createTooltip(editBookButton, "Edit the Book details",
+		// Placement.TOP);
+		$(editBookButton.getElement()).as(Tooltip).tooltip();
 
 		// Add to the button holder
 		buttonGrpHolder.add(authorBtns);
@@ -352,7 +360,7 @@ public class NewBookPage_2 extends AbstractPage {
 	 * @return
 	 */
 	private Button createButton(String caption, IconType iType,
-			ButtonType bType, ButtonSize bSize) {
+			ButtonType bType, ButtonSize bSize, String toolTipTxt) {
 		Button btn = null;
 		if (caption != null && caption.length() > 0) {
 			btn = new Button(caption);
@@ -362,6 +370,8 @@ public class NewBookPage_2 extends AbstractPage {
 		btn.setIcon(iType);
 		btn.setType(bType);
 		btn.setSize(bSize);
+		btn.getElement().setAttribute("rel", "tooltip");
+		btn.setTitle(toolTipTxt);
 		return btn;
 	}
 
@@ -372,13 +382,12 @@ public class NewBookPage_2 extends AbstractPage {
 	 * @param message
 	 * @param placement
 	 */
-	private void createTooltip(Widget w, String message, Placement placement) {
-		Tooltip tooltip = new Tooltip();
-		tooltip.setWidget(w);
-		tooltip.setText(message);
-		tooltip.setPlacement(placement);
-		tooltip.reconfigure();
-	}
+	/*
+	 * private void createTooltip(Widget w, String message, Placement placement)
+	 * { Tooltip tooltip = new Tooltip(); tooltip.setWidget(w);
+	 * tooltip.setText(message); tooltip.setPlacement(placement);
+	 * //tooltip.reconfigure(); }
+	 */
 
 	/**
 	 * When the page is hiding tell the Header so it can add the new book button
@@ -511,10 +520,11 @@ public class NewBookPage_2 extends AbstractPage {
 				.getCreatedDate()) : "";
 		String publDateFt = book.getActDate() != null ? dtf.format(book
 				.getActDate()) : "Not yet published";
-		bookIntroductionDetailWidget.setData(
-				Utils.buildRestServiceForBookFrontCoverDownloadLink(bookId),
-				createdDateFt, publDateFt, book.getCategory(), ""
-						+ currentBookDisplay.getBookHoursOfWork());
+		bookIntroductionDetailWidget.setData(Utils
+				.buildRestServiceForBookFrontCoverDownloadLink(bookId,
+						BookImageSizeEnum.SMALL), createdDateFt, publDateFt,
+				book.getCategory(),
+				"" + currentBookDisplay.getBookHoursOfWork());
 
 		// Introduction text
 		introductionTxt.setHTML(NewBookMessages.INSTANCE

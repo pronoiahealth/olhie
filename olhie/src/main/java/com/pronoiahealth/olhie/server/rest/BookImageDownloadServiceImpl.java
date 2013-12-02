@@ -69,13 +69,15 @@ public class BookImageDownloadServiceImpl implements BookImageDownloadService {
 	 */
 	@Override
 	@GET
-	@Path("/front/{uniqueNumb}/{bookId}")
-	@SecureAccess({ SecurityRoleEnum.ANONYMOUS, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.ADMIN })
+	@Path("/front/{size}/{uniqueNumb}/{bookId}")
+	@SecureAccess({ SecurityRoleEnum.ANONYMOUS, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.ADMIN })
 	public InputStream getBookFrontCoverImage(
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response,
-			@PathParam("bookId") String bookId, @Context ServletContext context)
-			throws ServletException, IOException, FileDownloadException {
+			@PathParam("bookId") String bookId, @PathParam("size") String size,
+			@Context ServletContext context) throws ServletException,
+			IOException, FileDownloadException {
 		DataInputStream in = null;
 		try {
 			// Get the file contents
@@ -86,7 +88,12 @@ public class BookImageDownloadServiceImpl implements BookImageDownloadService {
 			}
 
 			byte[] fileBytes = null;
-			String fileContents = book.getBase64FrontCover();
+			String fileContents = null;
+			if (size.equalsIgnoreCase("small")) {
+				fileContents = book.getBase64SmallFrontCover();
+			} else {
+				fileContents = book.getBase64FrontCover();
+			}
 			if (fileContents != null && fileContents.length() > 0) {
 				String fileName = book.getBookTitle() + "_front_cover.png";
 				String mimetype = context.getMimeType(fileName);
@@ -128,7 +135,8 @@ public class BookImageDownloadServiceImpl implements BookImageDownloadService {
 	@GET
 	@Path("/back/{uniqueNumb}/{bookId}")
 	@Produces({ "application/octet-stream" })
-	@SecureAccess({ SecurityRoleEnum.ANONYMOUS, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.ADMIN })
+	@SecureAccess({ SecurityRoleEnum.ANONYMOUS, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.ADMIN })
 	public InputStream getBookBackCoverImage(
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response,

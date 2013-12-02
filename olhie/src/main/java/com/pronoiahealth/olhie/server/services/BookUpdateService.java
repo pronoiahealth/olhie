@@ -70,8 +70,8 @@ public class BookUpdateService {
 	@Inject
 	private Event<BookUpdateCommittedEvent> bookUpdateCommittedEvent;
 
-	//@Resource(mappedName = "queue/testQueue")
-	//private Queue queue;
+	// @Resource(mappedName = "queue/testQueue")
+	// private Queue queue;
 
 	/**
 	 * Optionally use a pooled connection factory for better performance
@@ -79,8 +79,8 @@ public class BookUpdateService {
 	 * .mastertheboss.com/jboss-jms/jboss-as-7-sending-jms-messages-across
 	 * -java-ee-components
 	 */
-	//@Resource(mappedName = "java:/ConnectionFactory")
-	//private ConnectionFactory cf;
+	// @Resource(mappedName = "java:/ConnectionFactory")
+	// private ConnectionFactory cf;
 
 	@Inject
 	@DAO
@@ -133,6 +133,7 @@ public class BookUpdateService {
 			if (logoStr != null && logoStr.length() > 0) {
 				logo = Base64.decode(logoStr);
 			}
+
 			Map<Cover, String> coverMap = imgService.createDefaultBookCovers(
 					book, cat, cover, logo, authorName);
 
@@ -143,8 +144,10 @@ public class BookUpdateService {
 			currentBook.setCategory(book.getCategory());
 			currentBook.setCoverName(book.getCoverName());
 			currentBook.setInterfacePlatform(book.getInterfacePlatform());
-			currentBook.setInterfaceSendingSystem(book.getInterfaceSendingSystem());
-			currentBook.setInterfaceRecievingSystem(book.getInterfaceRecievingSystem());
+			currentBook.setInterfaceSendingSystem(book
+					.getInterfaceSendingSystem());
+			currentBook.setInterfaceRecievingSystem(book
+					.getInterfaceRecievingSystem());
 
 			// Update the active
 			Date now = new Date();
@@ -159,6 +162,8 @@ public class BookUpdateService {
 			// image data
 			currentBook.setBase64FrontCover(coverMap.get(Cover.FRONT));
 			currentBook.setBase64BackCover(coverMap.get(Cover.BACK));
+			currentBook.setBase64SmallFrontCover(coverMap
+					.get(Cover.SMALL_FRONT));
 			currentBook.setLastUpdated(now);
 
 			// Solr updating
@@ -212,6 +217,7 @@ public class BookUpdateService {
 			book.setCreatedDate(now);
 			book.setBase64FrontCover(coverMap.get(Cover.FRONT));
 			book.setBase64BackCover(coverMap.get(Cover.BACK));
+			book.setBase64SmallFrontCover(coverMap.get(Cover.SMALL_FRONT));
 			book.setLastUpdated(now);
 			book.setSolrUpdate(null);
 			book.setAuthorId(userToken.getUserId());
@@ -219,7 +225,7 @@ public class BookUpdateService {
 					&& book.getActive().booleanValue() == true) {
 				book.setActDate(now);
 			}
-						
+
 			// Save the book
 			book = bookDAO.addBook(book);
 

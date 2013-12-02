@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.server.services.dbaccess.orient;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -282,7 +283,8 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public List<Book> getBooksByIdLst(List<String> booksIdLst) throws Exception {
-		String qryStr = "select from Book where @rid in " + booksIdLst + " and active = true";
+		String qryStr = "select from Book where @rid in " + booksIdLst
+				+ " and active = true";
 		OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(qryStr);
 		HashMap<String, String> bparams = new HashMap<String, String>();
 		List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
@@ -352,7 +354,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public List<Book> getActiveBooksByTitle(String title, int startPos,
-			int limit) {
+			int limit) throws Exception {
 		OSQLSynchQuery<Book> bQuery = null;
 		HashMap<String, Object> bparams = new HashMap<String, Object>();
 		bparams.put("title", "%" + title.toLowerCase() + "%");
@@ -380,7 +382,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public List<String> getActiveBooksIdsByTitle(String title, int startPos,
-			int limit) {
+			int limit) throws Exception {
 		List<String> retLst = new ArrayList<String>();
 		List<Book> bResult = getActiveBooksByTitle(title, startPos, limit);
 		if (bResult != null && bResult.size() > 0) {
@@ -643,7 +645,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public Set<UserBookRelationshipEnum> getUserBooksRelationshipByUserId(
-			String userId, boolean activeOnly) {
+			String userId, boolean activeOnly) throws Exception {
 
 		Set<UserBookRelationshipEnum> retSet = new TreeSet<UserBookRelationshipEnum>();
 		if (userId != null) {
@@ -681,7 +683,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public List<UserBookRelationship> getUserBooksRelationshipLstByUserId(
-			String userId, boolean activeOnly) {
+			String userId, boolean activeOnly) throws Exception {
 
 		if (userId != null) {
 			OSQLSynchQuery<UserBookRelationship> rQuery = null;
@@ -697,6 +699,113 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 			return ooDbTx.command(rQuery).execute(rparams);
 		} else {
 			return null;
+		}
+	}
+
+	/**
+	 * 
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#getActiveUserBooksRelationshipLstByUserId(java.lang.String,
+	 *      java.lang.String[])
+	 */
+	@Override
+	public List<UserBookRelationship> getActiveUserBooksRelationshipLstByUserId(
+			String userId, String... relationships) throws Exception {
+		if (userId != null && relationships != null && relationships.length > 0) {
+			OSQLSynchQuery<UserBookRelationship> rQuery = null;
+			String qryStr = "select from UserBookRelationship where userId = :uId and activeRelationship = true "
+					+ "and userRelationship in "
+					+ convertStringArrayToInQryParam(relationships)
+					+ " order by bookCasePosition";
+			rQuery = new OSQLSynchQuery<UserBookRelationship>(qryStr);
+			HashMap<String, String> rparams = new HashMap<String, String>();
+			rparams.put("uId", userId);
+			return ooDbTx.command(rQuery).execute(rparams);
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * 
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#
+	 *      getUserBookRelationshipCnt(java.lang.String, java.lang.String[])
+	 */
+	@Override
+	public int getUserBookRelationshipCnt(String userId, String... relationhips)
+			throws Exception {
+		List<UserBookRelationship> lst = getActiveUserBooksRelationshipLstByUserId(
+				userId, relationhips);
+		if (lst != null) {
+			return lst.size();
+		} else {
+			return 0;
+		}
+	}
+
+	/**
+	 * @param userBookRelationshipId
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	public UserBookRelationship getUserBookRelationshipById(
+			String userBookRelationshipId) throws Exception {
+		OSQLSynchQuery<UserBookRelationship> rQuery = new OSQLSynchQuery<UserBookRelationship>(
+				"select from UserBookRelationship where @rId = :id and  activeRelationship = true");
+		HashMap<String, String> rparams = new HashMap<String, String>();
+		rparams.put("id", userBookRelationshipId);
+		List<UserBookRelationship> rResult = ooDbTx.command(rQuery).execute(
+				rparams);
+		// Should only be one active relationship in MyCollection for an
+		// individual book
+		if (rResult != null && rResult.size() == 1) {
+			return rResult.get(0);
+		} else {
+			return null;
+		}
+
+	}
+
+	/**
+	 * Updates the bookCasePosition of the UserBookRelationships. This is used
+	 * to display the list on the BookCasePage. If the userId of the
+	 * UserBookRelationship does not match the method parameter userId throw an
+	 * exception.
+	 * 
+	 * @param positionMap
+	 * @param userId
+	 * @throws Exception
+	 */
+	@Override
+	public void updateUserBookRelationshipBookCasePosition(
+			Map<String, Integer> positionMap, String userId) throws Exception {
+		try {
+			// Start a transaction since we are updating data
+			ooDbTx.begin(TXTYPE.OPTIMISTIC);
+
+			// Look up each book description and update its position
+			for (Entry<String, Integer> entry : positionMap.entrySet()) {
+				String id = entry.getKey();
+				Integer pos = entry.getValue();
+				UserBookRelationship rel = getUserBookRelationshipById(id);
+
+				// Check to make sure the userId's match.
+				// If not throw an exception
+				if (!userId.equals(rel.getTheUser())) {
+					throw new Exception(
+							"The userId does not match for UserBookRelationship with id "
+									+ rel.getId());
+				}
+
+				// Update the value
+				rel.setBookCasePosition(pos);
+			}
+
+			// Commit all the changes
+			ooDbTx.commit();
+		} catch (Exception e) {
+			ooDbTx.rollback();
+			throw e;
 		}
 	}
 
@@ -733,7 +842,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public List<UserBookRelationship> getActiveUserBookRelationships(
-			String userId, String bookId) {
+			String userId, String bookId) throws Exception {
 		OSQLSynchQuery<UserBookRelationship> bQuery = new OSQLSynchQuery<UserBookRelationship>(
 				"select from UserBookRelationship where userId = :uId and bookId = :bId and activeRelationship = true");
 		HashMap<String, String> bparams = new HashMap<String, String>();
@@ -782,7 +891,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public List<UserBookRelationship> getUserBookRelationshipByBookId(
-			String bookId) {
+			String bookId) throws Exception {
 		// Get UserBookRelatioship
 		OSQLSynchQuery<UserBookRelationship> bQuery = new OSQLSynchQuery<UserBookRelationship>(
 				"select from UserBookRelationship where bookId = :bId");
@@ -801,7 +910,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public List<UserBookRelationship> getUserBookRelationshipByUserIdBookId(
-			String bookId, String userId) {
+			String bookId, String userId) throws Exception {
 		// Get UserBookRelatioship
 		OSQLSynchQuery<UserBookRelationship> bQuery = new OSQLSynchQuery<UserBookRelationship>(
 				"select from UserBookRelationship where userId = :uId and bookId = :bId");
@@ -827,6 +936,8 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 			throws Exception {
 		Book book = getBookById(bookId);
 		User user = getUserByUserId(userId);
+		int currentMaxPos = this.getUserBookRelationshipCnt(userId,
+				userRelationship.toString());
 		UserBookRelationship rel = new UserBookRelationship();
 		rel.setActiveRelationship(activeRelationship);
 		rel.setUserRelationship(userRelationship.toString());
@@ -836,6 +947,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		rel.setUserId(userId);
 		rel.setEffectiveDate(date);
 		rel.setLastViewedDate(date);
+		rel.setBookCasePosition(currentMaxPos);
 		return ooDbTx.save(rel);
 	}
 
@@ -883,7 +995,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public Set<UserBookRelationshipEnum> getUserBookRelationshipByUserIdBookId(
-			String bookId, String userId, boolean activeOnly) {
+			String bookId, String userId, boolean activeOnly) throws Exception {
 
 		Set<UserBookRelationshipEnum> retSet = new TreeSet<UserBookRelationshipEnum>();
 		if (userId != null && bookId != null) {
@@ -1168,8 +1280,8 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public Book addLogoAndFrontCover(String bookId, String contentType,
-			String data, String fileName, long size, String encodedFrontCover)
-			throws Exception {
+			String data, String fileName, long size, String encodedFrontCover,
+			String encodedSmallFrontCover) throws Exception {
 		ooDbTx.begin(TXTYPE.OPTIMISTIC);
 		try {
 			// Find Book
@@ -1190,6 +1302,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 			book.setLogoFileName(fileName);
 			book.setBase64LogoData(data);
 			book.setBase64FrontCover(encodedFrontCover);
+			book.setBase64SmallFrontCover(encodedSmallFrontCover);
 			book = ooDbTx.save(book);
 			ooDbTx.commit();
 
@@ -1224,7 +1337,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 * 
 	 * @param book
 	 */
-	private Book clearUnNeeded(Book book) {
+	private Book clearUnNeeded(Book book) throws Exception {
 		book.setBase64LogoData(null);
 		book.setSolrUpdate(null);
 		return book;
@@ -1299,4 +1412,28 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		}
 	}
 
+	/**
+	 * Converts a String array to an in sql param.
+	 * 
+	 * @param strArr
+	 * @return
+	 */
+	private String convertStringArrayToInQryParam(String[] strArr) {
+		if (strArr != null && strArr.length > 0) {
+			int len = strArr.length;
+			StringBuilder builder = new StringBuilder();
+			builder.append("[");
+			for (int i = 0; i < len; i++) {
+				builder.append("\"" + strArr[i] + "\"");
+
+				if (i < (len - 1)) {
+					builder.append(",");
+				}
+			}
+			builder.append("]");
+			return builder.toString();
+		} else {
+			return "[]";
+		}
+	}
 }

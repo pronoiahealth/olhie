@@ -24,6 +24,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
 import com.pronoiahealth.olhie.client.clientfactories.FileTypeViewableContent;
+import com.pronoiahealth.olhie.client.shared.constants.BookImageSizeEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
@@ -133,7 +134,7 @@ public class BookListItemWidget extends Composite {
 				.setAttribute(
 						"style",
 						"background-image: url('"
-								+ Utils.buildRestServiceForBookFrontCoverDownloadLink(bookId)
+								+ Utils.buildRestServiceForBookFrontCoverDownloadLink(bookId, BookImageSizeEnum.LARGE)
 								+ "'); background-repeat: no-repeat; background-size: contain; overflow: auto;");
 
 		// My Collection Button

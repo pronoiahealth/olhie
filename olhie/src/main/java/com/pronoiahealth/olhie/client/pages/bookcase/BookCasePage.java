@@ -22,8 +22,6 @@ import javax.inject.Inject;
 import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.nav.client.local.PageShowing;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import com.google.gwt.query.client.GQuery;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -33,14 +31,17 @@ import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.RegisteredRole;
 import com.pronoiahealth.olhie.client.pages.AbstractPage;
 import com.pronoiahealth.olhie.client.pages.AppSelectors;
-import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
+import com.pronoiahealth.olhie.client.pages.bookcase.widgets.BookCaseContainerWidget;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.GetMyBookcaseEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.GetMyBookcaseResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.bookcase.MyBooksForBookcaseSmallIconRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.bookcase.MyBooksForBookcaseSmallIconResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
+import com.pronoiahealth.olhie.client.shared.vo.BookcaseDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.widgets.GlassPanelSpinner;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D;
@@ -66,6 +67,9 @@ public class BookCasePage extends AbstractPage {
 	public HTMLPanel bookcaseContainer;
 
 	@UiField
+	public HTMLPanel testBooksTab;
+
+	@UiField
 	public HTMLPanel myBooksTab;
 
 	@UiField
@@ -77,9 +81,6 @@ public class BookCasePage extends AbstractPage {
 	@UiField
 	public TabLayoutPanel tabPanel;
 
-	//@UiField
-	//public Icon spinner;
-	
 	private GlassPanelSpinner gSpinner;
 
 	@Inject
@@ -88,9 +89,15 @@ public class BookCasePage extends AbstractPage {
 	@Inject
 	private Event<GetMyBookcaseEvent> getMyBookcaseEvent;
 
+	@Inject
+	private Event<MyBooksForBookcaseSmallIconRequestEvent> myBooksForBookcaseSmallIconRequestEvent;
+
 	private BookSelectCallBack bookSelectCallBack;
 
 	private boolean responseRet = false;
+
+	@Inject
+	private BookCaseContainerWidget bookCaseContainerWidget;
 
 	public BookCasePage() {
 	}
@@ -105,25 +112,6 @@ public class BookCasePage extends AbstractPage {
 		gSpinner = new GlassPanelSpinner();
 		gSpinner.setVisible(false);
 		bookcaseContainer.add(gSpinner);
-		
-		// Initial state of spinner
-		// spinner.setVisible(false);
-
-		// create selector - This will fire the bookId to the server to see what
-		// the users relationship with the book is. If he's the author or
-		// co-author he will be directed to the NewBookPage to edit the book. If
-		// not he will be directed to the book review page.
-		bookSelectCallBack = new BookSelectCallBack() {
-			@Override
-			public void onBookSelect(String bookId) {
-				if (bookId != null) {
-					Multimap<String, Object> map = ArrayListMultimap.create();
-					map.put("bookId", bookId);
-					//nav.performTransition(NavEnum.NewBookPage.toString(), map);
-					nav.performTransition(NavEnum.NewBookPage_2.toString(), map);
-				}
-			}
-		};
 
 		// Bind tab panel selection event
 		// tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
@@ -133,7 +121,7 @@ public class BookCasePage extends AbstractPage {
 		// });
 
 	}
-	
+
 	@PreDestroy
 	protected void preDestroy() {
 		gSpinner.getElement();
@@ -147,9 +135,13 @@ public class BookCasePage extends AbstractPage {
 	@PageShowing
 	protected void pageShowing() {
 		gSpinner.setVisible(true);
-		//spinner.setVisible(true);
 		getMyBookcaseEvent
 				.fire(new GetMyBookcaseEvent(clientToken.getUserId()));
+
+		myBooksForBookcaseSmallIconRequestEvent
+				.fire(new MyBooksForBookcaseSmallIconRequestEvent(clientToken
+						.getUserId()));
+
 	}
 
 	/**
@@ -175,6 +167,19 @@ public class BookCasePage extends AbstractPage {
 	 */
 	protected void observesWindowResizeEvent(@Observes WindowResizeEvent event) {
 		setContainerSize();
+	}
+
+	protected void observesMyBooksForBookcaseSmallIconResponseEvent(
+			@Observes MyBooksForBookcaseSmallIconResponseEvent myBooksForBookcaseSmallIconResponseEvent) {
+
+		List<BookcaseDisplay> lst = myBooksForBookcaseSmallIconResponseEvent
+				.getBookCaseDisplayLst();
+
+		if (lst != null && lst.size() > 0) {
+			bookCaseContainerWidget.loadDataAndInit(lst);
+			testBooksTab.add(bookCaseContainerWidget);
+		}
+
 	}
 
 	/**
@@ -205,7 +210,7 @@ public class BookCasePage extends AbstractPage {
 
 		// Set the spinner state
 		gSpinner.setVisible(false);
-		//spinner.setVisible(false);
+		// spinner.setVisible(false);
 	}
 
 	/**

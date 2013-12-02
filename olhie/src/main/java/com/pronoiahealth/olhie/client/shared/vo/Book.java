@@ -78,6 +78,8 @@ public class Book {
 	private String authorId;
 
 	private String base64FrontCover;
+	
+	private String base64SmallFrontCover;
 
 	private String base64BackCover;
 
@@ -291,5 +293,13 @@ public class Book {
 
 	public void setInterfaceRecievingSystem(String interfaceRecievingSystem) {
 		this.interfaceRecievingSystem = interfaceRecievingSystem;
+	}
+
+	public String getBase64SmallFrontCover() {
+		return base64SmallFrontCover;
+	}
+
+	public void setBase64SmallFrontCover(String base64SmallFrontCover) {
+		this.base64SmallFrontCover = base64SmallFrontCover;
 	}
 }

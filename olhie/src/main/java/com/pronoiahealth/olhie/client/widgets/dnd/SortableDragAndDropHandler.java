@@ -26,6 +26,7 @@ import gwtquery.plugins.droppable.client.events.OutDroppableEvent.OutDroppableEv
 import gwtquery.plugins.droppable.client.events.OverDroppableEvent;
 import gwtquery.plugins.droppable.client.events.OverDroppableEvent.OverDroppableEventHandler;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -121,7 +122,7 @@ public class SortableDragAndDropHandler implements DropEventHandler,
 			return -1;
 		}
 
-		// compare absoluteTop of the draggable with absoluteTop od all widget
+		// compare absoluteTop of the draggable with absoluteTop of all widget
 		// containing in the panel
 		int draggableAbsoluteTop = draggableHelper.getAbsoluteTop();
 
@@ -129,6 +130,7 @@ public class SortableDragAndDropHandler implements DropEventHandler,
 			Widget w = panel.getWidget(i);
 			int widgetAbsoluteTop = w.getElement().getAbsoluteTop();
 			if (widgetAbsoluteTop > draggableAbsoluteTop) {
+				GWT.log("Panel widget cnt : " + i + " Top: " + widgetAbsoluteTop + " Draggable Top: " + draggableAbsoluteTop);
 				return i;
 			}
 		}

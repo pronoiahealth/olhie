@@ -10,14 +10,15 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages.newbook.widgets;
 
+import static com.arcbees.gquery.tooltip.client.Tooltip.Tooltip;
+import static com.google.gwt.query.client.GQuery.$;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
-import com.github.gwtbootstrap.client.ui.Tooltip;
-import com.github.gwtbootstrap.client.ui.constants.Placement;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Anchor;
@@ -85,7 +86,9 @@ public class BaseBookassetActionButtonWidget extends Composite {
 			button.setHref(hRef);
 			button.setTarget("_blank");
 		}
-		setTooltip(title);
+		// setTooltip(title);
+		// Add Tooltips
+		$(button.getElement()).as(Tooltip).tooltip();
 	}
 
 	/**
@@ -117,12 +120,10 @@ public class BaseBookassetActionButtonWidget extends Composite {
 	 * 
 	 * @param message
 	 */
-	protected void setTooltip(String message) {
-		Tooltip tip = new Tooltip();
-		tip.setWidget(button);
-		tip.setText(message);
-		tip.setPlacement(Placement.TOP);
-		// tip.setContainer("body");
-		tip.reconfigure();
-	}
+	/*
+	 * protected void setTooltip(String message) { Tooltip tip = new Tooltip();
+	 * tip.setWidget(button); tip.setText(message);
+	 * tip.setPlacement(Placement.TOP); // tip.setContainer("body");
+	 * tip.reconfigure(); }
+	 */
 }

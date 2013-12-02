@@ -72,9 +72,6 @@ public class SearchPagerWidget extends Composite {
 	 */
 	@PostConstruct
 	protected void postConstruct() {
-		// Add the tool tips
-		$("[rel=tooltip]", pager).as(Tooltip).tooltip();
-
 		// Add the buttons
 		pagerQry = $(pager);
 
@@ -139,6 +136,9 @@ public class SearchPagerWidget extends Composite {
 
 		// Initially hide the widget
 		pagerQry.hide();
+		
+		// Add the tool tips
+		$("[rel=tooltip]", pager).as(Tooltip).tooltip();
 	}
 
 	/**

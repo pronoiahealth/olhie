@@ -47,8 +47,9 @@ public interface BookImageDownloadService {
 	public InputStream getBookFrontCoverImage(
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response,
-			@PathParam("bookId") String bookId, @Context ServletContext context)
-			throws ServletException, IOException, FileDownloadException;
+			@PathParam("bookId") String bookId, @PathParam("size") String size,
+			@Context ServletContext context) throws ServletException,
+			IOException, FileDownloadException;
 
 	/**
 	 * @param request

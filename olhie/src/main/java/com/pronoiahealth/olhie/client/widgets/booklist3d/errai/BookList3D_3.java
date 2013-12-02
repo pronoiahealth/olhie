@@ -26,6 +26,8 @@ import javax.inject.Inject;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.gwt.query.client.Function;
 import com.google.gwt.query.client.GQuery;
 import com.google.gwt.query.client.css.CSS;
@@ -33,6 +35,10 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
+import com.pronoiahealth.olhie.client.navigation.PageNavigator;
+import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
+import com.pronoiahealth.olhie.client.shared.events.book.CheckBookIsAuthorRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.CheckBookIsAuthorResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.AddBookToMyCollectionEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.AddBookToMyCollectionEvent.ADD_RESPONSE_TYPE;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.AddBookToMyCollectionResponseEvent;
@@ -43,7 +49,6 @@ import com.pronoiahealth.olhie.client.shared.events.local.DownloadBookAssetEvent
 import com.pronoiahealth.olhie.client.shared.events.local.ShowAddBookCommentModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowViewBookassetDialogEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
-import com.pronoiahealth.olhie.client.widgets.booklist3d.BookSelectCallBack;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.IntHolder;
 
 /**
@@ -58,8 +63,9 @@ import com.pronoiahealth.olhie.client.widgets.booklist3d.IntHolder;
  */
 @Templated("#bookLstRoot")
 public class BookList3D_3 extends Composite {
-	private BookSelectCallBack bookSelectCallBack;
-
+	@Inject
+	protected PageNavigator nav;
+	
 	private int currentBookCnt;
 
 	@DataField("bookList")
@@ -82,6 +88,9 @@ public class BookList3D_3 extends Composite {
 
 	@Inject
 	private javax.enterprise.event.Event<ShowAddBookCommentModalEvent> showAddBookCommentModalEvent;
+
+	@Inject
+	private javax.enterprise.event.Event<CheckBookIsAuthorRequestEvent> checkBookIsAuthorRequestEvent;
 
 	private GQuery books;
 
@@ -229,6 +238,27 @@ public class BookList3D_3 extends Composite {
 	}
 
 	/**
+	 * The corresponding request event is fired when the user clicks the book.
+	 * When this happens a check is done to see if the user clicking the book is
+	 * the author or co-author of the book. If yes then the user will be
+	 * navigated to the NewBookPage where they cab edit the contents of the
+	 * book.
+	 * 
+	 * 
+	 * @param checkBookIsAuthorResponseEvent
+	 */
+	protected void observesCheckBookIsAuthorResponseEvent(
+			@Observes CheckBookIsAuthorResponseEvent checkBookIsAuthorResponseEvent) {
+		boolean isAuthorCoAuthor = checkBookIsAuthorResponseEvent
+				.isAuthorCoAuthor();
+		if (isAuthorCoAuthor == true) {
+			Multimap<String, Object> map = ArrayListMultimap.create();
+			map.put("bookId", checkBookIsAuthorResponseEvent.getBookId());
+			nav.performTransition(NavEnum.NewBookPage_2.toString(), map);
+		}
+	}
+
+	/**
 	 * Used to add books in after the initial display
 	 * 
 	 * @param bookDiv
@@ -274,8 +304,9 @@ public class BookList3D_3 extends Composite {
 				book.bind(Event.ONCLICK, new Function() {
 					@Override
 					public boolean f(Event e) {
-						bookSelectCallBack.onBookSelect(bookId);
-						return true;
+						checkBookIsAuthorRequestEvent
+								.fire(new CheckBookIsAuthorRequestEvent(bookId));
+						return false;
 					}
 				});
 

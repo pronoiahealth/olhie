@@ -132,11 +132,14 @@ public class BooklogoUploadServiceImpl implements BooklogoUploadService {
 				String frontBookCoverEncoded = imgService
 						.createDefaultFrontCoverEncoded(book, cat, cover,
 								bytes, authorName);
+				String smallFrontBookCoverEncoded = imgService
+						.createDefaultSmallFrontCoverEncoded(book, cat, cover,
+								bytes, authorName);
 
 				// Save it
 				// Add the logo
 				book = bookDAO.addLogoAndFrontCover(bookId, contentType, data,
-						fileName, size, frontBookCoverEncoded);
+						fileName, size, frontBookCoverEncoded, smallFrontBookCoverEncoded);
 
 			}
 			return "OK";

@@ -29,6 +29,7 @@ import com.google.gwt.query.client.GQuery;
 import com.google.gwt.query.client.css.CSS;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Widget;
+import com.pronoiahealth.olhie.client.shared.constants.BookImageSizeEnum;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
@@ -137,7 +138,8 @@ public class BookList3D_2 extends Widget {
 				.setAttribute(
 						"style",
 						"background-image: url('"
-								+ Utils.buildRestServiceForBookFrontCoverDownloadLink(bookId)
+								+ Utils.buildRestServiceForBookFrontCoverDownloadLink(
+										bookId, BookImageSizeEnum.LARGE)
 								+ "'); background-repeat: no-repeat; background-size: contain; overflow:auto;");
 
 		// Back of cover
@@ -529,7 +531,7 @@ public class BookList3D_2 extends Widget {
 			// Did it the first time mark it as done
 			this.hasBeenAttached = true;
 		}
-		
+
 		// Use jQuery for the tooltip buttons
 		setUpToolTipsForButtons();
 	}
@@ -537,7 +539,7 @@ public class BookList3D_2 extends Widget {
 	@Override
 	protected void onDetach() {
 		super.onDetach();
-		
+
 		// Remove tool tips
 		removeToolTipsForButtons();
 		removeEventsFromLst();

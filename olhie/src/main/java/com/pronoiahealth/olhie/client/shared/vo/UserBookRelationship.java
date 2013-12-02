@@ -64,6 +64,8 @@ public class UserBookRelationship {
 	private Date lastViewedDate;
 	
 	private Date inactiveDate;
+	
+	private int bookCasePosition;
 
 	/**
 	 * Constructor
@@ -146,5 +148,13 @@ public class UserBookRelationship {
 
 	public void setLastViewedDate(Date lastViewedDate) {
 		this.lastViewedDate = lastViewedDate;
+	}
+
+	public int getBookCasePosition() {
+		return bookCasePosition;
+	}
+
+	public void setBookCasePosition(int bookCasePosition) {
+		this.bookCasePosition = bookCasePosition;
 	}
 }

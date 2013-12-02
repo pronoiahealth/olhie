@@ -69,7 +69,7 @@ public class BookCoverImageService {
 	private TempThemeHolder coverDisplayData;
 
 	public enum Cover {
-		FRONT, BACK
+		FRONT, BACK, SMALL_FRONT
 	};
 
 	private Font medulaOneRegularFont;
@@ -177,8 +177,9 @@ public class BookCoverImageService {
 		// Back cover
 		retMap.put(
 				Cover.BACK,
-				createBackCoverEncoded(coverId, titleStr, spineColor, titleTextColor,
-						width, height, type, imgFormat, maxColors));
+				createBackCoverEncoded(coverId, titleStr, spineColor,
+						titleTextColor, width, height, type, imgFormat,
+						maxColors));
 
 		// Return the map with the front and back cover
 		return retMap;
@@ -207,6 +208,10 @@ public class BookCoverImageService {
 
 		// Back cover
 		retMap.put(Cover.BACK, createDefaultBackCoverEncoded(book, cover, category));
+		
+		// Small front cover
+		retMap.put(Cover.SMALL_FRONT, createDefaultSmallFrontCoverEncoded(book, category, cover, logo,
+				authorName));
 
 		// Return the map with the front and back cover
 		return retMap;
@@ -342,6 +347,27 @@ public class BookCoverImageService {
 				authorStr, titleStr, spineColor, authorTextColor,
 				titleTextColor, width, height, type, imgFormat, maxColors));
 	}
+	
+	/**
+	 * Creates a small front cover
+	 * 
+	 * @param book
+	 * @param category
+	 * @param cover
+	 * @param logo
+	 * @param authorName
+	 * @return
+	 * @throws Exception
+	 */
+	public String createDefaultSmallFrontCoverEncoded(Book book,
+			BookCategory category, BookCover cover, byte[] logo,
+			String authorName) throws Exception {
+		return createFrontCoverEncoded(book.getCoverName(), logo, authorName,
+				book.getBookTitle(), category.getColor(),
+				cover.getAuthorTextColor(), cover.getCoverTitleTextColor(),
+				75, 100, BufferedImage.TYPE_INT_ARGB,
+				ImageFormat.IMAGE_FORMAT_PNG, 128);
+	}
 
 	/**
 	 * 
@@ -379,9 +405,9 @@ public class BookCoverImageService {
 	 * @return
 	 * @throws Exception
 	 */
-	public byte[] createBackCover(String coverId, String titleStr, String spineColor,
-			String textColor, int width, int height, int type,
-			ImageFormat imgFormat, int maxColors) throws Exception {
+	public byte[] createBackCover(String coverId, String titleStr,
+			String spineColor, String textColor, int width, int height,
+			int type, ImageFormat imgFormat, int maxColors) throws Exception {
 
 		Graphics2D g2D = null;
 
@@ -405,7 +431,8 @@ public class BookCoverImageService {
 			// Add spine if present
 			if (spineColor != null && spineColor.length() > 0) {
 				g2D.setColor(Color.decode(spineColor));
-				g2D.fillRect(backCoverImg.getWidth()-2, 0, 2, backCoverImg.getHeight());
+				g2D.fillRect(backCoverImg.getWidth() - 2, 0, 2,
+						backCoverImg.getHeight());
 			}
 
 			// If the requested size is not 300X400 convert the image
@@ -446,12 +473,13 @@ public class BookCoverImageService {
 	 * @return
 	 * @throws Exception
 	 */
-	public String createBackCoverEncoded(String coverId, String titleStr, String spineColor,
-			String textColor, int width, int height, int type,
-			ImageFormat imgFormat, int maxColors) throws Exception {
+	public String createBackCoverEncoded(String coverId, String titleStr,
+			String spineColor, String textColor, int width, int height,
+			int type, ImageFormat imgFormat, int maxColors) throws Exception {
 
-		return Base64.encodeBytes(createBackCover(coverId, titleStr, spineColor, textColor,
-				width, height, type, imgFormat, maxColors));
+		return Base64.encodeBytes(createBackCover(coverId, titleStr,
+				spineColor, textColor, width, height, type, imgFormat,
+				maxColors));
 	}
 
 	/**
@@ -460,10 +488,10 @@ public class BookCoverImageService {
 	 * @return
 	 * @throws Exception
 	 */
-	public String createDefaultBackCoverEncoded(Book book, BookCover cover, BookCategory category)
-			throws Exception {
-		return createBackCoverEncoded(book.getCoverName(), book.getBookTitle(), category.getColor(),
-				cover.getCoverTitleTextColor(), 300, 400,
+	public String createDefaultBackCoverEncoded(Book book, BookCover cover,
+			BookCategory category) throws Exception {
+		return createBackCoverEncoded(book.getCoverName(), book.getBookTitle(),
+				category.getColor(), cover.getCoverTitleTextColor(), 300, 400,
 				BufferedImage.TYPE_INT_ARGB, ImageFormat.IMAGE_FORMAT_PNG, 128);
 	}
 

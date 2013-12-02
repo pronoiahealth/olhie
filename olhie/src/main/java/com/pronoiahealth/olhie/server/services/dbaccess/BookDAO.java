@@ -80,7 +80,7 @@ public interface BookDAO extends BaseDAO {
 	 * @throws Exception
 	 */
 	public Book getBookById(String bookId) throws Exception;
-	
+
 	/**
 	 * Get the Books in the id list
 	 * 
@@ -126,7 +126,7 @@ public interface BookDAO extends BaseDAO {
 	 * @return
 	 */
 	public List<Book> getActiveBooksByTitle(String title, int startPos,
-			int limit);
+			int limit) throws Exception;
 
 	/**
 	 * Gets a list of book ids
@@ -138,7 +138,7 @@ public interface BookDAO extends BaseDAO {
 	 * @return
 	 */
 	public List<String> getActiveBooksIdsByTitle(String title, int startPos,
-			int limit);
+			int limit) throws Exception;
 
 	/**
 	 * Update the lastUpdated attribute of a book.
@@ -169,8 +169,8 @@ public interface BookDAO extends BaseDAO {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Bookcomment> getBookCommentsByBookId(String bookId, boolean detach)
-			throws Exception;
+	public List<Bookcomment> getBookCommentsByBookId(String bookId,
+			boolean detach) throws Exception;
 
 	/**
 	 * Get all the comments for a book made by a specific user
@@ -236,7 +236,7 @@ public interface BookDAO extends BaseDAO {
 	 * @return
 	 */
 	public Set<UserBookRelationshipEnum> getUserBookRelationshipByUserIdBookId(
-			String bookId, String userId, boolean activeOnly);
+			String bookId, String userId, boolean activeOnly) throws Exception;
 
 	/**
 	 * @param userId
@@ -244,7 +244,24 @@ public interface BookDAO extends BaseDAO {
 	 * @return
 	 */
 	public Set<UserBookRelationshipEnum> getUserBooksRelationshipByUserId(
-			String userId, boolean activeOnly);
+			String userId, boolean activeOnly) throws Exception;
+
+	/**
+	 * @param userId
+	 * @param relationhips
+	 * @return
+	 */
+	public List<UserBookRelationship> getActiveUserBooksRelationshipLstByUserId(
+			String userId, String... relationhips) throws Exception;
+
+	/**
+	 * @param userId
+	 * @param relationhips
+	 * @return
+	 * @throws Exception
+	 */
+	public int getUserBookRelationshipCnt(String userId, String... relationhips)
+			throws Exception;
 
 	/**
 	 * Null may be returned if the userId is null or there are not relationships
@@ -256,7 +273,7 @@ public interface BookDAO extends BaseDAO {
 	 * @return
 	 */
 	public List<UserBookRelationship> getUserBooksRelationshipLstByUserId(
-			String userId, boolean activeOnly);
+			String userId, boolean activeOnly) throws Exception;
 
 	/**
 	 * @param bookId
@@ -276,7 +293,27 @@ public interface BookDAO extends BaseDAO {
 	 * @return
 	 */
 	public List<UserBookRelationship> getActiveUserBookRelationships(
-			String userId, String bookId);
+			String userId, String bookId) throws Exception;
+
+	/**
+	 * 
+	 * 
+	 * @param positionMap
+	 * @param userId
+	 * @throws Exception
+	 */
+	public void updateUserBookRelationshipBookCasePosition(
+			Map<String, Integer> positionMap, String userId) throws Exception;
+
+	/**
+	 * 
+	 * 
+	 * @param userBookRelationshipId
+	 * @return
+	 * @throws Exception
+	 */
+	public UserBookRelationship getUserBookRelationshipById(
+			String userBookRelationshipId) throws Exception;
 
 	/**
 	 * Update the last viewed date on the user book relationship
@@ -294,7 +331,7 @@ public interface BookDAO extends BaseDAO {
 	 * @return
 	 */
 	public List<UserBookRelationship> getUserBookRelationshipByBookId(
-			String bookId);
+			String bookId) throws Exception;
 
 	/**
 	 * Returns the relationships for a user and book.
@@ -305,7 +342,7 @@ public interface BookDAO extends BaseDAO {
 	 * @return
 	 */
 	public List<UserBookRelationship> getUserBookRelationshipByUserIdBookId(
-			String bookId, String userId);
+			String bookId, String userId) throws Exception;
 
 	/**
 	 * @param date
@@ -415,8 +452,8 @@ public interface BookDAO extends BaseDAO {
 	 * @throws Exception
 	 */
 	public Book addLogoAndFrontCover(String bookId, String contentType,
-			String data, String fileName, long size, String encodedFrontCover)
-			throws Exception;
+			String data, String fileName, long size, String encodedFrontCover,
+			String encodedSmallFronCover) throws Exception;
 
 	/**
 	 * Saves a book comment

@@ -26,9 +26,12 @@ import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.GetMyBookcaseEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.GetMyBookcaseResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.bookcase.MyBooksForBookcaseSmallIconRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.bookcase.MyBooksForBookcaseSmallIconResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
+import com.pronoiahealth.olhie.client.shared.vo.BookcaseDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.UserBookRelationship;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
@@ -55,6 +58,9 @@ public class BookcaseService {
 
 	@Inject
 	private Event<GetMyBookcaseResponseEvent> getMyBookcaseResponseEvent;
+
+	@Inject
+	private Event<MyBooksForBookcaseSmallIconResponseEvent> myBooksForBookcaseSmallIconResponseEvent;
 
 	@Inject
 	private Event<ServiceErrorEvent> serviceErrorEvent;
@@ -140,6 +146,51 @@ public class BookcaseService {
 			log.log(Level.SEVERE, errMsg, e);
 			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
 		}
+	}
+
+	/**
+	 * Gets the books that the user is the author of for the Bookcase
+	 * 
+	 * 
+	 * @param myBooksForBookcaseSmallIconRequestEvent
+	 */
+	protected void observesMyBooksForBookcaseSmallIconRequestEvent(
+			@Observes MyBooksForBookcaseSmallIconRequestEvent myBooksForBookcaseSmallIconRequestEvent) {
+
+		try {
+			// Check user id against session
+			String userId = myBooksForBookcaseSmallIconRequestEvent.getUserId();
+			String sessionId = userSessionToken.getUserId();
+
+			// Create the return list
+			List<BookcaseDisplay> bookcaseDisplayLst = new ArrayList<BookcaseDisplay>();
+
+			// If this is not the case the return an empty list
+			if (userId != null && userId.equals(sessionId)
+					&& userSessionToken.getLoggedIn() == true) {
+
+				// Must have an active relationship
+				List<UserBookRelationship> bResult = bookDAO
+						.getActiveUserBooksRelationshipLstByUserId(userId,
+								UserBookRelationshipEnum.CREATOR.toString(),
+								UserBookRelationshipEnum.COAUTHOR.toString());
+				for (UserBookRelationship rel : bResult) {
+					Book book = rel.getTheBook();
+					bookcaseDisplayLst.add(new BookcaseDisplay(book.getId()));
+				}
+			}
+
+			// Fire return
+			myBooksForBookcaseSmallIconResponseEvent
+					.fire(new MyBooksForBookcaseSmallIconResponseEvent(
+							bookcaseDisplayLst));
+
+		} catch (Exception e) {
+			String errMsg = e.getMessage();
+			log.log(Level.SEVERE, errMsg, e);
+			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
+		}
+
 	}
 
 }

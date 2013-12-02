@@ -74,7 +74,7 @@ public class BookSelectedService {
 	/**
 	 * Checks the UserBookRelationship to see if the current user is an author
 	 * or co-author of the book for the bookId received in the observed event.
-	 * It will will true or false in the BookListBookSelectedResponseEvent.
+	 * It will return true or false in the BookListBookSelectedResponseEvent.
 	 * 
 	 * @param bookListBookSelectedEvent
 	 */
