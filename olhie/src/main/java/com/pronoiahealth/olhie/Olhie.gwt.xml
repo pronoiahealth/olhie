@@ -38,12 +38,13 @@
 	<!-- inherits name='com.xedge.jquery.GWTJQuery' / -->
 
 	<!-- GWTQuery -->
+	<inherits name='gwtquery.plugins.Ui' />
 	<inherits name='com.google.gwt.query.Query' />
 	<inherits name='gwtquery.plugins.ratings.Ratings' />
 	<inherits name='gwtquery.plugins.draggable.Draggable' />
 	<inherits name='gwtquery.plugins.droppable.Droppable' />
 	<inherits name='com.watopi.chosen.Chosen' />
-	<inherits name='com.arcbees.gquery.tooltip.Tooltip'/>
+	<inherits name='com.arcbees.gquery.tooltip.Tooltip' />
 
 	<!-- Inherit the gwt-recaptcha module -->
 	<inherits name="com.claudiushauptmann.gwt.recaptcha.gwt-recaptcha" />

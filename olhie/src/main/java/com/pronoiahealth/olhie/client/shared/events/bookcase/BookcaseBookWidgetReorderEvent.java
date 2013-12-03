@@ -10,63 +10,54 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.shared.events.bookcase;
 
+import java.util.Map;
+
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
-import com.pronoiahealth.olhie.client.shared.constants.BookcaseEnum;
-
 /**
- * MyBookcaseSmallIconRequestEvent.java<br/>
+ * BookcaseBookWidgetReorderEvent.java<br/>
  * Responsibilities:<br/>
  * 1.
- *
+ * 
  * <p>
- * Fired By: <br/>
- * Observed By: <br/>
+ * Fired By: BookCaseContainerWidget<br/>
+ * Observed By: BookcaseService<br/>
  * </p>
  * 
  * @author John DeStefano
  * @version 1.0
- * @since Nov 29, 2013
- *
+ * @since Dec 2, 2013
+ * 
  */
 @Portable
 @Conversational
-public class MyBooksForBookcaseSmallIconRequestEvent {
-	private String userId;
-	private BookcaseEnum requestedTab;
+public class BookcaseBookWidgetReorderEvent {
+	private Map<String, Integer> widgetPositionMap;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 */
-	public MyBooksForBookcaseSmallIconRequestEvent() {
+	public BookcaseBookWidgetReorderEvent() {
 	}
 
 	/**
 	 * Constructor
-	 *
-	 * @param userId
+	 * 
+	 * @param widgetPositionMap
 	 */
-	public MyBooksForBookcaseSmallIconRequestEvent(String userId, BookcaseEnum requestedTab) {
+	public BookcaseBookWidgetReorderEvent(Map<String, Integer> widgetPositionMap) {
 		super();
-		this.userId = userId;
-		this.requestedTab = requestedTab;
+		this.widgetPositionMap = widgetPositionMap;
 	}
 
-	public String getUserId() {
-		return userId;
+	public Map<String, Integer> getWidgetPositionMap() {
+		return widgetPositionMap;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setWidgetPositionMap(Map<String, Integer> widgetPositionMap) {
+		this.widgetPositionMap = widgetPositionMap;
 	}
 
-	public BookcaseEnum getRequestedTab() {
-		return requestedTab;
-	}
-
-	public void setRequestedTab(BookcaseEnum requestedTab) {
-		this.requestedTab = requestedTab;
-	}
 }

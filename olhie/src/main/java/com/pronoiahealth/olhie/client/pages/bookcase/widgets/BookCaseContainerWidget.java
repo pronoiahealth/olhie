@@ -11,9 +11,12 @@
 package com.pronoiahealth.olhie.client.pages.bookcase.widgets;
 
 import static com.google.gwt.query.client.GQuery.$;
+import static gwtquery.plugins.ui.Ui.Ui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
@@ -24,8 +27,6 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.dom.client.Node;
-import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.query.client.Function;
 import com.google.gwt.query.client.GQuery;
 import com.google.gwt.user.client.DOM;
@@ -35,6 +36,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.pronoiahealth.olhie.client.shared.constants.BookImageSizeEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.bookcase.BookcaseBookWidgetReorderEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.BookcaseDisplay;
 import com.pronoiahealth.olhie.client.utils.BookList3DCreationalHandler;
@@ -51,6 +53,16 @@ import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3D_3;
  * @since Nov 29, 2013
  * 
  */
+/**
+ * BookCaseContainerWidget.java<br/>
+ * Responsibilities:<br/>
+ * 1.
+ * 
+ * @author John DeStefano
+ * @version 1.0
+ * @since Dec 2, 2013
+ * 
+ */
 @Templated("#root")
 public class BookCaseContainerWidget extends Composite {
 
@@ -65,6 +77,9 @@ public class BookCaseContainerWidget extends Composite {
 
 	@Inject
 	private javax.enterprise.event.Event<BookListBookSelectedEvent> bookListBookSelectedEvent;
+
+	@Inject
+	private javax.enterprise.event.Event<BookcaseBookWidgetReorderEvent> bookcaseBookWidgetReorderEvent;
 
 	private Function bookClickFunction;
 
@@ -114,9 +129,8 @@ public class BookCaseContainerWidget extends Composite {
 			// Remove all children from the bookDetailContainer
 			int cnt = bookDetailContainer.getChildCount();
 			while (bookDetailContainer.getChildCount() != 0) {
-				Node n = bookDetailContainer.getFirstChild();
-				bookDetailContainer.removeChild(n);
-				n = null;
+				bookDetailContainer.removeChild(bookDetailContainer
+						.getFirstChild());
 			}
 
 			// Add a book list3D to the container
@@ -150,25 +164,58 @@ public class BookCaseContainerWidget extends Composite {
 				BookCaseDraggableBookWidget widget = bookCaseDraggableBookWidgetFac
 						.get();
 				String bookId = bc.getBookId();
+				String userBookRelationshipId = bc.getUserBookRelationshipId();
 				widget.setData(Utils
 						.buildRestServiceForBookFrontCoverDownloadLink(bookId,
-								BookImageSizeEnum.SMALL), bookId);
+								BookImageSizeEnum.SMALL), bookId,
+						userBookRelationshipId);
 				sortableContainer.appendChild(widget.getElement());
 			}
-
 			config();
 		}
 	}
 
+	/**
+	 * Configure the update when a users moves a book in the display and
+	 * configure the button click on a book display.
+	 */
 	private void config() {
 		// Configure the sortable container
-		JSONObject obj = new JSONObject();
-		configSortable(this, sortableContainer, obj.getJavaScriptObject());
+		// JSONObject obj = new JSONObject();
+		// configSortable(this, sortableContainer, obj.getJavaScriptObject());
+
+		// Configure sortable
+		GQuery sortableContainerQry = $(sortableContainer);
+		sortableContainerQry.as(Ui).sortable()
+				.bind("sortupdate", new Function() {
+					@Override
+					public boolean f(Event e, Object data) {
+						GQuery lstQry = $(sortableContainer).find(
+								".ui-state-default");
+						int size = lstQry.length();
+						Map<String, Integer> map = new HashMap<String, Integer>();
+						for (int i = 0; i < size; i++) {
+							com.google.gwt.dom.client.Element ret = lstQry
+									.get(i);
+							GQuery retQry = $(ret).find(
+									".bookCase-Detail-Button");
+							String val = retQry.attr("userBookRelationshipId");
+							map.put(val, Integer.valueOf(i));
+						}
+
+						// Tell the server to update the data
+						bookcaseBookWidgetReorderEvent
+								.fire(new BookcaseBookWidgetReorderEvent(map));
+
+						// Event propagation stops here
+						return false;
+					}
+				});
 
 		// Configure the click events, bind the bookClickFunction to each
 		// element
-		GQuery sortableQry = $(sortableContainer).find(
-				".bookCase-Detail-Button");
+		GQuery sortableQry = sortableContainerQry
+				.find(".bookCase-Detail-Button");
 		sortableQry.each(new Function() {
 			@Override
 			public void f(com.google.gwt.dom.client.Element e) {

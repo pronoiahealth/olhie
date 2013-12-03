@@ -31,6 +31,7 @@ public class LinkToAssetButtonWidget extends BaseBookassetActionButtonWidget {
 		this.iconName = "icon-external-link";
 		this.buttonStyle = "btn-primary";
 		this.title = "Link";
+		this.additionalClasses = "btn-mini";
 	}
 
 }

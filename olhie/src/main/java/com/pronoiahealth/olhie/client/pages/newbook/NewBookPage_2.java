@@ -10,12 +10,12 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages.newbook;
 
-import static com.arcbees.gquery.tooltip.client.Tooltip.Tooltip;
 import static com.google.gwt.query.client.GQuery.$;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.nav.client.local.Page;
@@ -24,24 +24,20 @@ import org.jboss.errai.ui.nav.client.local.PageShowing;
 import org.jboss.errai.ui.nav.client.local.PageShown;
 import org.jboss.errai.ui.nav.client.local.PageState;
 
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.ButtonGroup;
 import com.github.gwtbootstrap.client.ui.FluidRow;
 import com.github.gwtbootstrap.client.ui.Heading;
 import com.github.gwtbootstrap.client.ui.Hero;
 import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.NavPills;
 import com.github.gwtbootstrap.client.ui.PageHeader;
-import com.github.gwtbootstrap.client.ui.constants.ButtonType;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
-import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.query.client.Function;
 import com.google.gwt.query.client.GQuery;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -54,7 +50,9 @@ import com.pronoiahealth.olhie.client.pages.newbook.features.AddLogoDialogHandle
 import com.pronoiahealth.olhie.client.pages.newbook.features.AddYouTubeDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.pages.newbook.features.BookDescriptionDetailDialogHandlerFeature;
 import com.pronoiahealth.olhie.client.pages.newbook.features.NewAssetDialogHandlerFeature;
+import com.pronoiahealth.olhie.client.pages.newbook.widgets.BaseBookassetActionButtonWidget;
 import com.pronoiahealth.olhie.client.pages.newbook.widgets.BookIntroductionDetailWidget;
+import com.pronoiahealth.olhie.client.pages.newbook.widgets.NewBookButtonHolderWidget;
 import com.pronoiahealth.olhie.client.pages.newbook.widgets.NewBookDroppablePanel;
 import com.pronoiahealth.olhie.client.shared.constants.BookImageSizeEnum;
 import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
@@ -198,27 +196,7 @@ public class NewBookPage_2 extends AbstractPage {
 	@UiField
 	public HTMLPanel buttonGrpHolder;
 
-	private ButtonGroup authorBtns;
-
-	public Button editBookButton;
-
-	public Button authorViewCommentsButton;
-
-	public Button loggedInMyCollViewCommentsButton;
-
-	public Button loggedInNotMyCollViewCommentsButton;
-
-	public Button notLoggedInViewCommentsButton;
-
-	public Button logoBookButton;
-
-	public Button addCommentBookButton;
-
-	public Button addCommentBookButton1;
-
-	public Button addToCollectionBookButton;
-
-	public Button removeFromCollectionBookButton;
+	public GQuery authorViewCommentsButton;
 
 	private StarRating starRating;
 
@@ -239,6 +217,12 @@ public class NewBookPage_2 extends AbstractPage {
 
 	@Inject
 	private AddLinkDialogHandlerFeature addLinkDialogHandlerFeature;
+
+	@Inject
+	private NewBookButtonHolderWidget newBookButtonHolderWidget;
+
+	@Inject
+	private Instance<BaseBookassetActionButtonWidget> baseBookassetActionButtonWidgetFac;
 
 	/**
 	 * Default Constructor
@@ -297,97 +281,65 @@ public class NewBookPage_2 extends AbstractPage {
 	 * Author buttons
 	 */
 	private void buildAndSetAuthorBtns() {
-		// Buttons for author or co-author
-		authorBtns = new ButtonGroup();
-
 		// logo
-		logoBookButton = createButton("", IconType.PICTURE, ButtonType.PRIMARY,
-				ButtonSize.SMALL, "Add a Logo image");
-		logoBookButton.addClickHandler(new ClickHandler() {
+		BaseBookassetActionButtonWidget but = baseBookassetActionButtonWidgetFac
+				.get();
+		Element lE = but.createAndBindButton("btn-primary", "Add a Logo image",
+				"icon-picture", null, "icon-small", false);
+		newBookButtonHolderWidget.getElement().appendChild(lE);
+		$(lE).bind(com.google.gwt.user.client.Event.ONCLICK, new Function() {
 			@Override
-			public void onClick(ClickEvent event) {
+			public boolean f(com.google.gwt.user.client.Event e) {
 				showAddLogoModalEvent.fire(new ShowAddLogoModalEvent(
 						currentBookDisplay.getBook().getId()));
+				return false;
 			}
 		});
-		GQuery q = $(logoBookButton.getElement());
-		$(logoBookButton.getElement()).as(Tooltip).tooltip();
-		authorBtns.add(logoBookButton);
-		// createTooltip(logoBookButton, "Add a Logo image", Placement.TOP);
 
 		// comments
-		authorViewCommentsButton = createButton("", IconType.COMMENTS,
-				ButtonType.PRIMARY, ButtonSize.SMALL, "View book comments");
-		authorViewCommentsButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				showBookCommentsModalEvent.fire(new ShowBookCommentsModalEvent(
-						currentBookDisplay.getBook().getId(),
-						currentBookDisplay.getBook().getBookTitle()));
-			}
-		});
-		authorBtns.add(authorViewCommentsButton);
-		// createTooltip(authorViewCommentsButton, "View book comments",
-		// Placement.TOP);
-		$(authorViewCommentsButton.getElement()).as(Tooltip).tooltip();
+		but = baseBookassetActionButtonWidgetFac.get();
+		Element authorViewCommentsButtonElement = but.createAndBindButton(
+				"btn-primary", "View book comments", "icon-comments", null,
+				"icon-small", false);
+		newBookButtonHolderWidget.getElement().appendChild(
+				authorViewCommentsButtonElement);
+		this.authorViewCommentsButton = $(authorViewCommentsButtonElement);
+		authorViewCommentsButton.bind(com.google.gwt.user.client.Event.ONCLICK,
+				new Function() {
+					@Override
+					public boolean f(com.google.gwt.user.client.Event e) {
+						String val = authorViewCommentsButton.attr("disabled");
+						if (!val.equals("disabled")) {
+							showBookCommentsModalEvent
+									.fire(new ShowBookCommentsModalEvent(
+											currentBookDisplay.getBook()
+													.getId(),
+											currentBookDisplay.getBook()
+													.getBookTitle()));
+						}
+						return false;
+					}
+				});
 
 		// Edit
-		editBookButton = createButton("", IconType.EDIT, ButtonType.PRIMARY,
-				ButtonSize.SMALL, "Edit the Book details");
-		editBookButton.addClickHandler(new ClickHandler() {
+		but = baseBookassetActionButtonWidgetFac.get();
+		Element eE = but
+				.createAndBindButton("btn-primary", "Edit the Book details",
+						"icon-edit", null, "icon-small", false);
+		newBookButtonHolderWidget.getElement().appendChild(eE);
+		$(eE).bind(com.google.gwt.user.client.Event.ONCLICK, new Function() {
 			@Override
-			public void onClick(ClickEvent event) {
+			public boolean f(com.google.gwt.user.client.Event e) {
 				showNewBookModalEvent.fire(new ShowNewBookModalEvent(
 						ModeEnum.EDIT, currentBookDisplay.getBook()));
+				return false;
 			}
 		});
-		authorBtns.add(editBookButton);
-		// createTooltip(editBookButton, "Edit the Book details",
-		// Placement.TOP);
-		$(editBookButton.getElement()).as(Tooltip).tooltip();
 
 		// Add to the button holder
-		buttonGrpHolder.add(authorBtns);
+		// buttonGrpHolder.add(authorBtns);
+		buttonGrpHolder.add(newBookButtonHolderWidget);
 	}
-
-	/**
-	 * Create a button
-	 * 
-	 * @param caption
-	 * @param iType
-	 * @param bType
-	 * @param bSize
-	 * @return
-	 */
-	private Button createButton(String caption, IconType iType,
-			ButtonType bType, ButtonSize bSize, String toolTipTxt) {
-		Button btn = null;
-		if (caption != null && caption.length() > 0) {
-			btn = new Button(caption);
-		} else {
-			btn = new Button();
-		}
-		btn.setIcon(iType);
-		btn.setType(bType);
-		btn.setSize(bSize);
-		btn.getElement().setAttribute("rel", "tooltip");
-		btn.setTitle(toolTipTxt);
-		return btn;
-	}
-
-	/**
-	 * Set a tool tip on a widget
-	 * 
-	 * @param w
-	 * @param message
-	 * @param placement
-	 */
-	/*
-	 * private void createTooltip(Widget w, String message, Placement placement)
-	 * { Tooltip tooltip = new Tooltip(); tooltip.setWidget(w);
-	 * tooltip.setText(message); tooltip.setPlacement(placement);
-	 * //tooltip.reconfigure(); }
-	 */
 
 	/**
 	 * When the page is hiding tell the Header so it can add the new book button
@@ -538,9 +490,9 @@ public class NewBookPage_2 extends AbstractPage {
 
 		// Comments
 		if (bookDisplay.isHasComments() == true) {
-			authorViewCommentsButton.setEnabled(true);
+			authorViewCommentsButton.attr("disabled", Boolean.FALSE);
 		} else {
-			authorViewCommentsButton.setEnabled(false);
+			authorViewCommentsButton.attr("disabled", Boolean.TRUE);
 		}
 
 		setControlVisibility(isUserAuthorOrCoAuthor);
@@ -555,7 +507,8 @@ public class NewBookPage_2 extends AbstractPage {
 	 * @param isUserAuthorOrCoAuthor
 	 */
 	private void setControlVisibility(boolean isUserAuthorOrCoAuthor) {
-		authorBtns.setVisible(isUserAuthorOrCoAuthor);
+		// authorBtns.setVisible(isUserAuthorOrCoAuthor);
+		newBookButtonHolderWidget.setVisible(isUserAuthorOrCoAuthor);
 		tocAddElementContainer.setVisible(isUserAuthorOrCoAuthor);
 
 	}

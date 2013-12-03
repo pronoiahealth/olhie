@@ -11,14 +11,6 @@
 				<g:customHeader size='7'>
 					<b:Image url="Olhie/images/Authored.png"></b:Image>
 				</g:customHeader>
-				<g:HTMLPanel ui:field="testBooksTab" styleName="ph-Bookcase-MyBooksTab"
-					height="100%">
-				</g:HTMLPanel>
-			</g:tab>
-			<g:tab>
-				<g:customHeader size='7'>
-					<b:Image url="Olhie/images/Authored.png"></b:Image>
-				</g:customHeader>
 				<g:HTMLPanel ui:field="myBooksTab" styleName="ph-Bookcase-MyBooksTab"
 					height="100%">
 				</g:HTMLPanel>

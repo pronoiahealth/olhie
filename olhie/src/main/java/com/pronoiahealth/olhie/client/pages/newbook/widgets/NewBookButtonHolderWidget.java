@@ -8,61 +8,39 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.pages.bookcase.widgets;
-
-import javax.inject.Inject;
+package com.pronoiahealth.olhie.client.pages.newbook.widgets;
 
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Image;
 
 /**
- * BookCaseBookWidget.java<br/>
+ * NewBookButtonHolderWidget.java<br/>
  * Responsibilities:<br/>
  * 1.
  * 
  * @author John DeStefano
  * @version 1.0
- * @since Nov 29, 2013
+ * @since Dec 2, 2013
  * 
  */
-@Templated("#root")
-public class BookCaseDraggableBookWidget extends Composite {
+@Templated("#buttonGroup")
+public class NewBookButtonHolderWidget extends Composite {
 
 	@DataField
-	private Element root = DOM.createElement("li");
-
-	@Inject
-	@DataField
-	private Anchor button;
-
-	@Inject
-	@DataField
-	private Image smallBookImageDisplay;
+	private Element buttonGroup = DOM.createDiv();
 
 	/**
 	 * Constructor
 	 * 
 	 */
-	public BookCaseDraggableBookWidget() {
+	public NewBookButtonHolderWidget() {
 	}
 
-	public void setData(String imgUrl, String bookId,
-			String userBookRelationshipId) {
-		smallBookImageDisplay.setUrl(imgUrl);
-		button.getElement().setAttribute("bookId", bookId);
-		button.getElement().setAttribute("userBookRelationshipId",
-				userBookRelationshipId);
+	public void addButton(BaseBookassetActionButtonWidget button) {
+		buttonGroup.appendChild(button.getElement());
 	}
-
-	@Override
-	public Element getElement() {
-		return root;
-	}
-
 }

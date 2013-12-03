@@ -37,5 +37,6 @@ public class DownloadAssetButtonWidget extends BaseBookassetActionButtonWidget {
 		this.iconName = "icon-cloud-download";
 		this.buttonStyle = "btn-info";
 		this.title = "Download";
+		this.additionalClasses = "btn-mini";
 	}
 }

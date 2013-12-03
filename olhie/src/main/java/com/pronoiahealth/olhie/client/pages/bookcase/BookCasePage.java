@@ -11,10 +11,8 @@
 package com.pronoiahealth.olhie.client.pages.bookcase;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -22,6 +20,8 @@ import javax.inject.Inject;
 import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.nav.client.local.PageShowing;
 
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.query.client.GQuery;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -32,7 +32,7 @@ import com.pronoiahealth.olhie.client.navigation.RegisteredRole;
 import com.pronoiahealth.olhie.client.pages.AbstractPage;
 import com.pronoiahealth.olhie.client.pages.AppSelectors;
 import com.pronoiahealth.olhie.client.pages.bookcase.widgets.BookCaseContainerWidget;
-import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
+import com.pronoiahealth.olhie.client.shared.constants.BookcaseEnum;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.GetMyBookcaseEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.GetMyBookcaseResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.MyBooksForBookcaseSmallIconRequestEvent;
@@ -40,12 +40,9 @@ import com.pronoiahealth.olhie.client.shared.events.bookcase.MyBooksForBookcaseS
 import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
-import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.BookcaseDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.widgets.GlassPanelSpinner;
-import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D;
-import com.pronoiahealth.olhie.client.widgets.booklist3d.BookSelectCallBack;
 
 /**
  * BookCasePage<br/>
@@ -65,9 +62,6 @@ public class BookCasePage extends AbstractPage {
 
 	@UiField
 	public HTMLPanel bookcaseContainer;
-
-	@UiField
-	public HTMLPanel testBooksTab;
 
 	@UiField
 	public HTMLPanel myBooksTab;
@@ -92,12 +86,16 @@ public class BookCasePage extends AbstractPage {
 	@Inject
 	private Event<MyBooksForBookcaseSmallIconRequestEvent> myBooksForBookcaseSmallIconRequestEvent;
 
-	private BookSelectCallBack bookSelectCallBack;
-
 	private boolean responseRet = false;
 
 	@Inject
-	private BookCaseContainerWidget bookCaseContainerWidget;
+	private BookCaseContainerWidget authorBookCaseContainerWidget;
+
+	@Inject
+	private BookCaseContainerWidget coauthorBookCaseContainerWidget;
+
+	@Inject
+	private BookCaseContainerWidget myCollectionBookCaseContainerWidget;
 
 	public BookCasePage() {
 	}
@@ -114,17 +112,41 @@ public class BookCasePage extends AbstractPage {
 		bookcaseContainer.add(gSpinner);
 
 		// Bind tab panel selection event
-		// tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
-		// @Override
-		// public void onSelection(SelectionEvent<Integer> event) {
-		// }
-		// });
+		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
+			@Override
+			public void onSelection(SelectionEvent<Integer> event) {
+				int tabIdx = event.getSelectedItem();
+				switch (tabIdx) {
+				case 0:
+					if (myBooksTab == null || myBooksTab.getWidgetCount() == 0) {
+						myBooksForBookcaseSmallIconRequestEvent
+								.fire(new MyBooksForBookcaseSmallIconRequestEvent(
+										clientToken.getUserId(),
+										BookcaseEnum.AUTHOR));
+					}
+					break;
+				case 1:
+					if (myCoBooksTab == null
+							|| myCoBooksTab.getWidgetCount() == 0) {
+						myBooksForBookcaseSmallIconRequestEvent
+								.fire(new MyBooksForBookcaseSmallIconRequestEvent(
+										clientToken.getUserId(),
+										BookcaseEnum.COAUTHOR));
+					}
+					break;
+				case 2:
+					if (myCollectionTab == null
+							|| myCollectionTab.getWidgetCount() == 0) {
+						myBooksForBookcaseSmallIconRequestEvent
+								.fire(new MyBooksForBookcaseSmallIconRequestEvent(
+										clientToken.getUserId(),
+										BookcaseEnum.MYCOLLECTION));
+					}
+					break;
+				}
+			}
+		});
 
-	}
-
-	@PreDestroy
-	protected void preDestroy() {
-		gSpinner.getElement();
 	}
 
 	/**
@@ -134,14 +156,11 @@ public class BookCasePage extends AbstractPage {
 	 */
 	@PageShowing
 	protected void pageShowing() {
+		// Load the author books by default
 		gSpinner.setVisible(true);
-		getMyBookcaseEvent
-				.fire(new GetMyBookcaseEvent(clientToken.getUserId()));
-
 		myBooksForBookcaseSmallIconRequestEvent
 				.fire(new MyBooksForBookcaseSmallIconRequestEvent(clientToken
-						.getUserId()));
-
+						.getUserId(), BookcaseEnum.AUTHOR));
 	}
 
 	/**
@@ -154,6 +173,9 @@ public class BookCasePage extends AbstractPage {
 		setContainerSize();
 	}
 
+	/**
+	 * Adjusts the container height
+	 */
 	private void setContainerSize() {
 		GQuery gObj = AppSelectors.INSTANCE.getCenterBackground().first();
 		int h = gObj.height();
@@ -172,45 +194,48 @@ public class BookCasePage extends AbstractPage {
 	protected void observesMyBooksForBookcaseSmallIconResponseEvent(
 			@Observes MyBooksForBookcaseSmallIconResponseEvent myBooksForBookcaseSmallIconResponseEvent) {
 
+		// Get the parameters
 		List<BookcaseDisplay> lst = myBooksForBookcaseSmallIconResponseEvent
 				.getBookCaseDisplayLst();
+		BookcaseEnum requestedTab = myBooksForBookcaseSmallIconResponseEvent
+				.getRequestedTab();
 
-		if (lst != null && lst.size() > 0) {
-			bookCaseContainerWidget.loadDataAndInit(lst);
-			testBooksTab.add(bookCaseContainerWidget);
+		switch (requestedTab) {
+		// Load the appropriate list
+		case AUTHOR:
+			if (lst != null && lst.size() > 0) {
+				authorBookCaseContainerWidget.loadDataAndInit(lst);
+				myBooksTab.clear();
+				myBooksTab.add(authorBookCaseContainerWidget);
+			}
+			break;
+		case COAUTHOR:
+			if (lst != null && lst.size() > 0) {
+				coauthorBookCaseContainerWidget.loadDataAndInit(lst);
+				myCoBooksTab.clear();
+				myCoBooksTab.add(authorBookCaseContainerWidget);
+			}
+			break;
+		case MYCOLLECTION:
+			if (lst != null && lst.size() > 0) {
+				myCollectionBookCaseContainerWidget.loadDataAndInit(lst);
+				myCollectionTab.clear();
+				myCollectionTab.add(myCollectionBookCaseContainerWidget);
+			}
+			break;
 		}
 
+		// Set the spinner state
+		gSpinner.setVisible(false);
 	}
 
 	/**
-	 * Watches for the list of books to display
+	 * Currently does nothing
 	 * 
 	 * @param getMyBookcaseResponseEvent
 	 */
 	protected void observesGetMyBookcaseResponseEvent(
 			@Observes GetMyBookcaseResponseEvent getMyBookcaseResponseEvent) {
-		Map<UserBookRelationshipEnum, List<BookDisplay>> bookMap = getMyBookcaseResponseEvent
-				.getDisplayMap();
-
-		List<BookDisplay> books = null;
-		books = bookMap.get(UserBookRelationshipEnum.CREATOR);
-		if (books != null && books.size() > 0) {
-			myBooksTab.add(new BookList3D(books, bookSelectCallBack));
-		}
-
-		books = bookMap.get(UserBookRelationshipEnum.COAUTHOR);
-		if (books != null && books.size() > 0) {
-			myCoBooksTab.add(new BookList3D(books, bookSelectCallBack));
-		}
-
-		books = bookMap.get(UserBookRelationshipEnum.MYCOLLECTION);
-		if (books != null && books.size() > 0) {
-			myCollectionTab.add(new BookList3D(books, bookSelectCallBack));
-		}
-
-		// Set the spinner state
-		gSpinner.setVisible(false);
-		// spinner.setVisible(false);
 	}
 
 	/**

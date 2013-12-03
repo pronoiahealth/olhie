@@ -33,6 +33,7 @@ public class BookdescriptionDetailButtonWidget extends BaseBookassetActionButton
 		this.iconName = "icon-rotate-right";
 		this.buttonStyle = "btn-danger";
 		this.title = "Detail";
+		this.additionalClasses = "btn-mini";
 	}
 
 }

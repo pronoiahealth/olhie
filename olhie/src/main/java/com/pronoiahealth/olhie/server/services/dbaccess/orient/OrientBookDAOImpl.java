@@ -630,6 +630,8 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 			ubRel.setUserRelationship(relationship.toString());
 			ubRel.setEffectiveDate(now);
 			ubRel.setLastViewedDate(now);
+			// Set this to 0 so it will appear at the beginning of the list
+			ubRel.setBookCasePosition(0);
 			ooDbTx.save(ubRel);
 			ooDbTx.commit();
 			return ooDbTx.detach(ubRel, true);
@@ -782,6 +784,10 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		try {
 			// Start a transaction since we are updating data
 			ooDbTx.begin(TXTYPE.OPTIMISTIC);
+			
+			// First get the current users id
+			User user = getUserByUserId(userId);
+			String uId = user.getId();
 
 			// Look up each book description and update its position
 			for (Entry<String, Integer> entry : positionMap.entrySet()) {
@@ -791,7 +797,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 
 				// Check to make sure the userId's match.
 				// If not throw an exception
-				if (!userId.equals(rel.getTheUser())) {
+				if (!uId.equals(rel.getTheUser().getId())) {
 					throw new Exception(
 							"The userId does not match for UserBookRelationship with id "
 									+ rel.getId());
@@ -799,6 +805,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 
 				// Update the value
 				rel.setBookCasePosition(pos);
+				ooDbTx.save(rel);
 			}
 
 			// Commit all the changes

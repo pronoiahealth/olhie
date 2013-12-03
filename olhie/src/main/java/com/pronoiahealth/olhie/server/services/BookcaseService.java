@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,8 +23,10 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.pronoiahealth.olhie.client.shared.constants.BookcaseEnum;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
+import com.pronoiahealth.olhie.client.shared.events.bookcase.BookcaseBookWidgetReorderEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.GetMyBookcaseEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.GetMyBookcaseResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.MyBooksForBookcaseSmallIconRequestEvent;
@@ -161,6 +164,8 @@ public class BookcaseService {
 			// Check user id against session
 			String userId = myBooksForBookcaseSmallIconRequestEvent.getUserId();
 			String sessionId = userSessionToken.getUserId();
+			BookcaseEnum requestedTab = myBooksForBookcaseSmallIconRequestEvent
+					.getRequestedTab();
 
 			// Create the return list
 			List<BookcaseDisplay> bookcaseDisplayLst = new ArrayList<BookcaseDisplay>();
@@ -170,66 +175,64 @@ public class BookcaseService {
 					&& userSessionToken.getLoggedIn() == true) {
 
 				// Must have an active relationship
-				List<UserBookRelationship> bResult = bookDAO
-						.getActiveUserBooksRelationshipLstByUserId(userId,
-								UserBookRelationshipEnum.CREATOR.toString(),
-								UserBookRelationshipEnum.COAUTHOR.toString());
+				List<UserBookRelationship> bResult = null;
+				switch (requestedTab) {
+				case AUTHOR:
+					bResult = bookDAO
+							.getActiveUserBooksRelationshipLstByUserId(userId,
+									UserBookRelationshipEnum.CREATOR.toString());
+					break;
+				case COAUTHOR:
+					bResult = bookDAO
+							.getActiveUserBooksRelationshipLstByUserId(userId,
+									UserBookRelationshipEnum.COAUTHOR
+											.toString());
+					break;
+				case MYCOLLECTION:
+					bResult = bookDAO
+							.getActiveUserBooksRelationshipLstByUserId(userId,
+									UserBookRelationshipEnum.MYCOLLECTION
+											.toString());
+					break;
+				}
+
+				// Load list
 				for (UserBookRelationship rel : bResult) {
 					Book book = rel.getTheBook();
-					bookcaseDisplayLst.add(new BookcaseDisplay(book.getId()));
+					bookcaseDisplayLst.add(new BookcaseDisplay(book.getId(),
+							rel.getId()));
 				}
 			}
 
 			// Fire return
 			myBooksForBookcaseSmallIconResponseEvent
 					.fire(new MyBooksForBookcaseSmallIconResponseEvent(
-							bookcaseDisplayLst));
+							bookcaseDisplayLst, requestedTab));
 
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);
 			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
 		}
-
 	}
 
+	/**
+	 * Reorder the books for the various collections
+	 * 
+	 * @param bookcaseBookWidgetReorderEvent
+	 */
+	protected void observesBookcaseBookWidgetReorderEvent(
+			@Observes BookcaseBookWidgetReorderEvent bookcaseBookWidgetReorderEvent) {
+		try {
+			Map<String, Integer> positionMap = bookcaseBookWidgetReorderEvent
+					.getWidgetPositionMap();
+			String userId = userSessionToken.getUserId();
+			bookDAO.updateUserBookRelationshipBookCasePosition(positionMap,
+					userId);
+		} catch (Exception e) {
+			String errMsg = e.getMessage();
+			log.log(Level.SEVERE, errMsg, e);
+			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
+		}
+	}
 }
-
-/*
- * // Build the BookDisplay BookDisplay retDisplay = new BookDisplay();
- * 
- * // Set the relationship Set<UserBookRelationshipEnum> relEnums = new
- * TreeSet<UserBookRelationshipEnum>(); relEnums.add(catEnum);
- * retDisplay.setRelEnums(relEnums);
- * 
- * // Full name String fullName = String.format("%s %s",
- * currentUser.getFirstName(), currentUser.getLastName());
- * retDisplay.setAuthorFullName(fullName);
- * 
- * // Book cover String bookCover = currentBook.getCoverName(); BookCover cover
- * = holder.getCoverByName(bookCover); retDisplay.setBookCover(cover);
- * 
- * // Book Category String bookCat = currentBook.getCategory(); BookCategory cat
- * = holder.getCategoryByName(bookCat); retDisplay.setBookCategory(cat);
- * 
- * // Book assets // Get a list of Bookassetdescriptions
- * OSQLSynchQuery<Bookassetdescription> baQuery = new
- * OSQLSynchQuery<Bookassetdescription>(
- * "select from Bookassetdescription where bookId = :bId"); HashMap<String,
- * String> baparams = new HashMap<String, String>(); baparams.put("bId",
- * currentBook.getId()); List<Bookassetdescription> baResults = ooDbTx.command(
- * baQuery).execute(baparams); if (baResults != null && baResults.size() > 0) {
- * List<Bookassetdescription> retDescs = new ArrayList<Bookassetdescription>();
- * retDisplay.setBookAssetDescriptions(retDescs); for (Bookassetdescription d :
- * baResults) { Bookassetdescription retDesc = new Bookassetdescription();
- * retDesc.setDescription(d.getDescription()); retDescs.add(retDesc); } }
- * 
- * // Book Book retBook = new Book(); retDisplay.setBook(retBook);
- * retBook.setBookTitle(currentBook.getBookTitle());
- * retBook.setIntroduction(currentBook.getIntroduction());
- * retBook.setId(currentBook.getId());
- * 
- * // Logo? String logoFileName = currentBook.getLogoFileName(); retDisplay
- * .setBookLogo((logoFileName != null && logoFileName .length() > 0) ? true :
- * false);
- */

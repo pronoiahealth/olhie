@@ -8,21 +8,18 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.widgets.booklist3d;
+package com.pronoiahealth.olhie.client.shared.constants;
 
 /**
- * BookSelectCallBack.java<br/>
+ * BookcaseEnum.java<br/>
  * Responsibilities:<br/>
  * 1.
  *
  * @author John DeStefano
  * @version 1.0
- * @since Sep 21, 2013
+ * @since Dec 2, 2013
  *
  */
-public interface BookSelectCallBack {
-	/**
-	 * @param bookId
-	 */
-	public void onBookSelect(String bookId);
+public enum BookcaseEnum {
+	AUTHOR, COAUTHOR, MYCOLLECTION;
 }

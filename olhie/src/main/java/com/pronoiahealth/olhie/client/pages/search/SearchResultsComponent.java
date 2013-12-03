@@ -16,16 +16,9 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.jboss.errai.ioc.client.container.IOC;
-import org.jboss.errai.ioc.client.container.async.AsyncBeanDef;
-import org.jboss.errai.ioc.client.container.async.AsyncBeanManager;
-import org.jboss.errai.ioc.client.container.async.CreationalCallback;
-
 import com.github.gwtbootstrap.client.ui.Column;
 import com.github.gwtbootstrap.client.ui.FluidRow;
 import com.github.gwtbootstrap.client.ui.Label;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -33,7 +26,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
-import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.constants.SearchPageActionEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.BookSearchEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookSearchResponseEvent;
@@ -47,7 +39,6 @@ import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.utils.BookList3DCreationalHandler;
 import com.pronoiahealth.olhie.client.utils.Utils;
 import com.pronoiahealth.olhie.client.widgets.GlassPanelSpinner;
-import com.pronoiahealth.olhie.client.widgets.booklist3d.BookSelectCallBack;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3D_3;
 
 //import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D_2;
@@ -91,8 +82,6 @@ public class SearchResultsComponent extends AbstractComposite {
 
 	private GlassPanelSpinner gSpinner;
 
-	private BookSelectCallBack bookSelectCallBack;
-
 	private BookList3D_3 bookList3D;
 
 	@Inject
@@ -122,17 +111,6 @@ public class SearchResultsComponent extends AbstractComposite {
 		gSpinner = new GlassPanelSpinner();
 		gSpinner.setVisible(false);
 		searchContainer.add(gSpinner);
-
-		// Navigate to the NewBookPage. The edit mode will be set by logic on
-		// that page.
-		bookSelectCallBack = new BookSelectCallBack() {
-			@Override
-			public void onBookSelect(String bookId) {
-				Multimap<String, Object> map = ArrayListMultimap.create();
-				map.put("bookId", bookId);
-				nav.performTransition(NavEnum.NewBookPage.toString(), map);
-			}
-		};
 
 		// Set pager column style
 		pagerContainerCol.getElement().setAttribute("style",

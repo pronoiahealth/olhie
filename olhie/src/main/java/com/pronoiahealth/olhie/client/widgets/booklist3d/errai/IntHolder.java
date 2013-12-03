@@ -8,7 +8,7 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.widgets.booklist3d;
+package com.pronoiahealth.olhie.client.widgets.booklist3d.errai;
 
 /**
  * IntHolder.java<br/>

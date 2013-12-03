@@ -37,6 +37,7 @@ public class ViewAssetButtonWidget extends BaseBookassetActionButtonWidget {
 		this.iconName = "icon-eye-open";
 		this.buttonStyle = "btn-success";
 		this.title = "View";
+		this.additionalClasses = "btn-mini";
 	}
 
 }

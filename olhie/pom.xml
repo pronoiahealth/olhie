@@ -58,6 +58,7 @@
 		<version.gson>2.2.4</version.gson>
 		<gwtquery.draggable>1.0.4</gwtquery.draggable>
 		<gwtquery.droppable>1.0.8</gwtquery.droppable>
+		<gwtquery.ui>r146</gwtquery.ui>
 		<commons.email>1.3.2</commons.email>
 	</properties>
 
@@ -382,6 +383,12 @@
 				<version>1.0.1</version>
 			</dependency>
 
+			<!-- GWTQuery-ui -->
+			<dependency>
+				<groupId>com.google.gwt</groupId>
+				<artifactId>gwtquery-ui</artifactId>
+				<version>${gwtquery.ui}</version>
+			</dependency>
 
 			<!-- GWT -->
 			<dependency>
@@ -439,12 +446,9 @@
 			</dependency>
 
 			<!-- gwtquery plugin chosen -->
-			<!-- dependency>
-				<groupId>com.watopi</groupId>
-				<groupId>com.watopi</groupId>
-				<artifactId>gwtchosen</artifactId>
-				<version>${version.gwtquery.chosen}</version>
-			</dependency -->
+			<!-- dependency> <groupId>com.watopi</groupId> <groupId>com.watopi</groupId> 
+				<artifactId>gwtchosen</artifactId> <version>${version.gwtquery.chosen}</version> 
+				</dependency -->
 			<dependency>
 				<groupId>org.jboss.resteasy</groupId>
 				<artifactId>resteasy-cdi</artifactId>
@@ -753,14 +757,6 @@
 			<artifactId>org.moxieapps.gwt.uploader</artifactId>
 		</dependency>
 
-		<!-- DND -->
-		<!-- dependency> <groupId>com.allen-sauer.gwt.dnd</groupId> <artifactId>gwt-dnd</artifactId> 
-			</dependency -->
-
-		<!-- gwtjquery -->
-		<!-- dependency> <groupId>com.xedge</groupId> <artifactId>gwt-jquery</artifactId> 
-			</dependency -->
-
 		<!-- Needed for running tests (you may also use TestNG) -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -866,16 +862,6 @@
 			<artifactId>gwt-recaptcha</artifactId>
 		</dependency>
 
-		<!-- gwtquery plugin chosen -->
-		<!-- dependency>
-			<groupId>com.watopi</groupId>
-			<artifactId>gwtchosen</artifactId>
-		</dependency -->
-		<!-- dependency>
-			<groupId>org.mortbay.jetty</groupId>
-			<artifactId>jetty-util5</artifactId>
-			<version>6.1.25</version>
-		</dependency -->
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-cdi</artifactId>
@@ -920,6 +906,13 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-email</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwtquery-ui</artifactId>
+		</dependency>
+
+
+
 	</dependencies>
 
 	<build>

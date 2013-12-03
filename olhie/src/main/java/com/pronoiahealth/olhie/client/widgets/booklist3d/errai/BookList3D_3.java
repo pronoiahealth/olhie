@@ -49,7 +49,6 @@ import com.pronoiahealth.olhie.client.shared.events.local.DownloadBookAssetEvent
 import com.pronoiahealth.olhie.client.shared.events.local.ShowAddBookCommentModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowViewBookassetDialogEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
-import com.pronoiahealth.olhie.client.widgets.booklist3d.IntHolder;
 
 /**
  * BookList3D_3.java<br/>
@@ -148,19 +147,6 @@ public class BookList3D_3 extends Composite {
 			}
 			attachEventsToLst();
 		}
-	}
-
-	/**
-	 * Remove the child nodes from bookList basically clearing all books. Before
-	 * that all jQuery events are removed. Also clears the map that is tracking
-	 * objects.
-	 */
-	public void cleanList() {
-		removeEventsFromLst();
-		while (bookList.hasChildNodes()) {
-			bookList.removeChild(bookList.getFirstChild());
-		}
-		bliwMap.clear();
 	}
 
 	/**

@@ -65,6 +65,10 @@ public class BaseBookassetActionButtonWidget extends Composite {
 
 	protected String hRef;
 
+	protected String additionalClasses;
+
+	protected boolean noToolTip = false;
+
 	/**
 	 * Constructor
 	 * 
@@ -74,21 +78,60 @@ public class BaseBookassetActionButtonWidget extends Composite {
 
 	/**
 	 * Sets icon, buttonStyle (info, warn, etc..), and tooltip title. Depends on
-	 * icon name string being set in constructor
+	 * icon name string being set in constructor of child classes
 	 */
 	@PostConstruct
 	protected final void postConstruct() {
-		button.setStyleName(buttonStyle, true);
-		button.getElement().setAttribute("data-original-title", title);
-		button.getElement().setAttribute("title", title);
-		buttonIcon.setClassName(iconName);
+		createButton(buttonStyle, title, iconName, hRef, additionalClasses,
+				noToolTip);
+	}
+
+	/**
+	 * Sets up attributes
+	 * 
+	 * @param buttonStyle
+	 * @param title
+	 * @param iconName
+	 * @param hRef
+	 * @param additionalClasses
+	 * @param noToolTip
+	 */
+	private void createButton(String buttonStyle, String title,
+			String iconName, String hRef, String additionalClasses,
+			boolean noToolTip) {
+		if (buttonStyle != null) {
+			this.buttonStyle = buttonStyle;
+			button.setStyleName(buttonStyle, true);
+		}
+
+		if (title != null) {
+			this.title = title;
+			button.getElement().setAttribute("data-original-title", title);
+			button.getElement().setAttribute("title", title);
+		}
+
+		if (iconName != null) {
+			this.iconName = iconName;
+			buttonIcon.setClassName(iconName);
+		}
+
 		if (hRef != null) {
+			this.hRef = hRef;
 			button.setHref(hRef);
 			button.setTarget("_blank");
 		}
-		// setTooltip(title);
+
+		if (additionalClasses != null) {
+			this.additionalClasses = additionalClasses;
+			button.setStyleName(additionalClasses, true);
+		}
+
 		// Add Tooltips
-		$(button.getElement()).as(Tooltip).tooltip();
+		if (noToolTip == false) {
+			$(button.getElement()).as(Tooltip).tooltip();
+		} else {
+			noToolTip = true;
+		}
 	}
 
 	/**
@@ -115,15 +158,25 @@ public class BaseBookassetActionButtonWidget extends Composite {
 	}
 
 	/**
-	 * Add tooltip using GwtBootstrap
+	 * A factory method to build a button
 	 * 
 	 * 
-	 * @param message
+	 * @param buttonStyle
+	 * @param title
+	 * @param iconName
+	 * @param hRef
+	 * @param additionalClasses
+	 * @param noToolTip
+	 * @return
 	 */
-	/*
-	 * protected void setTooltip(String message) { Tooltip tip = new Tooltip();
-	 * tip.setWidget(button); tip.setText(message);
-	 * tip.setPlacement(Placement.TOP); // tip.setContainer("body");
-	 * tip.reconfigure(); }
-	 */
+	public Element createAndBindButton(String buttonStyle, String title,
+			String iconName, String hRef, String additionalClasses,
+			boolean noToolTip) {
+		// Create the button
+		createButton(buttonStyle, title, iconName, hRef, additionalClasses,
+				noToolTip);
+
+		// Return the element
+		return bindButton();
+	}
 }

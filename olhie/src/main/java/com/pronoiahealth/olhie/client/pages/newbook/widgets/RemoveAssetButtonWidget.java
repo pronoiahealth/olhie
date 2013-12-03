@@ -37,6 +37,7 @@ public class RemoveAssetButtonWidget extends BaseBookassetActionButtonWidget {
 		this.iconName = "icon-remove-circle";
 		this.buttonStyle = "btn-warning";
 		this.title = "Remove";
+		this.additionalClasses = "btn-mini";
 	}
 
 }
