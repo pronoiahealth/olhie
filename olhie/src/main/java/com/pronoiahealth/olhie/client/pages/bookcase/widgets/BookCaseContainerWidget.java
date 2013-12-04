@@ -23,6 +23,7 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.jboss.errai.ioc.client.api.Disposer;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
@@ -83,7 +84,13 @@ public class BookCaseContainerWidget extends Composite {
 
 	private Function bookClickFunction;
 
-	private BookList3D_3 bookList3D;
+	@Inject
+	private Instance<BookList3D_3> bookList3DFac;
+
+	private BookList3D_3 currentInstanceBookList3D_3;
+
+	@Inject
+	private Disposer<BookList3D_3> bookList3DDisposer;
 
 	/**
 	 * Constructor
@@ -127,29 +134,26 @@ public class BookCaseContainerWidget extends Composite {
 				.getBookDisplay();
 		if (bookDisplay != null) {
 			// Remove all children from the bookDetailContainer
-			int cnt = bookDetailContainer.getChildCount();
 			while (bookDetailContainer.getChildCount() != 0) {
 				bookDetailContainer.removeChild(bookDetailContainer
 						.getFirstChild());
 			}
 
+			// Dispose of the Book
+			if (this.currentInstanceBookList3D_3 != null) {
+				bookList3DDisposer.dispose(currentInstanceBookList3D_3);
+			}
+
+			// Create a new book list
 			// Add a book list3D to the container
 			List<BookDisplay> bookDisplayList = new ArrayList<BookDisplay>();
 			bookDisplayList.add(bookDisplay);
-			Utils.cleanUpAndInitBookList3D(bookList3D, bookDisplayList,
-					new BookList3DCreationalHandler() {
-						@Override
-						public void bookListCreationalCallback(
-								BookList3D_3 currentBookList3D) {
-
-							// Add this class to the root element to adjust the
-							// position in the display
-							currentBookList3D.getElement().addClassName(
-									"ph-Bookcase-BookDetail-Panel");
-							bookDetailContainer.appendChild(currentBookList3D
-									.getElement());
-						}
-					});
+			currentInstanceBookList3D_3 = bookList3DFac.get();
+			currentInstanceBookList3D_3.build(bookDisplayList, false);
+			currentInstanceBookList3D_3.getElement().addClassName(
+					"ph-Bookcase-BookDetail-Panel");
+			bookDetailContainer.appendChild(currentInstanceBookList3D_3
+					.getElement());
 		}
 	}
 

@@ -130,33 +130,4 @@ public class Utils {
 	public static String getRandom() {
 		return "" + Random.nextInt(100000);
 	}
-
-	/**
-	 * Takes a book list and destroys it through the bean manager. Creates a new
-	 * one and calls the callback method with the new bean instance.
-	 * 
-	 * @param bl
-	 * @param books
-	 */
-	public static void cleanUpAndInitBookList3D(BookList3D_3 bl,
-			final List<BookDisplay> books, final BookList3DCreationalHandler callback) {
-
-		AsyncBeanManager bm = IOC.getAsyncBeanManager();
-
-		// Get rid of the old one
-		if (bl != null) {
-			bm.destroyBean(bl);
-		}
-
-		// Create a new one
-		AsyncBeanDef<BookList3D_3> itemBeanDef = bm
-				.lookupBean(BookList3D_3.class);
-		itemBeanDef.getInstance(new CreationalCallback<BookList3D_3>() {
-			@Override
-			public void callback(BookList3D_3 beanInstance) {
-				beanInstance.build(books, false);
-				callback.bookListCreationalCallback(beanInstance);
-			}
-		});
-	}
 }

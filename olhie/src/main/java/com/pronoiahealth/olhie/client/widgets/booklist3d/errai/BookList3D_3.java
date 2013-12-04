@@ -255,13 +255,6 @@ public class BookList3D_3 extends Composite {
 		this.currentBookCnt = books.length();
 
 		books.each(new Function() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * com.google.gwt.query.client.Function#f(com.google.gwt.dom.client
-			 * .Element)
-			 */
 			@Override
 			public void f(Element e) {
 				final GQuery book = $(e);
