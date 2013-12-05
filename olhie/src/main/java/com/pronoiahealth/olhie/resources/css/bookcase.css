@@ -121,6 +121,12 @@
 	background: url("Olhie/images/wood.jpg") repeat;
 }
 
+.ph-Bookcase-Bookcase {
+	max-width: 550px;
+	min-height: 600px;
+	background: url("Olhie/images/bookshelfbkg.jpg") repeat;
+}
+
 .ph-Bookcase-Sortable {
 	list-style-type: none;
 	margin: 0;
@@ -129,8 +135,9 @@
 }
 
 .ph-Bookcase-Sortable li {
-	margin: 3px 3px 3px 0;
+	margin: 13px 3px 16px 0;
 	padding: 1px;
+	padding-left: 3px;
 	float: left;
 	width: 100px;
 	height: 140px;

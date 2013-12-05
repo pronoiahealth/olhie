@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages.bookcase.widgets;
 
+import static com.arcbees.gquery.tooltip.client.Tooltip.Tooltip;
+import static com.google.gwt.query.client.GQuery.$;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -53,11 +55,15 @@ public class BookCaseDraggableBookWidget extends Composite {
 	}
 
 	public void setData(String imgUrl, String bookId,
-			String userBookRelationshipId) {
+			String userBookRelationshipId, String bookTitle) {
 		smallBookImageDisplay.setUrl(imgUrl);
-		button.getElement().setAttribute("bookId", bookId);
-		button.getElement().setAttribute("userBookRelationshipId",
+		Element buttonElement = button.getElement();
+		buttonElement.setAttribute("bookId", bookId);
+		buttonElement.setAttribute("userBookRelationshipId",
 				userBookRelationshipId);
+		buttonElement.setAttribute("title", bookTitle);
+		buttonElement.setAttribute("data-original-title", bookTitle);
+		$(buttonElement).as(Tooltip).tooltip();
 	}
 
 	@Override

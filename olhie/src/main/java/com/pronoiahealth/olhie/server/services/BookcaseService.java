@@ -200,7 +200,7 @@ public class BookcaseService {
 				for (UserBookRelationship rel : bResult) {
 					Book book = rel.getTheBook();
 					bookcaseDisplayLst.add(new BookcaseDisplay(book.getId(),
-							rel.getId()));
+							rel.getId(), book.getBookTitle()));
 				}
 			}
 

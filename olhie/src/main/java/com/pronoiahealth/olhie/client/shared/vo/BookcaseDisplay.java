@@ -16,16 +16,17 @@ import org.jboss.errai.common.client.api.annotations.Portable;
  * BookcaseDisplay.java<br/>
  * Responsibilities:<br/>
  * 1.
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since Dec 2, 2013
- *
+ * 
  */
 @Portable
 public class BookcaseDisplay {
 	private String bookId;
 	private String userBookRelationshipId;
+	private String bookTitle;
 
 	/**
 	 * Constructor
@@ -40,10 +41,12 @@ public class BookcaseDisplay {
 	 * @param smallBookImageUrl
 	 * @param bookId
 	 */
-	public BookcaseDisplay(String bookId, String userBookRelationshipId) {
+	public BookcaseDisplay(String bookId, String userBookRelationshipId,
+			String bookTitle) {
 		super();
 		this.bookId = bookId;
 		this.userBookRelationshipId = userBookRelationshipId;
+		this.bookTitle = bookTitle;
 	}
 
 	public String getBookId() {
@@ -60,5 +63,13 @@ public class BookcaseDisplay {
 
 	public void setUserBookRelationshipId(String userBookRelationshipId) {
 		this.userBookRelationshipId = userBookRelationshipId;
+	}
+
+	public String getBookTitle() {
+		return bookTitle;
+	}
+
+	public void setBookTitle(String bookTitle) {
+		this.bookTitle = bookTitle;
 	}
 }

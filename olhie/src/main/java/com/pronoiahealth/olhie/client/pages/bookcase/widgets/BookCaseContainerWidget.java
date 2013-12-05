@@ -40,7 +40,6 @@ import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedRes
 import com.pronoiahealth.olhie.client.shared.events.bookcase.BookcaseBookWidgetReorderEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.BookcaseDisplay;
-import com.pronoiahealth.olhie.client.utils.BookList3DCreationalHandler;
 import com.pronoiahealth.olhie.client.utils.Utils;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3D_3;
 
@@ -172,7 +171,7 @@ public class BookCaseContainerWidget extends Composite {
 				widget.setData(Utils
 						.buildRestServiceForBookFrontCoverDownloadLink(bookId,
 								BookImageSizeEnum.SMALL), bookId,
-						userBookRelationshipId);
+						userBookRelationshipId, bc.getBookTitle());
 				sortableContainer.appendChild(widget.getElement());
 			}
 			config();
