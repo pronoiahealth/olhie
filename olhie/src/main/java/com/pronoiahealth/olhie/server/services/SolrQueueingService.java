@@ -12,6 +12,7 @@ package com.pronoiahealth.olhie.server.services;
 
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -132,33 +133,38 @@ public class SolrQueueingService {
 			solrBook.getUser().add(solrUser);
 
 			// Iterate over book assets
-			for (Bookassetdescription desc : book.getBookDescriptions()) {
-				// create a BookAssetDescription
-				com.pronoiahealth.olhie.solr.xml.BookAssetDescription solrBookAssetDescription = new com.pronoiahealth.olhie.solr.xml.BookAssetDescription();
-				solrBookAssetDescription.setId(desc.getId());
-				solrBookAssetDescription.setDescription(desc.getDescription());
-				solrBookAssetDescription.setRemoved(desc.getRemoved() == null
-						|| desc.getRemoved() == Boolean.FALSE ? "false"
-						: "true");
-				solrBookAssetDescription.setCreatedDate(dtFormatHolder.get()
-						.format(desc.getCreatedDate()));
-				solrBookAssetDescription.setBookId(desc.getBookId());
-				solrBook.getBookAssetDescription()
-						.add(solrBookAssetDescription);
+			List<Bookassetdescription> descs = bookDAO.getBookassetdescriptionByBookId(bookId, true);
+			if (descs != null && descs.size() > 0) {
+				for (Bookassetdescription desc : descs) {
+					// create a BookAssetDescription
+					com.pronoiahealth.olhie.solr.xml.BookAssetDescription solrBookAssetDescription = new com.pronoiahealth.olhie.solr.xml.BookAssetDescription();
+					solrBookAssetDescription.setId(desc.getId());
+					solrBookAssetDescription.setDescription(desc
+							.getDescription());
+					solrBookAssetDescription
+							.setRemoved(desc.getRemoved() == null
+									|| desc.getRemoved() == Boolean.FALSE ? "false"
+									: "true");
+					solrBookAssetDescription.setCreatedDate(dtFormatHolder
+							.get().format(desc.getCreatedDate()));
+					solrBookAssetDescription.setBookId(desc.getBookId());
+					solrBook.getBookAssetDescription().add(
+							solrBookAssetDescription);
 
-				// create a BookAsset
-				if (desc.getBookAssets() != null) {
-					Bookasset ba = desc.getBookAssets().get(0);
-					BookAsset bookAsset = new BookAsset();
-					bookAsset.setId(ba.getId());
-					bookAsset.setItemName(ba.getItemName());
-					bookAsset.setContentType(ba.getItemType());
-					bookAsset.setSize(ba.getSize() == null ? "0" : ba.getSize()
-							.toString());
-					bookAsset.setBase64Data(ba.getBase64Data());
-					bookAsset.setBookassetdescriptionId(ba
-							.getBookassetdescriptionId());
-					solrBook.getBookAsset().add(bookAsset);
+					// create a BookAsset
+					if (desc.getBookAssets() != null) {
+						Bookasset ba = desc.getBookAssets().get(0);
+						BookAsset bookAsset = new BookAsset();
+						bookAsset.setId(ba.getId());
+						bookAsset.setItemName(ba.getItemName());
+						bookAsset.setContentType(ba.getItemType());
+						bookAsset.setSize(ba.getSize() == null ? "0" : ba
+								.getSize().toString());
+						bookAsset.setBase64Data(ba.getBase64Data());
+						bookAsset.setBookassetdescriptionId(ba
+								.getBookassetdescriptionId());
+						solrBook.getBookAsset().add(bookAsset);
+					}
 				}
 			}
 
@@ -175,7 +181,7 @@ public class SolrQueueingService {
 			marshaller.marshal(element, writer);
 
 			// Create a connection and Message producer
-			connection = factory.createConnection("guest", "guestpw");
+			connection = factory.createConnection("guest", "guestw");
 			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 			MessageProducer sender = session.createProducer(queue);
 

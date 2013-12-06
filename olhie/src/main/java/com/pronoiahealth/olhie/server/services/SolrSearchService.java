@@ -40,19 +40,23 @@ import com.pronoiahealth.olhie.server.security.ServerUserToken;
 @RequestScoped
 public class SolrSearchService {
 
-	private static final String SOLR_SERVER = "184.173.121.82";
-	//private static final String SOLR_SERVER = "localhost";
+	// private static final String SOLR_SERVER = "184.173.121.82";
+	private static final String SOLR_SERVER = "localhost";
 	private static final int SOLR_PORT = 8080;
-	
-	private static final String SOLR_QUERY_ALL = "http://" + SOLR_SERVER + ":" + SOLR_PORT + "/solr/select?q=*:*&wt=xml";
-	private static final String SOLR_QUERY_KEYWORDS = "http://" + SOLR_SERVER + ":" + SOLR_PORT + "/solr/select?q=keywords:";
-	private static final String SOLR_QUERY_TEXT = "http://" + SOLR_SERVER + ":" + SOLR_PORT + "/solr/select?q=text:";
-	private static final String SOLR_QUERY_FULL = "http://" + SOLR_SERVER + ":" + SOLR_PORT + "/solr/select?q=";
+
+	private static final String SOLR_QUERY_ALL = "http://" + SOLR_SERVER + ":"
+			+ SOLR_PORT + "/solr/select?q=*:*&wt=xml";
+	private static final String SOLR_QUERY_KEYWORDS = "http://" + SOLR_SERVER
+			+ ":" + SOLR_PORT + "/solr/select?q=keywords:";
+	private static final String SOLR_QUERY_TEXT = "http://" + SOLR_SERVER + ":"
+			+ SOLR_PORT + "/solr/select?q=text:";
+	private static final String SOLR_QUERY_FULL = "http://" + SOLR_SERVER + ":"
+			+ SOLR_PORT + "/solr/select?q=";
 	private static final String SOLR_ROWS_PARAM = "&rows=";
 	private static final String SOLR__POST_FIELDS = "&fl=id";
-	
+
 	private static final int RETURN_ALL_ROWS = -1;
-	
+
 	@Inject
 	private Logger log;
 
@@ -84,7 +88,7 @@ public class SolrSearchService {
 		}
 		return idList;
 	}
-	
+
 	/**
 	 * Run the solr query using a token list and parse the results.
 	 * 
@@ -103,10 +107,10 @@ public class SolrSearchService {
 		}
 		return idList;
 	}
-	
+
 	/**
-	 * Run the solr query using a token list and the number of rows to return, then 
-	 * parse the results.
+	 * Run the solr query using a token list and the number of rows to return,
+	 * then parse the results.
 	 * 
 	 * @param _tokenList
 	 * @param _rows
@@ -124,24 +128,22 @@ public class SolrSearchService {
 		}
 		return idList;
 	}
-	
+
 	/**
 	 * @return
 	 */
-	private String querySolrAll()
-	{
+	private String querySolrAll() {
 		return querySolr(SOLR_QUERY_ALL);
 	}
-	
+
 	/**
 	 * @param _query
 	 * @return
 	 */
-	private String querySolrKeywords(String _query)
-	{
+	private String querySolrKeywords(String _query) {
 		return querySolr(SOLR_QUERY_KEYWORDS + _query);
 	}
-	
+
 	/**
 	 * build a solr query using a list of tokens and the number of rows.
 	 * 
@@ -149,41 +151,38 @@ public class SolrSearchService {
 	 * @param _rows
 	 * @return
 	 */
-	private String querySolrText(String[] _tokenList, int _rows)
-	{
+	private String querySolrText(String[] _tokenList, int _rows) {
 		StringBuffer query = new StringBuffer();
 		query.append("(");
-		for (int i=0 ;i<_tokenList.length; i++) {
+		for (int i = 0; i < _tokenList.length; i++) {
 			query.append(_tokenList[i]);
-			if (i < _tokenList.length-1) {
+			if (i < _tokenList.length - 1) {
 				query.append("+");
 			}
 		}
 		query.append(")");
-		
+
 		return querySolrText(query.toString(), _rows);
 	}
-	
+
 	/**
 	 * @param _query
 	 * @param _rows
 	 * @return
 	 */
-	private String querySolrText(String _query, int _rows)
-	{
+	private String querySolrText(String _query, int _rows) {
 		return querySolr(SOLR_QUERY_TEXT + _query, _rows);
 	}
-	
+
 	/**
 	 * @param _query
 	 * @param _rows
 	 * @return
 	 */
-	private String querySolrFull(String _query, int _rows)
-	{
+	private String querySolrFull(String _query, int _rows) {
 		return querySolr(SOLR_QUERY_FULL + _query, _rows);
 	}
-	
+
 	/**
 	 * Add row parameter to determine how many records to return.
 	 * 
@@ -191,81 +190,84 @@ public class SolrSearchService {
 	 * @param _rows
 	 * @return
 	 */
-	private String querySolr(String _query, int _rows)
-	{
+	private String querySolr(String _query, int _rows) {
 		if (_rows == RETURN_ALL_ROWS) {
 			return querySolr(_query);
 		} else {
 			return querySolr(_query + SOLR_ROWS_PARAM + _rows);
 		}
 	}
-	
+
 	/**
 	 * Send the query to the solr server, and return the xml result list.
 	 * 
 	 * @param _query
 	 * @return
 	 */
-	private String querySolr(String _query)
-	{
+	private String querySolr(String _query) {
 		String query = _query + SOLR__POST_FIELDS;
 		StringBuffer result = new StringBuffer();
-		
+
 		BufferedReader reader = null;
 		InputStream is = null;
-		
-        try {
-        	URL url = new URL(query);
-            is = url.openConnection().getInputStream();
-            reader = new BufferedReader(new InputStreamReader(is));
-            String line = null;
-            while((line = reader.readLine()) != null) {
-            	result.append(line);
-            }
-            reader.close();
-        } catch (Exception e) {
-        	e.printStackTrace();
-        } finally {
-        	try {
-        		is.close();
-        	} catch (Exception exception) { }
-        	try {
-        		reader.close();
-        	} catch (Exception exception) { }
-        }
-        
+
+		try {
+			URL url = new URL(query);
+			is = url.openConnection().getInputStream();
+			reader = new BufferedReader(new InputStreamReader(is));
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				result.append(line);
+			}
+			reader.close();
+		} catch (Exception e) {
+			if (log != null) {
+				log.log(Level.SEVERE, e.getMessage(), e);
+			} else {
+				e.printStackTrace();
+			}
+		} finally {
+			try {
+				is.close();
+			} catch (Exception exception) {
+			}
+			try {
+				reader.close();
+			} catch (Exception exception) {
+			}
+		}
+
 		return result.toString();
 	}
-	
+
 	/**
 	 * @param _resultXML
 	 * @return
 	 */
-	private List<String> parseResults(String _resultXML)
-	{
-		Pattern regex = Pattern.compile("<str name=\"id\">(.*?)</str>", Pattern.DOTALL);
+	private List<String> parseResults(String _resultXML) {
+		Pattern regex = Pattern.compile("<str name=\"id\">(.*?)</str>",
+				Pattern.DOTALL);
 		Matcher matcher = regex.matcher(_resultXML);
 		List<String> results = new ArrayList<String>();
 		while (matcher.find()) {
-		    String id = matcher.group(1);
-		    results.add(id);
+			String id = matcher.group(1);
+			results.add(id);
 		}
-		
+
 		return results;
 	}
-	
+
 	/**
 	 * @param args
 	 */
-	public static void main(String [] args)
-	{
-		//String[] searchTokens = new String[] { "orange", "test.txt" };
+	public static void main(String[] args) {
+		// String[] searchTokens = new String[] { "orange", "test.txt" };
 		String[] searchTokens = new String[] { "book" };
 		SolrSearchService solrService = new SolrSearchService();
 		System.out.println(solrService.searchSolr(searchTokens, 5));
-		//String resultXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> <response> <lst name=\"responseHeader\"><int name=\"status\">0</int><int name=\"QTime\">11</int><lst name=\"params\"><str name=\"q\">keywords:*destefano*</str></lst></lst><result name=\"response\" numFound=\"6\" start=\"0\"><doc><str name=\"id\">#15:92</str><str name=\"keywords\">TEST BOOK FOR TODAY TEST BOOK FOR TODAY'S PRESENTATION   INTERFACE GREY DESIGNED JOHN DESTEFANO JDESTEF TEST FILE FOR TODAY'S DISCUSSION QUICKSTART_GUIDE.PDF</str><long name=\"_version_\">1440800724562739200</long></doc><doc><str name=\"id\">#15:93</str><str name=\"keywords\">THIS IS A TEST BOOK THIS IS A TEST BOOK   INTERFACE BLUE-GREY 1 JOHN DESTEFANO JDESTEF</str><long name=\"_version_\">1440800724563787776</long></doc><doc><str name=\"id\">#15:94</str><str name=\"keywords\">TEST BOOK 101 THIS IS TEST BOOK 101   LEGAL BLUE-GREY 1 JOHN DESTEFANO JDESTEF</str><long name=\"_version_\">1440800724563787777</long></doc><doc><str name=\"id\">#15:95</str><str name=\"keywords\">TEST BOOK 100 THIS IS TEST BOOK 100   INTERFACE BROWN 3 JOHN DESTEFANO JDESTEF</str><long name=\"_version_\">1440800724563787778</long></doc><doc><str name=\"id\">#15:96</str><str name=\"keywords\">TEST BOOK 3 THIS IS TEST BOOK 3   INTERFACE BROWN DESIGNED JOHN DESTEFANO JDESTEF</str><long name=\"_version_\">1440800724563787779</long></doc><doc><str name=\"id\">#15:98</str><str name=\"keywords\">TEST BOOK 1 THIS IS TEST BOOK 1   LEGAL MAUVE 1 JOHN DESTEFANO JDESTEF TEST FILE 2 TEST FILE DESCRIPTION QUICKSTART_GUIDE.PDF</str><long name=\"_version_\">1440800724563787781</long></doc></result> </response>";
-		//solrService.parseResults(resultXml);
+		// String resultXml =
+		// "<?xml version=\"1.0\" encoding=\"UTF-8\"?> <response> <lst name=\"responseHeader\"><int name=\"status\">0</int><int name=\"QTime\">11</int><lst name=\"params\"><str name=\"q\">keywords:*destefano*</str></lst></lst><result name=\"response\" numFound=\"6\" start=\"0\"><doc><str name=\"id\">#15:92</str><str name=\"keywords\">TEST BOOK FOR TODAY TEST BOOK FOR TODAY'S PRESENTATION   INTERFACE GREY DESIGNED JOHN DESTEFANO JDESTEF TEST FILE FOR TODAY'S DISCUSSION QUICKSTART_GUIDE.PDF</str><long name=\"_version_\">1440800724562739200</long></doc><doc><str name=\"id\">#15:93</str><str name=\"keywords\">THIS IS A TEST BOOK THIS IS A TEST BOOK   INTERFACE BLUE-GREY 1 JOHN DESTEFANO JDESTEF</str><long name=\"_version_\">1440800724563787776</long></doc><doc><str name=\"id\">#15:94</str><str name=\"keywords\">TEST BOOK 101 THIS IS TEST BOOK 101   LEGAL BLUE-GREY 1 JOHN DESTEFANO JDESTEF</str><long name=\"_version_\">1440800724563787777</long></doc><doc><str name=\"id\">#15:95</str><str name=\"keywords\">TEST BOOK 100 THIS IS TEST BOOK 100   INTERFACE BROWN 3 JOHN DESTEFANO JDESTEF</str><long name=\"_version_\">1440800724563787778</long></doc><doc><str name=\"id\">#15:96</str><str name=\"keywords\">TEST BOOK 3 THIS IS TEST BOOK 3   INTERFACE BROWN DESIGNED JOHN DESTEFANO JDESTEF</str><long name=\"_version_\">1440800724563787779</long></doc><doc><str name=\"id\">#15:98</str><str name=\"keywords\">TEST BOOK 1 THIS IS TEST BOOK 1   LEGAL MAUVE 1 JOHN DESTEFANO JDESTEF TEST FILE 2 TEST FILE DESCRIPTION QUICKSTART_GUIDE.PDF</str><long name=\"_version_\">1440800724563787781</long></doc></result> </response>";
+		// solrService.parseResults(resultXml);
 	}
 
-	
 }

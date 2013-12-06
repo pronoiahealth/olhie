@@ -27,6 +27,7 @@ import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.BookUpdateCommittedEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookUpdateEvent;
+import com.pronoiahealth.olhie.client.shared.events.book.QueueBookEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
@@ -69,6 +70,9 @@ public class BookUpdateService {
 
 	@Inject
 	private Event<BookUpdateCommittedEvent> bookUpdateCommittedEvent;
+
+	@Inject
+	private Event<QueueBookEvent> queueBookEvent;
 
 	// @Resource(mappedName = "queue/testQueue")
 	// private Queue queue;
@@ -173,9 +177,14 @@ public class BookUpdateService {
 			currentBook = bookDAO.addBook(currentBook);
 
 			// Return the result
+			String bookId = currentBook.getId();
 			BookUpdateCommittedEvent event = new BookUpdateCommittedEvent(
-					currentBook.getId());
+					bookId);
 			bookUpdateCommittedEvent.fire(event);
+
+			// Tell the update service
+			// Queue the book for Solr
+			queueBookEvent.fire(new QueueBookEvent(bookId, sessionUserId));
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			log.log(Level.SEVERE, msg, e);
@@ -234,9 +243,13 @@ public class BookUpdateService {
 					UserBookRelationshipEnum.CREATOR);
 
 			// Return the result
+			String bookId = book.getId();
 			BookUpdateCommittedEvent event = new BookUpdateCommittedEvent(
-					book.getId());
+					bookId);
 			bookUpdateCommittedEvent.fire(event);
+
+			// Queue the book for Solr
+			queueBookEvent.fire(new QueueBookEvent(bookId, sessionUserId));
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			log.log(Level.SEVERE, msg, e);

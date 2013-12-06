@@ -123,19 +123,19 @@ public class BookSearchService {
 			List<BookDisplay> bookDisplayList = new ArrayList<BookDisplay>();
 
 			int rows = bookSearchEvent.getRows();
-			/*
-			 * List<String> bookIdList = //
-			 * solrSearchService.searchSolr(searchText);
-			 * solrSearchService.searchSolr(searchText.split("\\s+"), rows);
-			 * 
-			 * // Find Book OSQLSynchQuery<Book> bQuery = new
-			 * OSQLSynchQuery<Book>( //
-			 * "select from Book where @rid in :idlist and active = true");
-			 * "select from Book where @rid in " + bookIdList +
-			 * " and active = true"); HashMap<String, Object> bparams = new
-			 * HashMap<String, Object>(); // bparams.put("idlist", bookIdList);
-			 * List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
-			 */
+			// solrSearchService.searchSolr(searchText);
+			List<String> solrBookIdList = solrSearchService.searchSolr(
+					searchText.split("\\s+"));
+
+			// Find Book
+			// OSQLSynchQuery<Book> bQuery = new
+			// OSQLSynchQuery<Book>( //
+			// "select from Book where @rid in :idlist and active = true");
+			// "select from Book where @rid in " + bookIdList +
+			// " and active = true"); HashMap<String, Object> bparams = new
+			// HashMap<String, Object>(); // bparams.put("idlist", bookIdList);
+			// List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
+
 			/*
 			 * OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
 			 * "select from Book where bookTitle.toLowerCase() like :title and active = true"
@@ -146,8 +146,9 @@ public class BookSearchService {
 			 */
 
 			List<String> bookIdxLst = new ArrayList<String>();
-			List<Book> bResult = bookDAO.getActiveBooksByTitle(searchText, 0,
-					rows);
+			List<Book> bResult = bookDAO.getBooksByIdLst(solrBookIdList, true);
+			//List<Book> bResult = bookDAO.getActiveBooksByTitle(searchText, 0,
+			//		rows);
 			String userId = userToken.getUserId();
 			int cnt = 0;
 			for (Book book : bResult) {
@@ -211,19 +212,19 @@ public class BookSearchService {
 			case FIRST:
 				// Position the page
 				srchRsltHolder.setCurrentPageToFirst();
-				bookDisplays = this.getBooksForResultLstToDisplay();
+				bookDisplays = this.getBooksForResultLstToDisplay(true);
 				break;
 			case PREVIOUS:
 				srchRsltHolder.setCurrentPageToPrevious();
-				bookDisplays = this.getBooksForResultLstToDisplay();
+				bookDisplays = this.getBooksForResultLstToDisplay(true);
 				break;
 			case NEXT:
 				srchRsltHolder.setCurrentPageToNext();
-				bookDisplays = this.getBooksForResultLstToDisplay();
+				bookDisplays = this.getBooksForResultLstToDisplay(true);
 				break;
 			case LAST:
 				srchRsltHolder.setCurrentPageToLast();
-				bookDisplays = this.getBooksForResultLstToDisplay();
+				bookDisplays = this.getBooksForResultLstToDisplay(true);
 				break;
 			case UPDATE_STATE:
 				break;
@@ -273,10 +274,10 @@ public class BookSearchService {
 	 * @return
 	 * @throws Exception
 	 */
-	private List<BookDisplay> getBooksForResultLstToDisplay() throws Exception {
+	private List<BookDisplay> getBooksForResultLstToDisplay(boolean activeOnly) throws Exception {
 		String userId = userToken.getUserId();
 		List<String> srchLst = srchRsltHolder.getResultsLstForCurrentPage();
-		List<Book> bResult = bookDAO.getBooksByIdLst(srchLst);
+		List<Book> bResult = bookDAO.getBooksByIdLst(srchLst, activeOnly);
 
 		List<BookDisplay> bookDisplayList = new ArrayList<BookDisplay>();
 		for (Book book : bResult) {

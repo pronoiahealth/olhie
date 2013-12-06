@@ -82,13 +82,15 @@ public interface BookDAO extends BaseDAO {
 	public Book getBookById(String bookId) throws Exception;
 
 	/**
-	 * Get the Books in the id list
+	 * Get the Books in the id list. If only active books are required then set
+	 * the activeOnlt flag to true.
 	 * 
 	 * @param booksIdLst
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Book> getBooksByIdLst(List<String> booksIdLst) throws Exception;
+	public List<Book> getBooksByIdLst(List<String> booksIdLst,
+			boolean activeOnly) throws Exception;
 
 	/**
 	 * Gets the contents of a book.

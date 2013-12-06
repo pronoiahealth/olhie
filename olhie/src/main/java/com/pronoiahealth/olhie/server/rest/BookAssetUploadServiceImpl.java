@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +34,7 @@ import org.apache.commons.io.IOUtils;
 import com.lowagie.text.pdf.codec.Base64;
 import com.pronoiahealth.olhie.client.shared.constants.BookAssetDataType;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
+import com.pronoiahealth.olhie.client.shared.events.book.QueueBookEvent;
 import com.pronoiahealth.olhie.client.shared.exceptions.FileUploadException;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
@@ -61,7 +63,10 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 
 	@Inject
 	@DAO
-	private BookDAO bookDAO;;
+	private BookDAO bookDAO;
+
+	@Inject
+	private Event<QueueBookEvent> queueBookEvent;
 
 	@Inject
 	public BookAssetUploadServiceImpl() {
@@ -119,7 +124,7 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 						if (item.getFieldName().equals("action")) {
 							action = Streams.asString(stream);
 						}
-						
+
 						// datatype
 						if (item.getFieldName().equals("dataType")) {
 							dataType = Streams.asString(stream);
@@ -167,8 +172,11 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 
 				// Add to the database
 				bookDAO.addUpdateBookasset(description, bookId, contentType,
-						BookAssetDataType.valueOf(dataType).toString(), data, action,
-						fileName, null, null, size, hoursOfWork, userId);
+						BookAssetDataType.valueOf(dataType).toString(), data,
+						action, fileName, null, null, size, hoursOfWork, userId);
+
+				// Tell Solr about the update
+				queueBookEvent.fire(new QueueBookEvent(bookId, userId));
 			}
 			return "OK";
 		} catch (Exception e) {

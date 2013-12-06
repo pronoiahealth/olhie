@@ -277,14 +277,20 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	}
 
 	/**
-	 * From the submitted list of books ids get the associated book objects
+	 * From the submitted list of book ids get the associated book objects.
 	 * 
 	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#getBooksByIdLst(java.util.List)
 	 */
 	@Override
-	public List<Book> getBooksByIdLst(List<String> booksIdLst) throws Exception {
-		String qryStr = "select from Book where @rid in " + booksIdLst
-				+ " and active = true";
+	public List<Book> getBooksByIdLst(List<String> booksIdLst,
+			boolean activeOnly) throws Exception {
+		String qryStr = null;
+		if (activeOnly == true) {
+			qryStr = "select from Book where @rid in " + booksIdLst
+					+ " and active = true";
+		} else {
+			qryStr = "select from Book where @rid in " + booksIdLst;
+		}
 		OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(qryStr);
 		HashMap<String, String> bparams = new HashMap<String, String>();
 		List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
@@ -784,7 +790,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		try {
 			// Start a transaction since we are updating data
 			ooDbTx.begin(TXTYPE.OPTIMISTIC);
-			
+
 			// First get the current users id
 			User user = getUserByUserId(userId);
 			String uId = user.getId();

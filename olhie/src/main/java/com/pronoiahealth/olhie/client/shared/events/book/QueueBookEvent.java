@@ -43,6 +43,8 @@ public class QueueBookEvent {
 	 */
 	public QueueBookEvent(@MapsTo("bookId") String bookId,
 			@MapsTo("userId") String userId) {
+		this.bookId = bookId;
+		this.userId = userId;
 	}
 
 	public String getBookId() {
