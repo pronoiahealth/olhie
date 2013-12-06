@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	
+	<xs:element name="book" type="book"/>
+  
+  	<xs:complexType name="book">
+		<xs:sequence>
+      		<xs:element name="id" 					type="xs:string"/>
+			<xs:element name="bookTitle" 			type="xs:string"/>
+			<xs:element name="introduction" 		type="xs:string"/>
+			<xs:element name="keyWords" 			type="xs:string"/>
+			<xs:element name="category" 			type="xs:string"/>
+			<xs:element name="coverName" 			type="xs:string"/>
+			<xs:element name="createdDate" 			type="xs:string"/>
+			<xs:element name="publishedDate"		type="xs:string"/>
+			<xs:element name="authorId" 			type="xs:string"/>
+			<xs:element name="active" 				type="xs:string"/>
+      		<xs:element name="user" 				type="user" 						minOccurs="0"	maxOccurs="unbounded"/>
+      		<xs:element name="bookAssetDescription" type="bookAssetDescription" 		minOccurs="0" 	maxOccurs="unbounded"/>
+      		<xs:element name="bookAsset" 			type="bookAsset" 					minOccurs="0"	maxOccurs="unbounded"/>
+    	</xs:sequence>
+  	</xs:complexType>
+
+	<xs:complexType name="user">
+    	<xs:sequence>
+      		<xs:element name="id" 			type="xs:string"/>
+      		<xs:element name="firstName" 	type="xs:string"/>
+			<xs:element name="lastName" 	type="xs:string"/>
+			<xs:element name="userId" 		type="xs:string"/>
+			<xs:element name="resetPwd" 	type="xs:string"/>
+			<xs:element name="role" 		type="xs:string"/>
+      	</xs:sequence>
+  	</xs:complexType>
+  	
+  	<xs:complexType name="bookAssetDescription">
+    	<xs:sequence>
+      		<xs:element name="id" 			type="xs:string"/>
+			<xs:element name="description" 	type="xs:string"/>
+			<xs:element name="createdDate" 	type="xs:string"/>
+			<xs:element name="removed" 		type="xs:string"/>
+			<xs:element name="removedDate" 	type="xs:string"/>
+			<xs:element name="bookId" 		type="xs:string"/>
+      	</xs:sequence>
+  	</xs:complexType>
+  	
+  	<xs:complexType name="bookAsset">
+    	<xs:sequence>
+      		<xs:element name="id" 						type="xs:string"/>
+			<xs:element name="createdDate" 				type="xs:string"/>
+			<xs:element name="authorId" 				type="xs:string"/>
+			<xs:element name="itemType" 				type="xs:string"/>
+			<xs:element name="itemName" 				type="xs:string"/>
+			<xs:element name="contentType" 				type="xs:string"/>
+			<xs:element name="size" 					type="xs:string"/>
+			<xs:element name="base64Data" 				type="xs:string"/>
+			<xs:element name="bookassetdescriptionId" 	type="xs:string"/>
+      	</xs:sequence>
+  	</xs:complexType>
+  	
+</xs:schema>
