@@ -13,6 +13,7 @@ package com.pronoiahealth.olhie.client.pages.bookcase;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
@@ -55,6 +56,7 @@ import com.pronoiahealth.olhie.client.widgets.GlassPanelSpinner;
  * @since May 26, 2013
  * 
  */
+@Dependent
 @Page(role = { RegisteredRole.class })
 public class BookCasePage extends AbstractPage {
 
@@ -201,22 +203,21 @@ public class BookCasePage extends AbstractPage {
 		disposeTabs();
 
 		// Create widget
-		BookCaseContainerWidget widget = null;
 		if (lst != null && lst.size() > 0) {
-			widget = bookCaseContainerWidgetFac.get();
-			widget.loadDataAndInit(lst);
+			currentBookCaseContainerWidget = bookCaseContainerWidgetFac.get();
+			currentBookCaseContainerWidget.loadDataAndInit(lst);
 		}
 
 		switch (requestedTab) {
 		// Load the appropriate list
 		case AUTHOR:
-			myBooksTab.add(widget);
+			myBooksTab.add(currentBookCaseContainerWidget);
 			break;
 		case COAUTHOR:
-			myCoBooksTab.add(widget);
+			myCoBooksTab.add(currentBookCaseContainerWidget);
 			break;
 		case MYCOLLECTION:
-			myCollectionTab.add(widget);
+			myCollectionTab.add(currentBookCaseContainerWidget);
 			break;
 		}
 
@@ -252,6 +253,9 @@ public class BookCasePage extends AbstractPage {
 		disposeTabs();
 	}
 
+	/**
+	 * Clean up tabs
+	 */
 	private void disposeTabs() {
 		// Destroy current widgets
 		// The tabs should only contain 1 widget

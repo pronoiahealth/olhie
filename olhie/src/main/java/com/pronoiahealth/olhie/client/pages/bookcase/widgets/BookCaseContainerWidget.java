@@ -75,8 +75,7 @@ public class BookCaseContainerWidget extends Composite {
 	private Element sortableContainer = DOM.createElement("ul");
 
 	@DataField
-	private HTMLPanel bookDetailContainer = new HTMLPanel(""); // =
-																// DOM.createDiv();
+	private HTMLPanel bookDetailContainer = new HTMLPanel("");
 
 	@Inject
 	private Instance<BookCaseDraggableBookWidget> bookCaseDraggableBookWidgetFac;
@@ -92,7 +91,7 @@ public class BookCaseContainerWidget extends Composite {
 	@Inject
 	private Instance<BookList3D_3> bookList3DFac;
 
-	// private BookList3D_3 currentInstanceBookList3D_3;
+	BookList3D_3 currentInstanceBookList3D_3;
 
 	@Inject
 	private Disposer<BookList3D_3> bookList3DDisposer;
@@ -105,6 +104,19 @@ public class BookCaseContainerWidget extends Composite {
 	 * 
 	 */
 	public BookCaseContainerWidget() {
+	}
+
+	/**
+	 * When the widget is unLoaded, if it conatins a bookList3D it is disposed
+	 * of
+	 * 
+	 * @see com.google.gwt.user.client.ui.Widget#onUnload()
+	 */
+	@Override
+	protected void onUnload() {
+		// TODO Auto-generated method stub
+		super.onUnload();
+		disposeBookList();
 	}
 
 	/**
@@ -129,21 +141,6 @@ public class BookCaseContainerWidget extends Composite {
 		};
 	}
 
-	@PreDestroy
-	protected void preDestroy() {
-	}
-
-	@Override
-	protected void onUnload() {
-		// TODO Auto-generated method stub
-		super.onUnload();
-
-		// if (currentInstanceBookList3D_3 != null) {
-		// bookList3DDisposer.dispose(currentInstanceBookList3D_3);
-		// currentInstanceBookList3D_3 = null;
-		// }
-	}
-
 	/**
 	 * Observes for the response events from the selecting of a book. Once the
 	 * BookDisplay is returned it will be set in the BookDetail Component
@@ -153,38 +150,23 @@ public class BookCaseContainerWidget extends Composite {
 	protected void observesBookListBookSelectedResponseEvent(
 			@Observes BookListBookSelectedResponseEvent bookListBookSelectedResponseEvent) {
 
+		// Get list
 		BookDisplay bookDisplay = bookListBookSelectedResponseEvent
 				.getBookDisplay();
+
+		// Clean up panel
+		disposeBookList();
+
 		if (bookDisplay != null) {
-			// Remove all children from the bookDetailContainer
-			// while (bookDetailContainer.getChildCount() != 0) {
-			// bookDetailContainer.removeChild(bookDetailContainer
-			// .getFirstChild());
-			// }
-			// bookDetailContainer.clear();
-
-			// Dispose of the Book
-			// if (this.currentInstanceBookList3D_3 != null) {
-			// bookList3DDisposer.dispose(currentInstanceBookList3D_3);
-			// this.currentInstanceBookList3D_3 = null;
-			// }
-
 			// Create a new book list
 			// Add a book list3D to the container
 			List<BookDisplay> bookDisplayList = new ArrayList<BookDisplay>();
 			bookDisplayList.add(bookDisplay);
-			if (bookDetailContainer.getWidgetCount() > 0) {
-				bookList3DDisposer.dispose((BookList3D_3) bookDetailContainer
-						.getWidget(0));
-				bookDetailContainer.clear();
-			}
-			BookList3D_3 currentInstanceBookList3D_3 = bookList3DFac.get();
+			currentInstanceBookList3D_3 = bookList3DFac.get();
 			currentInstanceBookList3D_3.build(bookDisplayList, false);
 			currentInstanceBookList3D_3.getElement().addClassName(
 					"ph-Bookcase-BookDetail-Panel");
 			bookListEventObserver.attachBookList(currentInstanceBookList3D_3);
-			// bookDetailContainer.appendChild(currentInstanceBookList3D_3
-			// .getElement());
 			bookDetailContainer.add(currentInstanceBookList3D_3);
 		}
 	}
@@ -258,6 +240,19 @@ public class BookCaseContainerWidget extends Composite {
 				$(e).bind(Event.ONCLICK, bookClickFunction);
 			}
 		});
+	}
+
+	/**
+	 * Clears out book detail panel
+	 */
+	private void disposeBookList() {
+		if (bookDetailContainer.getWidgetCount() > 0) {
+			bookDetailContainer.clear();
+			if (currentInstanceBookList3D_3 != null) {
+				bookList3DDisposer.dispose(currentInstanceBookList3D_3);
+				currentInstanceBookList3D_3 = null;
+			}
+		}
 	}
 
 	/**
