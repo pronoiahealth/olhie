@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -34,6 +36,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.pronoiahealth.olhie.client.shared.constants.BookImageSizeEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedResponseEvent;
@@ -41,6 +44,7 @@ import com.pronoiahealth.olhie.client.shared.events.bookcase.BookcaseBookWidgetR
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.BookcaseDisplay;
 import com.pronoiahealth.olhie.client.utils.Utils;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3DEventObserver;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3D_3;
 
 /**
@@ -63,6 +67,7 @@ import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3D_3;
  * @since Dec 2, 2013
  * 
  */
+@Dependent
 @Templated("#root")
 public class BookCaseContainerWidget extends Composite {
 
@@ -70,7 +75,8 @@ public class BookCaseContainerWidget extends Composite {
 	private Element sortableContainer = DOM.createElement("ul");
 
 	@DataField
-	private Element bookDetailContainer = DOM.createDiv();
+	private HTMLPanel bookDetailContainer = new HTMLPanel(""); // =
+																// DOM.createDiv();
 
 	@Inject
 	private Instance<BookCaseDraggableBookWidget> bookCaseDraggableBookWidgetFac;
@@ -86,10 +92,13 @@ public class BookCaseContainerWidget extends Composite {
 	@Inject
 	private Instance<BookList3D_3> bookList3DFac;
 
-	private BookList3D_3 currentInstanceBookList3D_3;
+	// private BookList3D_3 currentInstanceBookList3D_3;
 
 	@Inject
 	private Disposer<BookList3D_3> bookList3DDisposer;
+
+	@Inject
+	private BookList3DEventObserver bookListEventObserver;
 
 	/**
 	 * Constructor
@@ -120,6 +129,21 @@ public class BookCaseContainerWidget extends Composite {
 		};
 	}
 
+	@PreDestroy
+	protected void preDestroy() {
+	}
+
+	@Override
+	protected void onUnload() {
+		// TODO Auto-generated method stub
+		super.onUnload();
+
+		// if (currentInstanceBookList3D_3 != null) {
+		// bookList3DDisposer.dispose(currentInstanceBookList3D_3);
+		// currentInstanceBookList3D_3 = null;
+		// }
+	}
+
 	/**
 	 * Observes for the response events from the selecting of a book. Once the
 	 * BookDisplay is returned it will be set in the BookDetail Component
@@ -133,26 +157,35 @@ public class BookCaseContainerWidget extends Composite {
 				.getBookDisplay();
 		if (bookDisplay != null) {
 			// Remove all children from the bookDetailContainer
-			while (bookDetailContainer.getChildCount() != 0) {
-				bookDetailContainer.removeChild(bookDetailContainer
-						.getFirstChild());
-			}
+			// while (bookDetailContainer.getChildCount() != 0) {
+			// bookDetailContainer.removeChild(bookDetailContainer
+			// .getFirstChild());
+			// }
+			// bookDetailContainer.clear();
 
 			// Dispose of the Book
-			if (this.currentInstanceBookList3D_3 != null) {
-				bookList3DDisposer.dispose(currentInstanceBookList3D_3);
-			}
+			// if (this.currentInstanceBookList3D_3 != null) {
+			// bookList3DDisposer.dispose(currentInstanceBookList3D_3);
+			// this.currentInstanceBookList3D_3 = null;
+			// }
 
 			// Create a new book list
 			// Add a book list3D to the container
 			List<BookDisplay> bookDisplayList = new ArrayList<BookDisplay>();
 			bookDisplayList.add(bookDisplay);
-			currentInstanceBookList3D_3 = bookList3DFac.get();
+			if (bookDetailContainer.getWidgetCount() > 0) {
+				bookList3DDisposer.dispose((BookList3D_3) bookDetailContainer
+						.getWidget(0));
+				bookDetailContainer.clear();
+			}
+			BookList3D_3 currentInstanceBookList3D_3 = bookList3DFac.get();
 			currentInstanceBookList3D_3.build(bookDisplayList, false);
 			currentInstanceBookList3D_3.getElement().addClassName(
 					"ph-Bookcase-BookDetail-Panel");
-			bookDetailContainer.appendChild(currentInstanceBookList3D_3
-					.getElement());
+			bookListEventObserver.attachBookList(currentInstanceBookList3D_3);
+			// bookDetailContainer.appendChild(currentInstanceBookList3D_3
+			// .getElement());
+			bookDetailContainer.add(currentInstanceBookList3D_3);
 		}
 	}
 

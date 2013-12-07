@@ -15,8 +15,10 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.jboss.errai.ioc.client.api.Disposer;
 import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.nav.client.local.PageShowing;
 
@@ -34,7 +36,6 @@ import com.pronoiahealth.olhie.client.pages.AppSelectors;
 import com.pronoiahealth.olhie.client.pages.bookcase.widgets.BookCaseContainerWidget;
 import com.pronoiahealth.olhie.client.shared.constants.BookcaseEnum;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.GetMyBookcaseEvent;
-import com.pronoiahealth.olhie.client.shared.events.bookcase.GetMyBookcaseResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.MyBooksForBookcaseSmallIconRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.MyBooksForBookcaseSmallIconResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
@@ -89,13 +90,10 @@ public class BookCasePage extends AbstractPage {
 	private boolean responseRet = false;
 
 	@Inject
-	private BookCaseContainerWidget authorBookCaseContainerWidget;
+	private Instance<BookCaseContainerWidget> bookCaseContainerWidgetFac;
 
 	@Inject
-	private BookCaseContainerWidget coauthorBookCaseContainerWidget;
-
-	@Inject
-	private BookCaseContainerWidget myCollectionBookCaseContainerWidget;
+	private Disposer<BookCaseContainerWidget> bookCaseContainerWidgetDisposer;
 
 	public BookCasePage() {
 	}
@@ -116,34 +114,23 @@ public class BookCasePage extends AbstractPage {
 			@Override
 			public void onSelection(SelectionEvent<Integer> event) {
 				int tabIdx = event.getSelectedItem();
+				BookcaseEnum tabVal = null;
 				switch (tabIdx) {
 				case 0:
-					if (myBooksTab == null || myBooksTab.getWidgetCount() == 0) {
-						myBooksForBookcaseSmallIconRequestEvent
-								.fire(new MyBooksForBookcaseSmallIconRequestEvent(
-										clientToken.getUserId(),
-										BookcaseEnum.AUTHOR));
-					}
+					tabVal = BookcaseEnum.AUTHOR;
 					break;
 				case 1:
-					if (myCoBooksTab == null
-							|| myCoBooksTab.getWidgetCount() == 0) {
-						myBooksForBookcaseSmallIconRequestEvent
-								.fire(new MyBooksForBookcaseSmallIconRequestEvent(
-										clientToken.getUserId(),
-										BookcaseEnum.COAUTHOR));
-					}
+					tabVal = BookcaseEnum.COAUTHOR;
 					break;
 				case 2:
-					if (myCollectionTab == null
-							|| myCollectionTab.getWidgetCount() == 0) {
-						myBooksForBookcaseSmallIconRequestEvent
-								.fire(new MyBooksForBookcaseSmallIconRequestEvent(
-										clientToken.getUserId(),
-										BookcaseEnum.MYCOLLECTION));
-					}
+					tabVal = BookcaseEnum.MYCOLLECTION;
 					break;
 				}
+
+				// Fire event
+				myBooksForBookcaseSmallIconRequestEvent
+						.fire(new MyBooksForBookcaseSmallIconRequestEvent(
+								clientToken.getUserId(), tabVal));
 			}
 		});
 
@@ -173,6 +160,13 @@ public class BookCasePage extends AbstractPage {
 		setContainerSize();
 	}
 
+	@Override
+	public void onUnload() {
+		super.onUnload();
+		disposeTabs();
+		bookcaseContainer.clear();
+	}
+
 	/**
 	 * Adjusts the container height
 	 */
@@ -200,42 +194,31 @@ public class BookCasePage extends AbstractPage {
 		BookcaseEnum requestedTab = myBooksForBookcaseSmallIconResponseEvent
 				.getRequestedTab();
 
+		// Clear all tabs
+		disposeTabs();
+
+		// Create widget
+		BookCaseContainerWidget widget = null;
+		if (lst != null && lst.size() > 0) {
+			widget = bookCaseContainerWidgetFac.get();
+			widget.loadDataAndInit(lst);
+		}
+
 		switch (requestedTab) {
 		// Load the appropriate list
 		case AUTHOR:
-			if (lst != null && lst.size() > 0) {
-				authorBookCaseContainerWidget.loadDataAndInit(lst);
-				myBooksTab.clear();
-				myBooksTab.add(authorBookCaseContainerWidget);
-			}
+			myBooksTab.add(widget);
 			break;
 		case COAUTHOR:
-			if (lst != null && lst.size() > 0) {
-				coauthorBookCaseContainerWidget.loadDataAndInit(lst);
-				myCoBooksTab.clear();
-				myCoBooksTab.add(authorBookCaseContainerWidget);
-			}
+			myCoBooksTab.add(widget);
 			break;
 		case MYCOLLECTION:
-			if (lst != null && lst.size() > 0) {
-				myCollectionBookCaseContainerWidget.loadDataAndInit(lst);
-				myCollectionTab.clear();
-				myCollectionTab.add(myCollectionBookCaseContainerWidget);
-			}
+			myCollectionTab.add(widget);
 			break;
 		}
 
 		// Set the spinner state
 		gSpinner.setVisible(false);
-	}
-
-	/**
-	 * Currently does nothing
-	 * 
-	 * @param getMyBookcaseResponseEvent
-	 */
-	protected void observesGetMyBookcaseResponseEvent(
-			@Observes GetMyBookcaseResponseEvent getMyBookcaseResponseEvent) {
 	}
 
 	/**
@@ -247,7 +230,6 @@ public class BookCasePage extends AbstractPage {
 			@Observes ServiceErrorEvent serviceErrorEvent) {
 		// Set the spinner visible
 		gSpinner.setVisible(false);
-		// spinner.setVisible(false);
 	}
 
 	/**
@@ -259,5 +241,30 @@ public class BookCasePage extends AbstractPage {
 			@Observes ClientErrorEvent clientErrorEvent) {
 		// Set the spinner visible
 		gSpinner.setVisible(false);
+	}
+
+	private void disposeTabs() {
+		// Destroy current widgets
+		// The tabs should only contain 1 widget
+		if (myBooksTab != null && myBooksTab.getWidgetCount() > 0) {
+			BookCaseContainerWidget w = (BookCaseContainerWidget) myBooksTab
+					.getWidget(0);
+			bookCaseContainerWidgetDisposer.dispose(w);
+			myBooksTab.clear();
+		}
+
+		if (myCoBooksTab != null && myCoBooksTab.getWidgetCount() > 0) {
+			BookCaseContainerWidget w = (BookCaseContainerWidget) myCoBooksTab
+					.getWidget(0);
+			bookCaseContainerWidgetDisposer.dispose(w);
+			myCoBooksTab.clear();
+		}
+
+		if (myCollectionTab != null && myCollectionTab.getWidgetCount() > 0) {
+			BookCaseContainerWidget w = (BookCaseContainerWidget) myCollectionTab
+					.getWidget(0);
+			bookCaseContainerWidgetDisposer.dispose(w);
+			myCollectionTab.clear();
+		}
 	}
 }

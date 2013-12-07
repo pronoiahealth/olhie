@@ -40,6 +40,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.widgets.GlassPanelSpinner;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3DEventObserver;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3D_3;
 
 //import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D_2;
@@ -93,6 +94,9 @@ public class SearchResultsComponent extends AbstractComposite {
 
 	@Inject
 	private SearchPagerWidget pagerWidget;
+	
+	@Inject
+	private BookList3DEventObserver bookListObserver;
 
 	/**
 	 * Constructor
@@ -266,6 +270,7 @@ public class SearchResultsComponent extends AbstractComposite {
 		}
 		currentInstanceBookList3D_3 = bookList3DFac.get();
 		currentInstanceBookList3D_3.build(lst, false);
+		bookListObserver.attachBookList(currentInstanceBookList3D_3);
 		searchResultsContainerList.clear();
 		searchResultsContainerList.add(currentInstanceBookList3D_3);
 	}

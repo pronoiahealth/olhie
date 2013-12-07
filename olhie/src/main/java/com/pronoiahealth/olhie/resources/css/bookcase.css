@@ -105,6 +105,28 @@
 }
 
 .ph-Bookcase-BookCase-Frame {
+	/*
+	-moz-border-bottom-colors: none;
+	-moz-border-left-colors: none;
+	-moz-border-right-colors: none;
+	-moz-border-top-colors: none;
+	border-color: #2E1A12;
+	border-image: url("Olhie/images/wood1.png") 100 100 100 100;
+	border-style: solid;
+	border-width: 20px;
+	box-shadow: 1px 1px 10px #000000;
+	*/
+	float: left;
+	margin: 10px;
+	width: 500px;
+	height: 600px;
+	background: url("Olhie/images/wood.jpg") repeat;
+	border-imamge: url("Olhie/images/bookcasetop.jpg");
+	border-left: 0px;
+	border-right: 0px;
+}
+
+.ph-Bookcase-Bookcase-Display_Frame {
 	-moz-border-bottom-colors: none;
 	-moz-border-left-colors: none;
 	-moz-border-right-colors: none;

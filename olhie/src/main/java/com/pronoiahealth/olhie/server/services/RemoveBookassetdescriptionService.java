@@ -19,6 +19,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
+import com.pronoiahealth.olhie.client.shared.events.book.QueueBookEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.RemoveBookassetdescriptionEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.RemoveBookassetdescriptionResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
@@ -54,6 +55,9 @@ public class RemoveBookassetdescriptionService {
 	private Event<RemoveBookassetdescriptionResponseEvent> removeBookassetdescriptionResponseEvent;
 
 	@Inject
+	private Event<QueueBookEvent> queueBookEvent;
+
+	@Inject
 	@DAO
 	private BookDAO bookDAO;
 
@@ -84,6 +88,10 @@ public class RemoveBookassetdescriptionService {
 			Bookassetdescription bad = bookDAO
 					.inactivateBookAssetDescriptionFromBook(sessionUserId,
 							bookAssetdescriptionId);
+
+			// Tell Solr about it
+			queueBookEvent.fire(new QueueBookEvent(bad.getBookId(),
+					sessionUserId));
 
 			// Return good result
 			removeBookassetdescriptionResponseEvent

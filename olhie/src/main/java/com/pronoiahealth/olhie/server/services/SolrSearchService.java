@@ -24,6 +24,8 @@ import java.util.regex.Pattern;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
+import org.apache.deltaspike.core.api.config.ConfigProperty;
+
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
@@ -40,21 +42,16 @@ import com.pronoiahealth.olhie.server.security.ServerUserToken;
 @RequestScoped
 public class SolrSearchService {
 
-	// private static final String SOLR_SERVER = "184.173.121.82";
-	private static final String SOLR_SERVER = "localhost";
-	private static final int SOLR_PORT = 8080;
+	@Inject
+	@ConfigProperty(name = "SOLR_SERVER", defaultValue = "localhost")
+	private String solrServer;
 
-	private static final String SOLR_QUERY_ALL = "http://" + SOLR_SERVER + ":"
-			+ SOLR_PORT + "/solr/select?q=*:*&wt=xml";
-	private static final String SOLR_QUERY_KEYWORDS = "http://" + SOLR_SERVER
-			+ ":" + SOLR_PORT + "/solr/select?q=keywords:";
-	private static final String SOLR_QUERY_TEXT = "http://" + SOLR_SERVER + ":"
-			+ SOLR_PORT + "/solr/select?q=text:";
-	private static final String SOLR_QUERY_FULL = "http://" + SOLR_SERVER + ":"
-			+ SOLR_PORT + "/solr/select?q=";
+	@Inject
+	@ConfigProperty(name = "SOLR_PORT", defaultValue = "8080")
+	private String solrPort;
+
 	private static final String SOLR_ROWS_PARAM = "&rows=";
-	private static final String SOLR__POST_FIELDS = "&fl=id";
-
+	private static final String SOLR_POST_FIELDS = "&fl=id";
 	private static final int RETURN_ALL_ROWS = -1;
 
 	@Inject
@@ -133,7 +130,7 @@ public class SolrSearchService {
 	 * @return
 	 */
 	private String querySolrAll() {
-		return querySolr(SOLR_QUERY_ALL);
+		return querySolr(this.getSolrQueryAll());
 	}
 
 	/**
@@ -141,7 +138,7 @@ public class SolrSearchService {
 	 * @return
 	 */
 	private String querySolrKeywords(String _query) {
-		return querySolr(SOLR_QUERY_KEYWORDS + _query);
+		return querySolr(this.getSolrQueryKeywords() + _query);
 	}
 
 	/**
@@ -171,7 +168,7 @@ public class SolrSearchService {
 	 * @return
 	 */
 	private String querySolrText(String _query, int _rows) {
-		return querySolr(SOLR_QUERY_TEXT + _query, _rows);
+		return querySolr(this.getSolrQueryText() + _query, _rows);
 	}
 
 	/**
@@ -180,7 +177,7 @@ public class SolrSearchService {
 	 * @return
 	 */
 	private String querySolrFull(String _query, int _rows) {
-		return querySolr(SOLR_QUERY_FULL + _query, _rows);
+		return querySolr(this.getSolrQueryFull() + _query, _rows);
 	}
 
 	/**
@@ -205,7 +202,7 @@ public class SolrSearchService {
 	 * @return
 	 */
 	private String querySolr(String _query) {
-		String query = _query + SOLR__POST_FIELDS;
+		String query = _query + SOLR_POST_FIELDS;
 		StringBuffer result = new StringBuffer();
 
 		BufferedReader reader = null;
@@ -255,6 +252,24 @@ public class SolrSearchService {
 		}
 
 		return results;
+	}
+
+	private String getSolrQueryAll() {
+		return "http://" + solrServer + ":" + solrPort
+				+ "/solr/select?q=*:*&wt=xml";
+	}
+
+	private String getSolrQueryKeywords() {
+		return "http://" + solrServer + ":" + solrPort
+				+ "/solr/select?q=keywords:";
+	}
+
+	private String getSolrQueryText() {
+		return "http://" + solrServer + ":" + solrPort + "/solr/select?q=text:";
+	}
+
+	private String getSolrQueryFull() {
+		return "http://" + solrServer + ":" + solrPort + "/solr/select?q=";
 	}
 
 	/**

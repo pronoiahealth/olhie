@@ -30,6 +30,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Marshaller;
 
+import org.apache.deltaspike.core.api.config.ConfigProperty;
+
 import com.pronoiahealth.olhie.client.shared.events.book.QueueBookEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
@@ -70,6 +72,14 @@ public class SolrQueueingService {
 	@Inject
 	@DAO
 	private BookDAO bookDAO;
+	
+	@Inject
+	@ConfigProperty(name="SOLR_JMS_USERID", defaultValue="guest")
+	private String jmxUserid;
+	
+	@Inject
+	@ConfigProperty(name="SOLR_JMS_USERPWD", defaultValue="guestw")
+	private String jmsPwd;
 
 	@Resource(mappedName = "java:/ConnectionFactory")
 	ConnectionFactory factory;
@@ -120,8 +130,7 @@ public class SolrQueueingService {
 			solrBook.setPublishedDate(dtFormatHolder.get().format(
 					book.getActDate()));
 			solrBook.setAuthorId(book.getAuthorId());
-			solrBook.setActive(book.getActive() == null
-					|| book.getActive() == Boolean.FALSE ? "false" : "true");
+			solrBook.setActive(booleanStrVal(book.getActive()));
 
 			// create a User
 			com.pronoiahealth.olhie.solr.xml.User solrUser = new com.pronoiahealth.olhie.solr.xml.User();
@@ -133,7 +142,8 @@ public class SolrQueueingService {
 			solrBook.getUser().add(solrUser);
 
 			// Iterate over book assets
-			List<Bookassetdescription> descs = bookDAO.getBookassetdescriptionByBookId(bookId, true);
+			List<Bookassetdescription> descs = bookDAO
+					.getBookassetdescriptionByBookId(bookId, true);
 			if (descs != null && descs.size() > 0) {
 				for (Bookassetdescription desc : descs) {
 					// create a BookAssetDescription
@@ -142,9 +152,7 @@ public class SolrQueueingService {
 					solrBookAssetDescription.setDescription(desc
 							.getDescription());
 					solrBookAssetDescription
-							.setRemoved(desc.getRemoved() == null
-									|| desc.getRemoved() == Boolean.FALSE ? "false"
-									: "true");
+							.setRemoved(booleanStrVal(desc.getRemoved()));
 					solrBookAssetDescription.setCreatedDate(dtFormatHolder
 							.get().format(desc.getCreatedDate()));
 					solrBookAssetDescription.setBookId(desc.getBookId());
@@ -206,6 +214,14 @@ public class SolrQueueingService {
 					log.log(Level.SEVERE, e1.getMessage(), e1);
 				}
 			}
+		}
+	}
+
+	private String booleanStrVal(Boolean b) {
+		if (b == null || b.booleanValue() == false) {
+			return "false";
+		} else {
+			return "true";
 		}
 	}
 }

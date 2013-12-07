@@ -35,6 +35,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.CheckBookIsAuthorRequestEvent;
@@ -62,9 +63,6 @@ import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
  */
 @Templated("#bookLstRoot")
 public class BookList3D_3 extends Composite {
-	@Inject
-	protected PageNavigator nav;
-	
 	private int currentBookCnt;
 
 	@DataField("bookList")
@@ -109,12 +107,19 @@ public class BookList3D_3 extends Composite {
 	private void postConstruct() {
 		bliwMap = new HashMap<String, BookListItemWidget>();
 	}
-
+	
 	@PreDestroy
 	private void preDestroy() {
+		bliwMap.clear();
+	}
+	
+	@Override
+	protected void onUnload() {
+		// TODO Auto-generated method stub
+		super.onUnload();
 		removeEventsFromLst();
 	}
-
+	
 	/**
 	 * Create the list of books
 	 * 
@@ -178,70 +183,6 @@ public class BookList3D_3 extends Composite {
 		String bookTitle = bookListItemWidget.getBookTitle();
 		showAddBookCommentModalEvent.fire(new ShowAddBookCommentModalEvent(
 				bookId, bookTitle, true));
-	}
-
-	/**
-	 * Watch for events where the book has been added to the users collection
-	 * 
-	 * @param addBookToMyCollectionResponseEvent
-	 */
-	protected void observersAddBookToMyCollectionResponseEvent(
-			@Observes AddBookToMyCollectionResponseEvent addBookToMyCollectionResponseEvent) {
-		String bookId = addBookToMyCollectionResponseEvent.getBookId();
-		BookListItemWidget bookListItemWidget = bliwMap.get(bookId);
-
-		// Toggle the button so the user can now remove the book from his
-		// collection
-		bookListItemWidget.getTocWidget()
-				.setMyCollectionBtnRemoveFromCollection(false);
-
-		// Set the icon on the front of the book indicating that the book is in
-		// the users collection
-		bookListItemWidget.getMyCollectionIndicator().setAddToMyCollectionBtn(
-				true);
-	}
-
-	/**
-	 * Watch for events where the book has been removed from the users
-	 * collection
-	 * 
-	 * @param removeBookFromMyCollectionResponseEvent
-	 */
-	protected void observesRemoveBookFromMyCollectionResponseEvent(
-			@Observes RemoveBookFromMyCollectionResponseEvent removeBookFromMyCollectionResponseEvent) {
-		String bookId = removeBookFromMyCollectionResponseEvent.getBookId();
-		BookListItemWidget bookListItemWidget = bliwMap.get(bookId);
-
-		// Toggle the button so the user can now add the book to his
-		// collection
-		bookListItemWidget.getTocWidget().setMyCollectionBtnAddToCollection(
-				false);
-
-		// Hide the icon on the front of the book indicating that the book is
-		// not in
-		// the users collection
-		bookListItemWidget.getMyCollectionIndicator().setHideMyCollectionBtn();
-	}
-
-	/**
-	 * The corresponding request event is fired when the user clicks the book.
-	 * When this happens a check is done to see if the user clicking the book is
-	 * the author or co-author of the book. If yes then the user will be
-	 * navigated to the NewBookPage where they cab edit the contents of the
-	 * book.
-	 * 
-	 * 
-	 * @param checkBookIsAuthorResponseEvent
-	 */
-	protected void observesCheckBookIsAuthorResponseEvent(
-			@Observes CheckBookIsAuthorResponseEvent checkBookIsAuthorResponseEvent) {
-		boolean isAuthorCoAuthor = checkBookIsAuthorResponseEvent
-				.isAuthorCoAuthor();
-		if (isAuthorCoAuthor == true) {
-			Multimap<String, Object> map = ArrayListMultimap.create();
-			map.put("bookId", checkBookIsAuthorResponseEvent.getBookId());
-			nav.performTransition(NavEnum.NewBookPage_2.toString(), map);
-		}
 	}
 
 	/**
@@ -591,4 +532,7 @@ public class BookList3D_3 extends Composite {
 		}
 	}
 
+	public Map<String, BookListItemWidget> getBliwMap() {
+		return bliwMap;
+	}
 }

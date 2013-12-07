@@ -12,6 +12,8 @@ package com.pronoiahealth.olhie.client.pages.bookcase.widgets;
 
 import static com.arcbees.gquery.tooltip.client.Tooltip.Tooltip;
 import static com.google.gwt.query.client.GQuery.$;
+
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -33,6 +35,7 @@ import com.google.gwt.user.client.ui.Image;
  * @since Nov 29, 2013
  * 
  */
+@Dependent
 @Templated("#root")
 public class BookCaseDraggableBookWidget extends Composite {
 
@@ -52,6 +55,12 @@ public class BookCaseDraggableBookWidget extends Composite {
 	 * 
 	 */
 	public BookCaseDraggableBookWidget() {
+	}
+	
+	@Override
+	protected void onUnload() {
+		// TODO Auto-generated method stub
+		super.onUnload();
 	}
 
 	public void setData(String imgUrl, String bookId,
