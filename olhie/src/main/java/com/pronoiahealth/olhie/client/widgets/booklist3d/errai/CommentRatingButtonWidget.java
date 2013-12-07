@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.widgets.booklist3d.errai;
 
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -30,6 +31,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
  * @since Oct 18, 2013
  *
  */
+@Dependent
 @Templated("TOCWidget.html#commentRatingButtonContainer")
 public class CommentRatingButtonWidget extends Composite {
 	

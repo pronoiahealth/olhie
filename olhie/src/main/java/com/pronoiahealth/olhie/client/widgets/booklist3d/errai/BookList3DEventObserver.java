@@ -1,5 +1,6 @@
 package com.pronoiahealth.olhie.client.widgets.booklist3d.errai;
 
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -11,6 +12,7 @@ import com.pronoiahealth.olhie.client.shared.events.book.CheckBookIsAuthorRespon
 import com.pronoiahealth.olhie.client.shared.events.bookcase.AddBookToMyCollectionResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.RemoveBookFromMyCollectionResponseEvent;
 
+@Dependent
 public class BookList3DEventObserver {
 	@Inject
 	protected PageNavigator nav;

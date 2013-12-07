@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.widgets.booklist3d.errai;
 
+import javax.enterprise.context.Dependent;
+
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
@@ -28,6 +30,7 @@ import com.pronoiahealth.olhie.client.shared.constants.BookAssetDataType;
  * @since Sep 30, 2013
  * 
  */
+@Dependent
 @Templated("#bookContent")
 public class BookContentWidget extends Composite {
 

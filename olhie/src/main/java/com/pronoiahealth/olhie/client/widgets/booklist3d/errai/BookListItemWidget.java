@@ -13,6 +13,7 @@ package com.pronoiahealth.olhie.client.widgets.booklist3d.errai;
 import java.util.Map;
 import java.util.Set;
 
+import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
@@ -44,6 +45,7 @@ import com.pronoiahealth.olhie.client.widgets.rating.StarRating;
  * @since Sep 30, 2013
  * 
  */
+@Dependent
 @Templated("BookListItemWidget.html#bookListItem")
 public class BookListItemWidget extends Composite {
 

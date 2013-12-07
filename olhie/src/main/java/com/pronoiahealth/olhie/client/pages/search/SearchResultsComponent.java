@@ -94,7 +94,7 @@ public class SearchResultsComponent extends AbstractComposite {
 
 	@Inject
 	private SearchPagerWidget pagerWidget;
-	
+
 	@Inject
 	private BookList3DEventObserver bookListObserver;
 
@@ -132,6 +132,18 @@ public class SearchResultsComponent extends AbstractComposite {
 	}
 
 	/**
+	 * Clears any remaining book list widget
+	 * 
+	 * @see com.google.gwt.user.client.ui.Widget#onUnload()
+	 */
+	@Override
+	protected void onUnload() {
+		// TODO Auto-generated method stub
+		super.onUnload();
+		clearResultsContainer();
+	}
+
+	/**
 	 * Observes the results from a book search query.
 	 * 
 	 * @param event
@@ -141,6 +153,9 @@ public class SearchResultsComponent extends AbstractComposite {
 
 		// Hide spinner
 		gSpinner.setVisible(false);
+
+		// Clear results container
+		clearResultsContainer();
 
 		// Display the books, if nothing is returned the display a message
 		List<BookDisplay> lst = event.getBookDisplayList();
@@ -169,6 +184,9 @@ public class SearchResultsComponent extends AbstractComposite {
 			// Hide spinner
 			gSpinner.setVisible(false);
 
+			// Clear results container
+			clearResultsContainer();
+
 			// Display the books, if nothing is returned the display a message
 			List<BookDisplay> lst = searchPageNavigationResponseEvent
 					.getBookDisplays();
@@ -189,10 +207,6 @@ public class SearchResultsComponent extends AbstractComposite {
 	 */
 	protected void observesBookSearchEvent(
 			@Observes BookSearchEvent bookSearchEvent) {
-
-		// Clear the current display
-		searchResultsContainerList.clear();
-
 		// Show spinner
 		gSpinner.setVisible(true);
 	}
@@ -206,6 +220,9 @@ public class SearchResultsComponent extends AbstractComposite {
 			@Observes ServiceErrorEvent serviceErrorEvent) {
 		// hide spinner
 		gSpinner.setVisible(false);
+
+		// Clear results container
+		clearResultsContainer();
 	}
 
 	/**
@@ -217,6 +234,9 @@ public class SearchResultsComponent extends AbstractComposite {
 			@Observes ClientErrorEvent clientErrorEvent) {
 		// hide spinner
 		gSpinner.setVisible(false);
+
+		// Clear results container
+		clearResultsContainer();
 	}
 
 	/**
@@ -246,7 +266,8 @@ public class SearchResultsComponent extends AbstractComposite {
 	 */
 	protected void observesClientLogoutRequestEvent(
 			@Observes ClientLogoutRequestEvent clientLogoutRequestEvent) {
-		searchResultsContainerList.clear();
+		// Clear results container
+		clearResultsContainer();
 	}
 
 	/**
@@ -265,13 +286,19 @@ public class SearchResultsComponent extends AbstractComposite {
 	}
 
 	private void setNewCurrentBookList3D(List<BookDisplay> lst) {
-		if (this.currentInstanceBookList3D_3 != null) {
-			bookList3DDisposer.dispose(currentInstanceBookList3D_3);
-		}
 		currentInstanceBookList3D_3 = bookList3DFac.get();
 		currentInstanceBookList3D_3.build(lst, false);
 		bookListObserver.attachBookList(currentInstanceBookList3D_3);
-		searchResultsContainerList.clear();
 		searchResultsContainerList.add(currentInstanceBookList3D_3);
+	}
+
+	private void clearResultsContainer() {
+		if (searchResultsContainerList.getWidget() != null) {
+			searchResultsContainerList.clear();
+			if (currentInstanceBookList3D_3 != null) {
+				bookList3DDisposer.dispose(currentInstanceBookList3D_3);
+				currentInstanceBookList3D_3 = null;
+			}
+		}
 	}
 }

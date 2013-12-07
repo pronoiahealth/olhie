@@ -95,6 +95,8 @@ public class BookCasePage extends AbstractPage {
 	@Inject
 	private Disposer<BookCaseContainerWidget> bookCaseContainerWidgetDisposer;
 
+	private BookCaseContainerWidget currentBookCaseContainerWidget;
+
 	public BookCasePage() {
 	}
 
@@ -165,6 +167,7 @@ public class BookCasePage extends AbstractPage {
 		super.onUnload();
 		disposeTabs();
 		bookcaseContainer.clear();
+
 	}
 
 	/**
@@ -230,6 +233,9 @@ public class BookCasePage extends AbstractPage {
 			@Observes ServiceErrorEvent serviceErrorEvent) {
 		// Set the spinner visible
 		gSpinner.setVisible(false);
+
+		// Clean up tabs
+		disposeTabs();
 	}
 
 	/**
@@ -241,30 +247,21 @@ public class BookCasePage extends AbstractPage {
 			@Observes ClientErrorEvent clientErrorEvent) {
 		// Set the spinner visible
 		gSpinner.setVisible(false);
+
+		// Clean up tabs
+		disposeTabs();
 	}
 
 	private void disposeTabs() {
 		// Destroy current widgets
 		// The tabs should only contain 1 widget
-		if (myBooksTab != null && myBooksTab.getWidgetCount() > 0) {
-			BookCaseContainerWidget w = (BookCaseContainerWidget) myBooksTab
-					.getWidget(0);
-			bookCaseContainerWidgetDisposer.dispose(w);
-			myBooksTab.clear();
-		}
-
-		if (myCoBooksTab != null && myCoBooksTab.getWidgetCount() > 0) {
-			BookCaseContainerWidget w = (BookCaseContainerWidget) myCoBooksTab
-					.getWidget(0);
-			bookCaseContainerWidgetDisposer.dispose(w);
-			myCoBooksTab.clear();
-		}
-
-		if (myCollectionTab != null && myCollectionTab.getWidgetCount() > 0) {
-			BookCaseContainerWidget w = (BookCaseContainerWidget) myCollectionTab
-					.getWidget(0);
-			bookCaseContainerWidgetDisposer.dispose(w);
-			myCollectionTab.clear();
+		if (this.currentBookCaseContainerWidget != null) {
+			HTMLPanel activeTabContainer = (HTMLPanel) currentBookCaseContainerWidget
+					.getParent();
+			activeTabContainer.clear();
+			bookCaseContainerWidgetDisposer
+					.dispose(currentBookCaseContainerWidget);
+			currentBookCaseContainerWidget = null;
 		}
 	}
 }

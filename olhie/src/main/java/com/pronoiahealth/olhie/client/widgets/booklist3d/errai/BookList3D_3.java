@@ -19,15 +19,13 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.enterprise.event.Observes;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import com.google.gwt.query.client.Function;
 import com.google.gwt.query.client.GQuery;
 import com.google.gwt.query.client.css.CSS;
@@ -35,17 +33,11 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Widget;
-import com.pronoiahealth.olhie.client.navigation.PageNavigator;
-import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.CheckBookIsAuthorRequestEvent;
-import com.pronoiahealth.olhie.client.shared.events.book.CheckBookIsAuthorResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.AddBookToMyCollectionEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.AddBookToMyCollectionEvent.ADD_RESPONSE_TYPE;
-import com.pronoiahealth.olhie.client.shared.events.bookcase.AddBookToMyCollectionResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.RemoveBookFromMyCollectionEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.RemoveBookFromMyCollectionEvent.REMOVE_RESPONSE_TYPE;
-import com.pronoiahealth.olhie.client.shared.events.bookcase.RemoveBookFromMyCollectionResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.DownloadBookAssetEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowAddBookCommentModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowViewBookassetDialogEvent;
@@ -61,6 +53,7 @@ import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
  * @since Oct 17, 2013
  * 
  */
+@Dependent
 @Templated("#bookLstRoot")
 public class BookList3D_3 extends Composite {
 	private int currentBookCnt;
@@ -107,19 +100,19 @@ public class BookList3D_3 extends Composite {
 	private void postConstruct() {
 		bliwMap = new HashMap<String, BookListItemWidget>();
 	}
-	
+
 	@PreDestroy
 	private void preDestroy() {
 		bliwMap.clear();
 	}
-	
+
 	@Override
 	protected void onUnload() {
 		// TODO Auto-generated method stub
 		super.onUnload();
 		removeEventsFromLst();
 	}
-	
+
 	/**
 	 * Create the list of books
 	 * 
@@ -310,6 +303,7 @@ public class BookList3D_3 extends Composite {
 
 				// If it is a btn-success buton we want to add the book to the
 				// users collection, otherwise remove for the collection.
+				// Clear results container
 				tocPageMyCollectionsBtn.bind(Event.ONCLICK, new Function() {
 					@Override
 					public boolean f(Event e) {

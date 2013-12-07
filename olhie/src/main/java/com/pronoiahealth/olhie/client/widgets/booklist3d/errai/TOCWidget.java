@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.widgets.booklist3d.errai;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
@@ -31,6 +32,7 @@ import com.google.gwt.user.client.ui.Composite;
  * @since Oct 17, 2013
  *
  */
+@Dependent
 @Templated("#toc")
 public class TOCWidget extends Composite {
 	private Element rootElement;
