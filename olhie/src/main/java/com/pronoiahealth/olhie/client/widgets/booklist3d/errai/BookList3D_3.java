@@ -103,7 +103,7 @@ public class BookList3D_3 extends Composite {
 
 	@PreDestroy
 	private void preDestroy() {
-		bliwMap.clear();
+		int i = bliwMap.size();
 	}
 
 	@Override
@@ -136,7 +136,7 @@ public class BookList3D_3 extends Composite {
 			// Clear map
 			bliwMap.clear();
 
-			// Add the list fo books
+			// Add the list for books
 			for (BookDisplay book : books) {
 				BookListItemWidget bliw = bookListItemInst.get();
 				String bookId = bliw.build(book);

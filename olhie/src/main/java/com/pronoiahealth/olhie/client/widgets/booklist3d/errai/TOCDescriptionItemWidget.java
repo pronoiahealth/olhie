@@ -23,32 +23,32 @@ import com.google.gwt.user.client.ui.Composite;
  * TOCDescriptionItemWidget.java<br/>
  * Responsibilities:<br/>
  * 1.
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since Nov 25, 2013
- *
+ * 
  */
 @Dependent
 @Templated("#root")
 public class TOCDescriptionItemWidget extends Composite {
-	
+
 	@DataField
-	private Element root = DOM.createDiv(); 
-	
+	private Element root = DOM.createDiv();
+
 	@DataField
 	private Element itemNumber = DOM.createDiv();
-	
+
 	@DataField
 	private Element itemDescription = DOM.createDiv();
-	
+
 	/**
 	 * Constructor
-	 *
+	 * 
 	 */
 	public TOCDescriptionItemWidget() {
 	}
-	
+
 	/**
 	 * Sets the data for the row
 	 * 
@@ -56,10 +56,16 @@ public class TOCDescriptionItemWidget extends Composite {
 	 * @param itemDesc
 	 * @param hoursOfWork
 	 */
-	public Element setData(int count, String itemDesc, String hoursOfWork) {
+	public Element setData(int count, String itemDesc, String hoursOfWork,
+			boolean highlight) {
 		root.setAttribute("item-ref", "" + count);
 		itemNumber.setInnerText("" + count + ". ");
 		itemDescription.setInnerText(itemDesc + " (" + hoursOfWork + ")");
+		if (highlight == true) {
+			String style = itemDescription.getAttribute("style");
+			style = style + " color: green;";
+			itemDescription.setAttribute("style", style);
+		}
 		return root;
 	}
 

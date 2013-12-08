@@ -42,6 +42,7 @@ public class BookDisplay {
 	private int bookHoursOfWork;
 	private int totalCost;
 	private boolean userIsAuthorCoAuthor;
+	private List<String> bookassetdescriptionsContainteInSearchLst;
 
 	/**
 	 * 
@@ -56,11 +57,15 @@ public class BookDisplay {
 	 * @param authorFullName
 	 * @param bookAssetDescriptions
 	 */
-	public BookDisplay(Book book, BookCover bookCover, BookCategory bookCategory, String authorFullName,
+	public BookDisplay(Book book, BookCover bookCover,
+			BookCategory bookCategory, String authorFullName,
 			List<Bookassetdescription> bookAssetDescriptions, int bookRating,
-			int userBookRating, int bookHoursOfWork, int totalCost, boolean userIsAuthorCoAuthor) {
-		this(book, bookCover, bookCategory, authorFullName, bookAssetDescriptions, false,
-				false, bookRating, userBookRating, bookHoursOfWork, totalCost, userIsAuthorCoAuthor);
+			int userBookRating, int bookHoursOfWork, int totalCost,
+			boolean userIsAuthorCoAuthor) {
+		this(book, bookCover, bookCategory, authorFullName,
+				bookAssetDescriptions, false, false, bookRating,
+				userBookRating, bookHoursOfWork, totalCost,
+				userIsAuthorCoAuthor);
 	}
 
 	/**
@@ -76,9 +81,11 @@ public class BookDisplay {
 	 * @param bookRating
 	 * @param userBookRating
 	 */
-	public BookDisplay(Book book, BookCover bookCover, BookCategory bookCategory, String authorFullName,
+	public BookDisplay(Book book, BookCover bookCover,
+			BookCategory bookCategory, String authorFullName,
 			List<Bookassetdescription> bookAssetDescriptions, boolean bookLogo,
-			boolean hasComments, int bookRating, int userBookRating, int bookHoursOfWork, int totalCost, boolean userIsAuthorCoAuthor) {
+			boolean hasComments, int bookRating, int userBookRating,
+			int bookHoursOfWork, int totalCost, boolean userIsAuthorCoAuthor) {
 		super();
 		this.book = book;
 		this.bookCover = bookCover;
@@ -198,5 +205,29 @@ public class BookDisplay {
 
 	public void setTotalCost(int totalCost) {
 		this.totalCost = totalCost;
+	}
+
+	public List<String> getBookassetdescriptionsContainteInSearchLst() {
+		return bookassetdescriptionsContainteInSearchLst;
+	}
+
+	public void setBookassetdescriptionsContainteInSearchLst(
+			List<String> bookassetdescriptionsContainteInSearchLst) {
+		this.bookassetdescriptionsContainteInSearchLst = bookassetdescriptionsContainteInSearchLst;
+	}
+
+	public boolean bookassetdescriptionInSrchResults(
+			String bookassetdescriptionId) {
+		if (bookassetdescriptionsContainteInSearchLst == null
+				|| bookassetdescriptionsContainteInSearchLst.size() == 0) {
+			return false;
+		} else {
+			if (bookassetdescriptionsContainteInSearchLst
+					.contains(bookassetdescriptionId)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
 	}
 }

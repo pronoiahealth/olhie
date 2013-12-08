@@ -26,11 +26,11 @@ import com.google.gwt.user.client.ui.Composite;
  * TOCWidget.java<br/>
  * Responsibilities:<br/>
  * 1.
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since Oct 17, 2013
- *
+ * 
  */
 @Dependent
 @Templated("#toc")
@@ -39,25 +39,24 @@ public class TOCWidget extends Composite {
 
 	@DataField("tocItems")
 	private Element tocItems = DOM.createDiv();
-	
+
 	@DataField("tocItemsTable")
 	private Element tocItemsTable = DOM.createDiv();
 
 	@Inject
 	@DataField("myCollectionButtonContainer")
 	private MyCollectionButtonWidget myCollectionBtnContainer;
-	
+
 	@Inject
 	@DataField("commentRatingButtonContainer")
 	private CommentRatingButtonWidget commentRatingButtonContainer;
-	
+
 	@Inject
 	private Instance<TOCDescriptionItemWidget> tOCDescriptionItemWidgetFac;
-	
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 */
 	public TOCWidget() {
 	}
@@ -68,17 +67,21 @@ public class TOCWidget extends Composite {
 	}
 
 	/**
-	 * @param count - 1 based
+	 * @param count
+	 *            - 1 based
 	 * @param itemDesc
 	 */
-	public void addItem(int count, String itemDesc, String hoursOfWork) {
+	public void addItem(int count, String itemDesc, String hoursOfWork,
+			boolean highLight) {
 		TOCDescriptionItemWidget widget = tOCDescriptionItemWidgetFac.get();
-		//widget.setData(count, itemDesc, hoursOfWork);
-		//Element div = DOM.createDiv();
-		//div.setClassName("bk-toc-item");
-		//div.setAttribute("item-ref", "" + count);
-		//div.setInnerText("" + count + ". " + itemDesc + " (" + hoursOfWork + ")");
-		tocItemsTable.appendChild(widget.setData(count, itemDesc, hoursOfWork));
+		// widget.setData(count, itemDesc, hoursOfWork);
+		// Element div = DOM.createDiv();
+		// div.setClassName("bk-toc-item");
+		// div.setAttribute("item-ref", "" + count);
+		// div.setInnerText("" + count + ". " + itemDesc + " (" + hoursOfWork +
+		// ")");
+		tocItemsTable.appendChild(widget.setData(count, itemDesc, hoursOfWork,
+				highLight));
 	}
 
 	/**
@@ -99,11 +102,11 @@ public class TOCWidget extends Composite {
 	public void setMyCollectionBtnHide() {
 		myCollectionBtnContainer.setHideMyCollectionBtn();
 	}
-	
+
 	public void setCommentRatingBtnHide() {
 		commentRatingButtonContainer.setHideCommentRatingBtn();
 	}
-	
+
 	public void setCommentRatingBtnShow() {
 		commentRatingButtonContainer.setShowCommentRatingBtn();
 	}

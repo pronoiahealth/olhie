@@ -13,6 +13,7 @@ package com.pronoiahealth.olhie.server.services;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
@@ -32,6 +33,7 @@ import javax.inject.Named;
 public class SearchResultHolder implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private List<String> searchResults;
+	private Map<String, List<String>> bookassetdescriptionLst;
 	private String searchStr;
 	private int pageSize;
 	private int calculateCurrentPage;
@@ -53,8 +55,10 @@ public class SearchResultHolder implements Serializable {
 	 * @param currentPage
 	 */
 	public void setSearchResultHolder(List<String> searchResults,
+			Map<String, List<String>> bookassetdescriptionLst,
 			String searchStr, int pageSize) {
 		this.searchResults = searchResults;
+		this.bookassetdescriptionLst = bookassetdescriptionLst;
 		this.searchStr = searchStr;
 		this.pageSize = pageSize;
 
@@ -76,6 +80,15 @@ public class SearchResultHolder implements Serializable {
 
 	public void setSearchResults(List<String> searchResults) {
 		this.searchResults = searchResults;
+	}
+
+	public Map<String, List<String>> getBookassetdescriptionLst() {
+		return bookassetdescriptionLst;
+	}
+
+	public void setBookassetdescriptionLst(
+			Map<String, List<String>> bookassetdescriptionLst) {
+		this.bookassetdescriptionLst = bookassetdescriptionLst;
 	}
 
 	public String getSearchStr() {

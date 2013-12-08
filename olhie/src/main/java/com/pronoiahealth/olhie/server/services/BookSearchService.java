@@ -11,7 +11,11 @@
 package com.pronoiahealth.olhie.server.services;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -124,8 +128,10 @@ public class BookSearchService {
 
 			int rows = bookSearchEvent.getRows();
 			// solrSearchService.searchSolr(searchText);
-			List<String> solrBookIdList = solrSearchService.searchSolr(
-					searchText.split("\\s+"));
+			List<String> solrRetIdList = solrSearchService
+					.searchSolr(searchText.split("\\s+"));
+			LinkedHashMap<String, List<String>> lhm = getReturnListMap(solrRetIdList);
+			List<String> solrBookIdList = this.getSearchLst(lhm);
 
 			// Find Book
 			// OSQLSynchQuery<Book> bQuery = new
@@ -146,9 +152,10 @@ public class BookSearchService {
 			 */
 
 			List<String> bookIdxLst = new ArrayList<String>();
+			Map<String, List<String>> bookIdxLstBookassetdescMap = new HashMap<String, List<String>>();
 			List<Book> bResult = bookDAO.getBooksByIdLst(solrBookIdList, true);
-			//List<Book> bResult = bookDAO.getActiveBooksByTitle(searchText, 0,
-			//		rows);
+			// List<Book> bResult = bookDAO.getActiveBooksByTitle(searchText, 0,
+			// rows);
 			String userId = userToken.getUserId();
 			int cnt = 0;
 			for (Book book : bResult) {
@@ -157,19 +164,31 @@ public class BookSearchService {
 
 				// Only return the first page on the initial query but load all
 				// results into the book id's list for use by the srchRsltHolder
+				String bookId = null;
 				if (bookDisplay != null && cnt < searchPageSize) {
 					bookDisplayList.add(bookDisplay);
-					bookIdxLst.add(bookDisplay.getBook().getId());
+					bookId = bookDisplay.getBook().getId();
+					bookIdxLst.add(bookId);
+
+					// Return the list of matching bookassetdescription id's
+					// from the search
+					List<String> bookassetdescriptionMatchLst = lhm.get(bookId);
+					bookDisplay
+							.setBookassetdescriptionsContainteInSearchLst(bookassetdescriptionMatchLst);
+					bookIdxLstBookassetdescMap.put(bookId,
+							bookassetdescriptionMatchLst);
 					cnt++;
 				} else {
-					bookIdxLst.add(bookDisplay.getBook().getId());
+					bookId = bookDisplay.getBook().getId();
+					bookIdxLst.add(bookId);
+					bookIdxLstBookassetdescMap.put(bookId, lhm.get(bookId));
 				}
 			}
 
 			if (bResult.size() > 0) {
 				// Set initial state of session token
-				srchRsltHolder.setSearchResultHolder(bookIdxLst, searchText,
-						searchPageSize);
+				srchRsltHolder.setSearchResultHolder(bookIdxLst,
+						bookIdxLstBookassetdescMap, searchText, searchPageSize);
 			} else {
 				srchRsltHolder.clear();
 			}
@@ -229,7 +248,7 @@ public class BookSearchService {
 			case UPDATE_STATE:
 				break;
 			default:
-				throw new Exception("Unknow navigation action requested.");
+				throw new Exception("Unknown navigation action requested.");
 			}
 
 			// Send response to client
@@ -274,9 +293,12 @@ public class BookSearchService {
 	 * @return
 	 * @throws Exception
 	 */
-	private List<BookDisplay> getBooksForResultLstToDisplay(boolean activeOnly) throws Exception {
+	private List<BookDisplay> getBooksForResultLstToDisplay(boolean activeOnly)
+			throws Exception {
 		String userId = userToken.getUserId();
 		List<String> srchLst = srchRsltHolder.getResultsLstForCurrentPage();
+		Map<String, List<String>> badMatchedMap = srchRsltHolder
+				.getBookassetdescriptionLst();
 		List<Book> bResult = bookDAO.getBooksByIdLst(srchLst, activeOnly);
 
 		List<BookDisplay> bookDisplayList = new ArrayList<BookDisplay>();
@@ -286,11 +308,59 @@ public class BookSearchService {
 
 			// Only return the first page on the initial query
 			if (bookDisplay != null) {
+				bookDisplay
+						.setBookassetdescriptionsContainteInSearchLst(badMatchedMap
+								.get(book.getId()));
 				bookDisplayList.add(bookDisplay);
 			}
 		}
 
 		return bookDisplayList;
+	}
+
+	/**
+	 * @param lhm
+	 * @return
+	 */
+	private List<String> getSearchLst(LinkedHashMap<String, List<String>> lhm) {
+		List<String> srchLst = new ArrayList<String>();
+
+		if (lhm != null && lhm.size() > 0) {
+			for (Entry<String, List<String>> entry : lhm.entrySet()) {
+				srchLst.add(entry.getKey());
+			}
+		}
+		return srchLst;
+	}
+
+	/**
+	 * @param lst
+	 * @return
+	 */
+	private LinkedHashMap<String, List<String>> getReturnListMap(
+			List<String> lst) {
+		LinkedHashMap<String, List<String>> retMap = new LinkedHashMap<String, List<String>>();
+
+		if (lst != null && lst.size() > 0) {
+			for (String str : lst) {
+				String[] retArr = str.split("[|]", -2);
+				String key = retArr[0];
+				List<String> strLst = null;
+				if (retMap.containsKey(retArr[0]) == true) {
+					strLst = retMap.get(key);
+					if (retArr.length > 1) {
+						strLst.add(retArr[1]);
+					}
+				} else {
+					strLst = new ArrayList<String>();
+					if (retArr.length > 1) {
+						strLst.add(retArr[1]);
+					}
+					retMap.put(key, strLst);
+				}
+			}
+		}
+		return retMap;
 	}
 
 }

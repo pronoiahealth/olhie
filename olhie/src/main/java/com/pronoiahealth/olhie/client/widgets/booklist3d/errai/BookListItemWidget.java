@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.widgets.booklist3d.errai;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -136,7 +137,8 @@ public class BookListItemWidget extends Composite {
 				.setAttribute(
 						"style",
 						"background-image: url('"
-								+ Utils.buildRestServiceForBookFrontCoverDownloadLink(bookId, BookImageSizeEnum.LARGE)
+								+ Utils.buildRestServiceForBookFrontCoverDownloadLink(
+										bookId, BookImageSizeEnum.LARGE)
 								+ "'); background-repeat: no-repeat; background-size: contain; overflow: auto;");
 
 		// My Collection Button
@@ -192,7 +194,8 @@ public class BookListItemWidget extends Composite {
 					: false, currentAssetId, val == null ? "" : val, itemType,
 					linkRef);
 			bookPage.appendChild(bContent.getElement());
-			tocWidget.addItem(counter++, desc, hrsStr);
+			tocWidget.addItem(counter++, desc, hrsStr, bookDisplay
+					.bookassetdescriptionInSrchResults(bookAssetDesc.getId()));
 		}
 
 		// Back cover
