@@ -32,6 +32,7 @@ import com.google.gwt.query.client.css.CSS;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.pronoiahealth.olhie.client.shared.events.book.CheckBookIsAuthorRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.AddBookToMyCollectionEvent;
@@ -208,6 +209,7 @@ public class BookList3D_3 extends Composite {
 				final GQuery downloadContentBtns = page
 						.find("a.bk-download-btn");
 				final GQuery viewContentBtns = page.find("a.bk-view-btn");
+				final GQuery linkContentBtns = page.find("a.bk-link-btn");
 				final IntHolder current = new IntHolder();
 
 				// Book Id
@@ -391,6 +393,23 @@ public class BookList3D_3 extends Composite {
 									content.removeClass("bk-content-current")
 											.eq(current.getIntVal())
 											.addClass("bk-content-current");
+									return false;
+								}
+							});
+						}
+					});
+
+					// Link buttons
+					linkContentBtns.each(new Function() {
+						@Override
+						public void f(Element e) {
+							GQuery btn = $(e);
+							btn.bind(Event.ONCLICK, new Function() {
+								@Override
+								public boolean f(Event e) {
+									GQuery thisAnchor = $(e);
+									String href = thisAnchor.attr("href");
+									Window.open(href, "_black", "");
 									return false;
 								}
 							});

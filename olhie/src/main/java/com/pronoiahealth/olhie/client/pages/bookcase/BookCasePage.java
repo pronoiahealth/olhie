@@ -206,19 +206,19 @@ public class BookCasePage extends AbstractPage {
 		if (lst != null && lst.size() > 0) {
 			currentBookCaseContainerWidget = bookCaseContainerWidgetFac.get();
 			currentBookCaseContainerWidget.loadDataAndInit(lst);
-		}
 
-		switch (requestedTab) {
-		// Load the appropriate list
-		case AUTHOR:
-			myBooksTab.add(currentBookCaseContainerWidget);
-			break;
-		case COAUTHOR:
-			myCoBooksTab.add(currentBookCaseContainerWidget);
-			break;
-		case MYCOLLECTION:
-			myCollectionTab.add(currentBookCaseContainerWidget);
-			break;
+			switch (requestedTab) {
+			// Load the appropriate list
+			case AUTHOR:
+				myBooksTab.add(currentBookCaseContainerWidget);
+				break;
+			case COAUTHOR:
+				myCoBooksTab.add(currentBookCaseContainerWidget);
+				break;
+			case MYCOLLECTION:
+				myCollectionTab.add(currentBookCaseContainerWidget);
+				break;
+			}
 		}
 
 		// Set the spinner state

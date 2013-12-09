@@ -88,11 +88,14 @@ public class BookContentWidget extends Composite {
 		// View button
 		if (downLoadOnly == true) {
 			bookItemViewBtn.setAttribute("disabled", "true");
-			bookItemViewBtn.setAttribute("display", "none");
+			bookItemViewBtn.setAttribute("style", "display: none;");
+		} else {
+			bookItemViewBtn.setAttribute("bookassetid", assetId);
+			bookItemViewBtn.setAttribute("viewable-content-key", assetType);
+			bookItemViewBtn.removeAttribute("disabled");
+			bookItemViewBtn.setAttribute("style", "display: inline-block;");
 		}
-		bookItemViewBtn.setAttribute("bookassetid", assetId);
-		bookItemViewBtn.setAttribute("viewable-content-key", assetType);
-
+		
 		// Download
 		if (dataType == BookAssetDataType.FILE
 				|| dataType == BookAssetDataType.VIDEO) {

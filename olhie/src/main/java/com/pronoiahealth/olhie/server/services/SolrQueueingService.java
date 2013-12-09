@@ -165,7 +165,7 @@ public class SolrQueueingService {
 						BookAsset bookAsset = new BookAsset();
 						bookAsset.setId(ba.getId());
 						bookAsset.setItemName(ba.getItemName());
-						bookAsset.setContentType(ba.getItemType());
+						bookAsset.setContentType(ba.getContentType());
 						bookAsset.setSize(ba.getSize() == null ? "0" : ba
 								.getSize().toString());
 						bookAsset.setBase64Data(ba.getBase64Data());
