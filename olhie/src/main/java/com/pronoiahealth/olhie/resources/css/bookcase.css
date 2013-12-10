@@ -7,7 +7,8 @@
 }
 
 .ph-Bookcase-Background {
-	background: #93643a url(Olhie/images/wood.jpg) repeat;
+	/*background: #93643a url(Olhie/images/wood.jpg) repeat;*/
+	background: #93643a url(Olhie/images/leather.jpg) repeat;
 	background-color: black;
 }
 
@@ -82,6 +83,7 @@
 	moz-background-size: cover;
 	o-background-size: cover;
 	background-size: cover;
+	border-top: 3px solid green;
 }
 
 .ph-Bookcase-CoAuthorTab {
@@ -89,6 +91,7 @@
 	background-image: url("Olhie/images/coAuthorBg.png");
 	background-repeat: repeat;
 	padding-top: 30px;
+	border-top: 3px solid green;
 }
 
 .ph-Bookcase-MyCollectionTab {
@@ -102,6 +105,7 @@
 	o-background-size: cover;
 	background-size: cover;
 	padding-top: 30px;
+	border-top: 3px solid green;
 }
 
 .ph-Bookcase-BookCase-Frame {
@@ -127,6 +131,7 @@
 }
 
 .ph-Bookcase-Bookcase-Display_Frame {
+	/*
 	-moz-border-bottom-colors: none;
 	-moz-border-left-colors: none;
 	-moz-border-right-colors: none;
@@ -136,11 +141,17 @@
 	border-style: solid;
 	border-width: 20px;
 	box-shadow: 1px 1px 10px #000000;
+	*/
 	float: left;
 	margin: 10px;
-	width: 500px;
+	width: 700px;
 	height: 600px;
-	background: url("Olhie/images/wood.jpg") repeat;
+	/*background: url("Olhie/images/wood.jpg") repeat;*/
+	background: url("Olhie/images/bookdesktop.jpg") repeat;
+	-moz-border-radius: 25px;
+	-webkit-border-radius: 25px;
+	border-radius: 25px;
+	border: 2px solid #000000;
 }
 
 .ph-Bookcase-Bookcase {
@@ -170,7 +181,7 @@
 
 .ph-Bookcase-BookDetail-Panel {
 	padding-top: 30px;
-	padding-left: 30px;
+	padding-left: 150px;
 }
 
 .ph-Bookcase-Heading-Text {

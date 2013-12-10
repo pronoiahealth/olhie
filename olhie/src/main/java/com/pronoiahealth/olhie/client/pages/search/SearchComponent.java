@@ -51,9 +51,6 @@ public class SearchComponent extends AbstractComposite {
 	public TextBox searchQryBox;
 
 	@UiField
-	public ListBox returnVal;
-
-	@UiField
 	public Button findButton;
 
 	@Inject
@@ -79,8 +76,6 @@ public class SearchComponent extends AbstractComposite {
 				.setAttribute("style", "border-radius: 0 0 0 0;");
 		searchQryBox.getElement().setAttribute("style",
 				"border-radius: 0 0 0 0;");
-		returnVal.getElement().setAttribute("style",
-				"width: 75px; border-radius: 0 0 0 0;");
 
 		// Add an enter key handler
 		searchQryBox.addKeyDownHandler(new KeyDownHandler() {
@@ -105,20 +100,12 @@ public class SearchComponent extends AbstractComposite {
 		try {
 			// Grab the search text
 			String searchText = searchQryBox.getText();
-			String rowSelection = returnVal.getValue(returnVal.getSelectedIndex());
-			int rows = -1; // -1 indicates return all rows
-			try {
-				rows = Integer.parseInt(rowSelection);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
 			boolean isValid = validateSearchText(searchText);
 
 			if (isValid) {
 				// Fire event and send the results to the
 				// SearchResultsComponent.
-				newBookSearchEvent.fire(new BookSearchEvent(searchText, rows));
+				newBookSearchEvent.fire(new BookSearchEvent(searchText, 0));
 			}
 
 		} catch (Exception e) {

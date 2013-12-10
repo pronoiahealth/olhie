@@ -10,14 +10,6 @@
 			<b:InputAddOn prependIcon="SEARCH">
 				<b:TextBox ui:field="searchQryBox" searchQuery="true"
 					placeholder="search our site..." />
-				<b:Tooltip text="Number of results to return" placement="BOTTOM">
-					<b:ListBox ui:field="returnVal" multipleSelect="false">
-						<g:item value="20">20</g:item>
-						<g:item value="40">40</g:item>
-						<g:item value="60">60</g:item>
-						<g:item value="-1">All</g:item>
-					</b:ListBox>
-				</b:Tooltip>
 				<b:Button ui:field="findButton" type="PRIMARY" icon="PLAY">Find</b:Button>
 			</b:InputAddOn>
 		</b:WellForm>
