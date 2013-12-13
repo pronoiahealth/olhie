@@ -32,12 +32,14 @@ import javax.xml.bind.Marshaller;
 
 import org.apache.deltaspike.core.api.config.ConfigProperty;
 
+import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.QueueBookEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
+import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
 import com.pronoiahealth.olhie.solr.xml.BookAsset;
 import com.pronoiahealth.olhie.solr.xml.ObjectFactory;
@@ -101,6 +103,7 @@ public class SolrQueueingService {
 	 * 
 	 * @param queueBookEvent
 	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
 	protected void observesQueueBookEvent(
 			@Observes QueueBookEvent queueBookEvent) {
 

@@ -56,13 +56,15 @@ public class BookCaseDraggableBookWidget extends Composite {
 	 */
 	public BookCaseDraggableBookWidget() {
 	}
-	
-	@Override
-	protected void onUnload() {
-		// TODO Auto-generated method stub
-		super.onUnload();
-	}
 
+	/**
+	 * Sets data for widget
+	 * 
+	 * @param imgUrl
+	 * @param bookId
+	 * @param userBookRelationshipId
+	 * @param bookTitle
+	 */
 	public void setData(String imgUrl, String bookId,
 			String userBookRelationshipId, String bookTitle) {
 		smallBookImageDisplay.setUrl(imgUrl);

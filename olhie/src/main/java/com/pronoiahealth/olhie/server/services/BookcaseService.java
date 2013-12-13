@@ -157,6 +157,8 @@ public class BookcaseService {
 	 * 
 	 * @param myBooksForBookcaseSmallIconRequestEvent
 	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+		SecurityRoleEnum.REGISTERED })
 	protected void observesMyBooksForBookcaseSmallIconRequestEvent(
 			@Observes MyBooksForBookcaseSmallIconRequestEvent myBooksForBookcaseSmallIconRequestEvent) {
 

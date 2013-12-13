@@ -117,6 +117,10 @@ public class BookCasePage extends AbstractPage {
 		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
 			@Override
 			public void onSelection(SelectionEvent<Integer> event) {
+				// First dispose of any existing tabs
+				disposeTabs();
+				
+				// Now send a request for new data
 				int tabIdx = event.getSelectedItem();
 				BookcaseEnum tabVal = null;
 				switch (tabIdx) {
@@ -198,9 +202,6 @@ public class BookCasePage extends AbstractPage {
 				.getBookCaseDisplayLst();
 		BookcaseEnum requestedTab = myBooksForBookcaseSmallIconResponseEvent
 				.getRequestedTab();
-
-		// Clear all tabs
-		disposeTabs();
 
 		// Create widget
 		if (lst != null && lst.size() > 0) {

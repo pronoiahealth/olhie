@@ -35,6 +35,7 @@ import com.google.gwt.query.client.GQuery;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.pronoiahealth.olhie.client.shared.constants.BookImageSizeEnum;
@@ -78,9 +79,6 @@ public class BookCaseContainerWidget extends Composite {
 	private HTMLPanel bookDetailContainer = new HTMLPanel("");
 
 	@Inject
-	private Instance<BookCaseDraggableBookWidget> bookCaseDraggableBookWidgetFac;
-
-	@Inject
 	private javax.enterprise.event.Event<BookListBookSelectedEvent> bookListBookSelectedEvent;
 
 	@Inject
@@ -97,6 +95,12 @@ public class BookCaseContainerWidget extends Composite {
 	private Disposer<BookList3D_3> bookList3DDisposer;
 
 	@Inject
+	private Instance<BookCaseDraggableBookWidget> bookCaseDraggableBookWidgetFac;
+
+	@Inject
+	private Disposer<BookCaseDraggableBookWidget> bookCaseDraggableBookWidgetDisposer;
+
+	@Inject
 	private BookList3DEventObserver bookListEventObserver;
 
 	/**
@@ -107,16 +111,12 @@ public class BookCaseContainerWidget extends Composite {
 	}
 
 	/**
-	 * When the widget is unLoaded, if it conatins a bookList3D it is disposed
-	 * of
-	 * 
-	 * @see com.google.gwt.user.client.ui.Widget#onUnload()
+	 * Clean up created widgets
 	 */
-	@Override
-	protected void onUnload() {
-		// TODO Auto-generated method stub
-		super.onUnload();
+	@PreDestroy
+	protected void preDestroy() {
 		disposeBookList();
+		disposeBookCaseDraggableBookWidgets();
 	}
 
 	/**
@@ -251,6 +251,33 @@ public class BookCaseContainerWidget extends Composite {
 			if (currentInstanceBookList3D_3 != null) {
 				bookList3DDisposer.dispose(currentInstanceBookList3D_3);
 				currentInstanceBookList3D_3 = null;
+			}
+		}
+	}
+
+	/**
+	 * Clears book item widgets
+	 */
+	private void disposeBookCaseDraggableBookWidgets() {
+		/*
+		 * if (bookCaseDraggableBookWidgetLst != null &&
+		 * bookCaseDraggableBookWidgetLst.size() > 0) { for
+		 * (BookCaseDraggableBookWidget w : bookCaseDraggableBookWidgetLst) {
+		 * bookCaseDraggableBookWidgetDisposer.dispose(w); } }
+		 */
+		if (sortableContainer != null) {
+			int cnt = DOM.getChildCount(sortableContainer);
+			for (int i = 0; i < cnt; i++) {
+				Element e = DOM.getChild(sortableContainer, i);
+				EventListener listener = DOM
+						.getEventListener((com.google.gwt.user.client.Element) e);
+				// No listener attached to the element, so no widget exist for
+				// this element
+				if (listener != null
+						&& listener instanceof BookCaseDraggableBookWidget) {
+					bookCaseDraggableBookWidgetDisposer
+							.dispose((BookCaseDraggableBookWidget) listener);
+				}
 			}
 		}
 	}

@@ -77,7 +77,7 @@ public class BookCommentRatingService {
 	 * 
 	 * @param addBookCommentEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED })
 	protected void observesAddBookCommentEvent(
 			@Observes AddBookCommentRatingEvent addBookCommentEvent) {
 
@@ -104,7 +104,7 @@ public class BookCommentRatingService {
 	 * 
 	 * @param bookFindCommentsEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED,
 			SecurityRoleEnum.ANONYMOUS })
 	protected void observesBookFindCommentsEvent(
 			@Observes BookFindCommentsEvent bookFindCommentsEvent) {
@@ -136,7 +136,7 @@ public class BookCommentRatingService {
 	 * 
 	 * @param mostRecentUserBookCommentEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED })
 	protected void observesMostRecentUserBookCommentEvent(
 			@Observes MostRecentUserBookCommentEvent mostRecentUserBookCommentEvent) {
 		try {

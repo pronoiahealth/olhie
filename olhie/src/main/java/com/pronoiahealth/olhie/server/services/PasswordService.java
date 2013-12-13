@@ -61,7 +61,7 @@ public class PasswordService {
 	private MailSendingService mailSrv;
 
 	@Inject
-	@ConfigProperty(name = "OLHIE_SUPPORT_EMAIL", defaultValue = "jjdestef3@gmail.com")
+	@ConfigProperty(name = "OLHIE_SUPPORT_EMAIL")
 	private String supportEmail;
 
 	@Inject

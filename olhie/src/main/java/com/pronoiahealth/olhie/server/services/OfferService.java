@@ -221,6 +221,8 @@ public class OfferService {
 	 * 
 	 * @param acceptOfferEvent
 	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+		SecurityRoleEnum.REGISTERED })
 	protected void observesAcceptOfferEvent(
 			@Observes AcceptOfferEvent acceptOfferEvent) {
 		try {
@@ -266,6 +268,8 @@ public class OfferService {
 	/**
 	 * @param rejectOfferEvent
 	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+		SecurityRoleEnum.REGISTERED })
 	protected void observesRejectOfferEvent(
 			@Observes RejectOfferEvent rejectOfferEvent) {
 		try {
@@ -294,6 +298,8 @@ public class OfferService {
 	 * 
 	 * @param closeOfferEvent
 	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+		SecurityRoleEnum.REGISTERED })
 	protected void observesCloseOfferEvent(
 			@Observes CloseOfferEvent closeOfferEvent) {
 		try {

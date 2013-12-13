@@ -178,4 +178,29 @@ public class OrientUserDAOImpl extends OrientBaseTxDAO implements UserDAO {
 			throw e;
 		}
 	}
+
+	/**
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.UserDAO#updateUserRole(java.lang.String,
+	 *      com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum)
+	 */
+	@Override
+	public void updateUserRole(String userId, SecurityRoleEnum role)
+			throws Exception {
+		// Look up user
+		User user = getUserByUserId(userId);
+		if (user == null) {
+			throw new Exception("Unknown user with id " + userId);
+		}
+
+		// Save the new data
+		ooDbTx.begin(TXTYPE.OPTIMISTIC);
+		try {
+			user.setRole(role.getName());
+			ooDbTx.save(user);
+			ooDbTx.commit();
+		} catch (Exception e) {
+			ooDbTx.rollback();
+			throw e;
+		}
+	}
 }

@@ -200,6 +200,7 @@ public class RegisterDialog extends Composite {
 	protected void observesShowRegisterModalEvent(
 			@Observes ShowRegisterModalEvent showRegisterModalEvent) {
 		updateState = false;
+		regFormHolder.getParent().getElement().setAttribute("style", "max-height: 600px;");
 		regForm.prepareRegister();
 		show();
 	}
@@ -219,6 +220,7 @@ public class RegisterDialog extends Composite {
 		blankForm.setPwd("Aaaaaaaa8"); // TODO: remove validation bypass -- not actually read
 		blankForm.setPwdRepeat("Aaaaaaaa8"); // TODO: remove validation bypass -- not actually read
 		updateState = true;
+		regFormHolder.getParent().getElement().setAttribute("style", "max-height: 400px;");
 		regForm.populateForm();
 		regForm.prepareEdit(populatedForm.isAuthor());
 		regForm.setFocusOnFirstName();

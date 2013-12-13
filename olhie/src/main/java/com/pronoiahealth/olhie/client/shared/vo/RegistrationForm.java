@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.shared.vo;
 
+import java.util.Date;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -18,6 +20,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 
+import com.orientechnologies.orient.core.annotation.OId;
+import com.orientechnologies.orient.core.annotation.OVersion;
 import com.pronoiahealth.olhie.client.shared.Email;
 
 /**
@@ -33,6 +37,12 @@ import com.pronoiahealth.olhie.client.shared.Email;
 @Portable
 @Bindable
 public class RegistrationForm {
+	@OId
+	private String id;
+
+	@OVersion
+	private Long opVer;
+	
 	@Size(min = 0, max = 25)
 	@Pattern(regexp = "[A-Za-z ]*", message = "First name must contain only letters and spaces")
 	private String firstName;
@@ -66,6 +76,22 @@ public class RegistrationForm {
 	
 	@NotNull
 	private boolean author;
+	
+	@NotNull
+	private Date regDate;
+	
+	private boolean authorDecision;
+	
+	private Date authorDecisionDate;
+	
+	private String adminUserId;
+	
+	@NotNull
+	private boolean acceptedPolicyStatement;
+	
+	@NotNull
+	@Size(min = 1, max = 25)
+	private String type;
 
 	/**
 	 * Constructor
@@ -136,5 +162,61 @@ public class RegistrationForm {
 
 	public void setAuthor(boolean author) {
 		this.author = author;
+	}
+
+	public Date getRegDate() {
+		return regDate;
+	}
+
+	public void setRegDate(Date regDate) {
+		this.regDate = regDate;
+	}
+
+	public boolean isAuthorDecision() {
+		return authorDecision;
+	}
+
+	public void setAuthorDecision(boolean authorDecision) {
+		this.authorDecision = authorDecision;
+	}
+
+	public Date getAuthorDecisionDate() {
+		return authorDecisionDate;
+	}
+
+	public void setAuthorDecisionDate(Date authorDecisionDate) {
+		this.authorDecisionDate = authorDecisionDate;
+	}
+
+	public String getAdminUserId() {
+		return adminUserId;
+	}
+
+	public void setAdminUserId(String adminUserId) {
+		this.adminUserId = adminUserId;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public boolean isAcceptedPolicyStatement() {
+		return acceptedPolicyStatement;
+	}
+
+	public void setAcceptedPolicyStatement(boolean acceptedPolicyStatement) {
+		this.acceptedPolicyStatement = acceptedPolicyStatement;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }

@@ -10,8 +10,11 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.features.dialogs;
 
+import static com.google.gwt.query.client.GQuery.$;
+
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -25,14 +28,27 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.TextBox;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.query.client.Function;
+import com.google.gwt.query.client.GQuery;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.validation.client.impl.Validation;
+import com.pronoiahealth.olhie.client.shared.constants.RegistrationEventEnum;
 import com.pronoiahealth.olhie.client.shared.exceptions.DataValidationException;
 import com.pronoiahealth.olhie.client.shared.vo.RegistrationForm;
 
 @Templated("#form")
 public class RegisterForm extends Composite {
+
+	/**
+	 * Tracks form state
+	 */
+	private RegistrationEventEnum mode;
 
 	@Inject
 	@Bound
@@ -107,6 +123,10 @@ public class RegisterForm extends Composite {
 
 	@Inject
 	@DataField
+	private Label authorErr;
+
+	@Inject
+	@DataField
 	private Label authorLbl;
 
 	@Inject
@@ -114,7 +134,30 @@ public class RegisterForm extends Composite {
 	@DataField
 	private CheckBox author;
 
+	@Inject
+	@DataField
+	private Label acceptedPolicyStatementErr;
+
+	@Inject
+	@DataField
+	private Label acceptedPolicyStatementLbl;
+
+	@Inject
+	@Bound
+	@DataField
+	private CheckBox acceptedPolicyStatement;
+
+	@DataField
+	private Element policyStatement = DOM.createDiv();
+
+	@DataField
+	private Element policyHeader = DOM.createDiv();
+
 	private DataBinder<RegistrationForm> formBinder;
+
+	private GQuery scrollPanelQry;
+
+	private GQuery policyHeaderQry;
 
 	/**
 	 * Constructor
@@ -128,14 +171,83 @@ public class RegisterForm extends Composite {
 	}
 
 	/**
+	 * Grab a GQuery handle to the scrollPanel and the policyHeader. Add a value
+	 * change handler to the author checkbox.
+	 */
+	@PostConstruct
+	protected void postConstruct() {
+		scrollPanelQry = $(policyStatement);
+		policyHeaderQry = $(policyHeader);
+
+		author.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				if (event.getValue() == true) {
+					authorErr
+							.setText("The administrator will contact you when your author status has been approved.");
+				} else {
+					authorErr.setText("");
+				}
+			}
+		});
+	}
+
+	/**
+	 * Attach scroll listener. When the user scrolls to the bottom of the policy
+	 * statement div the enable the acceptedPolicyStatement checkbox.
 	 * 
+	 * @see com.google.gwt.user.client.ui.Widget#onLoad()
+	 */
+	@Override
+	protected void onLoad() {
+		super.onLoad();
+
+		scrollPanelQry.bind(Event.ONSCROLL, new Function() {
+			@Override
+			public boolean f(Event e) {
+				double scrollHeight = scrollPanelQry.prop("scrollHeight",
+						Double.class);
+				boolean visible = scrollPanelQry.visible();
+				if ((scrollHeight - scrollPanelQry.scrollTop() <= scrollPanelQry
+						.outerHeight()) && visible) {
+					acceptedPolicyStatementLbl.setVisible(true);
+					acceptedPolicyStatement.setVisible(true);
+				}
+				return false;
+			}
+		});
+	}
+
+	/**
+	 * Unload scroll listener
+	 * 
+	 * @see com.google.gwt.user.client.ui.Widget#onUnload()
+	 */
+	@Override
+	protected void onUnload() {
+		super.onUnload();
+
+		if (scrollPanelQry != null) {
+			scrollPanelQry.unbind(Event.ONSCROLL);
+			scrollPanelQry = null;
+		}
+	}
+
+	/**
+	 * Prepare for editing. If the user has already requested to be an author
+	 * then hide the check box.
 	 */
 	public void prepareEdit(boolean hideAuthor) {
+		mode = RegistrationEventEnum.UPDATE;
 		userId.setReadOnly(true);
 		pwd.setVisible(false);
 		pwdLbl.setVisible(false);
 		pwdRepeat.setVisible(false);
 		pwdRepeatLbl.setVisible(false);
+		acceptedPolicyStatementLbl.setVisible(false);
+		acceptedPolicyStatement.setVisible(false);
+		scrollPanelQry.hide();
+		policyHeaderQry.hide();
 
 		if (hideAuthor == true) {
 			author.setVisible(false);
@@ -147,10 +259,10 @@ public class RegisterForm extends Composite {
 	}
 
 	/**
-	 * Prepare for editing. If the user has already requested to be an author
-	 * the hide the check box.
+	 * Prepare for new registration.
 	 */
 	public void prepareRegister() {
+		mode = RegistrationEventEnum.NEW;
 		userId.setReadOnly(false);
 		pwd.setVisible(true);
 		pwdLbl.setVisible(true);
@@ -160,6 +272,11 @@ public class RegisterForm extends Composite {
 		pwdRepeatLbl.setText("Retype Password:");
 		author.setVisible(true);
 		authorLbl.setVisible(true);
+		acceptedPolicyStatementLbl.setVisible(false);
+		acceptedPolicyStatement.setVisible(false);
+		scrollPanelQry.show();
+		policyHeaderQry.show();
+		scrollPanelQry.prop("scrollTop", 0);
 	}
 
 	/**
@@ -197,6 +314,7 @@ public class RegisterForm extends Composite {
 		pwdRepeat.setText("");
 		organization.setText("");
 		author.setValue(Boolean.FALSE);
+		acceptedPolicyStatement.setValue(Boolean.FALSE);
 	}
 
 	/**
@@ -210,6 +328,8 @@ public class RegisterForm extends Composite {
 		pwdErr.setText("");
 		pwdRepeatErr.setText("");
 		organizationErr.setText("");
+		acceptedPolicyStatementErr.setText("");
+		authorErr.setText("");
 	}
 
 	/**
@@ -229,6 +349,10 @@ public class RegisterForm extends Composite {
 	 * 
 	 * @return
 	 */
+	/**
+	 * @return
+	 * @throws DataValidationException
+	 */
 	public RegistrationForm validateForm() throws DataValidationException {
 		clearErrors();
 		Validator validator = Validation.buildDefaultValidatorFactory()
@@ -238,23 +362,30 @@ public class RegisterForm extends Composite {
 		Set<ConstraintViolation<RegistrationForm>> violations = validator
 				.validate(rf);
 
+		boolean foundErr = false;
 		for (ConstraintViolation<RegistrationForm> cv : violations) {
 			String prop = cv.getPropertyPath().toString();
 			if (prop.equals("lastName")) {
 				lastNameErr.setText(cv.getMessage());
+				foundErr = true;
 			} else if (prop.equals("firstName")) {
 				firstNameErr.setText(cv.getMessage());
+				foundErr = true;
 			} else if (prop.equals("email")) {
 				emailErr.setText(cv.getMessage());
+				foundErr = true;
 			} else if (prop.equals("userId")) {
 				userIdErr.setText(cv.getMessage());
+				foundErr = true;
 			} else if (prop.equals("pwd")) {
 				pwdErr.setText(cv.getMessage());
+				foundErr = true;
 			} else if (prop.equals("organization")) {
 				organizationErr.setText(cv.getMessage());
+				foundErr = true;
 			}
 		}
-		
+
 		Boolean authorBVal = author.getValue();
 		if (authorBVal == null) {
 			author.setValue(Boolean.FALSE);
@@ -262,13 +393,24 @@ public class RegisterForm extends Composite {
 
 		if (!pwd.getValue().equals(pwdRepeat.getValue())) {
 			pwdRepeatErr.setText("Passwords must match. Please retype.");
-			throw new DataValidationException("Passwords did not match");
+			foundErr = true;
 		}
 
-		if (violations.isEmpty()) {
-			return rf;
+		// User must accept the policy statement if this is a new registration
+		if ((acceptedPolicyStatement.getValue() == null || acceptedPolicyStatement
+				.getValue().booleanValue() == false)
+				&& mode == RegistrationEventEnum.NEW) {
+			acceptedPolicyStatementErr
+					.setText("You must accept the policy statement.");
+			foundErr = true;
+		}
+
+		// If any errors throw and exception
+		// else return the form data
+		if (foundErr == true) {
+			throw new DataValidationException("Found error(s).");
 		} else {
-			throw new DataValidationException();
+			return rf;
 		}
 	}
 

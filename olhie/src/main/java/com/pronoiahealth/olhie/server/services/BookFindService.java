@@ -83,7 +83,7 @@ public class BookFindService {
 	 * 
 	 * @param bookFindByIdEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED })
 	protected void observesBookNewFindByIdEvent(
 			@Observes FindAuthorsBookByIdEvent bookFindByIdEvent) {
 		try {

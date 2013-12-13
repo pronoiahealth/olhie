@@ -16,6 +16,8 @@ import com.google.gwt.user.client.ui.Composite;
 
 @Templated("#root")
 public class CarouselSliderWidget extends Composite {
+	final int transition_time = 1000; // 1 second
+	final int time_between_slides = 4000; // 4 seconds
 
 	@DataField("carouselContainer")
 	private Element carouselContainer = DOM.createDiv();
@@ -32,10 +34,8 @@ public class CarouselSliderWidget extends Composite {
 
 	private void attachedGQuery() {
 		// settings
-		final GQuery slider = $(".ph-carousel-slider", carouselContainer); 
+		final GQuery slider = $(".ph-carousel-slider", carouselContainer);
 		final String slide = "li"; // could also use 'img' if you're not using a
-		final int transition_time = 1000; // 1 second
-		final int time_between_slides = 4000; // 4 seconds
 
 		// Get slides and fade all of them out immediately
 		final GQuery slides = slider.find(slide);
@@ -50,8 +50,9 @@ public class CarouselSliderWidget extends Composite {
 		effectTimer = new Timer() {
 			@Override
 			public void run() {
-				//slides.stop();
-				int i = slides.index(slider.find(slide + ".active").elements()[0]);
+				// slides.stop();
+				int i = slides
+						.index(slider.find(slide + ".active").elements()[0]);
 				slides.eq(i).removeClass("active");
 				slides.eq(i).fadeOut(transition_time);
 				if (slides.length() == (i + 1)) {
@@ -61,13 +62,28 @@ public class CarouselSliderWidget extends Composite {
 				slides.eq(i + 1).addClass("active");
 			}
 		};
+	}
+
+	/**
+	 * Start the timer when the widget loads
+	 * 
+	 * @see com.google.gwt.user.client.ui.Widget#onLoad()
+	 */
+	@Override
+	protected void onLoad() {
+		super.onLoad();
 		effectTimer.scheduleRepeating(time_between_slides + transition_time);
 	}
 
+	/**
+	 * Cancel the timer
+	 * 
+	 * @see com.google.gwt.user.client.ui.Widget#onUnload()
+	 */
 	@Override
 	protected void onUnload() {
 		super.onUnload();
-		
+
 		// Cancel timer
 		effectTimer.cancel();
 	}

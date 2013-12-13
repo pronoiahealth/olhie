@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services;
 
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,9 +19,12 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.apache.deltaspike.core.api.config.ConfigProperty;
+
 import com.pronoiahealth.olhie.client.shared.annotations.Load;
 import com.pronoiahealth.olhie.client.shared.annotations.New;
 import com.pronoiahealth.olhie.client.shared.annotations.Update;
+import com.pronoiahealth.olhie.client.shared.constants.RegistrationEventEnum;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.registration.LoadProfileResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.registration.RegistrationErrorEvent;
@@ -29,6 +33,8 @@ import com.pronoiahealth.olhie.client.shared.events.registration.RegistrationRes
 import com.pronoiahealth.olhie.client.shared.vo.RegistrationForm;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
+import com.pronoiahealth.olhie.server.security.SecureAccess;
+import com.pronoiahealth.olhie.server.services.dbaccess.RegistrationFormDAO;
 import com.pronoiahealth.olhie.server.services.dbaccess.UserDAO;
 
 /**
@@ -51,6 +57,17 @@ public class RegistrationService {
 	@Inject
 	@DAO
 	private UserDAO userDAO;
+
+	@Inject
+	@DAO
+	private RegistrationFormDAO registrationFormDAO;
+
+	@Inject
+	@ConfigProperty(name = "OLHIE_SUPPORT_EMAIL")
+	private String supportEmail;
+
+	@Inject
+	private MailSendingService mailService;
 
 	@Inject
 	private Event<RegistrationErrorEvent> registrationErrorEvent;
@@ -109,10 +126,27 @@ public class RegistrationService {
 
 			// Add user
 			userDAO.addUser(userId, form.getLastName(), form.getFirstName(),
-					SecurityRoleEnum.AUTHOR, form.getEmail(), form.getPwd(), form.getOrganization(), form.isAuthor());
+					SecurityRoleEnum.REGISTERED, form.getEmail(),
+					form.getPwd(), form.getOrganization(), form.isAuthor());
+
+			// Add the registration
+			form.setPwd("X");
+			form.setPwdRepeat("X");
+			form.setRegDate(new Date());
+			form.setUserId(userId);
+			form.setType(RegistrationEventEnum.NEW.toString());
+			RegistrationForm savedForm = registrationFormDAO
+					.addRegistrationForm(form);
 
 			// Fire the good response event
 			registrationResponseEvent.fire(new RegistrationResponseEvent());
+
+			// Fire off an email to the administrator
+			if (form.isAuthor() == true) {
+				mailService.sendRequestAuthorMailFromApp(supportEmail, userId,
+						form.getFirstName(), form.getLastName(),
+						savedForm.getId());
+			}
 		} catch (Exception e) {
 			handleError(Level.SEVERE, e.getMessage(),
 					RegistrationErrorEvent.ErrorTypeEnum.OTHER, e);
@@ -124,6 +158,8 @@ public class RegistrationService {
 	 * 
 	 * @param commentEvent
 	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+		SecurityRoleEnum.REGISTERED })
 	protected void observesLoadRegistrationRequestEvent(
 			@Observes @Load RegistrationRequestEvent registrationRequestEvent) {
 
@@ -157,6 +193,8 @@ public class RegistrationService {
 	 * 
 	 * @param commentEvent
 	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+		SecurityRoleEnum.REGISTERED })
 	protected void observesUpdateRegistrationRequestEvent(
 			@Observes @Update RegistrationRequestEvent registrationRequestEvent) {
 
@@ -165,11 +203,37 @@ public class RegistrationService {
 		String userId = form.getUserId();
 
 		try {
+			// Get the current User
+			User user = userDAO.getUserByUserId(userId);
+			SecurityRoleEnum currentUserRole = SecurityRoleEnum.valueOf(user
+					.getRole());
+
+			// Update User
 			userDAO.updateUser(userId, form.getLastName(), form.getFirstName(),
-					SecurityRoleEnum.AUTHOR, form.getEmail(), form.getOrganization(), form.isAuthor());
+					currentUserRole, form.getEmail(), form.getOrganization(),
+					form.isAuthor());
+
+			// Save registration changes
+			// Add the registration
+			form.setPwd("X");
+			form.setPwdRepeat("X");
+			form.setRegDate(new Date());
+			form.setUserId(userId);
+			form.setType(RegistrationEventEnum.UPDATE.toString());
+			RegistrationForm savedForm = registrationFormDAO
+					.addRegistrationForm(form);
 
 			// Fire the good response event
 			registrationResponseEvent.fire(new RegistrationResponseEvent());
+
+			// Send author request email if form.isAuthor is true and the users
+			// role is not AUTHOR
+			if (form.isAuthor() == true
+					&& !(currentUserRole == SecurityRoleEnum.ADMIN || currentUserRole == SecurityRoleEnum.AUTHOR)) {
+				mailService.sendRequestAuthorMailFromApp(supportEmail, userId,
+						form.getFirstName(), form.getLastName(),
+						savedForm.getId());
+			}
 		} catch (Exception e) {
 			handleError(Level.SEVERE, e.getMessage(),
 					RegistrationErrorEvent.ErrorTypeEnum.OTHER, e);

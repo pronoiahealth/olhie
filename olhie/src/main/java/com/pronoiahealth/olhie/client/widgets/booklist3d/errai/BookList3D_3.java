@@ -109,7 +109,6 @@ public class BookList3D_3 extends Composite {
 
 	@Override
 	protected void onUnload() {
-		// TODO Auto-generated method stub
 		super.onUnload();
 		removeEventsFromLst();
 	}

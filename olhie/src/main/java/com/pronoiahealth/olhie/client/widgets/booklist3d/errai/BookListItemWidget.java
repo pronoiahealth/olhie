@@ -10,14 +10,15 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.widgets.booklist3d.errai;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.jboss.errai.ioc.client.api.Disposer;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
@@ -25,6 +26,8 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.clientfactories.FileTypeViewableContent;
 import com.pronoiahealth.olhie.client.shared.constants.BookImageSizeEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
@@ -70,7 +73,8 @@ public class BookListItemWidget extends Composite {
 	private Element bookCoverBackColor = DOM.createDiv();
 
 	@DataField("bookPage")
-	private Element bookPage = DOM.createDiv();
+	// private Element bookPage = DOM.createDiv();
+	private HTMLPanel bookPage = new HTMLPanel("");;
 
 	@DataField("bookBackCover")
 	private Element bookBackCover = DOM.createDiv();
@@ -100,6 +104,9 @@ public class BookListItemWidget extends Composite {
 	private Instance<BookContentWidget> bookContentInstance;
 
 	@Inject
+	private Disposer<BookContentWidget> bookContentInstanceDisposer;
+
+	@Inject
 	private TOCWidget tocWidget;
 
 	@Inject
@@ -115,6 +122,25 @@ public class BookListItemWidget extends Composite {
 	 * 
 	 */
 	public BookListItemWidget() {
+	}
+
+	/**
+	 * Dispose of BookContentWidget instance that where created
+	 */
+	@PreDestroy
+	private void preDestroy() {
+		if (bookPage != null && bookPage.getWidgetCount() > 0) {
+			int cnt = bookPage.getWidgetCount();
+			for (int i = 0; i < cnt; i++) {
+				Widget w =  bookPage.getWidget(0);
+				if (w != null && w instanceof BookContentWidget) {
+					bookContentInstanceDisposer.dispose((BookContentWidget) w);
+				}
+				
+				// Remove the widget
+				bookPage.remove(w);
+			}
+		}
 	}
 
 	/**
@@ -171,7 +197,8 @@ public class BookListItemWidget extends Composite {
 				+ catColor + ";");
 
 		// Create TOC and iterate over book asset descriptions
-		bookPage.appendChild(tocWidget.getElement());
+		// bookPage.appendChild(tocWidget.getElement());
+		bookPage.add(tocWidget);
 		int counter = 1;
 		for (Bookassetdescription bookAssetDesc : bookDisplay
 				.getBookAssetDescriptions()) {
@@ -193,7 +220,8 @@ public class BookListItemWidget extends Composite {
 			bContent.setDescription(desc, addedDate, hrsStr, val == null ? true
 					: false, currentAssetId, val == null ? "" : val, itemType,
 					linkRef);
-			bookPage.appendChild(bContent.getElement());
+			// bookPage.appendChild(bContent.getElement());
+			bookPage.add(bContent);
 			tocWidget.addItem(counter++, desc, hrsStr, bookDisplay
 					.bookassetdescriptionInSrchResults(bookAssetDesc.getId()));
 		}

@@ -20,10 +20,12 @@ import javax.inject.Inject;
 
 import com.pronoiahealth.olhie.client.shared.constants.BookAssetActionType;
 import com.pronoiahealth.olhie.client.shared.constants.BookAssetDataType;
+import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.AddBookLinkAssetEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.FindAuthorsBookByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
+import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
 
@@ -74,6 +76,7 @@ public class BookLinkAssetService {
 	 * 
 	 * @param addBookYouTubeAssetEvent
 	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
 	protected void observersAddBookLinkAssetEvent(
 			@Observes AddBookLinkAssetEvent addBookLinkAssetEvent) {
 		try {

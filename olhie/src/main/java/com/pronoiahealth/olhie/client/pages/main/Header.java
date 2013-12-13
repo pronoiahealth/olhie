@@ -10,6 +10,9 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages.main;
 
+import static com.arcbees.gquery.tooltip.client.Tooltip.Tooltip;
+import static com.google.gwt.query.client.GQuery.$;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -20,9 +23,11 @@ import com.github.gwtbootstrap.client.ui.Dropdown;
 import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.NavWidget;
 import com.github.gwtbootstrap.client.ui.VerticalDivider;
+import com.github.gwtbootstrap.client.ui.base.IconAnchor;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.query.client.GQuery;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -164,6 +169,48 @@ public class Header extends Composite {
 
 		// When built hide the dropdown
 		setNotLoggedIn();
+	}
+
+	/*
+	 * @ Add tooltips to the top toolbar selections
+	 * 
+	 * @see com.google.gwt.user.client.ui.Widget#onLoad()
+	 */
+	@Override
+	protected void onLoad() {
+		super.onLoad();
+		// Comments
+		IconAnchor a = commentsLink.getAnchor();
+		a.setTitle("Leave a comment for the Administrator");
+		$(a.getElement()).data("tooltip-placement", "BOTTOM")
+				.data("tooltip-delayShow", "200").as(Tooltip).tooltip();
+
+		// Register
+		a = registerLink.getAnchor();
+		a.setTitle("Register as a new user");
+		$(a.getElement()).data("tooltip-placement", "BOTTOM")
+				.data("tooltip-delayShow", "200").as(Tooltip).tooltip();
+
+		// Add book
+		a = addBookLink.getAnchor();
+		a.setTitle("Add a book$(commentsLink.getAnchor().getElement()).as(Tooltip).tooltip().destroy();$(commentsLink.getAnchor().getElement()).as(Tooltip).tooltip().destroy();");
+		$(a.getElement()).data("tooltip-placement", "BOTTOM")
+				.data("tooltip-delayShow", "200").as(Tooltip).tooltip();
+	}
+
+	/**
+	 * Cancel tooltips
+	 * 
+	 * @see com.google.gwt.user.client.ui.Widget#onUnload()
+	 */
+	@Override
+	protected void onUnload() {
+		super.onUnload();
+		$(commentsLink.getAnchor().getElement()).as(Tooltip).tooltip()
+				.destroy();
+		$(registerLink.getAnchor().getElement()).as(Tooltip).tooltip()
+				.destroy();
+		$(addBookLink.getAnchor().getElement()).as(Tooltip).tooltip().destroy();
 	}
 
 	/**

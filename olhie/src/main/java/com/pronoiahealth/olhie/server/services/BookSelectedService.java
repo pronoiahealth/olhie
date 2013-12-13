@@ -78,7 +78,7 @@ public class BookSelectedService {
 	 * 
 	 * @param bookListBookSelectedEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED,
 			SecurityRoleEnum.ANONYMOUS })
 	protected void observesBookListBookSelectedEvent(
 			@Observes BookListBookSelectedEvent bookListBookSelectedEvent) {

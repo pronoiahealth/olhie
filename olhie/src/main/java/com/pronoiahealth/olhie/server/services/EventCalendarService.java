@@ -72,7 +72,7 @@ public class EventCalendarService {
 	 * 
 	 * @param userEmailRequestEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED })
 	protected void observersUserEmailRequestEvent(
 			@Observes UserEmailRequestEvent userEmailRequestEvent) {
 		try {
@@ -91,7 +91,7 @@ public class EventCalendarService {
 	 * 
 	 * @param calendarRequestSaveEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED })
 	protected void observesCalendarRequestSaveEvent(
 			@Observes CalendarRequestSaveEvent calendarRequestSaveEvent) {
 		try {

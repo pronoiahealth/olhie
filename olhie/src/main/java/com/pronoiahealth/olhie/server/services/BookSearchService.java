@@ -115,7 +115,7 @@ public class BookSearchService {
 	 * @param bookFindByIdEvent
 	 */
 	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
-			SecurityRoleEnum.ANONYMOUS })
+			SecurityRoleEnum.REGISTERED, SecurityRoleEnum.ANONYMOUS })
 	protected void observesBookSearchEvent(
 			@Observes BookSearchEvent bookSearchEvent) {
 		try {
@@ -214,7 +214,7 @@ public class BookSearchService {
 	 * 
 	 * @param searchPageNavigationRequestEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED,
 			SecurityRoleEnum.ANONYMOUS })
 	protected void observesSearchPageNavigationRequestEvent(
 			@Observes SearchPageNavigationRequestEvent searchPageNavigationRequestEvent) {

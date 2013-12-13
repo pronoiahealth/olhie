@@ -80,7 +80,7 @@ public class RemoveBookFromMyCollectionService {
 	 * @param emoveBookFromMyCollectionEvent
 	 */
 	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
-			SecurityRoleEnum.ANONYMOUS })
+			SecurityRoleEnum.REGISTERED })
 	protected void observesRemoveBookFromMyCollectionEvent(
 			@Observes RemoveBookFromMyCollectionEvent removeBookFromMyCollectionEvent) {
 

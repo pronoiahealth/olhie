@@ -72,7 +72,7 @@ public class SolrSearchService {
 	 * 
 	 * @param _text
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED, 
 			SecurityRoleEnum.ANONYMOUS })
 	protected List<String> searchSolr(String _text) {
 		List<String> idList = null;
@@ -91,7 +91,7 @@ public class SolrSearchService {
 	 * 
 	 * @param _tokenList
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED,
 			SecurityRoleEnum.ANONYMOUS })
 	protected List<String> searchSolr(String[] _tokenList) {
 		List<String> idList = null;
@@ -112,7 +112,7 @@ public class SolrSearchService {
 	 * @param _tokenList
 	 * @param _rows
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED,
 			SecurityRoleEnum.ANONYMOUS })
 	protected List<String> searchSolr(String[] _tokenList, int _rows) {
 		List<String> idList = null;

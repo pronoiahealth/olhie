@@ -84,7 +84,7 @@ public class AddBookToMyCollectionService {
 	 * 
 	 * @param addBookToMyCollectionEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED })
 	protected void observesAddBookToMyCollectionEvent(
 			@Observes AddBookToMyCollectionEvent addBookToMyCollectionEvent) {
 

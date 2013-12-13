@@ -71,7 +71,7 @@ public class BookCheckAuthorCoAuthorService {
 	 * 
 	 * @param checkBookIsAuthorRequestEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED, 
 			SecurityRoleEnum.ANONYMOUS })
 	protected void observesCheckIsAuthorRequestEvent(
 			@Observes CheckBookIsAuthorRequestEvent checkBookIsAuthorRequestEvent) {

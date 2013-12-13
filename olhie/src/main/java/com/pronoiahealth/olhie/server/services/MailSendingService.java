@@ -55,7 +55,7 @@ public class MailSendingService {
 	@Inject
 	@ConfigProperty(name = "MAIL_TLS_ENABLED", defaultValue = "true")
 	private String tlsEnabled;
-	
+
 	@Inject
 	@ConfigProperty(name = "MAIL_DEBUG", defaultValue = "false")
 	private String debugEnabled;
@@ -85,6 +85,34 @@ public class MailSendingService {
 		email.setSubject("Reset Olhie Password");
 		email.setMsg("You have requested that your password be reset. Your new Olhie password is "
 				+ newPwd);
+		email.addTo(toEmail);
+		email.setTLS(Boolean.parseBoolean(tlsEnabled));
+		email.setSocketTimeout(10000);
+		email.setSocketConnectionTimeout(12000);
+		email.send();
+	}
+
+	/**
+	 * Author Request email that goes to the olhie administrator
+	 * 
+	 * @param toEmail
+	 * @param userId
+	 * @param firstName
+	 * @param lastName
+	 * @param regId
+	 * @throws Exception
+	 */
+	public void sendRequestAuthorMailFromApp(String toEmail, String userId,
+			String firstName, String lastName, String regId) throws Exception {
+		Email email = new SimpleEmail();
+		email.setSmtpPort(Integer.parseInt(smtpPort));
+		email.setAuthenticator(new DefaultAuthenticator(fromAddress, fromPwd));
+		email.setDebug(Boolean.parseBoolean(debugEnabled));
+		email.setHostName(smtpSever);
+		email.setFrom(fromAddress);
+		email.setSubject("Author Request");
+		email.setMsg("User Id: " + userId + " Name: " + firstName + " "
+				+ lastName + " Registration Id: " + regId);
 		email.addTo(toEmail);
 		email.setTLS(Boolean.parseBoolean(tlsEnabled));
 		email.setSocketTimeout(10000);

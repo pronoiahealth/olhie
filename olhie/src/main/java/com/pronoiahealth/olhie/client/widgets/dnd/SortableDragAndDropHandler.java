@@ -26,7 +26,6 @@ import gwtquery.plugins.droppable.client.events.OutDroppableEvent.OutDroppableEv
 import gwtquery.plugins.droppable.client.events.OverDroppableEvent;
 import gwtquery.plugins.droppable.client.events.OverDroppableEvent.OverDroppableEventHandler;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -99,7 +98,8 @@ public class SortableDragAndDropHandler implements DropEventHandler,
 	 */
 	private void createPlaceHolder(Widget draggable, int initialPosition) {
 		placeHolder = new SimplePanel();
-		placeHolder.getElement().setAttribute("style", "border:1px dashed black; margin-top: 5px;");
+		placeHolder.getElement().setAttribute("style",
+				"border:1px dashed black; margin-top: 5px;");
 		placeHolder.setHeight("" + $(draggable).height() + "px");
 		placeHolder.setWidth("" + $(draggable).width() + "px");
 
@@ -130,7 +130,9 @@ public class SortableDragAndDropHandler implements DropEventHandler,
 			Widget w = panel.getWidget(i);
 			int widgetAbsoluteTop = w.getElement().getAbsoluteTop();
 			if (widgetAbsoluteTop > draggableAbsoluteTop) {
-				GWT.log("Panel widget cnt : " + i + " Top: " + widgetAbsoluteTop + " Draggable Top: " + draggableAbsoluteTop);
+				// GWT.log("Panel widget cnt : " + i + " Top: " +
+				// widgetAbsoluteTop + " Draggable Top: " +
+				// draggableAbsoluteTop);
 				return i;
 			}
 		}
@@ -163,6 +165,9 @@ public class SortableDragAndDropHandler implements DropEventHandler,
 		}
 	}
 
+	/**
+	 * Removes drag handler and placeholder
+	 */
 	private void reset() {
 		// don't listen drag event on the draggable
 		dragHandlerRegistration.removeHandler();

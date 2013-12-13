@@ -5,7 +5,7 @@
 
 /*Used in Register Modal */
 .ph-Register-Modal-Size {
-	width: 800px; /* SET THE WIDTH OF THE MODAL */
+	width: 740px; /* SET THE WIDTH OF THE MODAL */
 	margin-left: -400px;
 	/* CHANGE MARGINS TO ACCOMODATE THE NEW WIDTH (original = margin: -250px 0 0 -280px;) */
 	max-height: 800px;

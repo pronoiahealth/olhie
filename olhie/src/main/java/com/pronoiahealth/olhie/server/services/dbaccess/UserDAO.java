@@ -90,4 +90,12 @@ public interface UserDAO extends BaseDAO {
 	 * @param newPwd
 	 */
 	public void resetUserPwd(String userId, String newPwd) throws Exception;
+
+	/**
+	 * @param userId
+	 * @param role
+	 * @throws Exception
+	 */
+	public void updateUserRole(String userId, SecurityRoleEnum role)
+			throws Exception;
 }
