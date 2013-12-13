@@ -60,7 +60,6 @@ import com.pronoiahealth.olhie.client.shared.events.book.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.FindAuthorsBookByIdEvent;
-import com.pronoiahealth.olhie.client.shared.events.book.RemoveBookassetdescriptionResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.BookContentUpdatedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEvent;
@@ -408,18 +407,6 @@ public class NewBookPage_2 extends AbstractPage {
 	protected void observesBookContentUpdatedEvent(
 			@Observes BookContentUpdatedEvent bookContentUpdatedEvent) {
 		String id = bookContentUpdatedEvent.getBookId();
-		callBookFindById(id);
-	}
-
-	/**
-	 * Observes for a positive response to a remove and then fires a find book
-	 * event
-	 * 
-	 * @param removeBookassetdescriptionEvent
-	 */
-	protected void observesRemoveBookassetdescriptionResponseEvent(
-			@Observes RemoveBookassetdescriptionResponseEvent removeBookassetdescriptionResponseEvent) {
-		String id = removeBookassetdescriptionResponseEvent.getBookId();
 		callBookFindById(id);
 	}
 

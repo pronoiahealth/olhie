@@ -19,10 +19,11 @@ import javax.enterprise.event.Event;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.jboss.errai.ioc.client.api.Disposer;
+
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.shared.events.book.BookdescriptionDetailRequestEvent;
-import com.pronoiahealth.olhie.client.shared.events.book.RemoveBookassetdescriptionEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.UpdateBookassetdescriptionsForBookEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.DownloadBookAssetEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowViewBookassetDialogEvent;
@@ -59,9 +60,6 @@ public class NewBookDroppablePanel extends DroppablePanel {
 	private Event<DownloadBookAssetEvent> downloadBookAssetEvent;
 
 	@Inject
-	private Event<RemoveBookassetdescriptionEvent> removeBookassetdescriptionEvent;
-
-	@Inject
 	private Event<ShowViewBookassetDialogEvent> showViewBookassetDialogEvent;
 
 	@Inject
@@ -74,6 +72,9 @@ public class NewBookDroppablePanel extends DroppablePanel {
 
 	@Inject
 	private Instance<BookItemDisplay> bookItemDisplayFactory;
+
+	@Inject
+	private Disposer<BookItemDisplay> bookItemDisplayDisposer;
 
 	/**
 	 * Constructor
@@ -126,6 +127,7 @@ public class NewBookDroppablePanel extends DroppablePanel {
 						BookItemDisplay item = (BookItemDisplay) bidW;
 						if (item.getBadId().equals(baDescId)) {
 							fp.remove(item);
+							bookItemDisplayDisposer.dispose(item);
 							break;
 						}
 					}
