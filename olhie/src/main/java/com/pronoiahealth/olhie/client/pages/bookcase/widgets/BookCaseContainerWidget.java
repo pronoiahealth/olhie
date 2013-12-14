@@ -14,6 +14,7 @@ import static com.google.gwt.query.client.GQuery.$;
 import static gwtquery.plugins.ui.Ui.Ui;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.Disposer;
+import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
@@ -102,6 +105,9 @@ public class BookCaseContainerWidget extends Composite {
 
 	@Inject
 	private BookList3DEventObserver bookListEventObserver;
+	
+	@Inject
+	private SyncBeanManager syncManger;
 
 	/**
 	 * Constructor
@@ -253,18 +259,22 @@ public class BookCaseContainerWidget extends Composite {
 				currentInstanceBookList3D_3 = null;
 			}
 		}
+
+		// Are there any other reference to the booklist
+		// This is a hack for now.
+		Collection<IOCBeanDef<BookList3D_3>> book3DList = syncManger
+				.lookupBeans(BookList3D_3.class);
+		if (book3DList != null && book3DList.size() > 0) {
+			for (IOCBeanDef<BookList3D_3> b : book3DList) {
+				syncManger.destroyBean(b.getInstance());
+			}
+		}
 	}
 
 	/**
 	 * Clears book item widgets
 	 */
 	private void disposeBookCaseDraggableBookWidgets() {
-		/*
-		 * if (bookCaseDraggableBookWidgetLst != null &&
-		 * bookCaseDraggableBookWidgetLst.size() > 0) { for
-		 * (BookCaseDraggableBookWidget w : bookCaseDraggableBookWidgetLst) {
-		 * bookCaseDraggableBookWidgetDisposer.dispose(w); } }
-		 */
 		if (sortableContainer != null) {
 			int cnt = DOM.getChildCount(sortableContainer);
 			for (int i = 0; i < cnt; i++) {

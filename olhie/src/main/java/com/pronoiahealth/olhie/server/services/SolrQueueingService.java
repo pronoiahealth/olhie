@@ -74,13 +74,13 @@ public class SolrQueueingService {
 	@Inject
 	@DAO
 	private BookDAO bookDAO;
-	
+
 	@Inject
-	@ConfigProperty(name="SOLR_JMS_USERID", defaultValue="guest")
+	@ConfigProperty(name = "SOLR_JMS_USERID", defaultValue = "guest")
 	private String jmxUserid;
-	
+
 	@Inject
-	@ConfigProperty(name="SOLR_JMS_USERPWD", defaultValue="guestw")
+	@ConfigProperty(name = "SOLR_JMS_USERPWD", defaultValue = "guestw")
 	private String jmsPwd;
 
 	@Resource(mappedName = "java:/ConnectionFactory")
@@ -130,8 +130,12 @@ public class SolrQueueingService {
 			solrBook.setCoverName(book.getCoverName());
 			solrBook.setCreatedDate(dtFormatHolder.get().format(
 					book.getCreatedDate()));
-			solrBook.setPublishedDate(dtFormatHolder.get().format(
-					book.getActDate()));
+			if (book.getActDate() != null) {
+				solrBook.setPublishedDate(dtFormatHolder.get().format(
+						book.getActDate()));
+			} else {
+				solrBook.setPublishedDate(null);
+			}
 			solrBook.setAuthorId(book.getAuthorId());
 			solrBook.setActive(booleanStrVal(book.getActive()));
 
@@ -154,8 +158,8 @@ public class SolrQueueingService {
 					solrBookAssetDescription.setId(desc.getId());
 					solrBookAssetDescription.setDescription(desc
 							.getDescription());
-					solrBookAssetDescription
-							.setRemoved(booleanStrVal(desc.getRemoved()));
+					solrBookAssetDescription.setRemoved(booleanStrVal(desc
+							.getRemoved()));
 					solrBookAssetDescription.setCreatedDate(dtFormatHolder
 							.get().format(desc.getCreatedDate()));
 					solrBookAssetDescription.setBookId(desc.getBookId());

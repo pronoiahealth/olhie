@@ -23,6 +23,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.jboss.errai.ioc.client.api.Disposer;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
@@ -32,6 +33,7 @@ import com.google.gwt.query.client.css.CSS;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.pronoiahealth.olhie.client.shared.events.book.CheckBookIsAuthorRequestEvent;
@@ -64,6 +66,9 @@ public class BookList3D_3 extends Composite {
 
 	@Inject
 	private Instance<BookListItemWidget> bookListItemInst;
+
+	@Inject
+	private Disposer<BookListItemWidget> bookListItemDisposer;
 
 	@Inject
 	private javax.enterprise.event.Event<DownloadBookAssetEvent> downloadBookAssetEvent;
@@ -102,15 +107,15 @@ public class BookList3D_3 extends Composite {
 		bliwMap = new HashMap<String, BookListItemWidget>();
 	}
 
+	/**
+	 * Clean up objects create through instance factory
+	 */
 	@PreDestroy
 	private void preDestroy() {
-		int i = bliwMap.size();
-	}
-
-	@Override
-	protected void onUnload() {
-		super.onUnload();
 		removeEventsFromLst();
+		detroyInstanceCreatedObjects();
+		bliwMap.clear();
+		clearPhysicalBookList();
 	}
 
 	/**
@@ -128,13 +133,10 @@ public class BookList3D_3 extends Composite {
 		if (books != null && books.size() > 0) {
 			removeEventsFromLst();
 			if (appendToCurrent == false) {
-				while (bookList.hasChildNodes()) {
-					bookList.removeChild(bookList.getFirstChild());
-				}
+				detroyInstanceCreatedObjects();
+				bliwMap.clear();
+				clearPhysicalBookList();
 			}
-
-			// Clear map
-			bliwMap.clear();
 
 			// Add the list for books
 			for (BookDisplay book : books) {
@@ -144,6 +146,37 @@ public class BookList3D_3 extends Composite {
 				bliwMap.put(bookId, bliw);
 			}
 			attachEventsToLst();
+		}
+	}
+
+	/**
+	 * Destroys BookListItemWidget created with instance factory
+	 */
+	private void detroyInstanceCreatedObjects() {
+		// Clear created BookListItemWidget
+		if (bookList != null) {
+			int cnt = DOM.getChildCount(bookList);
+			for (int i = 0; i < cnt; i++) {
+				Element e = DOM.getChild(bookList, i);
+				EventListener listener = DOM
+						.getEventListener((com.google.gwt.user.client.Element) e);
+				// No listener attached to the element, so no widget exist for
+				// this element
+				if (listener != null && listener instanceof BookListItemWidget) {
+					bookListItemDisposer.dispose((BookListItemWidget) listener);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Removes the BookListItemWidget elements from the DOM
+	 */
+	private void clearPhysicalBookList() {
+		if (bookList != null) {
+			while (bookList.hasChildNodes()) {
+				bookList.removeChild(bookList.getFirstChild());
+			}
 		}
 	}
 
@@ -544,6 +577,10 @@ public class BookList3D_3 extends Composite {
 		}
 	}
 
+	/**
+	 * Return the maps that tracts BookListItemWidget instances
+	 * @return
+	 */
 	public Map<String, BookListItemWidget> getBliwMap() {
 		return bliwMap;
 	}

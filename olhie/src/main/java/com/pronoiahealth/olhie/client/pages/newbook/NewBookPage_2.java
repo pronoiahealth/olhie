@@ -411,7 +411,6 @@ public class NewBookPage_2 extends AbstractPage {
 	}
 
 	/**
-	 * Called by observesRemoveBookassetdescriptionResponseEvent and
 	 * observersBookContentUpdatedEvent
 	 * 
 	 * @param id

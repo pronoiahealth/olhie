@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages.search;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -18,6 +19,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.Disposer;
+import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
 
 import com.github.gwtbootstrap.client.ui.Column;
 import com.github.gwtbootstrap.client.ui.FluidRow;
@@ -97,6 +100,9 @@ public class SearchResultsComponent extends AbstractComposite {
 
 	@Inject
 	private BookList3DEventObserver bookListObserver;
+
+	@Inject
+	private SyncBeanManager syncManger;
 
 	/**
 	 * Constructor
@@ -298,6 +304,16 @@ public class SearchResultsComponent extends AbstractComposite {
 			if (currentInstanceBookList3D_3 != null) {
 				bookList3DDisposer.dispose(currentInstanceBookList3D_3);
 				currentInstanceBookList3D_3 = null;
+			}
+		}
+
+		// Are there any other reference to the booklist
+		// This is a hack for now. 
+		Collection<IOCBeanDef<BookList3D_3>> book3DList = syncManger
+				.lookupBeans(BookList3D_3.class);
+		if (book3DList != null && book3DList.size() > 0) {
+			for (IOCBeanDef<BookList3D_3> b : book3DList) {
+				syncManger.destroyBean(b.getInstance());
 			}
 		}
 	}
