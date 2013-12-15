@@ -119,6 +119,34 @@ public class MailSendingService {
 		email.setSocketConnectionTimeout(12000);
 		email.send();
 	}
+	
+	/**
+	 * @param toEmail
+	 * @param userId
+	 * @param firstName
+	 * @param lastName
+	 * @param eventId
+	 * @param details
+	 * @throws Exception
+	 */
+	public void sendRequestMailForCalendarEventFromApp(String toEmail, String userId,
+			String firstName, String lastName, String eventId, String details) throws Exception {
+		Email email = new SimpleEmail();
+		email.setSmtpPort(Integer.parseInt(smtpPort));
+		email.setAuthenticator(new DefaultAuthenticator(fromAddress, fromPwd));
+		email.setDebug(Boolean.parseBoolean(debugEnabled));
+		email.setHostName(smtpSever);
+		email.setFrom(fromAddress);
+		email.setSubject("Calendar Event Request");
+		email.setMsg("User Id: " + userId + " Name: " + firstName + " "
+				+ lastName + " Event Id: " + eventId + "\n" + details);
+		email.addTo(toEmail);
+		email.setTLS(Boolean.parseBoolean(tlsEnabled));
+		email.setSocketTimeout(10000);
+		email.setSocketConnectionTimeout(12000);
+		email.send();
+	}
+
 
 	/**
 	 * Testing purposes

@@ -18,6 +18,8 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.apache.deltaspike.core.api.config.ConfigProperty;
+
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.eventcalendar.CalendarRequestSaveEvent;
@@ -51,6 +53,13 @@ public class EventCalendarService {
 	private CalendarEventDAO calendarEventDAO;
 
 	@Inject
+	private MailSendingService mailService;
+
+	@Inject
+	@ConfigProperty(name = "OLHIE_SUPPORT_EMAIL")
+	private String supportEmail;
+
+	@Inject
 	private Event<UserEmailResponseEvent> userEmailResponseEvent;
 
 	@Inject
@@ -72,7 +81,8 @@ public class EventCalendarService {
 	 * 
 	 * @param userEmailRequestEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.REGISTERED })
 	protected void observersUserEmailRequestEvent(
 			@Observes UserEmailRequestEvent userEmailRequestEvent) {
 		try {
@@ -91,12 +101,14 @@ public class EventCalendarService {
 	 * 
 	 * @param calendarRequestSaveEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.REGISTERED })
 	protected void observesCalendarRequestSaveEvent(
 			@Observes CalendarRequestSaveEvent calendarRequestSaveEvent) {
 		try {
 			// Quick check to see if there is any funny business
 			String userId = userToken.getUserId();
+			User user = calendarEventDAO.getUserByUserId(userId);
 			CalendarRequest cr = calendarRequestSaveEvent.getCalendarRequest();
 			if (!userId.equals(cr.getRequestorUserId()) == true) {
 				throw new Exception(
@@ -104,12 +116,16 @@ public class EventCalendarService {
 			}
 
 			// Process the save
-			calendarEventDAO.saveNewCalendarRequest(cr);
+			CalendarRequest req = calendarEventDAO.saveNewCalendarRequest(cr);
+
+			// eMail the administrator
+			mailService.sendRequestMailForCalendarEventFromApp(supportEmail,
+					userId, user.getFirstName(), user.getLastName(),
+					req.getId(), req.getDescription());
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);
 			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
 		}
 	}
-
 }

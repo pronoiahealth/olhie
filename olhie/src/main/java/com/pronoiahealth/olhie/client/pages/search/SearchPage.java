@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.pages.search;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -24,7 +25,6 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.AnonymousRole;
 import com.pronoiahealth.olhie.client.pages.AbstractPage;
-import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.LeavingSearchPageEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.DestroyPageWhenHiddenEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
@@ -102,6 +102,11 @@ public class SearchPage extends AbstractPage {
 	 * 
 	 */
 	public SearchPage() {
+	}
+	
+	@PreDestroy
+	protected void preDestroy() {
+		searchPlaceHolder.getElement();
 	}
 
 	/**
