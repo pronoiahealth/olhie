@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.widgets.booklist3d.errai;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -39,6 +41,8 @@ public class BookList3DEventObserver {
 	protected PageNavigator nav;
 
 	private BookList3D_3 bookList;
+	
+	private String clazz;
 
 	/**
 	 * Constructor
@@ -46,9 +50,20 @@ public class BookList3DEventObserver {
 	 */
 	public BookList3DEventObserver() {
 	}
+	
+	@PostConstruct
+	protected void postConstruct() {
+		nav.hashCode();
+	}
+	
+	@PreDestroy
+	protected void preDestroy() {
+		nav.getClass();
+	}
 
-	public void attachBookList(BookList3D_3 bookList) {
+	public void attachBookList(BookList3D_3 bookList, String clazz) {
 		this.bookList = bookList;
+		this.clazz = clazz;
 	}
 
 	/**

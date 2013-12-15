@@ -13,12 +13,15 @@ package com.pronoiahealth.olhie.client.pages.newbook;
 import static com.google.gwt.query.client.GQuery.$;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.jboss.errai.ioc.client.api.Disposer;
 import org.jboss.errai.ui.nav.client.local.Page;
+import org.jboss.errai.ui.nav.client.local.PageHidden;
 import org.jboss.errai.ui.nav.client.local.PageHiding;
 import org.jboss.errai.ui.nav.client.local.PageShowing;
 import org.jboss.errai.ui.nav.client.local.PageShown;
@@ -37,7 +40,9 @@ import com.google.gwt.query.client.GQuery;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -56,11 +61,13 @@ import com.pronoiahealth.olhie.client.pages.newbook.widgets.NewBookButtonHolderW
 import com.pronoiahealth.olhie.client.pages.newbook.widgets.NewBookDroppablePanel;
 import com.pronoiahealth.olhie.client.shared.constants.BookImageSizeEnum;
 import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
+import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.FindAuthorsBookByIdEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.BookContentUpdatedEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.DestroyPageWhenHiddenEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowAddBookCommentModalEvent;
@@ -192,6 +199,9 @@ public class NewBookPage_2 extends AbstractPage {
 	@Inject
 	private Event<FindAuthorsBookByIdEvent> bookFindByIdEvent;
 
+	@Inject
+	private Event<DestroyPageWhenHiddenEvent> destroyPageWhenHiddenEvent;
+
 	@UiField
 	public HTMLPanel buttonGrpHolder;
 
@@ -223,11 +233,47 @@ public class NewBookPage_2 extends AbstractPage {
 	@Inject
 	private Instance<BaseBookassetActionButtonWidget> baseBookassetActionButtonWidgetFac;
 
+	@Inject
+	private Disposer<BaseBookassetActionButtonWidget> baseBookassetActionButtonWidgetDisposer;
+
 	/**
 	 * Default Constructor
 	 * 
 	 */
 	public NewBookPage_2() {
+	}
+	
+	/**
+	 * Clean up BaseBookassetActionButtonWidget created with instance factory.
+	 * Destroy both the logical part (the widget) and the physical part (the DOM
+	 * elements.
+	 */
+	@Override
+	protected void onUnload() {
+		super.onUnload();
+		
+		if (newBookButtonHolderWidget != null) {
+			// Destroy the BaseBookassetActionButtonWidget
+			Element el = newBookButtonHolderWidget.getElement();
+			int cnt = DOM.getChildCount(el);
+			for (int i = 0; i < cnt; i++) {
+				Element e = DOM.getChild(el, i);
+				EventListener listener = DOM
+						.getEventListener((com.google.gwt.user.client.Element) e);
+				// No listener attached to the element, so no widget exist for
+				// this element
+				if (listener != null
+						&& listener instanceof BaseBookassetActionButtonWidget) {
+					baseBookassetActionButtonWidgetDisposer
+							.dispose((BaseBookassetActionButtonWidget) listener);
+				}
+			}
+
+			// Remove the elements from the DOM
+			while (el.hasChildNodes()) {
+				el.removeChild(el.getFirstChild());
+			}
+		}
 	}
 
 	/**
@@ -340,13 +386,19 @@ public class NewBookPage_2 extends AbstractPage {
 		buttonGrpHolder.add(newBookButtonHolderWidget);
 	}
 
+	@PageHidden
+	protected void pageHidden() {
+		destroyPageWhenHiddenEvent.fire(new DestroyPageWhenHiddenEvent(
+				NavEnum.NewBookPage_2));
+	}
+
 	/**
 	 * When the page is hiding tell the Header so it can add the new book button
 	 * back to the menu. Also, deactivate all the features activated in
 	 * pageShown.
 	 */
 	@PageHiding
-	protected void pageHidden() {
+	protected void pageHiding() {
 		// Remove page features
 		addFileDialogFeature.deactivate();
 		newAssetDialogFeature.deactivate();

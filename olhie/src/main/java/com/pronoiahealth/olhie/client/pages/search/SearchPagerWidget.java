@@ -14,6 +14,7 @@ import static com.arcbees.gquery.tooltip.client.Tooltip.Tooltip;
 import static com.google.gwt.query.client.GQuery.$;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -43,6 +44,7 @@ import com.pronoiahealth.olhie.client.shared.events.book.SearchPageNavigationRes
  * @since Nov 27, 2013
  * 
  */
+@Dependent
 @Templated("#pager")
 public class SearchPagerWidget extends Composite {
 

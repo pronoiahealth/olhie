@@ -151,8 +151,10 @@ public class AppNavMenu extends UnorderedListWidget {
 					public void onClick(ClickEvent event) {
 						SideBarNavWidget sWidget = (SideBarNavWidget) event
 								.getSource();
-						syncMenuWithViewEvent.fire(new SyncMenuWithViewEvent(
-								sWidget, null));
+						navigator.performTransition(sWidget.getNavToPageName(), null);
+						
+						//syncMenuWithViewEvent.fire(new SyncMenuWithViewEvent(
+						//		sWidget, null));
 					}
 				});
 		sWidget.setClickHandlerReg(handler);
@@ -197,6 +199,7 @@ public class AppNavMenu extends UnorderedListWidget {
 	 * 
 	 * @param event
 	 */
+	/*
 	public void observesSideBarNavWidgetClick(
 			@Observes SyncMenuWithViewEvent event) {
 		SideBarNavWidget sWidget = event.getWidget();
@@ -204,6 +207,7 @@ public class AppNavMenu extends UnorderedListWidget {
 		navigator.performTransition(sWidget.getNavToPageName(),
 				map == null ? null : map);
 	}
+	*/
 
 	/**
 	 * Watches for page visible events from "pages"

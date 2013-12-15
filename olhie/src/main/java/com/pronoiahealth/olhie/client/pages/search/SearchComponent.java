@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.pages.search;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
@@ -39,6 +40,7 @@ import com.pronoiahealth.olhie.client.shared.events.book.BookSearchEvent;
  * @since May 26, 2013
  * 
  */
+@Dependent
 public class SearchComponent extends AbstractComposite {
 
 	@Inject

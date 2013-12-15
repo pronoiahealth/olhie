@@ -188,7 +188,7 @@ public class MainPage extends AbstractComposite {
 	
 	@Inject
 	private ResetPwdDialogHandlerFeature resetPwdDialogHandlerFeature;
-
+	
 	private static final int EAST_PANEL_WIDTH = 180;
 
 	/**
@@ -296,7 +296,7 @@ public class MainPage extends AbstractComposite {
 		
 		// Add a change password feature
 		resetPwdDialogHandlerFeature.standUpAndActivate(null);
-
+		
 		// Footer
 		buildFooter();
 

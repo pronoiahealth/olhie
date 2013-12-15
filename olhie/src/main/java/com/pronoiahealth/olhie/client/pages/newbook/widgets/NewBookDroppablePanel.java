@@ -21,6 +21,9 @@ import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.Disposer;
 
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.shared.events.book.BookdescriptionDetailRequestEvent;
@@ -29,6 +32,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.DownloadBookAssetEvent
 import com.pronoiahealth.olhie.client.shared.events.local.ShowViewBookassetDialogEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookListItemWidget;
 import com.pronoiahealth.olhie.client.widgets.dnd.DroppablePanel;
 import com.pronoiahealth.olhie.client.widgets.dnd.SortableDragAndDropHandler;
 
@@ -81,6 +85,18 @@ public class NewBookDroppablePanel extends DroppablePanel {
 	 * 
 	 */
 	public NewBookDroppablePanel() {
+	}
+
+	/**
+	 * Destroy and BookItemDisplays created with instance factory.
+	 * 
+	 * @see gwtquery.plugins.droppable.client.gwt.DroppableWidget#onUnload()
+	 */
+	@Override
+	public void onUnload() {
+		super.onUnload();
+		destroyExisitingBookassetdescriptions();
+		getOriginalWidget().clear();
 	}
 
 	@PostConstruct
@@ -227,6 +243,9 @@ public class NewBookDroppablePanel extends DroppablePanel {
 	 */
 	public void setDescriptionItems(BookDisplay bookDisplay,
 			boolean isUserAuthorOrCoAuthor) {
+		// Destroy instance
+		destroyExisitingBookassetdescriptions();
+
 		// Clear the panel if anything is there
 		getOriginalWidget().clear();
 
@@ -241,6 +260,26 @@ public class NewBookDroppablePanel extends DroppablePanel {
 					isUserAuthorOrCoAuthor == true ? removeClickHandler : null,
 					viewClickHandler);
 			addWidget(item);
+		}
+	}
+
+	/**
+	 * Destroy instance created with instance factory
+	 */
+	private void destroyExisitingBookassetdescriptions() {
+		if (getInnerPanel() != null) {
+			Element el = getInnerPanel().getElement();
+			int cnt = DOM.getChildCount(el);
+			for (int i = 0; i < cnt; i++) {
+				Element e = DOM.getChild(el, i);
+				EventListener listener = DOM
+						.getEventListener((com.google.gwt.user.client.Element) e);
+				// No listener attached to the element, so no widget exist for
+				// this element
+				if (listener != null && listener instanceof BookListItemWidget) {
+					bookItemDisplayDisposer.dispose((BookItemDisplay) listener);
+				}
+			}
 		}
 	}
 }

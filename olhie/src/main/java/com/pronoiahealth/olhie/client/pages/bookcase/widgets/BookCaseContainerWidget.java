@@ -105,9 +105,9 @@ public class BookCaseContainerWidget extends Composite {
 
 	@Inject
 	private BookList3DEventObserver bookListEventObserver;
-	
+
 	@Inject
-	private SyncBeanManager syncManger;
+	private SyncBeanManager syncManager;
 
 	/**
 	 * Constructor
@@ -117,12 +117,16 @@ public class BookCaseContainerWidget extends Composite {
 	}
 
 	/**
-	 * Clean up created widgets
+	 * Clean up constructed instances
+	 * 
+	 * @see com.google.gwt.user.client.ui.Widget#onUnload()
 	 */
-	@PreDestroy
-	protected void preDestroy() {
+	@Override
+	public void onUnload() {
+		super.onUnload();
 		disposeBookList();
 		disposeBookCaseDraggableBookWidgets();
+		bookListEventObserver = null;
 	}
 
 	/**
@@ -172,7 +176,8 @@ public class BookCaseContainerWidget extends Composite {
 			currentInstanceBookList3D_3.build(bookDisplayList, false);
 			currentInstanceBookList3D_3.getElement().addClassName(
 					"ph-Bookcase-BookDetail-Panel");
-			bookListEventObserver.attachBookList(currentInstanceBookList3D_3);
+			bookListEventObserver.attachBookList(currentInstanceBookList3D_3,
+					"BookCaseContainerWidget");
 			bookDetailContainer.add(currentInstanceBookList3D_3);
 		}
 	}
@@ -262,13 +267,13 @@ public class BookCaseContainerWidget extends Composite {
 
 		// Are there any other reference to the booklist
 		// This is a hack for now.
-		Collection<IOCBeanDef<BookList3D_3>> book3DList = syncManger
-				.lookupBeans(BookList3D_3.class);
-		if (book3DList != null && book3DList.size() > 0) {
-			for (IOCBeanDef<BookList3D_3> b : book3DList) {
-				syncManger.destroyBean(b.getInstance());
-			}
-		}
+		// Collection<IOCBeanDef<BookList3D_3>> book3DList = syncManager
+		//		.lookupBeans(BookList3D_3.class);
+		//if (book3DList != null && book3DList.size() > 0) {
+		//	for (IOCBeanDef<BookList3D_3> b : book3DList) {
+		//		syncManager.destroyBean(b.getInstance());
+		//	}
+		//}
 	}
 
 	/**

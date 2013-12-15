@@ -41,6 +41,7 @@ import com.pronoiahealth.olhie.client.shared.events.bookcase.MyBooksForBookcaseS
 import com.pronoiahealth.olhie.client.shared.events.bookcase.MyBooksForBookcaseSmallIconResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.DestroyPageWhenHiddenEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookcaseDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
@@ -89,6 +90,9 @@ public class BookCasePage extends AbstractPage {
 	@Inject
 	private Event<MyBooksForBookcaseSmallIconRequestEvent> myBooksForBookcaseSmallIconRequestEvent;
 
+	@Inject
+	private Event<DestroyPageWhenHiddenEvent> destroyPageWhenHiddenEvent;
+
 	private boolean responseRet = false;
 
 	@Inject
@@ -119,7 +123,7 @@ public class BookCasePage extends AbstractPage {
 			public void onSelection(SelectionEvent<Integer> event) {
 				// First dispose of any existing tabs
 				disposeTabs();
-				
+
 				// Now send a request for new data
 				int tabIdx = event.getSelectedItem();
 				BookcaseEnum tabVal = null;
@@ -173,7 +177,6 @@ public class BookCasePage extends AbstractPage {
 		super.onUnload();
 		disposeTabs();
 		bookcaseContainer.clear();
-
 	}
 
 	/**
@@ -205,6 +208,8 @@ public class BookCasePage extends AbstractPage {
 
 		// Create widget
 		if (lst != null && lst.size() > 0) {
+			// Protects against back to back call sot this method
+			disposeTabs();
 			currentBookCaseContainerWidget = bookCaseContainerWidgetFac.get();
 			currentBookCaseContainerWidget.loadDataAndInit(lst);
 
@@ -263,10 +268,10 @@ public class BookCasePage extends AbstractPage {
 		if (this.currentBookCaseContainerWidget != null) {
 			HTMLPanel activeTabContainer = (HTMLPanel) currentBookCaseContainerWidget
 					.getParent();
-			activeTabContainer.clear();
 			bookCaseContainerWidgetDisposer
 					.dispose(currentBookCaseContainerWidget);
 			currentBookCaseContainerWidget = null;
+			activeTabContainer.clear();
 		}
 	}
 }

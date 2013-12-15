@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -59,6 +60,7 @@ import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3D_3;
  * @since May 26, 2013
  * 
  */
+@Dependent
 public class SearchResultsComponent extends AbstractComposite {
 
 	@Inject
@@ -147,6 +149,9 @@ public class SearchResultsComponent extends AbstractComposite {
 		// TODO Auto-generated method stub
 		super.onUnload();
 		clearResultsContainer();
+		
+		// Destroy the event observer
+		syncManger.destroyBean(bookListObserver);
 	}
 
 	/**
@@ -294,7 +299,7 @@ public class SearchResultsComponent extends AbstractComposite {
 	private void setNewCurrentBookList3D(List<BookDisplay> lst) {
 		currentInstanceBookList3D_3 = bookList3DFac.get();
 		currentInstanceBookList3D_3.build(lst, false);
-		bookListObserver.attachBookList(currentInstanceBookList3D_3);
+		bookListObserver.attachBookList(currentInstanceBookList3D_3, "SearchResultsComponent");
 		searchResultsContainerList.add(currentInstanceBookList3D_3);
 	}
 
@@ -308,7 +313,7 @@ public class SearchResultsComponent extends AbstractComposite {
 		}
 
 		// Are there any other reference to the booklist
-		// This is a hack for now. 
+		// This is a hack for now.
 		Collection<IOCBeanDef<BookList3D_3>> book3DList = syncManger
 				.lookupBeans(BookList3D_3.class);
 		if (book3DList != null && book3DList.size() > 0) {

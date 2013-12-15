@@ -11,6 +11,7 @@
 package com.pronoiahealth.olhie.client.pages.search;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
@@ -23,7 +24,9 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.AnonymousRole;
 import com.pronoiahealth.olhie.client.pages.AbstractPage;
+import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.LeavingSearchPageEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.DestroyPageWhenHiddenEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 
 /**
@@ -66,6 +69,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
  * 
  */
 @SuppressWarnings("cdi-ambiguous-dependency")
+@Dependent
 @Page(role = { AnonymousRole.class })
 public class SearchPage extends AbstractPage {
 
@@ -89,6 +93,9 @@ public class SearchPage extends AbstractPage {
 
 	@Inject
 	private Event<LeavingSearchPageEvent> leavingSearchPageEvent;
+
+	@Inject
+	private Event<DestroyPageWhenHiddenEvent> destroyPageWhenHiddenEvent;
 
 	/**
 	 * Constructor

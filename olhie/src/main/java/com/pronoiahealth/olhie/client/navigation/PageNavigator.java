@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.navigation;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,11 +19,15 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.nav.client.local.Navigation;
 import org.jboss.errai.ui.nav.client.local.NavigationEvent;
 import org.jboss.errai.ui.nav.client.local.TransitionTo;
+import org.jboss.errai.ui.nav.client.local.spi.PageNode;
 
 import com.google.common.collect.Multimap;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.clientfactories.DefaultAppPage;
 import com.pronoiahealth.olhie.client.clientfactories.PageRoleMap;
@@ -67,7 +72,7 @@ public class PageNavigator {
 
 	@Inject
 	private TransitionTo<BulletinboardPage> showBulletinboardPage;
-	
+
 	@Inject
 	private TransitionTo<EventsPage> showEventsPage;
 
@@ -79,9 +84,9 @@ public class PageNavigator {
 
 	@Inject
 	private TransitionTo<NewBookPage_2> showNewBookPage;
-	
+
 	@Inject
-	private Event<SyncPageToMenuEvent> syncPageToMenuEvent; 
+	private Event<SyncPageToMenuEvent> syncPageToMenuEvent;
 
 	@Inject
 	public PageNavigator() {
@@ -123,7 +128,7 @@ public class PageNavigator {
 			}
 			break;
 		}
-		
+
 		case EventsPage: {
 			if (state == null) {
 				showEventsPage.go();
@@ -151,7 +156,7 @@ public class PageNavigator {
 			break;
 		}
 
-		//case NewBookPage: {
+		// case NewBookPage: {
 		case NewBookPage_2: {
 			if (state == null) {
 				showNewBookPage.go();
@@ -190,12 +195,25 @@ public class PageNavigator {
 			if (canNavTo == false) {
 				showDefaultPage();
 			}
-			
+
 			// Fire SyncPageToMenuEvent
 			syncPageToMenuEvent.fire(new SyncPageToMenuEvent(pageName));
-			
-			// Tell the main page
 		}
+	}
+
+	/**
+	 * Get the current page
+	 * 
+	 * @return
+	 */
+	private String returnCurrentPage() {
+		PageNode<IsWidget> node = nav.getCurrentPage();
+		if (node != null) {
+			return node.name();
+		} else {
+			return "";
+		}
+		
 	}
 
 	/**

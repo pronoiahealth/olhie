@@ -286,6 +286,7 @@
 	padding-bottom: 20px !important;
 	padding-left: 20px !important;
 	padding-right: 20px !important;
+	min-height: 210px;
 }
 
 .ph-NewBook-ViewComments-CommentsContainer {
