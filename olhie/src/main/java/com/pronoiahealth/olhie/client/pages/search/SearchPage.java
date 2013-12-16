@@ -103,11 +103,6 @@ public class SearchPage extends AbstractPage {
 	 */
 	public SearchPage() {
 	}
-	
-	@PreDestroy
-	protected void preDestroy() {
-		searchPlaceHolder.getElement();
-	}
 
 	/**
 	 * Inject the custom resources and create the main gui via uiBinder

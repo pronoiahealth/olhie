@@ -14,7 +14,6 @@ import static com.google.gwt.query.client.GQuery.$;
 import static gwtquery.plugins.ui.Ui.Ui;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.Disposer;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -42,8 +40,8 @@ import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.pronoiahealth.olhie.client.shared.constants.BookImageSizeEnum;
-import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedEvent;
-import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.bookcase.BookcaseBookListBookSelectedEvent;
+import com.pronoiahealth.olhie.client.shared.events.bookcase.BookcaseBookListBookSelectedResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.BookcaseBookWidgetReorderEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.BookcaseDisplay;
@@ -82,7 +80,7 @@ public class BookCaseContainerWidget extends Composite {
 	private HTMLPanel bookDetailContainer = new HTMLPanel("");
 
 	@Inject
-	private javax.enterprise.event.Event<BookListBookSelectedEvent> bookListBookSelectedEvent;
+	private javax.enterprise.event.Event<BookcaseBookListBookSelectedEvent> bookListBookSelectedEvent;
 
 	@Inject
 	private javax.enterprise.event.Event<BookcaseBookWidgetReorderEvent> bookcaseBookWidgetReorderEvent;
@@ -92,10 +90,10 @@ public class BookCaseContainerWidget extends Composite {
 	@Inject
 	private Instance<BookList3D_3> bookList3DFac;
 
-	BookList3D_3 currentInstanceBookList3D_3;
-
 	@Inject
 	private Disposer<BookList3D_3> bookList3DDisposer;
+	
+	private BookList3D_3 currentInstanceBookList3D_3;
 
 	@Inject
 	private Instance<BookCaseDraggableBookWidget> bookCaseDraggableBookWidgetFac;
@@ -104,7 +102,12 @@ public class BookCaseContainerWidget extends Composite {
 	private Disposer<BookCaseDraggableBookWidget> bookCaseDraggableBookWidgetDisposer;
 
 	@Inject
-	private BookList3DEventObserver bookListEventObserver;
+	private Instance<BookList3DEventObserver> bookListEventObserverFac;
+	
+	@Inject
+	private Disposer<BookList3DEventObserver> bookListEventObserverDisposer;
+	
+	private BookList3DEventObserver currentBookList3DEventObserver;
 
 	@Inject
 	private SyncBeanManager syncManager;
@@ -114,6 +117,11 @@ public class BookCaseContainerWidget extends Composite {
 	 * 
 	 */
 	public BookCaseContainerWidget() {
+	}
+	
+	@PreDestroy
+	protected void preDestroy() {
+		syncManager.getClass();
 	}
 
 	/**
@@ -125,8 +133,10 @@ public class BookCaseContainerWidget extends Composite {
 	public void onUnload() {
 		super.onUnload();
 		disposeBookList();
+		if (currentBookList3DEventObserver != null) {
+			bookListEventObserverDisposer.dispose(currentBookList3DEventObserver);
+		}
 		disposeBookCaseDraggableBookWidgets();
-		bookListEventObserver = null;
 	}
 
 	/**
@@ -144,7 +154,7 @@ public class BookCaseContainerWidget extends Composite {
 				String bookId = $(e).attr("bookId");
 				if (bookId != null && bookId.length() > 0) {
 					bookListBookSelectedEvent
-							.fire(new BookListBookSelectedEvent(bookId));
+							.fire(new BookcaseBookListBookSelectedEvent(bookId));
 				}
 				return false;
 			}
@@ -157,8 +167,8 @@ public class BookCaseContainerWidget extends Composite {
 	 * 
 	 * @param bookListBookSelectedResponseEvent
 	 */
-	protected void observesBookListBookSelectedResponseEvent(
-			@Observes BookListBookSelectedResponseEvent bookListBookSelectedResponseEvent) {
+	protected void observesBookcaseBookListBookSelectedResponseEvent(
+			@Observes BookcaseBookListBookSelectedResponseEvent bookListBookSelectedResponseEvent) {
 
 		// Get list
 		BookDisplay bookDisplay = bookListBookSelectedResponseEvent
@@ -176,8 +186,11 @@ public class BookCaseContainerWidget extends Composite {
 			currentInstanceBookList3D_3.build(bookDisplayList, false);
 			currentInstanceBookList3D_3.getElement().addClassName(
 					"ph-Bookcase-BookDetail-Panel");
-			bookListEventObserver.attachBookList(currentInstanceBookList3D_3,
-					"BookCaseContainerWidget");
+			if (currentBookList3DEventObserver != null) {
+				bookListEventObserverDisposer.dispose(currentBookList3DEventObserver);
+			}
+			currentBookList3DEventObserver = bookListEventObserverFac.get();
+			currentBookList3DEventObserver.attachBookList(currentInstanceBookList3D_3);
 			bookDetailContainer.add(currentInstanceBookList3D_3);
 		}
 	}

@@ -8,7 +8,7 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.shared.events.book;
+package com.pronoiahealth.olhie.client.shared.events.bookcase;
 
 import java.util.Set;
 
@@ -19,23 +19,19 @@ import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 
 /**
- * BookListBookSelectedResponseEvent.java<br/>
+ * BookcaseBookListBookSelectedResponseEvent.java<br/>
  * Responsibilities:<br/>
- * 1. Response to the BookListBookSelectedEvent<br/>
- * 
- * <p>
- * Fired By: BookSelectedService<br/>
- * Observed By: BookcasePage<br/>
- * </p>
- * 
+ * 1.
+ *
  * @author John DeStefano
  * @version 1.0
- * @since Jun 26, 2013
- * 
+ * @since Dec 15, 2013
+ *
  */
 @Portable
 @Conversational
-public class BookListBookSelectedResponseEvent {
+public class BookcaseBookListBookSelectedResponseEvent {
+
 	private String bookId;
 	private boolean authorSelected;
 	private BookDisplay bookDisplay;
@@ -45,7 +41,7 @@ public class BookListBookSelectedResponseEvent {
 	 * Constructor
 	 *
 	 */
-	public BookListBookSelectedResponseEvent() {
+	public BookcaseBookListBookSelectedResponseEvent() {
 	}
 
 	/**
@@ -56,7 +52,7 @@ public class BookListBookSelectedResponseEvent {
 	 * @param bookDisplay
 	 * @param rels
 	 */
-	public BookListBookSelectedResponseEvent(String bookId,
+	public BookcaseBookListBookSelectedResponseEvent(String bookId,
 			boolean authorSelected, BookDisplay bookDisplay,
 			Set<UserBookRelationshipEnum> rels) {
 		super();
@@ -97,4 +93,5 @@ public class BookListBookSelectedResponseEvent {
 	public void setRels(Set<UserBookRelationshipEnum> rels) {
 		this.rels = rels;
 	}
+
 }

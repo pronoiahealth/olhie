@@ -24,6 +24,8 @@ import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.bookcase.BookcaseBookListBookSelectedEvent;
+import com.pronoiahealth.olhie.client.shared.events.bookcase.BookcaseBookListBookSelectedResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
@@ -34,8 +36,10 @@ import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
 /**
  * BookSelectedService.java<br/>
  * Responsibilities:<br/>
- * 1. Watches for a BookListBookSelectedEvent and returns a
- * BookListBookSelectedResponseEvent. The response will indicate if the
+ * 1. Watches for a BookListBookSelectedEvent and
+ * BookcaseBookListBookSelectedEvent and returns a
+ * BookListBookSelectedResponseEvent or
+ * BookcaseBookListBookSelectedResponseEvent. The response will indicate if the
  * currently logged in user is the creator or co-author of this book.
  * 
  * @author John DeStefano
@@ -58,6 +62,9 @@ public class BookSelectedService {
 	private Event<BookListBookSelectedResponseEvent> bookListBookSelectedResponseEvent;
 
 	@Inject
+	private Event<BookcaseBookListBookSelectedResponseEvent> bookcaseBookListBookSelectedResponseEvent;
+
+	@Inject
 	private Event<ServiceErrorEvent> serviceErrorEvent;
 
 	@Inject
@@ -78,41 +85,80 @@ public class BookSelectedService {
 	 * 
 	 * @param bookListBookSelectedEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED,
-			SecurityRoleEnum.ANONYMOUS })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.REGISTERED, SecurityRoleEnum.ANONYMOUS })
 	protected void observesBookListBookSelectedEvent(
 			@Observes BookListBookSelectedEvent bookListBookSelectedEvent) {
 		try {
-			String bookId = bookListBookSelectedEvent.getBookId();
-			String userId = serverToken.getUserId();
-			boolean loggedIn = serverToken.getLoggedIn();
-
-			// If the user has logged in
-			// relationship. Otherwise he is an anonymous user and has no
-			// relationship
-
-			// Get User Book relationships
-			Set<UserBookRelationshipEnum> rels = bookDAO
-					.getActiveBookRealtionshipForUser(userId, loggedIn, bookId);
-
-			boolean authorSelected = bookDAO.isAuthorSelected(userId, bookId, rels);
-			
-			// Get the Book
-			BookDisplay bookDisplay = bookDAO.getBookDisplayById(bookId,
-					userId, holder, true);
-
-			// Update the last viewed date in the UserBookRelationship
-			bookDAO.setLastViewedOnUserBookRelationship(userId,
-					bookId, new Date());
-
-			// Fire the event
-			bookListBookSelectedResponseEvent
-					.fire(new BookListBookSelectedResponseEvent(bookId,
-							authorSelected, bookDisplay, rels));
+			processRequest(bookListBookSelectedEvent.getBookId(), false);
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);
 			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
 		}
 	}
+
+	/**
+	 * @param bookListBookSelectedEvent
+	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.REGISTERED, SecurityRoleEnum.ANONYMOUS })
+	protected void observesBookcaseBookListBookSelectedEvent(
+			@Observes BookcaseBookListBookSelectedEvent bookListBookSelectedEvent) {
+		try {
+			processRequest(bookListBookSelectedEvent.getBookId(), true);
+		} catch (Exception e) {
+			String errMsg = e.getMessage();
+			log.log(Level.SEVERE, errMsg, e);
+			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
+		}
+
+	}
+
+	/**
+	 * Processes the request. Basically the same processing for both events.
+	 * Done this way to get around CDI event issues on front end where 2
+	 * functionally different components might receive the same message before
+	 * one has a chance to be destroyed.
+	 * 
+	 * @param bookId
+	 * @return
+	 * @throws Exception
+	 */
+	private void processRequest(String bookId, boolean fireForBookcase)
+			throws Exception {
+		String userId = serverToken.getUserId();
+		boolean loggedIn = serverToken.getLoggedIn();
+
+		// If the user has logged in
+		// relationship. Otherwise he is an anonymous user and has no
+		// relationship
+
+		// Get User Book relationships
+		Set<UserBookRelationshipEnum> rels = bookDAO
+				.getActiveBookRealtionshipForUser(userId, loggedIn, bookId);
+
+		boolean authorSelected = bookDAO.isAuthorSelected(userId, bookId, rels);
+
+		// Get the Book
+		BookDisplay bookDisplay = bookDAO.getBookDisplayById(bookId, userId,
+				holder, true);
+
+		// Update the last viewed date in the UserBookRelationship
+		bookDAO.setLastViewedOnUserBookRelationship(userId, bookId, new Date());
+
+		// Return for bookcase or booklist
+		if (fireForBookcase == true) {
+			// Fire the event
+			bookcaseBookListBookSelectedResponseEvent
+					.fire(new BookcaseBookListBookSelectedResponseEvent(bookId,
+							authorSelected, bookDisplay, rels));
+		} else {
+			// Fire the event
+			bookListBookSelectedResponseEvent
+					.fire(new BookListBookSelectedResponseEvent(bookId,
+							authorSelected, bookDisplay, rels));
+		}
+	}
+
 }

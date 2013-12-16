@@ -10,7 +10,6 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.navigation;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,8 +18,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
-import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.nav.client.local.Navigation;
 import org.jboss.errai.ui.nav.client.local.NavigationEvent;
 import org.jboss.errai.ui.nav.client.local.TransitionTo;
@@ -117,7 +114,7 @@ public class PageNavigator {
 	 * @param navToPage
 	 * @param state
 	 */
-	public void performTransition(String navToPage, Multimap state) {
+	public void performTransition(String navToPage, Multimap<String, String> state) {
 		NavEnum page = NavEnum.valueOf(navToPage);
 		switch (page) {
 		case BulletinboardPage: {
@@ -199,21 +196,6 @@ public class PageNavigator {
 			// Fire SyncPageToMenuEvent
 			syncPageToMenuEvent.fire(new SyncPageToMenuEvent(pageName));
 		}
-	}
-
-	/**
-	 * Get the current page
-	 * 
-	 * @return
-	 */
-	private String returnCurrentPage() {
-		PageNode<IsWidget> node = nav.getCurrentPage();
-		if (node != null) {
-			return node.name();
-		} else {
-			return "";
-		}
-		
 	}
 
 	/**

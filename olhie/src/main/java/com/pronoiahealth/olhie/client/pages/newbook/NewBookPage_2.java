@@ -14,6 +14,7 @@ import static com.google.gwt.query.client.GQuery.$;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
@@ -101,6 +102,7 @@ import com.pronoiahealth.olhie.client.widgets.rating.StarRating;
  * @since May 26, 2013
  * 
  */
+@Dependent
 @Page(role = { AuthorRole.class })
 public class NewBookPage_2 extends AbstractPage {
 

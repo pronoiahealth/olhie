@@ -11,7 +11,6 @@
 package com.pronoiahealth.olhie.client.widgets.booklist3d.errai;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -41,8 +40,6 @@ public class BookList3DEventObserver {
 	protected PageNavigator nav;
 
 	private BookList3D_3 bookList;
-	
-	private String clazz;
 
 	/**
 	 * Constructor
@@ -55,15 +52,9 @@ public class BookList3DEventObserver {
 	protected void postConstruct() {
 		nav.hashCode();
 	}
-	
-	@PreDestroy
-	protected void preDestroy() {
-		nav.getClass();
-	}
 
-	public void attachBookList(BookList3D_3 bookList, String clazz) {
+	public void attachBookList(BookList3D_3 bookList) {
 		this.bookList = bookList;
-		this.clazz = clazz;
 	}
 
 	/**
@@ -137,7 +128,7 @@ public class BookList3DEventObserver {
 		boolean isAuthorCoAuthor = checkBookIsAuthorResponseEvent
 				.isAuthorCoAuthor();
 		if (isAuthorCoAuthor == true) {
-			Multimap<String, Object> map = ArrayListMultimap.create();
+			Multimap<String, String> map = ArrayListMultimap.create();
 			map.put("bookId", checkBookIsAuthorResponseEvent.getBookId());
 			nav.performTransition(NavEnum.NewBookPage_2.toString(), map);
 		}

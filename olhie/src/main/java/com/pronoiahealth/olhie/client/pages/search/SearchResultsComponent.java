@@ -299,7 +299,7 @@ public class SearchResultsComponent extends AbstractComposite {
 	private void setNewCurrentBookList3D(List<BookDisplay> lst) {
 		currentInstanceBookList3D_3 = bookList3DFac.get();
 		currentInstanceBookList3D_3.build(lst, false);
-		bookListObserver.attachBookList(currentInstanceBookList3D_3, "SearchResultsComponent");
+		bookListObserver.attachBookList(currentInstanceBookList3D_3);
 		searchResultsContainerList.add(currentInstanceBookList3D_3);
 	}
 

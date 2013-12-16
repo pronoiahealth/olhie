@@ -344,7 +344,7 @@ public class NewBookDialog extends Composite {
 	protected void observesBookUpdateCommittedEvent(
 			@Observes BookUpdateCommittedEvent bookUpdateCommittedEvent) {
 		newBookModal.hide();
-		Multimap<String, Object> map = ArrayListMultimap.create();
+		Multimap<String, String> map = ArrayListMultimap.create();
 		map.put("bookId", bookUpdateCommittedEvent.getBookId());
 		nav.performTransition(NavEnum.NewBookPage_2.toString(), map);
 	}

@@ -13,6 +13,7 @@ package com.pronoiahealth.olhie.client.pages.bookcase;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -107,6 +108,23 @@ public class BookCasePage extends AbstractPage {
 	}
 
 	/**
+	 * @see com.google.gwt.user.client.ui.Widget#onLoad()
+	 */
+	@Override
+	public void onLoad() {
+		super.onLoad();
+		setPageBackgroundClass("ph-Bookcase-Background");
+		setContainerSize();
+	}
+
+	@Override
+	public void onUnload() {
+		super.onUnload();
+		disposeTabs();
+		bookcaseContainer.clear();
+	}
+
+	/**
 	 * Inject the custom resources and create the main gui via uiBinder
 	 */
 	@PostConstruct
@@ -163,23 +181,6 @@ public class BookCasePage extends AbstractPage {
 	}
 
 	/**
-	 * @see com.google.gwt.user.client.ui.Widget#onLoad()
-	 */
-	@Override
-	public void onLoad() {
-		super.onLoad();
-		setPageBackgroundClass("ph-Bookcase-Background");
-		setContainerSize();
-	}
-
-	@Override
-	public void onUnload() {
-		super.onUnload();
-		disposeTabs();
-		bookcaseContainer.clear();
-	}
-
-	/**
 	 * Adjusts the container height
 	 */
 	private void setContainerSize() {
@@ -208,7 +209,7 @@ public class BookCasePage extends AbstractPage {
 
 		// Create widget
 		if (lst != null && lst.size() > 0) {
-			// Protects against back to back call sot this method
+			// Protects against back to back call so this method
 			disposeTabs();
 			currentBookCaseContainerWidget = bookCaseContainerWidgetFac.get();
 			currentBookCaseContainerWidget.loadDataAndInit(lst);
