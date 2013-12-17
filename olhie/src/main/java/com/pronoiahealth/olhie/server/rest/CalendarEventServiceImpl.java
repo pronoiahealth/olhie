@@ -77,7 +77,7 @@ public class CalendarEventServiceImpl implements CalendarEventService {
 	@GET
 	@Path("/events")
 	@Produces({ "application/json" })
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED,
 			SecurityRoleEnum.ANONYMOUS })
 	public Response getCalendarEvents(@QueryParam("start") String start,
 			@QueryParam("end") String end) throws ServletException {

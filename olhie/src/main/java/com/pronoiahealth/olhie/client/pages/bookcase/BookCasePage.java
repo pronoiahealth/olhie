@@ -13,7 +13,6 @@ package com.pronoiahealth.olhie.client.pages.bookcase;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -24,11 +23,13 @@ import org.jboss.errai.ioc.client.api.Disposer;
 import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.nav.client.local.PageShowing;
 
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.query.client.GQuery;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -39,14 +40,13 @@ import com.pronoiahealth.olhie.client.pages.bookcase.widgets.BookCaseContainerWi
 import com.pronoiahealth.olhie.client.shared.constants.BookcaseEnum;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.GetMyBookcaseEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.MyBooksForBookcaseSmallIconRequestEvent;
-import com.pronoiahealth.olhie.client.shared.events.bookcase.MyBooksForBookcaseSmallIconResponseEvent;
-import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
-import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.DestroyPageWhenHiddenEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
+import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.BookcaseDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.widgets.GlassPanelSpinner;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3D_3;
 
 /**
  * BookCasePage<br/>
@@ -94,8 +94,6 @@ public class BookCasePage extends AbstractPage {
 	@Inject
 	private Event<DestroyPageWhenHiddenEvent> destroyPageWhenHiddenEvent;
 
-	private boolean responseRet = false;
-
 	@Inject
 	private Instance<BookCaseContainerWidget> bookCaseContainerWidgetFac;
 
@@ -103,6 +101,14 @@ public class BookCasePage extends AbstractPage {
 	private Disposer<BookCaseContainerWidget> bookCaseContainerWidgetDisposer;
 
 	private BookCaseContainerWidget currentBookCaseContainerWidget;
+
+	@Inject
+	private Instance<BookCasePageEventHandler> bookCasePageEventHandlerFac;
+
+	@Inject
+	private Disposer<BookCasePageEventHandler> bookCasePageEventHandlerDisposer;
+
+	private BookCasePageEventHandler currentBookCasePageEventHandler;
 
 	public BookCasePage() {
 	}
@@ -120,6 +126,10 @@ public class BookCasePage extends AbstractPage {
 	@Override
 	public void onUnload() {
 		super.onUnload();
+		if (currentBookCasePageEventHandler != null) {
+			bookCasePageEventHandlerDisposer
+					.dispose(currentBookCasePageEventHandler);
+		}
 		disposeTabs();
 		bookcaseContainer.clear();
 	}
@@ -130,7 +140,12 @@ public class BookCasePage extends AbstractPage {
 	@PostConstruct
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
-		//
+
+		// Create and attach event listener
+		currentBookCasePageEventHandler = bookCasePageEventHandlerFac.get();
+		currentBookCasePageEventHandler.attach(this);
+
+		// Spinner
 		gSpinner = new GlassPanelSpinner();
 		gSpinner.setVisible(false);
 		bookcaseContainer.add(gSpinner);
@@ -198,81 +213,58 @@ public class BookCasePage extends AbstractPage {
 		setContainerSize();
 	}
 
-	protected void observesMyBooksForBookcaseSmallIconResponseEvent(
-			@Observes MyBooksForBookcaseSmallIconResponseEvent myBooksForBookcaseSmallIconResponseEvent) {
-
-		// Get the parameters
-		List<BookcaseDisplay> lst = myBooksForBookcaseSmallIconResponseEvent
-				.getBookCaseDisplayLst();
-		BookcaseEnum requestedTab = myBooksForBookcaseSmallIconResponseEvent
-				.getRequestedTab();
-
-		// Create widget
-		if (lst != null && lst.size() > 0) {
-			// Protects against back to back call so this method
-			disposeTabs();
-			currentBookCaseContainerWidget = bookCaseContainerWidgetFac.get();
-			currentBookCaseContainerWidget.loadDataAndInit(lst);
-
-			switch (requestedTab) {
-			// Load the appropriate list
-			case AUTHOR:
-				myBooksTab.add(currentBookCaseContainerWidget);
-				break;
-			case COAUTHOR:
-				myCoBooksTab.add(currentBookCaseContainerWidget);
-				break;
-			case MYCOLLECTION:
-				myCollectionTab.add(currentBookCaseContainerWidget);
-				break;
-			}
-		}
-
-		// Set the spinner state
-		gSpinner.setVisible(false);
-	}
-
-	/**
-	 * Hide the spinner on an error
-	 * 
-	 * @param serviceErrorEvent
-	 */
-	protected void observesServiceErrorEvent(
-			@Observes ServiceErrorEvent serviceErrorEvent) {
-		// Set the spinner visible
-		gSpinner.setVisible(false);
-
-		// Clean up tabs
-		disposeTabs();
-	}
-
-	/**
-	 * Hide the spinner on a error
-	 * 
-	 * @param clientErrorEvent
-	 */
-	protected void observesClientErrorEvent(
-			@Observes ClientErrorEvent clientErrorEvent) {
-		// Set the spinner visible
-		gSpinner.setVisible(false);
-
-		// Clean up tabs
-		disposeTabs();
-	}
-
 	/**
 	 * Clean up tabs
 	 */
-	private void disposeTabs() {
+	protected void disposeTabs() {
 		// Destroy current widgets
 		// The tabs should only contain 1 widget
 		if (this.currentBookCaseContainerWidget != null) {
-			HTMLPanel activeTabContainer = (HTMLPanel) currentBookCaseContainerWidget
-					.getParent();
+			// HTMLPanel activeTabContainer = (HTMLPanel)
+			// currentBookCaseContainerWidget
+			// .getParent();
 			bookCaseContainerWidgetDisposer
 					.dispose(currentBookCaseContainerWidget);
+			currentBookCaseContainerWidget.removeFromParent();
+			Element el = currentBookCaseContainerWidget.getElement();
+			Node firstNode = null;
+			while ((firstNode = el.getFirstChild()) != null) {
+				el.removeChild(firstNode);
+			}
 			currentBookCaseContainerWidget = null;
-			activeTabContainer.clear();
+			// activeTabContainer.clear();
 		}
+	}
+
+	protected void loadNewContainerWidget(BookcaseEnum tab,
+			List<BookcaseDisplay> lst) {
+		currentBookCaseContainerWidget = bookCaseContainerWidgetFac.get();
+		currentBookCaseContainerWidget.loadDataAndInit(lst);
+
+		switch (tab) {
+		case AUTHOR:
+			myBooksTab.add(currentBookCaseContainerWidget);
+			break;
+		case COAUTHOR:
+			myCoBooksTab.add(currentBookCaseContainerWidget);
+			break;
+		case MYCOLLECTION:
+			myCollectionTab.add(currentBookCaseContainerWidget);
+			break;
+		}
+	}
+
+	protected void showBookcaseSpinner(boolean show) {
+		gSpinner.setVisible(show);
+	}
+
+	protected void destroyVisibleBookList() {
+		currentBookCaseContainerWidget.disposeBookList();
+	}
+
+	protected BookList3D_3 addBookListToCurrentBookcaseContainer(
+			List<BookDisplay> bookDisplayList) {
+		return currentBookCaseContainerWidget
+				.attachNewBookList(bookDisplayList);
 	}
 }

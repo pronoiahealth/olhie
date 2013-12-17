@@ -70,7 +70,7 @@ public class BookImageDownloadServiceImpl implements BookImageDownloadService {
 	@Override
 	@GET
 	@Path("/front/{size}/{uniqueNumb}/{bookId}")
-	@SecureAccess({ SecurityRoleEnum.ANONYMOUS, SecurityRoleEnum.AUTHOR,
+	@SecureAccess({ SecurityRoleEnum.ANONYMOUS, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED,
 			SecurityRoleEnum.ADMIN })
 	public InputStream getBookFrontCoverImage(
 			@Context HttpServletRequest request,
@@ -135,7 +135,7 @@ public class BookImageDownloadServiceImpl implements BookImageDownloadService {
 	@GET
 	@Path("/back/{uniqueNumb}/{bookId}")
 	@Produces({ "application/octet-stream" })
-	@SecureAccess({ SecurityRoleEnum.ANONYMOUS, SecurityRoleEnum.AUTHOR,
+	@SecureAccess({ SecurityRoleEnum.ANONYMOUS, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED,
 			SecurityRoleEnum.ADMIN })
 	public InputStream getBookBackCoverImage(
 			@Context HttpServletRequest request,

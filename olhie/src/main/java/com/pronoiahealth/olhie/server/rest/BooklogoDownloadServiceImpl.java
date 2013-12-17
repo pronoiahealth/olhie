@@ -67,7 +67,7 @@ public class BooklogoDownloadServiceImpl implements BooklogoDownloadService {
 	@Path("/logo/{uniqueNumb}/{bookId}")
 	// @Produces({"application/pdf", "application/octet-stream", "text/html"})
 	@Produces({ "application/octet-stream" })
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED,
 			SecurityRoleEnum.ANONYMOUS })
 	public InputStream getBooklogo(@Context HttpServletRequest request,
 			@Context HttpServletResponse response,

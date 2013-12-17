@@ -13,15 +13,12 @@ package com.pronoiahealth.olhie.client.pages.bookcase.widgets;
 import static com.google.gwt.query.client.GQuery.$;
 import static gwtquery.plugins.ui.Ui.Ui;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
@@ -31,6 +28,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.query.client.Function;
 import com.google.gwt.query.client.GQuery;
 import com.google.gwt.user.client.DOM;
@@ -41,7 +39,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.pronoiahealth.olhie.client.shared.constants.BookImageSizeEnum;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.BookcaseBookListBookSelectedEvent;
-import com.pronoiahealth.olhie.client.shared.events.bookcase.BookcaseBookListBookSelectedResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.BookcaseBookWidgetReorderEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.BookcaseDisplay;
@@ -85,14 +82,12 @@ public class BookCaseContainerWidget extends Composite {
 	@Inject
 	private javax.enterprise.event.Event<BookcaseBookWidgetReorderEvent> bookcaseBookWidgetReorderEvent;
 
-	private Function bookClickFunction;
-
 	@Inject
 	private Instance<BookList3D_3> bookList3DFac;
 
 	@Inject
 	private Disposer<BookList3D_3> bookList3DDisposer;
-	
+
 	private BookList3D_3 currentInstanceBookList3D_3;
 
 	@Inject
@@ -100,14 +95,6 @@ public class BookCaseContainerWidget extends Composite {
 
 	@Inject
 	private Disposer<BookCaseDraggableBookWidget> bookCaseDraggableBookWidgetDisposer;
-
-	@Inject
-	private Instance<BookList3DEventObserver> bookListEventObserverFac;
-	
-	@Inject
-	private Disposer<BookList3DEventObserver> bookListEventObserverDisposer;
-	
-	private BookList3DEventObserver currentBookList3DEventObserver;
 
 	@Inject
 	private SyncBeanManager syncManager;
@@ -118,10 +105,10 @@ public class BookCaseContainerWidget extends Composite {
 	 */
 	public BookCaseContainerWidget() {
 	}
-	
+
 	@PreDestroy
 	protected void preDestroy() {
-		syncManager.getClass();
+		doCleanupLogic();
 	}
 
 	/**
@@ -132,67 +119,18 @@ public class BookCaseContainerWidget extends Composite {
 	@Override
 	public void onUnload() {
 		super.onUnload();
+		doCleanupLogic();
+	}
+
+	/**
+	 * Clean up widget
+	 */
+	private void doCleanupLogic() {
+		// Booklist and event observer
 		disposeBookList();
-		if (currentBookList3DEventObserver != null) {
-			bookListEventObserverDisposer.dispose(currentBookList3DEventObserver);
-		}
+
+		// Draggable widget
 		disposeBookCaseDraggableBookWidgets();
-	}
-
-	/**
-	 * Builds the bookClickFunction function. This function will call the
-	 * BookListBookSelectedEvent with the bookId. The bookId is set as an
-	 * attribute on the button component of the BookCaseDraggableBookWidget.
-	 */
-	@PostConstruct
-	protected void postConstruct() {
-		bookClickFunction = new Function() {
-			@Override
-			public boolean f(Event e) {
-				// Fire the event which will get the clicked book for
-				// display
-				String bookId = $(e).attr("bookId");
-				if (bookId != null && bookId.length() > 0) {
-					bookListBookSelectedEvent
-							.fire(new BookcaseBookListBookSelectedEvent(bookId));
-				}
-				return false;
-			}
-		};
-	}
-
-	/**
-	 * Observes for the response events from the selecting of a book. Once the
-	 * BookDisplay is returned it will be set in the BookDetail Component
-	 * 
-	 * @param bookListBookSelectedResponseEvent
-	 */
-	protected void observesBookcaseBookListBookSelectedResponseEvent(
-			@Observes BookcaseBookListBookSelectedResponseEvent bookListBookSelectedResponseEvent) {
-
-		// Get list
-		BookDisplay bookDisplay = bookListBookSelectedResponseEvent
-				.getBookDisplay();
-
-		// Clean up panel
-		disposeBookList();
-
-		if (bookDisplay != null) {
-			// Create a new book list
-			// Add a book list3D to the container
-			List<BookDisplay> bookDisplayList = new ArrayList<BookDisplay>();
-			bookDisplayList.add(bookDisplay);
-			currentInstanceBookList3D_3 = bookList3DFac.get();
-			currentInstanceBookList3D_3.build(bookDisplayList, false);
-			currentInstanceBookList3D_3.getElement().addClassName(
-					"ph-Bookcase-BookDetail-Panel");
-			if (currentBookList3DEventObserver != null) {
-				bookListEventObserverDisposer.dispose(currentBookList3DEventObserver);
-			}
-			currentBookList3DEventObserver = bookListEventObserverFac.get();
-			currentBookList3DEventObserver.attachBookList(currentInstanceBookList3D_3);
-			bookDetailContainer.add(currentInstanceBookList3D_3);
-		}
 	}
 
 	/**
@@ -261,7 +199,20 @@ public class BookCaseContainerWidget extends Composite {
 		sortableQry.each(new Function() {
 			@Override
 			public void f(com.google.gwt.dom.client.Element e) {
-				$(e).bind(Event.ONCLICK, bookClickFunction);
+				$(e).bind(Event.ONCLICK, new Function() {
+					@Override
+					public boolean f(Event e) {
+						// Fire the event which will get the clicked book for
+						// display
+						String bookId = $(e).attr("bookId");
+						if (bookId != null && bookId.length() > 0) {
+							bookListBookSelectedEvent
+									.fire(new BookcaseBookListBookSelectedEvent(
+											bookId));
+						}
+						return false;
+					}
+				});
 			}
 		});
 	}
@@ -269,31 +220,59 @@ public class BookCaseContainerWidget extends Composite {
 	/**
 	 * Clears out book detail panel
 	 */
-	private void disposeBookList() {
+	public void disposeBookList() {
 		if (bookDetailContainer.getWidgetCount() > 0) {
+			destroyCurrentInstanceBookList3D_3();
 			bookDetailContainer.clear();
-			if (currentInstanceBookList3D_3 != null) {
-				bookList3DDisposer.dispose(currentInstanceBookList3D_3);
-				currentInstanceBookList3D_3 = null;
-			}
 		}
+	}
 
-		// Are there any other reference to the booklist
-		// This is a hack for now.
-		// Collection<IOCBeanDef<BookList3D_3>> book3DList = syncManager
-		//		.lookupBeans(BookList3D_3.class);
-		//if (book3DList != null && book3DList.size() > 0) {
-		//	for (IOCBeanDef<BookList3D_3> b : book3DList) {
-		//		syncManager.destroyBean(b.getInstance());
-		//	}
-		//}
+	/**
+	 * Attach a new book list
+	 * 
+	 * @param bookDisplayList
+	 */
+	public BookList3D_3 attachNewBookList(List<BookDisplay> bookDisplayList) {
+		currentInstanceBookList3D_3 = bookList3DFac.get();
+		currentInstanceBookList3D_3.build(bookDisplayList, false);
+		currentInstanceBookList3D_3.getElement().addClassName(
+				"ph-Bookcase-BookDetail-Panel");
+		bookDetailContainer.add(currentInstanceBookList3D_3);
+		return currentInstanceBookList3D_3;
+	}
+
+	/**
+	 * Destroy the current list
+	 */
+	public void destroyCurrentInstanceBookList3D_3() {
+		if (currentInstanceBookList3D_3 != null) {
+			bookList3DDisposer.dispose(currentInstanceBookList3D_3);
+			currentInstanceBookList3D_3 = null;
+		}
 	}
 
 	/**
 	 * Clears book item widgets
 	 */
 	private void disposeBookCaseDraggableBookWidgets() {
-		if (sortableContainer != null) {
+		if (sortableContainer != null && sortableContainer.hasChildNodes()) {
+			GQuery sortableContainerQry = $(sortableContainer);
+
+			// Unbind the click events
+			GQuery sortableQry = sortableContainerQry
+					.find(".bookCase-Detail-Button");
+			sortableQry.each(new Function() {
+				@Override
+				public void f(com.google.gwt.dom.client.Element e) {
+					$(e).unbind(Event.ONCLICK);
+				}
+			});
+
+			// Unbind the sortable
+			sortableContainerQry.as(Ui).sortable().unbind("sortupdate");
+			sortableContainerQry.as(Ui).sortable().destroy();
+
+			// Remove all the widgets
 			int cnt = DOM.getChildCount(sortableContainer);
 			for (int i = 0; i < cnt; i++) {
 				Element e = DOM.getChild(sortableContainer, i);
@@ -307,6 +286,12 @@ public class BookCaseContainerWidget extends Composite {
 							.dispose((BookCaseDraggableBookWidget) listener);
 				}
 			}
+		}
+
+		// Destroy physical
+		Node node = null;
+		while ((node = sortableContainer.getFirstChild()) != null) {
+			sortableContainer.removeChild(node);
 		}
 	}
 
@@ -344,5 +329,4 @@ public class BookCaseContainerWidget extends Composite {
 			GQuery retQry = $(ret);
 		}
 	}
-
 }

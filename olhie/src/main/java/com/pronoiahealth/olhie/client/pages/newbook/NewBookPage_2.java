@@ -13,10 +13,8 @@ package com.pronoiahealth.olhie.client.pages.newbook;
 import static com.google.gwt.query.client.GQuery.$;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
@@ -63,11 +61,7 @@ import com.pronoiahealth.olhie.client.pages.newbook.widgets.NewBookDroppablePane
 import com.pronoiahealth.olhie.client.shared.constants.BookImageSizeEnum;
 import com.pronoiahealth.olhie.client.shared.constants.ModeEnum;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
-import com.pronoiahealth.olhie.client.shared.events.book.BookFindResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedEvent;
-import com.pronoiahealth.olhie.client.shared.events.book.BookListBookSelectedResponseEvent;
-import com.pronoiahealth.olhie.client.shared.events.book.FindAuthorsBookByIdEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.BookContentUpdatedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.DestroyPageWhenHiddenEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageHidingEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.NewBookPageShowingEvent;
@@ -76,7 +70,6 @@ import com.pronoiahealth.olhie.client.shared.events.local.ShowAddLogoModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowBookCommentsModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewAssetModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowNewBookModalEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
@@ -199,9 +192,6 @@ public class NewBookPage_2 extends AbstractPage {
 	private Event<ShowNewAssetModalEvent> showNewAssetModalEvent;
 
 	@Inject
-	private Event<FindAuthorsBookByIdEvent> bookFindByIdEvent;
-
-	@Inject
 	private Event<DestroyPageWhenHiddenEvent> destroyPageWhenHiddenEvent;
 
 	@UiField
@@ -238,13 +228,21 @@ public class NewBookPage_2 extends AbstractPage {
 	@Inject
 	private Disposer<BaseBookassetActionButtonWidget> baseBookassetActionButtonWidgetDisposer;
 
+	@Inject
+	private Instance<NewBookPageEventHandler> newBookEventHandlerFac;
+
+	@Inject
+	private Disposer<NewBookPageEventHandler> newBookEventHandlerDisposer;
+
+	private NewBookPageEventHandler currentNewBookEventHandler;
+
 	/**
 	 * Default Constructor
 	 * 
 	 */
 	public NewBookPage_2() {
 	}
-	
+
 	/**
 	 * Clean up BaseBookassetActionButtonWidget created with instance factory.
 	 * Destroy both the logical part (the widget) and the physical part (the DOM
@@ -254,6 +252,12 @@ public class NewBookPage_2 extends AbstractPage {
 	protected void onUnload() {
 		super.onUnload();
 		
+		// Remove the event handler
+		if (currentNewBookEventHandler != null) {
+			newBookEventHandlerDisposer.dispose(currentNewBookEventHandler);
+		}
+		
+		// Remove the attached widgets
 		if (newBookButtonHolderWidget != null) {
 			// Destroy the BaseBookassetActionButtonWidget
 			Element el = newBookButtonHolderWidget.getElement();
@@ -322,6 +326,10 @@ public class NewBookPage_2 extends AbstractPage {
 
 		// Set page background to the book cover background
 		setPageBackgroundClass("ph-NewBook-Background");
+
+		// build event handler
+		currentNewBookEventHandler = newBookEventHandlerFac.get();
+		currentNewBookEventHandler.attach(this);
 	}
 
 	/**
@@ -440,64 +448,11 @@ public class NewBookPage_2 extends AbstractPage {
 	}
 
 	/**
-	 * Looks for the BookListBookSelectedResponseEvent.
-	 * 
-	 * @param bookListBookSelectedResponseEvent
-	 */
-	protected void observesBookListBookSelectedResponseEvent(
-			@Observes BookListBookSelectedResponseEvent bookListBookSelectedResponseEvent) {
-
-		// Set the book in display
-		setCurrentBookInDisplay(bookListBookSelectedResponseEvent
-				.getBookDisplay());
-	}
-
-	/**
-	 * Watches for the book content update event. If the book id matches the one
-	 * showing then asks for the new data.
-	 * 
-	 * @param bookContentUpdatedEvent
-	 */
-	protected void observesBookContentUpdatedEvent(
-			@Observes BookContentUpdatedEvent bookContentUpdatedEvent) {
-		String id = bookContentUpdatedEvent.getBookId();
-		callBookFindById(id);
-	}
-
-	/**
-	 * observersBookContentUpdatedEvent
-	 * 
-	 * @param id
-	 */
-	private void callBookFindById(String id) {
-		// Test to see if the book id's match
-		// If so ask for updated data
-		if (id != null && id.equals(bookId)) {
-			bookFindByIdEvent.fire(new FindAuthorsBookByIdEvent(bookId));
-		}
-	}
-
-	/**
-	 * From the bookId a request is made for the book from the
-	 * whenPageShownCalled method. The response is received here and processed.
-	 * If in the view mode the user-book relationship is checked to see if the
-	 * addToMycollections button should be made visible.
-	 * 
-	 * @param bookFindResponseEvent
-	 */
-	protected void observesBookFindResponse(
-			@Observes BookFindResponseEvent bookFindResponseEvent) {
-
-		// Set page background to the book cover background
-		setCurrentBookInDisplay(bookFindResponseEvent.getBookDisplay());
-	}
-
-	/**
 	 * Sync returned book and display
 	 * 
 	 * @param bookDisplay
 	 */
-	private void setCurrentBookInDisplay(BookDisplay bookDisplay) {
+	public void setCurrentBookInDisplay(BookDisplay bookDisplay) {
 		// Check to see if the current user is the author
 		boolean isUserAuthorOrCoAuthor = bookDisplay.isUserIsAuthorCoAuthor();
 
@@ -554,18 +509,9 @@ public class NewBookPage_2 extends AbstractPage {
 	}
 
 	/**
-	 * Need to adjust the Heros dynamically
-	 * 
-	 * @param event
-	 */
-	protected void observesWindowResizeEvent(@Observes WindowResizeEvent event) {
-		adjustSize();
-	}
-
-	/**
 	 * Adjusts component sizes in response to window size changes
 	 */
-	private void adjustSize() {
+	public void adjustSize() {
 		if (isAttached() == true) {
 			// Difference from window height
 			int wndHeight = this.getPageContainerHeight();
