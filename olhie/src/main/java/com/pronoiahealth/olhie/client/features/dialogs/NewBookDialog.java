@@ -29,6 +29,7 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.Column;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
+import com.github.gwtbootstrap.client.ui.FluidContainer;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Modal;
@@ -164,6 +165,9 @@ public class NewBookDialog extends Composite {
 	@UiField
 	public Button submitButton;
 
+	@UiField
+	public FluidContainer formFluidContainer;
+
 	private ClickHandler categoryClickedHandler;
 
 	private ClickHandler coverClickedHandler;
@@ -206,6 +210,10 @@ public class NewBookDialog extends Composite {
 				"ph-NewBook-BookCover-SplitButton", true);
 		newBookForm.addStyleName("ph-NewBook-Modal-Form");
 
+		// Adjust modal body height
+		formFluidContainer.getElement().getParentElement()
+				.setAttribute("style", "height: 430px;");
+
 		// Set up click events
 		// When the user clicks one of the categories then set the text of the
 		// drop down to the category name and change the largeBookWidget
@@ -219,7 +227,7 @@ public class NewBookDialog extends Composite {
 					// Update the label in the drop down
 					String catName = a.getName();
 					catagoryDropDown.setText(catName);
-					
+
 					// Update the interface fields
 					configureInterfaceDataEntry(catName);
 
@@ -348,7 +356,7 @@ public class NewBookDialog extends Composite {
 		map.put("bookId", bookUpdateCommittedEvent.getBookId());
 		nav.performTransition(NavEnum.NewBookPage_2.toString(), map);
 	}
-	
+
 	/**
 	 * Shows the modal dialog. If we are editing then sync up the model.
 	 * 
@@ -358,13 +366,13 @@ public class NewBookDialog extends Composite {
 			@Observes ShowNewBookModalEvent showNewBookModalEvent) {
 		// Reset the form
 		resetFormForNewMode();
-		
+
 		// Is there a book
 		Book theBook = showNewBookModalEvent.getEditBook();
 		if (theBook != null) {
 			setFormForEdit(theBook);
-		} 
-		
+		}
+
 		// Show the dialog
 		show();
 	}

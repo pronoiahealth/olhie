@@ -193,7 +193,7 @@ public class Header extends Composite {
 
 		// Add book
 		a = addBookLink.getAnchor();
-		a.setTitle("Add a book$(commentsLink.getAnchor().getElement()).as(Tooltip).tooltip().destroy();$(commentsLink.getAnchor().getElement()).as(Tooltip).tooltip().destroy();");
+		a.setTitle("Add a book");
 		$(a.getElement()).data("tooltip-placement", "BOTTOM")
 				.data("tooltip-delayShow", "200").as(Tooltip).tooltip();
 	}

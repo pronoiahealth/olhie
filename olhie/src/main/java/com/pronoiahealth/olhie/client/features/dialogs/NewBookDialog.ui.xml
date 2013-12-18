@@ -8,7 +8,7 @@
 	<b:Modal ui:field="newBookModal" title="Create a New Book"
 		backdrop="STATIC" keyboard="true" animation="true">
 
-		<b:FluidContainer>
+		<b:FluidContainer ui:field="formFluidContainer">
 			<b:Column size="6">
 				<b:FluidRow>
 					<b:WellForm ui:field="newBookForm">

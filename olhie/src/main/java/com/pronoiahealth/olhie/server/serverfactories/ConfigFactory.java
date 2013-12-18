@@ -30,6 +30,11 @@ public class ConfigFactory {
 	@Inject
 	@ConfigProperty(name = "SEARCH_PAGE_SIZE")
 	private String searchPageSize;
+	
+	@Inject
+	@ConfigProperty(name = "SOLR_MAX_RESULTS")
+	private String maxSolrResults;
+	
 
 	/**
 	 * Default no-args Constructor
@@ -50,6 +55,16 @@ public class ConfigFactory {
 			return Integer.parseInt(searchPageSize.trim());
 		} else {
 			return 0;
+		}
+	}
+	
+	@Produces
+	@SolrMaxResultsReturned
+	public int getMaxSolrResults() {
+		if (maxSolrResults != null) {
+			return Integer.parseInt(maxSolrResults.trim());
+		} else {
+			return -1;
 		}
 	}
 

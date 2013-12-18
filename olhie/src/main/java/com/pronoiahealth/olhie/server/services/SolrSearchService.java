@@ -29,6 +29,7 @@ import org.apache.deltaspike.core.api.config.ConfigProperty;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
+import com.pronoiahealth.olhie.server.serverfactories.SolrMaxResultsReturned;
 
 /**
  * SolrSearchService.java<br/>
@@ -49,6 +50,10 @@ public class SolrSearchService {
 	@Inject
 	@ConfigProperty(name = "SOLR_PORT", defaultValue = "8080")
 	private String solrPort;
+	
+	@Inject
+	@SolrMaxResultsReturned
+	private int solrMaxReturnResults;
 
 	private static final String SOLR_ROWS_PARAM = "&rows=";
 	private static final String SOLR_POST_FIELDS = "&fl=id";
@@ -96,7 +101,7 @@ public class SolrSearchService {
 	protected List<String> searchSolr(String[] _tokenList) {
 		List<String> idList = null;
 		try {
-			String resultXml = querySolrText(_tokenList, RETURN_ALL_ROWS);
+			String resultXml = querySolrText(_tokenList, solrMaxReturnResults);
 			idList = parseResults(resultXml);
 		} catch (Exception e) {
 			String errMsg = e.getMessage();

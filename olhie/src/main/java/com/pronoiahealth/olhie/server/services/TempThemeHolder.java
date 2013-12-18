@@ -35,8 +35,8 @@ public class TempThemeHolder {
 		bookCovers.add(new BookCover("Olhie/images/bookcover6.png", "Olhie/images/bookcover6_30X40.png", "Green 4", "#FFFFFF", "#FFFFFF"));
 		bookCovers.add(new BookCover("Olhie/images/bookcover7.png", "Olhie/images/bookcover7_30X40.png", "Grey Designed", "#FFFFFF", "#FFFFFF"));
 		bookCovers.add(new BookCover("Olhie/images/bookcover8.png", "Olhie/images/bookcover8_30X40.png", "Brown Designed", "#FFFFFF", "#FFFFFF"));
-		bookCovers.add(new BookCover("Olhie/images/bookcover9.png", "Olhie/images/bookcover9_30X40.png", "Light Brown Designed", "#FFFFFF", "#FFFFFF"));
-		bookCovers.add(new BookCover("Olhie/images/bookcoverX.png", "Olhie/images/bookcoverX_30X40.png", "Orange Designed", "#FFFFFF", "#FFFFFF"));
+		bookCovers.add(new BookCover("Olhie/images/bookcover9.png", "Olhie/images/bookcover9_30X40.png", "Light Brown", "#FFFFFF", "#FFFFFF"));
+		bookCovers.add(new BookCover("Olhie/images/bookcoverX.png", "Olhie/images/bookcoverX_30X40.png", "Orange", "#FFFFFF", "#FFFFFF"));
 	}
 	
 	public List<BookCategory> getCategories() {

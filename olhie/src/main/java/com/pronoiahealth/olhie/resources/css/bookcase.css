@@ -158,6 +158,10 @@
 	max-width: 550px;
 	min-height: 600px;
 	background: url("Olhie/images/bookshelfbkg.jpg") repeat;
+	overflow: scroll;
+}
+
+.ph-Bookcase-Bookcase-Background {
 }
 
 .ph-Bookcase-Sortable {
