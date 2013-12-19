@@ -31,6 +31,7 @@ import com.pronoiahealth.olhie.client.shared.constants.SearchPageActionEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.BookSearchResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.SearchPageNavigationRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.book.SearchPageNavigationResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ClientBookSearchEvent;
 
 /**
  * SearchPagerWidget.java<br/>
@@ -61,6 +62,9 @@ public class SearchPagerWidget extends Composite {
 	@Inject
 	private javax.enterprise.event.Event<SearchPageNavigationRequestEvent> searchPageNavigationRequestEvent;
 
+	@Inject
+	private javax.enterprise.event.Event<ClientBookSearchEvent> clientBookSearchEvent;
+
 	/**
 	 * Required CDI no-args Constructor
 	 * 
@@ -83,6 +87,7 @@ public class SearchPagerWidget extends Composite {
 			@Override
 			public boolean f(Event e) {
 				if (!firstButton.hasClass("disabled")) {
+					clientBookSearchEvent.fire(new ClientBookSearchEvent());
 					searchPageNavigationRequestEvent
 							.fire(new SearchPageNavigationRequestEvent(
 									SearchPageActionEnum.FIRST));
@@ -97,6 +102,7 @@ public class SearchPagerWidget extends Composite {
 			@Override
 			public boolean f(Event e) {
 				if (!previousButton.hasClass("disabled")) {
+					clientBookSearchEvent.fire(new ClientBookSearchEvent());
 					searchPageNavigationRequestEvent
 							.fire(new SearchPageNavigationRequestEvent(
 									SearchPageActionEnum.PREVIOUS));
@@ -111,6 +117,7 @@ public class SearchPagerWidget extends Composite {
 			@Override
 			public boolean f(Event e) {
 				if (!nextButton.hasClass("disabled")) {
+					clientBookSearchEvent.fire(new ClientBookSearchEvent());
 					searchPageNavigationRequestEvent
 							.fire(new SearchPageNavigationRequestEvent(
 									SearchPageActionEnum.NEXT));
@@ -125,6 +132,7 @@ public class SearchPagerWidget extends Composite {
 			@Override
 			public boolean f(Event e) {
 				if (!lastButton.hasClass("disabled")) {
+					clientBookSearchEvent.fire(new ClientBookSearchEvent());
 					searchPageNavigationRequestEvent
 							.fire(new SearchPageNavigationRequestEvent(
 									SearchPageActionEnum.LAST));
@@ -138,7 +146,7 @@ public class SearchPagerWidget extends Composite {
 
 		// Initially hide the widget
 		pagerQry.hide();
-		
+
 		// Add the tool tips
 		$("[rel=tooltip]", pager).as(Tooltip).tooltip();
 	}

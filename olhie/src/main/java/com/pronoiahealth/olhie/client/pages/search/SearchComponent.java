@@ -16,7 +16,6 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.WellForm;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -29,6 +28,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
 import com.pronoiahealth.olhie.client.shared.events.book.BookSearchEvent;
+import com.pronoiahealth.olhie.client.shared.events.local.ClientBookSearchEvent;
 
 /**
  * SearchComponent.java<br/>
@@ -57,6 +57,9 @@ public class SearchComponent extends AbstractComposite {
 
 	@Inject
 	private Event<BookSearchEvent> newBookSearchEvent;
+
+	@Inject
+	private Event<ClientBookSearchEvent> clientBookSearchEvent;
 
 	/**
 	 * Constructor
@@ -107,6 +110,7 @@ public class SearchComponent extends AbstractComposite {
 			if (isValid) {
 				// Fire event and send the results to the
 				// SearchResultsComponent.
+				clientBookSearchEvent.fire(new ClientBookSearchEvent());
 				newBookSearchEvent.fire(new BookSearchEvent(searchText, 0));
 			}
 

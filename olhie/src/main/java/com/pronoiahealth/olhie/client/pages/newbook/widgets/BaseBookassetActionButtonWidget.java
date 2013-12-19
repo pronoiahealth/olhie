@@ -106,9 +106,9 @@ public class BaseBookassetActionButtonWidget extends Composite {
 
 		if (title != null) {
 			this.title = title;
-			button.getElement().setAttribute("data-original-title", title);
-			//button.getElement().setAttribute("title", title);
 		}
+		button.getElement().setAttribute("data-original-title", title);
+		// button.getElement().setAttribute("title", title);
 
 		if (iconName != null) {
 			this.iconName = iconName;

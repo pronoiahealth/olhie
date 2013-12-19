@@ -10,17 +10,14 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages.search;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.Disposer;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 
 import com.github.gwtbootstrap.client.ui.Column;
@@ -33,21 +30,10 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
-import com.pronoiahealth.olhie.client.shared.constants.SearchPageActionEnum;
-import com.pronoiahealth.olhie.client.shared.events.book.BookSearchEvent;
-import com.pronoiahealth.olhie.client.shared.events.book.BookSearchResponseEvent;
-import com.pronoiahealth.olhie.client.shared.events.book.SearchPageNavigationResponseEvent;
-import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
-import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
-import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.widgets.GlassPanelSpinner;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3DEventObserver;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3D_3;
-
-//import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D_2;
 
 /**
  * SearchResultsComponent.java<br/>
@@ -98,13 +84,18 @@ public class SearchResultsComponent extends AbstractComposite {
 	private Disposer<BookList3D_3> bookList3DDisposer;
 
 	@Inject
+	private Instance<SearchResultsComponentEventHandler> searchResultsComponentEventHandlerFac;
+
+	@Inject
+	private Disposer<SearchResultsComponentEventHandler> searchResultsComponentEventHandlerDisposer;
+
+	private SearchResultsComponentEventHandler currentSearchResultsComponentEventHandler;
+
+	@Inject
 	private SearchPagerWidget pagerWidget;
 
 	@Inject
-	private BookList3DEventObserver bookListObserver;
-
-	@Inject
-	private SyncBeanManager syncManger;
+	private SyncBeanManager syncManager;
 
 	/**
 	 * Constructor
@@ -119,6 +110,11 @@ public class SearchResultsComponent extends AbstractComposite {
 	@PostConstruct
 	private void postConstruct() {
 		initWidget(binder.createAndBindUi(this));
+
+		// Initalize currentSearchResultsComponentEventHandler
+		currentSearchResultsComponentEventHandler = searchResultsComponentEventHandlerFac
+				.get();
+		currentSearchResultsComponentEventHandler.attach(this);
 
 		// Header for list
 		searchResultsHeader.addStyleName("ph-SearchResults-Header");
@@ -149,142 +145,18 @@ public class SearchResultsComponent extends AbstractComposite {
 		// TODO Auto-generated method stub
 		super.onUnload();
 		clearResultsContainer();
-		
+
 		// Destroy the event observer
-		syncManger.destroyBean(bookListObserver);
-	}
-
-	/**
-	 * Observes the results from a book search query.
-	 * 
-	 * @param event
-	 */
-	public void observesBookSearchResponseEvent(
-			@Observes BookSearchResponseEvent event) {
-
-		// Hide spinner
-		gSpinner.setVisible(false);
-
-		// Clear results container
-		clearResultsContainer();
-
-		// Display the books, if nothing is returned the display a message
-		List<BookDisplay> lst = event.getBookDisplayList();
-		if (lst != null && lst.size() > 0) {
-			setNewCurrentBookList3D(lst);
-		} else {
-			resultsLbl.setText(SearchConstants.INSTANCE.searchResults());
-			Label noBooksLbl = new Label(SearchConstants.INSTANCE.noResults());
-			noBooksLbl.setStyleName("ph-SearchResults-NoResults-Lbl");
-			searchResultsContainerList.add(noBooksLbl);
+		if (currentSearchResultsComponentEventHandler != null) {
+			searchResultsComponentEventHandlerDisposer
+					.dispose(currentSearchResultsComponentEventHandler);
 		}
-	}
-
-	/**
-	 * Similar actions to the observesBookSearchResponseEvent except the
-	 * SearchPageNavigationResponseEvent as a result of the user navigating
-	 * through an already returned search result set.
-	 * 
-	 * 
-	 * @param searchPageNavigationResponseEvent
-	 */
-	protected void observesSearchPageNavigationResponseEvent(
-			@Observes SearchPageNavigationResponseEvent searchPageNavigationResponseEvent) {
-		// This component does not handle the UPDATE_STATE action
-		if (searchPageNavigationResponseEvent.getRequestedAction() != SearchPageActionEnum.UPDATE_STATE) {
-			// Hide spinner
-			gSpinner.setVisible(false);
-
-			// Clear results container
-			clearResultsContainer();
-
-			// Display the books, if nothing is returned the display a message
-			List<BookDisplay> lst = searchPageNavigationResponseEvent
-					.getBookDisplays();
-			if (lst != null && lst.size() > 0) {
-				setNewCurrentBookList3D(lst);
-			} else {
-				resultsLbl.setText(SearchConstants.INSTANCE.searchResults());
-				Label noBooksLbl = new Label(
-						SearchConstants.INSTANCE.noResults());
-				noBooksLbl.setStyleName("ph-SearchResults-NoResults-Lbl");
-				searchResultsContainerList.add(noBooksLbl);
-			}
-		}
-	}
-
-	/**
-	 * @param bookSearchEvent
-	 */
-	protected void observesBookSearchEvent(
-			@Observes BookSearchEvent bookSearchEvent) {
-		// Show spinner
-		gSpinner.setVisible(true);
-	}
-
-	/**
-	 * Hide the spinner on an error
-	 * 
-	 * @param serviceErrorEvent
-	 */
-	protected void observesServiceErrorEvent(
-			@Observes ServiceErrorEvent serviceErrorEvent) {
-		// hide spinner
-		gSpinner.setVisible(false);
-
-		// Clear results container
-		clearResultsContainer();
-	}
-
-	/**
-	 * Hide the spinner on a error
-	 * 
-	 * @param clientErrorEvent
-	 */
-	protected void observesClientErrorEvent(
-			@Observes ClientErrorEvent clientErrorEvent) {
-		// hide spinner
-		gSpinner.setVisible(false);
-
-		// Clear results container
-		clearResultsContainer();
-	}
-
-	/**
-	 * Observes when the parent window has been loaded. This component will
-	 * adjust its size at that point.
-	 * 
-	 * @param event
-	 */
-	public void observesSearchPageLoadedEvent(
-			@Observes SearchPageLoadedEvent event) {
-		adjustSize();
-	}
-
-	/**
-	 * Need to adjust the search results panel dynamically
-	 * 
-	 * @param event
-	 */
-	public void observesWindowResizeEvent(@Observes WindowResizeEvent event) {
-		adjustSize();
-	}
-
-	/**
-	 * Client is logging out so clear the returned books
-	 * 
-	 * @param clientLogoutRequestEvent
-	 */
-	protected void observesClientLogoutRequestEvent(
-			@Observes ClientLogoutRequestEvent clientLogoutRequestEvent) {
-		// Clear results container
-		clearResultsContainer();
 	}
 
 	/**
 	 * Dynamically adjusts the page size
 	 */
-	private void adjustSize() {
+	protected void adjustSize() {
 		if (isAttached() == true) {
 			// Difference from window height
 			int wndHeight = this.getPageContainerHeight();
@@ -296,30 +168,32 @@ public class SearchResultsComponent extends AbstractComposite {
 		}
 	}
 
-	private void setNewCurrentBookList3D(List<BookDisplay> lst) {
+	protected void setNewCurrentBookList3D(List<BookDisplay> lst,
+			BookList3DEventObserver bookListObserver) {
 		currentInstanceBookList3D_3 = bookList3DFac.get();
 		currentInstanceBookList3D_3.build(lst, false);
 		bookListObserver.attachBookList(currentInstanceBookList3D_3);
 		searchResultsContainerList.add(currentInstanceBookList3D_3);
 	}
 
-	private void clearResultsContainer() {
+	protected void clearResultsContainer() {
 		if (searchResultsContainerList.getWidget() != null) {
-			searchResultsContainerList.clear();
 			if (currentInstanceBookList3D_3 != null) {
 				bookList3DDisposer.dispose(currentInstanceBookList3D_3);
 				currentInstanceBookList3D_3 = null;
 			}
+			searchResultsContainerList.clear();
 		}
+	}
 
-		// Are there any other reference to the booklist
-		// This is a hack for now.
-		Collection<IOCBeanDef<BookList3D_3>> book3DList = syncManger
-				.lookupBeans(BookList3D_3.class);
-		if (book3DList != null && book3DList.size() > 0) {
-			for (IOCBeanDef<BookList3D_3> b : book3DList) {
-				syncManger.destroyBean(b.getInstance());
-			}
-		}
+	protected void setSpinnerVisibility(boolean show) {
+		gSpinner.setVisible(show);
+	}
+
+	protected void setNoResultsLabel() {
+		resultsLbl.setText(SearchConstants.INSTANCE.searchResults());
+		Label noBooksLbl = new Label(SearchConstants.INSTANCE.noResults());
+		noBooksLbl.setStyleName("ph-SearchResults-NoResults-Lbl");
+		searchResultsContainerList.add(noBooksLbl);
 	}
 }
