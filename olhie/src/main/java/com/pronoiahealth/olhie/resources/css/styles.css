@@ -1,9 +1,44 @@
-@import "mainscreen.css";
+/* Browser speific scrollbar overrides */
 
-@import "bookshelf.css";
+/* Mollia */
 
-@import "searchScreen.css";
+/*
+@-moz-document url-prefix (http://),url-prefix (https://) {
+scrollbar {
+	-moz-appearance:none!important;
+	background: rgb(0, 255, 0) !important;
+}
 
-@import "modal.css";
+thumb,scrollbarbutton {
+	-moz-appearance: none !important;
+	background-color: rgb(0, 0, 255) !important;
+}
 
-@import "sidebarmenu.css";
+thumb:hover,scrollbarbutton:hover {
+	-moz-appearance: none !important;
+	background-color: rgb(255, 0, 0) !important;
+}
+
+scrollbarbutton {
+	display: none !important;
+}
+
+scrollbar[orient="vertical"] {
+	min-width: 40px !important;
+}
+}
+
+*/
+
+/* Webkit */
+
+/*
+::-webkit-scrollbar { width: 3px; height: 3px;}
+::-webkit-scrollbar-button {  background-color: #666; }
+::-webkit-scrollbar-track {  background-color: #999;}
+::-webkit-scrollbar-track-piece { background-color: #ffffff;}
+::-webkit-scrollbar-thumb { height: 50px; background-color: #666; border-radius: 3px;}
+::-webkit-scrollbar-corner { background-color: #999;}}
+::-webkit-resizer { background-color: #666;}
+
+*/

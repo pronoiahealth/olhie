@@ -49,6 +49,7 @@ public class OlhieResourceInjector {
 	 * </pre>
 	 */
 	public static void configureWithCssFile() {
+		//OlhieResources.INSTANCE.stylescss().ensureInjected();
 		OlhieResources.INSTANCE.bookcasecss().ensureInjected();
 		OlhieResources.INSTANCE.cbgbuttoncss().ensureInjected();
 		OlhieResources.INSTANCE.mainscreencss().ensureInjected();

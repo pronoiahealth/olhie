@@ -7,7 +7,7 @@
 	xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets.booklargeshow'
 	xmlns:chzn='urn:import:com.watopi.chosen.client.gwt'>
 
-	<b:Modal ui:field="eventRequestModal" title="Create a New Book"
+	<b:Modal ui:field="eventRequestModal" title="Request a calendar event"
 		backdrop="STATIC" keyboard="true" animation="true">
 		<b:WellForm ui:field="eventRequestForm" type="HORIZONTAL">
 			<b:Fieldset ui:field="controlFieldset">
