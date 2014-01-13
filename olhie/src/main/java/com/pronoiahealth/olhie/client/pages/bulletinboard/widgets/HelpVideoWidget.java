@@ -74,7 +74,7 @@ public class HelpVideoWidget extends Composite {
 
 		// Build overview
 		HelpVideoDropdownSubmenu overviewSM = new HelpVideoDropdownSubmenu(
-				"Help Topics", HelpVideoConstants.INSTANCE.overviewUrlMap(),
+				"Technical", HelpVideoConstants.INSTANCE.overviewUrlMap(),
 				HelpVideoConstants.INSTANCE.overviewDisplayList(), topicTitle,
 				videoFrame);
 		helpTopic.getMenuWiget().add(overviewSM);

@@ -8,19 +8,30 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.shared.constants;
+package com.pronoiahealth.olhie.client.shared.events.tv;
 
+import org.jboss.errai.common.client.api.annotations.Portable;
+import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
 /**
- * NavEnum.java<br/>
+ * TVChannelProgrammingRequestEvent.java<br/>
  * Responsibilities:<br/>
- * 1. An enumeration of page names used in Errai navigation system<br/>
- * 
+ * 1.
+ *
  * @author John DeStefano
  * @version 1.0
- * @since May 26, 2013
- * 
+ * @since Jan 12, 2014
+ *
  */
-public enum NavEnum {
-	BulletinboardPage, EventsPage, BookCasePage, SearchPage, NewBookPage, NewBookPage_2, TVPage;
+@Portable
+@Conversational
+public class TVChannelProgrammingRequestEvent {
+
+	/**
+	 * Constructor
+	 *
+	 */
+	public TVChannelProgrammingRequestEvent() {
+	}
+
 }

@@ -145,6 +145,10 @@ public interface OlhieResources extends ClientBundle {
 	@CssResource.NotStrict
 	CssResource jqueryminuicss();
 	
+	@Source("com/pronoiahealth/olhie/resources/css/tv.css")
+	@CssResource.NotStrict
+	CssResource tvcss();
+	
 	//@Source("com/pronoiahealth/olhie/resources/css/styles.css")
 	//@CssResource.NotStrict
 	//CssResource stylescss();

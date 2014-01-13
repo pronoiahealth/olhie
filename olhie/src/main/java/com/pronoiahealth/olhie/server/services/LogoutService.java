@@ -69,8 +69,8 @@ public class LogoutService {
 	 * 
 	 * @param logoutRequestEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
-			SecurityRoleEnum.REGISTERED })
+	//@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+	//		SecurityRoleEnum.REGISTERED })
 	public void observesLogoutRequestEvent(
 			@Observes LogoutRequestEvent logoutRequestEvent) {
 		try {

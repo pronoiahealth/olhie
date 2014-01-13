@@ -91,6 +91,11 @@ public class AppNavMenu extends UnorderedListWidget {
 		navWidget = new SideBarNavWidget(NavEnum.SearchPage.toString(), "", "",
 				"icon-search", "Find a Book");
 		addSideBarNavWidget(navWidget);
+		
+		// Olhie TV
+		navWidget = new SideBarNavWidget(NavEnum.TVPage.toString(), "", "",
+				"icon-picture", "TV");
+		addSideBarNavWidget(navWidget);
 
 		// See the SideBarNavWidget doc and currentPage
 		syncMenuWithPage(currentPage);

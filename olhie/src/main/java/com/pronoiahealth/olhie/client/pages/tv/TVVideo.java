@@ -8,19 +8,38 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.shared.constants;
+package com.pronoiahealth.olhie.client.pages.tv;
 
+import javax.enterprise.context.Dependent;
+
+import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.Templated;
+
+import com.google.gwt.media.client.Video;
+import com.google.gwt.user.client.ui.Composite;
 
 /**
- * NavEnum.java<br/>
+ * TVVideo.java<br/>
  * Responsibilities:<br/>
- * 1. An enumeration of page names used in Errai navigation system<br/>
+ * 1.
  * 
  * @author John DeStefano
  * @version 1.0
- * @since May 26, 2013
+ * @since Dec 25, 2013
  * 
  */
-public enum NavEnum {
-	BulletinboardPage, EventsPage, BookCasePage, SearchPage, NewBookPage, NewBookPage_2, TVPage;
+@Dependent
+@Templated("#root")
+public class TVVideo extends Composite {
+
+	@DataField
+	private Video video = Video.createIfSupported();
+
+	/**
+	 * Constructor
+	 * 
+	 */
+	public TVVideo() {
+	}
+
 }

@@ -11,7 +11,6 @@
 package com.pronoiahealth.olhie.client.pages.search;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;

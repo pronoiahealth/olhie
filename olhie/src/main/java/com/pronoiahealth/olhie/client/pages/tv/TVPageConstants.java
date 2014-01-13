@@ -8,19 +8,36 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.shared.constants;
+package com.pronoiahealth.olhie.client.pages.tv;
 
+import java.util.Map;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.Constants;
 
 /**
- * NavEnum.java<br/>
+ * TVPageConstants.java<br/>
  * Responsibilities:<br/>
- * 1. An enumeration of page names used in Errai navigation system<br/>
- * 
+ * 1.
+ *
  * @author John DeStefano
  * @version 1.0
- * @since May 26, 2013
- * 
+ * @since Jan 12, 2014
+ *
  */
-public enum NavEnum {
-	BulletinboardPage, EventsPage, BookCasePage, SearchPage, NewBookPage, NewBookPage_2, TVPage;
+public interface TVPageConstants extends Constants {
+	public static final TVPageConstants INSTANCE = GWT
+			.create(TVPageConstants.class);
+
+	Map<String, String> helpUrlMap();
+
+	String[] helpDisplayList();
+
+	Map<String, String> overviewUrlMap();
+
+	String[] overviewDisplayList();
+
+	Map<String, String> introductionUrlMap();
+
+	String[] introductionDisplayList();
 }

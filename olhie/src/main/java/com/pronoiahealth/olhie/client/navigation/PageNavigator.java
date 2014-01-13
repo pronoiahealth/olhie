@@ -21,10 +21,8 @@ import javax.inject.Inject;
 import org.jboss.errai.ui.nav.client.local.Navigation;
 import org.jboss.errai.ui.nav.client.local.NavigationEvent;
 import org.jboss.errai.ui.nav.client.local.TransitionTo;
-import org.jboss.errai.ui.nav.client.local.spi.PageNode;
 
 import com.google.common.collect.Multimap;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.clientfactories.DefaultAppPage;
 import com.pronoiahealth.olhie.client.clientfactories.PageRoleMap;
@@ -33,6 +31,7 @@ import com.pronoiahealth.olhie.client.pages.bulletinboard.BulletinboardPage;
 import com.pronoiahealth.olhie.client.pages.calendar.EventsPage;
 import com.pronoiahealth.olhie.client.pages.newbook.NewBookPage_2;
 import com.pronoiahealth.olhie.client.pages.search.SearchPage;
+import com.pronoiahealth.olhie.client.pages.tv.TVPage;
 import com.pronoiahealth.olhie.client.shared.constants.NavEnum;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.local.SyncPageToMenuEvent;
@@ -83,6 +82,9 @@ public class PageNavigator {
 	private TransitionTo<NewBookPage_2> showNewBookPage;
 
 	@Inject
+	private TransitionTo<TVPage> showTVPage;
+
+	@Inject
 	private Event<SyncPageToMenuEvent> syncPageToMenuEvent;
 
 	@Inject
@@ -114,7 +116,8 @@ public class PageNavigator {
 	 * @param navToPage
 	 * @param state
 	 */
-	public void performTransition(String navToPage, Multimap<String, String> state) {
+	public void performTransition(String navToPage,
+			Multimap<String, String> state) {
 		NavEnum page = NavEnum.valueOf(navToPage);
 		switch (page) {
 		case BulletinboardPage: {
@@ -159,6 +162,16 @@ public class PageNavigator {
 				showNewBookPage.go();
 			} else {
 				showNewBookPage.go(state);
+			}
+			break;
+		}
+
+		// case NewBookPage: {
+		case TVPage: {
+			if (state == null) {
+				showTVPage.go();
+			} else {
+				showTVPage.go(state);
 			}
 			break;
 		}

@@ -10,18 +10,9 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.utils;
 
-import java.util.List;
-
-import org.jboss.errai.ioc.client.container.IOC;
-import org.jboss.errai.ioc.client.container.async.AsyncBeanDef;
-import org.jboss.errai.ioc.client.container.async.AsyncBeanManager;
-import org.jboss.errai.ioc.client.container.async.CreationalCallback;
-
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Random;
 import com.pronoiahealth.olhie.client.shared.constants.BookImageSizeEnum;
-import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
-import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3D_3;
 
 /**
  * Utils.java<br/>

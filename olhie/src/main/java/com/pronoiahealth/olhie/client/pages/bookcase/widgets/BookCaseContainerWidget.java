@@ -43,7 +43,6 @@ import com.pronoiahealth.olhie.client.shared.events.bookcase.BookcaseBookWidgetR
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.BookcaseDisplay;
 import com.pronoiahealth.olhie.client.utils.Utils;
-import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3DEventObserver;
 import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3D_3;
 
 /**
