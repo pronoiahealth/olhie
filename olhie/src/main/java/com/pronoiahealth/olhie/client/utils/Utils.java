@@ -114,6 +114,19 @@ public class Utils {
 	}
 
 	/**
+	 * @param programRef
+	 * @return
+	 */
+	public static String buildRestServiceForTVDownload(String programRef) {
+		StringBuilder urlStr = new StringBuilder();
+		urlStr.append("rest/tv_download/tv/");
+		urlStr.append(getRandom());
+		urlStr.append("/");
+		urlStr.append(URL.encodeQueryString(programRef));
+		return urlStr.toString();
+	}
+
+	/**
 	 * Gets a random integer
 	 * 
 	 * @return

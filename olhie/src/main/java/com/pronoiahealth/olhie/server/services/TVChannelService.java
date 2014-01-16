@@ -12,7 +12,6 @@ package com.pronoiahealth.olhie.server.services;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,10 +21,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.filefilter.NotFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.deltaspike.core.api.config.ConfigProperty;
 
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
@@ -79,30 +74,7 @@ public class TVChannelService {
 			@Observes TVChannelProgrammingRequestEvent tVChannelProgrammingRequestEvent) {
 		try {
 			// Get list of directories under base directory
-			Collection<File> dirs = FileUtils.listFiles(new File(
-					tvChannelBaseDir), new NotFileFilter(
-					TrueFileFilter.INSTANCE), DirectoryFileFilter.DIRECTORY);
-
-			// For each directory get the names of the files
-			List<ChannelProgramList> channelProgramList = new ArrayList<ChannelProgramList>();
-			for (File dir : dirs) {
-				ChannelProgramList cpLst = new ChannelProgramList();
-				String dirName = dir.getName();
-				cpLst.setChannelName(dirName);
-				cpLst.setProgramList(new ArrayList<ChannelProgram>());
-				List<ChannelProgram> cps = cpLst.getProgramList();
-				Collection<File> fileLst = FileUtils.listFiles(new File(
-						tvChannelBaseDir), new NotFileFilter(
-						TrueFileFilter.INSTANCE), null);
-				for (File file : fileLst) {
-					ChannelProgram cp = new ChannelProgram();
-					String fName = file.getName();
-					cp.setProgramName(file.getName());
-					cp.setProgramKey(dirName + "/" + fName);
-					cps.add(cp);
-				}
-				channelProgramList.add(cpLst);
-			}
+			List<ChannelProgramList> channelProgramList = this.getList();
 
 			// Return the list
 			tVChannelProgrammingResponseEvent
@@ -115,9 +87,42 @@ public class TVChannelService {
 		}
 	}
 
-	public void main(String[] args) {
-		try {
+	@SuppressWarnings("unchecked")
+	private List<ChannelProgramList> getList() {
+		// Get list of directories under base directory
+		List<ChannelProgramList> channelProgramCatelog = new ArrayList<ChannelProgramList>();
+		File root = new File(tvChannelBaseDir);
+		File[] files = root.listFiles();
+		for (File f : files) {
+			if (f.isDirectory()) {
+				ChannelProgramList cpLst = new ChannelProgramList();
+				String dirName = f.getName();
+				cpLst.setChannelName(dirName);
+				cpLst.setProgramList(new ArrayList<ChannelProgram>());
+				List<ChannelProgram> cps = cpLst.getProgramList();
+				// One level deep only
+				for (File sf : f.listFiles()) {
+					if (sf.isDirectory()) {
+						ChannelProgram cp = new ChannelProgram();
+						String sfName = sf.getName();
+						cp.setProgramName(sfName);
+						cp.setProgramKey((dirName + "|" + sfName).replace(' ', '_'));
+						cps.add(cp);
+					}
+				}
+				channelProgramCatelog.add(cpLst);
+			}
+		}
 
+		return channelProgramCatelog;
+	}
+
+	public static void main(String[] args) {
+		try {
+			TVChannelService srv = new TVChannelService();
+			srv.tvChannelBaseDir = "/Users/johndestefano/olhietv";
+			List<ChannelProgramList> lst = srv.getList();
+			System.out.println(lst.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
