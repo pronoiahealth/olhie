@@ -24,7 +24,7 @@
 								placeholder="What's in this Book (Must be at least 10 characters long)?"
 								width="400px"></b:TextArea>
 						</b:ControlGroup>
-						<b:ControlLabel>List some key words separated by commas:</b:ControlLabel>
+						<b:ControlLabel>List some key words separated by spaces:</b:ControlLabel>
 						<b:ControlGroup ui:field="keywordsCG">
 							<b:TextBox ui:field="keywords"
 								placeholder="Legal, DURSA, CT (Can't be more than 250 characters long.)"

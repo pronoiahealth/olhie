@@ -10,8 +10,8 @@
 	background-image: url("Olhie/images/tvbackground.jpg");
 	background-repeat: none;
 	/*padding: 20px;*/
-	width: 660px;
-	height: 500px;
+	width: 1040px;;
+	height: 602px;
 	margin: auto;
 }
 
@@ -19,14 +19,17 @@
 }
 
 .ph-TVPage-Channel-Guide {
-	width: 640px;
+	width: 1040px;
 	margin: auto;	
 }
 
 
 .ph-TVPage-Title {
 	font-family: 'Swanky and Moo Moo', cursive;
-	width: 300px;
+	font-size: 100px;
+	line-height: 110px;
+	font-weight: bolder;
+	width: 400px;
 	margin: 0 auto;
 	text-align: center;
 	padding-top: 60px;
@@ -34,10 +37,10 @@
 
 .ph-tv-sp-container {
 	position: absolute;
-	padding-top: 22px;
-	padding-left: 21px;
-	width: 622px;
-	height: 460px;
+	padding-top: 27px;
+	padding-left: 30px;
+	width: 1010px;
+	height: 548px;
 	z-index: 0;
 	background: -webkit-radial-gradient(rgba(0, 0, 0, 0.1),
 		rgba(0, 0, 0, 0.3) 35%, rgba(0, 0, 0, 0.7));
@@ -50,11 +53,14 @@
 }
 
 .ph-TVPage-Video-Container {
+	position: absolute;
+	width: 1010px;
+	height: 548px;
 }
 
 .ph-tv-sp-content {
-	/*position: absolute;
-	padding-top: 2px;*/
+	position: absolute;
+	/*padding-top: 2px;*/
 	width: 100%;
 	height: 100%;
 	left: 0px;
