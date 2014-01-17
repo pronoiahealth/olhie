@@ -3,32 +3,30 @@
 <head>
 <meta charset="US-ASCII">
 <title>Insert title here</title>
-<link href="../../resources/css/tv.css" rel="stylesheet" type="text/css"></link>
-<link href="../../resources/css/bootstrap.min.css" rel="stylesheet"
+<link href="../../../resources/css/tv.css" rel="stylesheet" type="text/css"></link>
+<link href="../../../resources/css/bootstrap.min.css" rel="stylesheet"
 	type="text/css"></link>
 </head>
 
 <body>
 	<div id="tvContainer" data-field="root">
-		<div class="ph-TVPage-Title"><h1>Olhie TV</h1></div>
-		<div style="width: 100%; height: 100%; overflow: auto;">
-			<div class="ph-TVPage-TV-Bkgd"
-				style="margin: auto; width: 640px; height: 440px;">
-				<div class="ph-TVPage-TV">
-					<div class="ph-tv-sp-container">
-						<div data-field="tvVideoContainer">
-						</div>
-					</div>
+		<div class="ph-TVPage-Title">
+			<h1>Olhie TV</h1>
+		</div>
+		<div class="ph-TVPage-TV-Bkgd">
+			<div class="ph-TVPage-TV">
+				<div class="ph-tv-sp-container">
+					<div class="ph-TVPage-Video-Container" data-field="tvVideoContainer"></div>
 				</div>
 			</div>
-			<div style="width: 600px; margin: auto;">
-				<p>
-					<h3>Olhie Programming Guide</h3>
-				</p>
-				<p>
-					<div data-field="splitButton"></div>
-				</p>
-			</div>
+		</div>
+		<div class="ph-TVPage-Channel-Guide" style="width: 640px;">
+			<p>
+				<h3>Olhie Programming Guide</h3>
+			</p>
+			<p>
+				<div data-field="splitButton"></div>
+			</p>
 		</div>
 	</div>
 </body>

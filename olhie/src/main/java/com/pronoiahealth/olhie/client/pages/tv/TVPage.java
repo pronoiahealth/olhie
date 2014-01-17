@@ -113,9 +113,6 @@ public class TVPage extends AbstractPage {
 
 	@PageShowing
 	protected void onPageShowing() {
-		// Set the background which will make the containing div overflow
-		// setPageBackgroundClass("ph-BulletinBoard-Background");
-
 		setContainerContents(tvPromotion);
 	}
 
@@ -129,6 +126,9 @@ public class TVPage extends AbstractPage {
 	@Override
 	protected void onLoad() {
 		super.onLoad();
+		
+		// Set the background
+		setPageBackgroundClass("ph-TVPage-TV-Bkgd");
 
 		// Bind to the root div of this page
 		addFullPageScrolling();
