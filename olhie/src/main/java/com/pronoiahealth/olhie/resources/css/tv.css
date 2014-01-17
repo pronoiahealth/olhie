@@ -7,6 +7,7 @@
 }
 
 .ph-TVPage-TV {
+	/*position: absolute;*/
 	background-image: url("Olhie/images/tvbackground.jpg");
 	background-repeat: none;
 	/*padding: 20px;*/
@@ -19,24 +20,25 @@
 }
 
 .ph-TVPage-Channel-Guide {
-	width: 1040px;
+	width: 100px;
 	margin: auto;	
+	padding-bottom: 20px;
 }
 
 
 .ph-TVPage-Title {
 	font-family: 'Swanky and Moo Moo', cursive;
-	font-size: 100px;
-	line-height: 110px;
+	font-size: 80px;
+	line-height: 80px;
 	font-weight: bolder;
 	width: 400px;
 	margin: 0 auto;
 	text-align: center;
-	padding-top: 60px;
+	padding-top: 10px;
 }
 
 .ph-tv-sp-container {
-	position: absolute;
+	/*position: absolute;*/
 	padding-top: 27px;
 	padding-left: 30px;
 	width: 1010px;
@@ -53,14 +55,14 @@
 }
 
 .ph-TVPage-Video-Container {
-	position: absolute;
+	position: relative;
 	width: 1010px;
 	height: 548px;
 }
 
 .ph-tv-sp-content {
-	position: absolute;
-	/*padding-top: 2px;*/
+	/*position: absolute;
+	padding-top: 2px;*/
 	width: 100%;
 	height: 100%;
 	left: 0px;
@@ -79,6 +81,23 @@
 	width: 100%;
 	text-align: center;
 	color: transparent;
+	-webkit-animation: blurFadeInOut 3s ease-in backwards;
+	-moz-animation: blurFadeInOut 3s ease-in backwards;
+	-ms-animation: blurFadeInOut 3s ease-in backwards;
+	animation: blurFadeInOut 3s ease-in backwards;
+}
+
+.ph-tv-sp-container img {
+	/*position: absolute;
+	text-transform: none;
+	top: 50%;
+	line-height: 100px;
+	height: 100px;
+	margin-top: -50px;
+	font-size: 100px;
+	width: 100%;
+	text-align: center;
+	color: transparent;*/
 	-webkit-animation: blurFadeInOut 3s ease-in backwards;
 	-moz-animation: blurFadeInOut 3s ease-in backwards;
 	-ms-animation: blurFadeInOut 3s ease-in backwards;
@@ -114,7 +133,9 @@
 	animation-delay: 9s;
 }
 
-.ph-tv-sp-container h3.frame-6 {
+.ph-tv-sp-container h3 img.frame-6 {
+	margin: auto;
+	padding-bottom: 10px;
 	-webkit-animation-delay: 15s;
 	-moz-animation-delay: 15s;
 	-ms-animation-delay: 15s;

@@ -86,7 +86,7 @@ public class TVPage extends AbstractPage {
 		// Configure the splitbutton
 		splitButton.setIcon(IconType.MAGIC);
 		splitButton.setText("Pick a Channel");
-		splitButton.setDropup(true);
+		splitButton.setDropup(false);
 
 		// Construct call back
 		itemSelected = new ClickHandler() {

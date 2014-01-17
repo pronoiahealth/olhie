@@ -10,7 +10,7 @@
 				<img src="Olhie/images/Pushpin.gif" />
 			</div>
 		</g:HTMLPanel>
-		<b:Heading size="2">Learn how to use Olhie</b:Heading>
+		<b:Heading size="2">Learn about Olhie</b:Heading>
 		<b:Paragraph>
 			<b:SplitDropdownButton ui:field="helpTopic" text="Select a help topic"
 				icon="MAGIC">

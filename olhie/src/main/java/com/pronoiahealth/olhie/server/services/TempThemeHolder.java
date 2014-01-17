@@ -20,6 +20,8 @@ public class TempThemeHolder {
 		bookCategories.add(new BookCategory("#FFFF00", "Legal", "#800080"));
 		bookCategories.add(new BookCategory("#3C0338", "Policy", "#42C0E4"));
 		bookCategories.add(new BookCategory("#127C65", "Toolkit", "#2C2B87"));
+		bookCategories.add(new BookCategory("#DDC526", "Privacy", "#103C4B"));
+		bookCategories.add(new BookCategory("#A9E2F3", "Administration", "#000000"));
 		
 
 		// Covers

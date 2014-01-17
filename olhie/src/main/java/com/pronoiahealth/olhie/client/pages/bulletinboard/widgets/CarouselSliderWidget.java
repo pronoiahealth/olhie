@@ -29,6 +29,8 @@ public class CarouselSliderWidget extends Composite {
 
 	@PostConstruct
 	private void postConstruct() {
+		
+		
 		attachedGQuery();
 	}
 

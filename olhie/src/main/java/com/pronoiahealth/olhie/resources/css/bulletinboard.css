@@ -24,6 +24,16 @@
 	background: url("Olhie/images/icon_top.png") no-repeat;
 }
 
+.ph-BulletinBoard-Widget-HelpVideo-Bkg {
+	background-image: url('Olhie/images/login_paper.png');
+	background-repeat: repeat;
+}
+
+.ph-BulletinBoard-Widget-CurrentStatus-Bkg {
+	background-image: url('Olhie/images/error_paper.png');
+	background-repeat: repeat;
+}
+
 /*
 .ph-BulletinBoard-Background {
 	background: url("Olhie/images/bulletin-color.png") no-repeat center center fixed;

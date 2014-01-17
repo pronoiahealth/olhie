@@ -6,6 +6,11 @@
   overflow: hidden;
 }
 
+.ph-carousel-Bkg {
+	background-image: url('Olhie/images/comment_paper.png');
+	background-repeat: repeat;
+}
+
 .ph-carousel-slider li {
   display: none;
   position: absolute; 

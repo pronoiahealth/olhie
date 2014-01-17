@@ -86,9 +86,9 @@ public class BulletinboardPage extends AbstractPage {
 	private void postConstruct() {
 		createAddDraggableWidgetToDroppablePanel(col1, statusWidget,
 				".draggableWidget");
-		createAddDraggableWidgetToDroppablePanel(col2, helpVideoWidget,
+		createAddDraggableWidgetToDroppablePanel(col1, carouselWidget,
 				".draggableWidget");
-		createAddDraggableWidgetToDroppablePanel(col2, carouselWidget,
+		createAddDraggableWidgetToDroppablePanel(col2, helpVideoWidget,
 				".draggableWidget");
 	}
 

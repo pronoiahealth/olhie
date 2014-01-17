@@ -89,7 +89,7 @@ public class HelpVideoWidget extends Composite {
 		// Set up display
 		hero.getElement().setAttribute("style",
 				"padding: 20px; height: 665px; width: 607px;");
-		hero.setStyleName("draggableWidget", true);
+		hero.setStyleName("draggableWidget ph-BulletinBoard-Widget-HelpVideo-Bkg", true);
 
 		// Topic title
 		String firstTitle = "";
