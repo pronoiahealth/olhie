@@ -70,8 +70,8 @@ public class BookImageDownloadServiceImpl implements BookImageDownloadService {
 	@Override
 	@GET
 	@Path("/front/{size}/{uniqueNumb}/{bookId}")
-	@SecureAccess({ SecurityRoleEnum.ANONYMOUS, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED,
-			SecurityRoleEnum.ADMIN })
+	@SecureAccess({ SecurityRoleEnum.ANONYMOUS, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.REGISTERED, SecurityRoleEnum.ADMIN })
 	public InputStream getBookFrontCoverImage(
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response,
@@ -88,16 +88,20 @@ public class BookImageDownloadServiceImpl implements BookImageDownloadService {
 			}
 
 			byte[] fileBytes = null;
-			String fileContents = null;
+			// String fileContents = null;
 			if (size.equalsIgnoreCase("small")) {
-				fileContents = book.getBase64SmallFrontCover();
+				// fileContents = book.getBase64SmallFrontCover();
+				fileBytes = book.getSmallFrontCoverBytes();
 			} else {
-				fileContents = book.getBase64FrontCover();
+				// fileContents = book.getBase64FrontCover();
+				fileBytes = book.getFrontCoverBytes();
 			}
-			if (fileContents != null && fileContents.length() > 0) {
+
+			// if (fileContents != null && fileContents.length() > 0) {
+			if (fileBytes != null && fileBytes.length > 0) {
 				String fileName = book.getBookTitle() + "_front_cover.png";
 				String mimetype = context.getMimeType(fileName);
-				fileBytes = Base64.decode(fileContents);
+				// fileBytes = Base64.decode(fileContents);
 				response.setContentType((mimetype != null) ? mimetype
 						: "application/octet-stream");
 			} else {
@@ -135,8 +139,8 @@ public class BookImageDownloadServiceImpl implements BookImageDownloadService {
 	@GET
 	@Path("/back/{uniqueNumb}/{bookId}")
 	@Produces({ "application/octet-stream" })
-	@SecureAccess({ SecurityRoleEnum.ANONYMOUS, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED,
-			SecurityRoleEnum.ADMIN })
+	@SecureAccess({ SecurityRoleEnum.ANONYMOUS, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.REGISTERED, SecurityRoleEnum.ADMIN })
 	public InputStream getBookBackCoverImage(
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response,
@@ -151,12 +155,14 @@ public class BookImageDownloadServiceImpl implements BookImageDownloadService {
 						"Could not find Book for id %s", bookId));
 			}
 
-			byte[] fileBytes = null;
-			String fileContents = book.getBase64BackCover();
-			if (fileContents != null && fileContents.length() > 0) {
+			// byte[] fileBytes = null;
+			byte[] fileBytes = book.getBackCoverBytes();
+			// String fileContents = book.getBase64BackCover();
+			// if (fileContents != null && fileContents.length() > 0) {
+			if (fileBytes != null && fileBytes.length > 0) {
 				String fileName = book.getBookTitle() + "_back_cover.png";
 				String mimetype = context.getMimeType(fileName);
-				fileBytes = Base64.decode(fileContents);
+				//fileBytes = Base64.decode(fileContents);
 				response.setContentType((mimetype != null) ? mimetype
 						: "application/octet-stream");
 			} else {

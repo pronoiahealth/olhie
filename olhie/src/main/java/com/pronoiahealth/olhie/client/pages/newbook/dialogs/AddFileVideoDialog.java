@@ -205,12 +205,16 @@ public class AddFileVideoDialog extends Composite {
 												NewBookConstants.INSTANCE
 														.uploadAFile());
 								progressBar.setProgress(-1.0d);
+								uploader.setButtonDisabled(false);
 								cancelButton.removeFromParent();
 							}
 						});
 
 						uploadContainer.add(progressBar);
 						uploadContainer.add(cancelButton);
+						
+						// Only allow one file to be uploaded
+						uploader.setButtonDisabled(true);
 
 						return true;
 					}
@@ -365,52 +369,55 @@ public class AddFileVideoDialog extends Composite {
 	 */
 	@UiHandler("uploadButton")
 	public void uploadButtonClicked(ClickEvent clickEvt) {
-		boolean hasErrors = false;
-		clearErrors();
+		if (uploader != null && uploader.getStats().getUploadsInProgress() <= 0) {
+			boolean hasErrors = false;
+			clearErrors();
 
-		// Check description
-		String desc = description.getText();
-		if (desc != null) {
-			int descLen = desc.length();
-			if (descLen < 1 || descLen > 250) {
+			// Check description
+			String desc = description.getText();
+			if (desc != null) {
+				int descLen = desc.length();
+				if (descLen < 1 || descLen > 250) {
+					hasErrors = true;
+					descriptionCG.setType(ControlGroupType.ERROR);
+				}
+			} else {
 				hasErrors = true;
 				descriptionCG.setType(ControlGroupType.ERROR);
 			}
-		} else {
-			hasErrors = true;
-			descriptionCG.setType(ControlGroupType.ERROR);
-		}
 
-		// Check hours of work
-		String hours = hoursOfWork.getText();
-		if (hours == null || hours.length() == 0) {
-			hours = "0";
-		} else {
-			try {
-				int hoursRet = Integer.parseInt(hours);
-			} catch (Exception e) {
-				hasErrors = true;
-				hoursOfWorkCG.setType(ControlGroupType.ERROR);
+			// Check hours of work
+			String hours = hoursOfWork.getText();
+			if (hours == null || hours.length() == 0) {
+				hours = "0";
+			} else {
+				try {
+					int hoursRet = Integer.parseInt(hours);
+				} catch (Exception e) {
+					hasErrors = true;
+					hoursOfWorkCG.setType(ControlGroupType.ERROR);
+				}
 			}
-		}
 
-		// Check upload
-		int filesQueued = uploader.getStats().getFilesQueued();
-		if (filesQueued != 1) {
-			hasErrors = true;
-			noFileToUploadErr.setText(NewBookConstants.INSTANCE
-					.uploadFileError());
-		}
+			// Check upload
+			int filesQueued = uploader.getStats().getFilesQueued();
+			if (filesQueued != 1) {
+				hasErrors = true;
+				noFileToUploadErr.setText(NewBookConstants.INSTANCE
+						.uploadFileError());
+			}
 
-		if (hasErrors == false) {
-			JSONObject params = new JSONObject();
-			params.put("description", new JSONString(desc));
-			params.put("hoursOfWork", new JSONString(hours));
-			params.put("bookId", new JSONString(this.currentBookId));
-			params.put("action", new JSONString(BookAssetActionType.NEW.name()));
-			params.put("dataType", new JSONString(dataType));
-			uploader.setPostParams(params);
-			uploader.startUpload();
+			if (hasErrors == false) {
+				JSONObject params = new JSONObject();
+				params.put("description", new JSONString(desc));
+				params.put("hoursOfWork", new JSONString(hours));
+				params.put("bookId", new JSONString(this.currentBookId));
+				params.put("action",
+						new JSONString(BookAssetActionType.NEW.name()));
+				params.put("dataType", new JSONString(dataType));
+				uploader.setPostParams(params);
+				uploader.startUpload();
+			}
 		}
 	}
 

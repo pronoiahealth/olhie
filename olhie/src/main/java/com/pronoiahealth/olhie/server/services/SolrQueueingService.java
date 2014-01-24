@@ -32,10 +32,12 @@ import javax.xml.bind.Marshaller;
 
 import org.apache.deltaspike.core.api.config.ConfigProperty;
 
+import com.lowagie.text.pdf.codec.Base64;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.book.QueueBookEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
+import com.pronoiahealth.olhie.client.shared.vo.Bookassetdata;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
@@ -175,7 +177,13 @@ public class SolrQueueingService {
 						bookAsset.setContentType(ba.getContentType());
 						bookAsset.setSize(ba.getSize() == null ? "0" : ba
 								.getSize().toString());
-						bookAsset.setBase64Data(ba.getBase64Data());
+						Bookassetdata bookData = bookDAO
+								.getBookassetdataByBookassetId(ba.getId());
+						if (bookData != null && bookData.getAssetData() != null
+								&& bookData.getAssetData().length > 0) {
+							bookAsset.setBase64Data(Base64.encodeBytes(bookData
+									.getAssetData()));
+						}
 						bookAsset.setBookassetdescriptionId(ba
 								.getBookassetdescriptionId());
 						solrBook.getBookAsset().add(bookAsset);

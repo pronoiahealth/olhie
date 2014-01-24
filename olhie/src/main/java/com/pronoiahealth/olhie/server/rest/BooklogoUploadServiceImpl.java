@@ -92,7 +92,7 @@ public class BooklogoUploadServiceImpl implements BooklogoUploadService {
 				// FileItemFactory fileItemFactory = new FileItemFactory();
 				String bookId = null;
 				String contentType = null;
-				String data = null;
+				// String data = null;
 				byte[] bytes = null;
 				String fileName = null;
 				long size = 0;
@@ -117,7 +117,7 @@ public class BooklogoUploadServiceImpl implements BooklogoUploadService {
 							IOUtils.copy(in, bos);
 							bytes = bos.toByteArray(); // fileItem.get();
 							size = bytes.length;
-							data = Base64.encodeBytes(bytes);
+							// data = Base64.encodeBytes(bytes);
 						}
 					}
 				}
@@ -129,17 +129,23 @@ public class BooklogoUploadServiceImpl implements BooklogoUploadService {
 				BookCategory cat = holder.getCategoryByName(book.getCategory());
 				BookCover cover = holder.getCoverByName(book.getCoverName());
 				String authorName = bookDAO.getAuthorName(book.getAuthorId());
-				String frontBookCoverEncoded = imgService
-						.createDefaultFrontCoverEncoded(book, cat, cover,
-								bytes, authorName);
-				String smallFrontBookCoverEncoded = imgService
-						.createDefaultSmallFrontCoverEncoded(book, cat, cover,
-								bytes, authorName);
+				//String frontBookCoverEncoded = imgService
+				//		.createDefaultFrontCoverEncoded(book, cat, cover,
+				//				bytes, authorName);
+				byte[] frontBookCoverBytes = imgService.createDefaultFrontCover(book, cat, cover,
+										bytes, authorName);
+				
+				//String smallFrontBookCoverEncoded = imgService
+				//		.createDefaultSmallFrontCoverEncoded(book, cat, cover,
+				//				bytes, authorName);
+				byte[] frontBookCoverSmallBytes = imgService.createDefaultSmallFrontCover(book, cat, cover,
+						bytes, authorName);
+				
 
 				// Save it
 				// Add the logo
-				book = bookDAO.addLogoAndFrontCover(bookId, contentType, data,
-						fileName, size, frontBookCoverEncoded, smallFrontBookCoverEncoded);
+				book = bookDAO.addLogoAndFrontCoverBytes(bookId, contentType, bytes,
+						fileName, size, frontBookCoverBytes, frontBookCoverSmallBytes);
 
 			}
 			return "OK";

@@ -96,7 +96,8 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 				String action = null;
 				String dataType = null;
 				String contentType = null;
-				String data = null;
+				//String data = null;
+				byte[] bytes = null;
 				String fileName = null;
 				long size = 0;
 				ServletFileUpload fileUpload = new ServletFileUpload();
@@ -138,9 +139,9 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 							InputStream in = item.openStream();
 							ByteArrayOutputStream bos = new ByteArrayOutputStream();
 							IOUtils.copy(in, bos);
-							byte[] bytes = bos.toByteArray(); // fileItem.get();
+							bytes = bos.toByteArray(); // fileItem.get();
 							size = bytes.length;
-							data = Base64.encodeBytes(bytes);
+							//data = Base64.encodeBytes(bytes);
 						}
 					}
 				}
@@ -171,8 +172,8 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 				}
 
 				// Add to the database
-				bookDAO.addUpdateBookasset(description, bookId, contentType,
-						BookAssetDataType.valueOf(dataType).toString(), data,
+				bookDAO.addUpdateBookassetBytes(description, bookId, contentType,
+						BookAssetDataType.valueOf(dataType).toString(), bytes,
 						action, fileName, null, null, size, hoursOfWork, userId);
 
 				// Tell Solr about the update

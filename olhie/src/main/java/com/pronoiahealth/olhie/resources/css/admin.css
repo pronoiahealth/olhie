@@ -1,0 +1,53 @@
+.ph-Admin-Bkg {
+	background: #FFFFFF url(Olhie/images/admin.jpg) repeat;
+	background-color: white;
+}
+
+.ph-Admin-tab.tabbable {
+	height: 500px;
+	overflow: auto;
+	padding: 10px;
+	/*border-bottom: 1px solid #ccc;*/
+}
+
+.ph-Admin-tab.nav-tabs {
+	margin-right: 10px;
+	font-size: 18px;
+}
+
+.ph-Admin-tab.tab-content {
+	height: 600px;
+	overflow: auto;
+	background-color: white;
+	margin-right: 10px;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+}
+
+.ph-Admin-tbl {
+	display: table;
+	width: 100%;
+}
+
+.ph-Admin-tbl-row {
+	display: table-row;
+}
+
+.ph-Admin-tbl-cell {
+	display: table-cell;
+	padding-right: 10px;
+	text-align: center;
+}
+
+.ph-Admin-tbl-header {
+	display: table-header-group;
+}
+
+.ph-Admin-tbl-rowGroup {
+	display: table-row-group;
+}
+
+.ph-Admin-tbl-center {
+	margin: auto 0px;
+	overflow: auto;
+}

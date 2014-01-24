@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 2014-01-17 v1.0
+# 2014-01-19 v1.0
 Olhie/images/bookcover-green1.png
 Olhie/images/bookcover-mauve1.png
 Olhie/images/bookcover-wood1.png
@@ -38,6 +38,7 @@ Olhie/images/book_page_texture.jpg
 Olhie/images/newbookbkgrnd.jpg
 Olhie/images/tvbackground.jpg
 Olhie/images/olhie_tv_image.png
+Olhie/images/admin.jpg
 
 NETWORK:
 *

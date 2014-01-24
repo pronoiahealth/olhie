@@ -28,10 +28,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
-import com.lowagie.text.pdf.codec.Base64;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.exceptions.FileDownloadException;
 import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
+import com.pronoiahealth.olhie.client.shared.vo.Bookassetdata;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.services.dbaccess.BookDAO;
@@ -67,8 +67,8 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 	@Path("/book/{uniqueNumb}/{assetId}/DOWNLOAD")
 	// @Produces({"application/pdf", "application/octet-stream", "text/html"})
 	@Produces({ "application/octet-stream" })
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED,
-			SecurityRoleEnum.ANONYMOUS })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.REGISTERED, SecurityRoleEnum.ANONYMOUS })
 	public InputStream downloadAsset(@Context HttpServletRequest request,
 			@Context HttpServletResponse response,
 			@PathParam("assetId") String assetId,
@@ -79,16 +79,19 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 		try {
 			// Get the file contents
 			Bookasset bookasset = bookDAO.getBookasset(assetId);
-			if (bookasset == null) {
+			Bookassetdata bookassetData = bookDAO
+					.getBookassetdataByBookassetId(assetId);
+			if (bookasset == null || bookassetData == null) {
 				throw new FileDownloadException(String.format(
 						"Could not find Book for id %s", assetId));
 			}
 
-			String fileContents = bookasset.getBase64Data();
+			// String fileContents = bookasset.getBase64Data();
 			String fileName = bookasset.getItemName();
 			String mimetype = context.getMimeType(fileName);
 			// Base64 unencode
-			byte[] fileBytes = Base64.decode(fileContents);
+			// byte[] fileBytes = Base64.decode(fileContents);
+			byte[] fileBytes = bookassetData.getAssetData();
 
 			response.setContentType((mimetype != null) ? mimetype
 					: "application/octet-stream");
@@ -126,8 +129,8 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 	@GET
 	@Path("/book/{uniqueNumb}/{assetId}/PDF")
 	@Produces({ "application/pdf" })
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED,
-			SecurityRoleEnum.ANONYMOUS })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.REGISTERED, SecurityRoleEnum.ANONYMOUS })
 	public InputStream viewPDFAsset(@Context HttpServletRequest request,
 			@Context HttpServletResponse response,
 			@PathParam("assetId") String assetId,
@@ -138,15 +141,18 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 		try {
 			// Get the file contents
 			Bookasset bookasset = bookDAO.getBookasset(assetId);
-			if (bookasset == null) {
+			Bookassetdata bookassetData = bookDAO
+					.getBookassetdataByBookassetId(assetId);
+			if (bookasset == null || bookassetData == null) {
 				throw new FileDownloadException(String.format(
 						"Could not find Book for id %s", assetId));
 			}
 
-			String fileContents = bookasset.getBase64Data();
+			// String fileContents = bookasset.getBase64Data();
 			String fileName = bookasset.getItemName();
 			// Base64 unencode
-			byte[] fileBytes = Base64.decode(fileContents);
+			// byte[] fileBytes = Base64.decode(fileContents);
+			byte[] fileBytes = bookassetData.getAssetData();
 
 			response.setContentType("application/pdf");
 			// No image caching
@@ -179,8 +185,8 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 	@GET
 	@Path("/book/{uniqueNumb}/{assetId}/TEXT")
 	@Produces({ "text/plain" })
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED,
-			SecurityRoleEnum.ANONYMOUS })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.REGISTERED, SecurityRoleEnum.ANONYMOUS })
 	public InputStream viewTestAsset(@Context HttpServletRequest request,
 			@Context HttpServletResponse response,
 			@PathParam("assetId") String assetId,
@@ -191,15 +197,18 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 		try {
 			// Get the file contents
 			Bookasset bookasset = bookDAO.getBookasset(assetId);
-			if (bookasset == null) {
+			Bookassetdata bookassetData = bookDAO
+					.getBookassetdataByBookassetId(assetId);
+			if (bookasset == null || bookassetData == null) {
 				throw new FileDownloadException(String.format(
 						"Could not find Book for id %s", assetId));
 			}
 
-			String fileContents = bookasset.getBase64Data();
+			//String fileContents = bookasset.getBase64Data();
 			String fileName = bookasset.getItemName();
 			// Base64 unencode
-			byte[] fileBytes = Base64.decode(fileContents);
+			// byte[] fileBytes = Base64.decode(fileContents);
+			byte[] fileBytes = bookassetData.getAssetData();
 
 			response.setContentType("text/plain");
 			// No image caching
@@ -232,8 +241,8 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 	@GET
 	@Path("/book/{uniqueNumb}/{assetId}/HTML")
 	@Produces({ "text/html" })
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED,
-			SecurityRoleEnum.ANONYMOUS })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.REGISTERED, SecurityRoleEnum.ANONYMOUS })
 	public InputStream viewHTMLAsset(@Context HttpServletRequest request,
 			@Context HttpServletResponse response,
 			@PathParam("assetId") String assetId,
@@ -244,15 +253,18 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 		try {
 			// Get the file contents
 			Bookasset bookasset = bookDAO.getBookasset(assetId);
-			if (bookasset == null) {
+			Bookassetdata bookassetData = bookDAO
+					.getBookassetdataByBookassetId(assetId);
+			if (bookasset == null || bookassetData == null) {
 				throw new FileDownloadException(String.format(
 						"Could not find Book for id %s", assetId));
 			}
 
-			String fileContents = bookasset.getBase64Data();
+			// String fileContents = bookasset.getBase64Data();
 			String fileName = bookasset.getItemName();
 			// Base64 unencode
-			byte[] fileBytes = Base64.decode(fileContents);
+			// byte[] fileBytes = Base64.decode(fileContents);
+			byte[] fileBytes = bookassetData.getAssetData();
 
 			response.setContentType("text/html");
 			// No image caching

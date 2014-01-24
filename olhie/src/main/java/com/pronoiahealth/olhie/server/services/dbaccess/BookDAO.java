@@ -19,6 +19,7 @@ import com.pronoiahealth.olhie.client.shared.constants.UserBookRelationshipEnum;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
+import com.pronoiahealth.olhie.client.shared.vo.Bookassetdata;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 import com.pronoiahealth.olhie.client.shared.vo.Bookcomment;
 import com.pronoiahealth.olhie.client.shared.vo.Comment;
@@ -428,6 +429,26 @@ public interface BookDAO extends BaseDAO {
 			int hoursOfWork, String userId) throws Exception;
 
 	/**
+	 * @param description
+	 * @param bookId
+	 * @param contentType
+	 * @param itemType
+	 * @param data
+	 * @param action
+	 * @param fileName
+	 * @param linkRef
+	 * @param embededLinkRef
+	 * @param size
+	 * @param hoursOfWork
+	 * @param userId
+	 * @throws Exception
+	 */
+	public void addUpdateBookassetBytes(String description, String bookId,
+			String contentType, String itemType, byte[] data, String action,
+			String fileName, String linkRef, String embededLinkRef, long size,
+			int hoursOfWork, String userId) throws Exception;
+
+	/**
 	 * Add logo
 	 * 
 	 * @param bookId
@@ -439,6 +460,18 @@ public interface BookDAO extends BaseDAO {
 	 * @throws Exception
 	 */
 	public Book addLogo(String bookId, String contentType, String data,
+			String fileName, long size) throws Exception;
+
+	/**
+	 * @param bookId
+	 * @param contentType
+	 * @param data
+	 * @param fileName
+	 * @param size
+	 * @return
+	 * @throws Exception
+	 */
+	public Book addLogoBytes(String bookId, String contentType, byte[] data,
 			String fileName, long size) throws Exception;
 
 	/**
@@ -456,6 +489,22 @@ public interface BookDAO extends BaseDAO {
 	public Book addLogoAndFrontCover(String bookId, String contentType,
 			String data, String fileName, long size, String encodedFrontCover,
 			String encodedSmallFronCover) throws Exception;
+
+	/**
+	 * Add logo and encoded front cover
+	 * 
+	 * @param bookId
+	 * @param contentType
+	 * @param data
+	 * @param fileName
+	 * @param size
+	 * @param encodedFrontCover
+	 * @return
+	 * @throws Exception
+	 */
+	public Book addLogoAndFrontCoverBytes(String bookId, String contentType,
+			byte[] data, String fileName, long size, byte[] encodedFrontCover,
+			byte[] encodedSmallFronCover) throws Exception;
 
 	/**
 	 * Saves a book comment
@@ -502,5 +551,15 @@ public interface BookDAO extends BaseDAO {
 	 * @throws Exception
 	 */
 	public boolean isUserAuthorOrCoauthorOfBook(String userId, String bookId)
+			throws Exception;
+
+	/**
+	 * Returns the Bookassetdata object with the given Bookasset id
+	 * 
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public Bookassetdata getBookassetdataByBookassetId(String baId)
 			throws Exception;
 }

@@ -82,12 +82,14 @@ public class BooklogoDownloadServiceImpl implements BooklogoDownloadService {
 						"Could not find Book for id %s", bookId));
 			}
 
-			byte[] fileBytes = null;
-			String fileContents = book.getBase64LogoData();
-			if (fileContents != null && fileContents.length() > 0) {
+			//byte[] fileBytes = null;
+			//String fileContents = book.getBase64LogoData();
+			//if (fileContents != null && fileContents.length() > 0) {
+			byte[] fileBytes = book.getLogoBytes();
+			if (fileBytes != null && fileBytes.length > 0) {
 				String fileName = book.getLogoFileName();
 				String mimetype = context.getMimeType(fileName);
-				fileBytes = Base64.decode(fileContents);
+				//fileBytes = Base64.decode(fileContents);
 				response.setContentType((mimetype != null) ? mimetype
 						: "application/octet-stream");
 			} else {

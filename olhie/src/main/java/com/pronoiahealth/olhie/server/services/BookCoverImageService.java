@@ -207,14 +207,52 @@ public class BookCoverImageService {
 						authorName));
 
 		// Back cover
-		retMap.put(Cover.BACK, createDefaultBackCoverEncoded(book, cover, category));
-		
+		retMap.put(Cover.BACK,
+				createDefaultBackCoverEncoded(book, cover, category));
+
 		// Small front cover
-		retMap.put(Cover.SMALL_FRONT, createDefaultSmallFrontCoverEncoded(book, category, cover, logo,
-				authorName));
+		retMap.put(
+				Cover.SMALL_FRONT,
+				createDefaultSmallFrontCoverEncoded(book, category, cover,
+						logo, authorName));
 
 		// Return the map with the front and back cover
 		return retMap;
+	}
+
+	/**
+	 * @param book
+	 * @param category
+	 * @param cover
+	 * @param logo
+	 * @param authorName
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<Cover, byte[]> createDefaultBookCoversBytes(Book book,
+			BookCategory category, BookCover cover, byte[] logo,
+			String authorName) throws Exception {
+
+		// Create the return make
+		Map<Cover, byte[]> retMap = new HashMap<Cover, byte[]>();
+
+		// Front cover
+		retMap.put(
+				Cover.FRONT,
+				createDefaultFrontCover(book, category, cover, logo, authorName));
+
+		// Back cover
+		retMap.put(Cover.BACK, createDefaultBackCover(book, cover, category));
+
+		// Small front cover
+		retMap.put(
+				Cover.SMALL_FRONT,
+				createDefaultSmallFrontCover(book, category, cover, logo,
+						authorName));
+
+		// Return the map with the front and back cover
+		return retMap;
+
 	}
 
 	/**
@@ -347,7 +385,7 @@ public class BookCoverImageService {
 				authorStr, titleStr, spineColor, authorTextColor,
 				titleTextColor, width, height, type, imgFormat, maxColors));
 	}
-	
+
 	/**
 	 * Creates a small front cover
 	 * 
@@ -364,9 +402,30 @@ public class BookCoverImageService {
 			String authorName) throws Exception {
 		return createFrontCoverEncoded(book.getCoverName(), logo, authorName,
 				book.getBookTitle(), category.getColor(),
-				cover.getAuthorTextColor(), cover.getCoverTitleTextColor(),
-				75, 100, BufferedImage.TYPE_INT_ARGB,
-				ImageFormat.IMAGE_FORMAT_PNG, 128);
+				cover.getAuthorTextColor(), cover.getCoverTitleTextColor(), 75,
+				100, BufferedImage.TYPE_INT_ARGB, ImageFormat.IMAGE_FORMAT_PNG,
+				128);
+	}
+
+	/**
+	 * Creates a small front cover
+	 * 
+	 * @param book
+	 * @param category
+	 * @param cover
+	 * @param logo
+	 * @param authorName
+	 * @return
+	 * @throws Exception
+	 */
+	public byte[] createDefaultSmallFrontCover(Book book,
+			BookCategory category, BookCover cover, byte[] logo,
+			String authorName) throws Exception {
+		return createFrontCover(book.getCoverName(), logo, authorName,
+				book.getBookTitle(), category.getColor(),
+				cover.getAuthorTextColor(), cover.getCoverTitleTextColor(), 75,
+				100, BufferedImage.TYPE_INT_ARGB, ImageFormat.IMAGE_FORMAT_PNG,
+				128);
 	}
 
 	/**
@@ -383,6 +442,15 @@ public class BookCoverImageService {
 			BookCategory category, BookCover cover, byte[] logo,
 			String authorName) throws Exception {
 		return createFrontCoverEncoded(book.getCoverName(), logo, authorName,
+				book.getBookTitle(), category.getColor(),
+				cover.getAuthorTextColor(), cover.getCoverTitleTextColor(),
+				300, 400, BufferedImage.TYPE_INT_ARGB,
+				ImageFormat.IMAGE_FORMAT_PNG, 128);
+	}
+
+	public byte[] createDefaultFrontCover(Book book, BookCategory category,
+			BookCover cover, byte[] logo, String authorName) throws Exception {
+		return createFrontCover(book.getCoverName(), logo, authorName,
 				book.getBookTitle(), category.getColor(),
 				cover.getAuthorTextColor(), cover.getCoverTitleTextColor(),
 				300, 400, BufferedImage.TYPE_INT_ARGB,
@@ -491,6 +559,19 @@ public class BookCoverImageService {
 	public String createDefaultBackCoverEncoded(Book book, BookCover cover,
 			BookCategory category) throws Exception {
 		return createBackCoverEncoded(book.getCoverName(), book.getBookTitle(),
+				category.getColor(), cover.getCoverTitleTextColor(), 300, 400,
+				BufferedImage.TYPE_INT_ARGB, ImageFormat.IMAGE_FORMAT_PNG, 128);
+	}
+
+	/**
+	 * @param book
+	 * @param category
+	 * @return
+	 * @throws Exception
+	 */
+	public byte[] createDefaultBackCover(Book book, BookCover cover,
+			BookCategory category) throws Exception {
+		return createBackCover(book.getCoverName(), book.getBookTitle(),
 				category.getColor(), cover.getCoverTitleTextColor(), 300, 400,
 				BufferedImage.TYPE_INT_ARGB, ImageFormat.IMAGE_FORMAT_PNG, 128);
 	}

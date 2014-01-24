@@ -80,6 +80,7 @@ public class OlhieResourceInjector {
 		OlhieResources.INSTANCE.animatemincss().ensureInjected();
 		OlhieResources.INSTANCE.jqueryminuicss().ensureInjected();
 		OlhieResources.INSTANCE.tvcss().ensureInjected();
+		OlhieResources.INSTANCE.admincss().ensureInjected();
 		/*injectResourceCssAsFile("gwt_overrides.css");*/
 	}
 

@@ -17,6 +17,7 @@ public class TempThemeHolder {
 		// Categories
 		this.bookCategories = new ArrayList<BookCategory>();
 		bookCategories.add(new BookCategory("#000000", "Interface", "#FFFFFF"));
+		bookCategories.add(new BookCategory("#EEC5C5", "Technical", "#2B0202"));
 		bookCategories.add(new BookCategory("#FFFF00", "Legal", "#800080"));
 		bookCategories.add(new BookCategory("#3C0338", "Policy", "#42C0E4"));
 		bookCategories.add(new BookCategory("#127C65", "Toolkit", "#2C2B87"));

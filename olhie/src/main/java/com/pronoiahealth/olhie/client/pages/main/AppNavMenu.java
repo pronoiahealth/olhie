@@ -116,8 +116,16 @@ public class AppNavMenu extends UnorderedListWidget {
 			if (secRole != SecurityRoleEnum.ANONYMOUS) {
 
 				switch (secRole) {
+				case ANONYMOUS:
+					
 				case ADMIN:
-
+					if (!isInList("Admin")) {
+						SideBarNavWidget navWidget = new SideBarNavWidget(
+								NavEnum.AdminPage.toString(), "", "",
+								"icon-group", "Admin",
+								SecurityRoleEnum.ADMIN);
+						addSideBarNavWidget(navWidget);
+					}
 				case AUTHOR:
 
 				case REGISTERED:

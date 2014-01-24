@@ -11,7 +11,6 @@
 package com.pronoiahealth.olhie.server.services.dbaccess.orient;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -22,6 +21,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
+import com.orientechnologies.orient.core.metadata.schema.OType;
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
 import com.pronoiahealth.olhie.client.shared.constants.BookAssetActionType;
@@ -32,6 +33,7 @@ import com.pronoiahealth.olhie.client.shared.vo.BookCategory;
 import com.pronoiahealth.olhie.client.shared.vo.BookCover;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
+import com.pronoiahealth.olhie.client.shared.vo.Bookassetdata;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 import com.pronoiahealth.olhie.client.shared.vo.Bookcomment;
 import com.pronoiahealth.olhie.client.shared.vo.Comment;
@@ -86,10 +88,27 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		// Proxied or un-Proxied instance
 		// Remember if proxyed then you must call the get method to access the
 		// data
-		// If Errai marshalling is involved it will eventually access all daat
-		// for return
+		// If Errai marshalling is involved it will eventually access all data
+		// for return. Here we will load just the book info. Don't go into the
+		// Linked lists yet because that will retreive all the image data
 		if (returnNonProxyed == true) {
-			book = ooDbTx.detachAll(book, true);
+			// book = ooDbTx.detachAll(book, true);
+			book.getActDate();
+			book.getActive();
+			book.getAuthorId();
+			book.getBookTitle();
+			book.getCategory();
+			book.getCoverName();
+			book.getCreatedDate();
+			book.getId();
+			book.getInterfacePlatform();
+			book.getInterfaceRecievingSystem();
+			book.getInterfaceSendingSystem();
+			book.getIntroduction();
+			book.getKeywords();
+			book.getLastUpdated();
+			book.getLogoFileName();
+			book.getSolrUpdate();
 		}
 
 		// Get rid of unwanted return data
@@ -175,17 +194,34 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 					retBad.setId(bad.getId());
 					retBad.setPosition(bad.getPosition());
 					Bookasset ba = bad.getBookAssets().get(0);
+					// load data once from db
+					String id = ba.getId();
+					ODocument sBa = this.getSlimBookassetById(id);
 					Bookasset retBa = new Bookasset();
-					retBa.setCreatedDate(ba.getCreatedDate());
-					retBa.setId(ba.getId());
-					retBa.setContentType(ba.getContentType());
-					retBa.setItemType(ba.getItemType());
-					retBa.setLinkRef(ba.getLinkRef());
-					retBa.setEmbededLinkRef(ba.getEmbededLinkRef());
-					int hoursOfWork = ba.getHoursOfWork();
+					// retBa.setCreatedDate(ba.getCreatedDate());
+					retBa.setCreatedDate((Date) sBa.field("createdDate",
+							OType.DATETIME));
+					// retBa.setId(ba.getId());
+					retBa.setId(id);
+					// retBa.setContentType(ba.getContentType());
+					retBa.setContentType((String) sBa.field("contentType"));
+					// retBa.setItemType(ba.getItemType());
+					retBa.setItemType((String) sBa.field("itemType"));
+					// retBa.setLinkRef(ba.getLinkRef());
+					retBa.setLinkRef((String) sBa.field("linkRef"));
+					// retBa.setEmbededLinkRef(ba.getEmbededLinkRef());
+					retBa.setEmbededLinkRef((String) sBa
+							.field("embededLinkRef"));
+					// int hoursOfWork = ba.getHoursOfWork();
+					int hoursOfWork = (Integer) sBa.field("hoursOfWork",
+							OType.INTEGER);
+					// retBa.setHoursOfWork(hoursOfWork);
 					retBa.setHoursOfWork(hoursOfWork);
-					int cost = ba.getCost();
+					// int cost = ba.getCost();
+					int cost = (Integer) sBa.field("cost", OType.INTEGER);
+					// retBa.setCost(cost);
 					retBa.setCost(cost);
+					// bookHoursOfWork = bookHoursOfWork + hoursOfWork;
 					bookHoursOfWork = bookHoursOfWork + hoursOfWork;
 					totalCost = totalCost + cost;
 					ArrayList<Bookasset> retbookAssets = new ArrayList<Bookasset>();
@@ -234,6 +270,19 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		return bookDisplay;
 	}
 
+	private ODocument getSlimBookassetById(String id) throws Exception {
+		OSQLSynchQuery<Bookasset> bQuery = new OSQLSynchQuery<Bookasset>(
+				"select createdDate, contentType, itemType, linkRef, embededLinkRef, hoursOfWork, cost from Bookasset where @rid = :bId");
+		HashMap<String, String> bparams = new HashMap<String, String>();
+		bparams.put("bId", id);
+		List<ODocument> bResult = ooDbTx.command(bQuery).execute(bparams);
+		if (bResult != null && bResult.size() == 1) {
+			return bResult.get(0);
+		} else {
+			throw new Exception("Could not find bookasset.");
+		}
+	}
+
 	/**
 	 * Eventually calls getBookDisplayByBook().
 	 * 
@@ -248,7 +297,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	public BookDisplay getBookDisplayById(String bookId, String userId,
 			TempThemeHolder holder, boolean returnNonProxyed) throws Exception {
 		// Find Book
-		Book book = ooDbTx.detach(getBookById(bookId), true);
+		Book book = getBookById(bookId);
 
 		// Return the Display object
 		return getBookDisplayByBook(book, userId, holder, returnNonProxyed);
@@ -1220,6 +1269,123 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		}
 	}
 
+	/**
+	 * Only handles new (additions) right now.
+	 * 
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#addUpdateBookasset(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String,
+	 *      java.lang.String, java.lang.String, long)
+	 */
+	@Override
+	public void addUpdateBookassetBytes(String description, String bookId,
+			String contentType, String itemType, byte[] data, String action,
+			String fileName, String linkRef, String embededLinkRef, long size,
+			int hoursOfWork, String userId) throws Exception {
+		if (BookAssetActionType.valueOf(action).equals(BookAssetActionType.NEW)) {
+			int activeAssetCnt = getBookdescriptionCnt(bookId, true);
+
+			// Create Bookassetdescription
+			Date now = new Date();
+			Bookassetdescription bad = new Bookassetdescription();
+			try {
+				ooDbTx.begin(TXTYPE.OPTIMISTIC);
+				// Its new so should have the next position number
+				// Ithe list is null or ) in size that means the book has no
+				// bookassetdescriptions. In that case the item being added is
+				// in position 1.
+				bad.setBookId(bookId);
+				bad.setCreatedDate(now);
+				bad.setDescription(description);
+				bad.setRemoved(Boolean.FALSE);
+				bad.setPosition(++activeAssetCnt);
+				bad = ooDbTx.save(bad);
+				ooDbTx.commit();
+			} catch (Exception e) {
+				log.log(Level.SEVERE, e.getMessage(), e);
+				ooDbTx.rollback();
+				throw new Exception(e);
+			}
+
+			// Bookasset and add to bad list
+			Bookasset ba = new Bookasset();
+			BookAssetDataType itemTypeData = BookAssetDataType
+					.valueOf(itemType);
+			try {
+				ooDbTx.begin(TXTYPE.OPTIMISTIC);
+				ba.setAuthorId(userId);
+				ba.setBookassetdescriptionId(bad.getId());
+				ba.setContentType(contentType);
+				ba.setCreatedDate(now);
+				if (itemTypeData == BookAssetDataType.LINK
+						|| itemTypeData == BookAssetDataType.YOUTUBE) {
+					ba.setLinkRef(linkRef);
+					ba.setEmbededLinkRef(embededLinkRef);
+				} else {
+					ba.setItemName(fileName);
+				}
+				ba.setItemType(itemType);
+				ba.setSize(size);
+				ba.setHoursOfWork(hoursOfWork);
+				ba = ooDbTx.save(ba);
+				ooDbTx.commit();
+			} catch (Exception e) {
+				log.log(Level.SEVERE, e.getMessage(), e);
+				ooDbTx.rollback();
+				throw new Exception(e);
+			}
+
+			// Bookassetdata
+			Bookassetdata baData = new Bookassetdata();
+			try {
+				ooDbTx.begin(TXTYPE.OPTIMISTIC);
+				baData.setAssetData(data);
+				baData.setBookassetId(ba.getId());
+				baData = ooDbTx.save(baData);
+				ooDbTx.commit();
+			} catch (Exception e) {
+				log.log(Level.SEVERE, e.getMessage(), e);
+				ooDbTx.rollback();
+				throw new Exception(e);
+			}
+
+			// Add Bookasset to BookasssetDescription list
+			try {
+				ooDbTx.begin(TXTYPE.OPTIMISTIC);
+				List<Bookasset> baLst = new LinkedList<Bookasset>();
+				baLst.add(ba);
+				bad.setBookAssets(baLst);
+				bad = ooDbTx.save(bad);
+				ooDbTx.commit();
+			} catch (Exception e) {
+				log.log(Level.SEVERE, e.getMessage(), e);
+				ooDbTx.rollback();
+				throw new Exception(e);
+			}
+		}
+	}
+	
+	/**
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#getBookassetdataByBookassetId(java.lang.String)
+	 */
+	@Override
+	public Bookassetdata getBookassetdataByBookassetId(String baId)
+			throws Exception {
+		OSQLSynchQuery<Bookassetdata> bQuery = new OSQLSynchQuery<Bookassetdata>(
+				"select from Bookassetdata where bookassetId = :bId");
+		HashMap<String, String> bparams = new HashMap<String, String>();
+		bparams.put("bId", baId);
+		List<Bookassetdata> bResult = ooDbTx.command(bQuery).execute(bparams);
+		Bookassetdata bookassetdata = null;
+		if (bResult != null && bResult.size() == 1) {
+			bookassetdata = bResult.get(0);
+		} else {
+			bookassetdata = null;
+		}
+		return bookassetdata;
+	}
+	
+	
+	// ////////////////////////////////////////////////////////////////////////////////////////////
 	// Comments
 	// ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1287,6 +1453,45 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	}
 
 	/**
+	 * Returns a non-proxyed instance of the book
+	 * 
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#addLogo(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String, long)
+	 */
+	@Override
+	public Book addLogoBytes(String bookId, String contentType, byte[] data,
+			String fileName, long size) throws Exception {
+
+		ooDbTx.begin(TXTYPE.OPTIMISTIC);
+		try {
+			// Find Book
+			OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
+					"select from Book where @rid = :bId");
+			HashMap<String, String> bparams = new HashMap<String, String>();
+			bparams.put("bId", bookId);
+			List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
+			Book book = null;
+			if (bResult != null && bResult.size() == 1) {
+				book = bResult.get(0);
+			} else {
+				throw new Exception(String.format(
+						"Could not find Book for id %s", bookId));
+			}
+
+			// Update the book
+			book.setLogoFileName(fileName);
+			book.setLogoBytes(data);
+			book = ooDbTx.save(book);
+			ooDbTx.commit();
+
+			return ooDbTx.detach(book, true);
+		} catch (Exception e) {
+			ooDbTx.rollback();
+			throw e;
+		}
+	}
+
+	/**
 	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#addLogoAndFrontCover(java.lang.String,
 	 *      java.lang.String, java.lang.String, java.lang.String, long,
 	 *      java.lang.String)
@@ -1327,6 +1532,46 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	}
 
 	/**
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#addLogoAndFrontCover(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String, long,
+	 *      java.lang.String)
+	 */
+	@Override
+	public Book addLogoAndFrontCoverBytes(String bookId, String contentType,
+			byte[] data, String fileName, long size, byte[] frontCover,
+			byte[] smallFrontCover) throws Exception {
+		ooDbTx.begin(TXTYPE.OPTIMISTIC);
+		try {
+			// Find Book
+			OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
+					"select from Book where @rid = :bId");
+			HashMap<String, String> bparams = new HashMap<String, String>();
+			bparams.put("bId", bookId);
+			List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
+			Book book = null;
+			if (bResult != null && bResult.size() == 1) {
+				book = bResult.get(0);
+			} else {
+				throw new Exception(String.format(
+						"Could not find Book for id %s", bookId));
+			}
+
+			// Update the book
+			book.setLogoFileName(fileName);
+			book.setFrontCoverBytes(frontCover);
+			book.setLogoBytes(data);
+			book.setSmallFrontCoverBytes(smallFrontCover);
+			book = ooDbTx.save(book);
+			ooDbTx.commit();
+
+			return ooDbTx.detach(book, true);
+		} catch (Exception e) {
+			ooDbTx.rollback();
+			throw e;
+		}
+	}
+
+	/**
 	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#getAuthorName()
 	 */
 	@Override
@@ -1346,7 +1591,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	}
 
 	/**
-	 * Detachs the Book data except for the base64Logo field
+	 * Detaches the Book data except for the base64Logo field
 	 * 
 	 * @param book
 	 */

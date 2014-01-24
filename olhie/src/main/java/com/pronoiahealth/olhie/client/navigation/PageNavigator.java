@@ -26,6 +26,7 @@ import com.google.common.collect.Multimap;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.clientfactories.DefaultAppPage;
 import com.pronoiahealth.olhie.client.clientfactories.PageRoleMap;
+import com.pronoiahealth.olhie.client.pages.admin.AdminPage;
 import com.pronoiahealth.olhie.client.pages.bookcase.BookCasePage;
 import com.pronoiahealth.olhie.client.pages.bulletinboard.BulletinboardPage;
 import com.pronoiahealth.olhie.client.pages.calendar.EventsPage;
@@ -83,6 +84,9 @@ public class PageNavigator {
 
 	@Inject
 	private TransitionTo<TVPage> showTVPage;
+	
+	@Inject
+	private TransitionTo<AdminPage> showAdminPage;
 
 	@Inject
 	private Event<SyncPageToMenuEvent> syncPageToMenuEvent;
@@ -175,6 +179,16 @@ public class PageNavigator {
 			}
 			break;
 		}
+
+		// case NewBookPage: {
+		case AdminPage: {
+			if (state == null) {
+				showAdminPage.go();
+			} else {
+				showAdminPage.go(state);
+			}
+			break;
+		}
 		}
 	}
 
@@ -188,6 +202,7 @@ public class PageNavigator {
 	protected void observesNavigationEvent(
 			@Observes NavigationEvent navigationEvent) {
 		String pageName = navigationEvent.getHistoryToken().getPageName();
+		//String pageName = navigationEvent.getPageRequest().getPageName();
 		if (pageName.length() > 0) {
 			// Check Can navigate to the page security
 			boolean canNavTo = false;

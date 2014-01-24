@@ -128,18 +128,21 @@ public class BookUpdateService {
 			String authorName = bookDAO.getAuthorName(book.getAuthorId());
 
 			// Is there a logo on the current book
-			String logoStr = currentBook.getBase64LogoData();
+			//String logoStr = currentBook.getBase64LogoData();
 
 			// Is there currently a logo
 			// TODO: Don't recreate the images if the data in the image hasn't
 			// changed.
-			byte[] logo = null;
-			if (logoStr != null && logoStr.length() > 0) {
-				logo = Base64.decode(logoStr);
-			}
+			//byte[] logo = null;
+			//if (logoStr != null && logoStr.length() > 0) {
+			//	logo = Base64.decode(logoStr);
+			//}
 
-			Map<Cover, String> coverMap = imgService.createDefaultBookCovers(
-					book, cat, cover, logo, authorName);
+			//Map<Cover, String> coverMap = imgService.createDefaultBookCovers(
+			//		book, cat, cover, logo, authorName);
+			Map<Cover, byte[]> coverMap = imgService.createDefaultBookCoversBytes(
+					book, cat, cover, currentBook.getLogoBytes(), authorName);
+
 
 			// Update basic book data
 			currentBook.setBookTitle(book.getBookTitle());
@@ -164,10 +167,13 @@ public class BookUpdateService {
 			}
 
 			// image data
-			currentBook.setBase64FrontCover(coverMap.get(Cover.FRONT));
-			currentBook.setBase64BackCover(coverMap.get(Cover.BACK));
-			currentBook.setBase64SmallFrontCover(coverMap
-					.get(Cover.SMALL_FRONT));
+			//currentBook.setBase64FrontCover(coverMap.get(Cover.FRONT));
+			//currentBook.setBase64BackCover(coverMap.get(Cover.BACK));
+			//currentBook.setBase64SmallFrontCover(coverMap
+			//		.get(Cover.SMALL_FRONT));
+			currentBook.setBackCoverBytes(coverMap.get(Cover.BACK));
+			currentBook.setFrontCoverBytes(coverMap.get(Cover.FRONT));
+			currentBook.setSmallFrontCoverBytes(coverMap.get(Cover.SMALL_FRONT));
 			currentBook.setLastUpdated(now);
 
 			// Solr updating
@@ -218,15 +224,20 @@ public class BookUpdateService {
 			BookCategory cat = holder.getCategoryByName(book.getCategory());
 			BookCover cover = holder.getCoverByName(book.getCoverName());
 			String authorName = bookDAO.getAuthorName(sessionUserId);
-			Map<Cover, String> coverMap = imgService.createDefaultBookCovers(
+			//Map<Cover, String> coverMap = imgService.createDefaultBookCovers(
+			//		book, cat, cover, null, authorName);
+			Map<Cover, byte[]> coverMap = imgService.createDefaultBookCoversBytes(
 					book, cat, cover, null, authorName);
 
 			// Add the book
 			Date now = new Date();
 			book.setCreatedDate(now);
-			book.setBase64FrontCover(coverMap.get(Cover.FRONT));
-			book.setBase64BackCover(coverMap.get(Cover.BACK));
-			book.setBase64SmallFrontCover(coverMap.get(Cover.SMALL_FRONT));
+			book.setBackCoverBytes(coverMap.get(Cover.BACK));
+			book.setFrontCoverBytes(coverMap.get(Cover.FRONT));
+			book.setSmallFrontCoverBytes(coverMap.get(Cover.SMALL_FRONT));
+			//book.setBase64FrontCover(coverMap.get(Cover.FRONT));
+			//book.setBase64BackCover(coverMap.get(Cover.BACK));
+			//book.setBase64SmallFrontCover(coverMap.get(Cover.SMALL_FRONT));
 			book.setLastUpdated(now);
 			book.setSolrUpdate(null);
 			book.setAuthorId(userToken.getUserId());

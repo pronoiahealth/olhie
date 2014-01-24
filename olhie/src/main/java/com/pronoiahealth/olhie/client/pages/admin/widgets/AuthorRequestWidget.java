@@ -8,19 +8,33 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.shared.constants;
+package com.pronoiahealth.olhie.client.pages.admin.widgets;
 
+import javax.enterprise.context.Dependent;
+
+import org.jboss.errai.ui.shared.api.annotations.Templated;
+
+import com.google.gwt.user.client.ui.Composite;
 
 /**
- * NavEnum.java<br/>
+ * AuthorRequestWidget.java<br/>
  * Responsibilities:<br/>
- * 1. An enumeration of page names used in Errai navigation system<br/>
- * 
+ * 1.
+ *
  * @author John DeStefano
  * @version 1.0
- * @since May 26, 2013
- * 
+ * @since Jan 19, 2014
+ *
  */
-public enum NavEnum {
-	BulletinboardPage, EventsPage, BookCasePage, SearchPage, NewBookPage, NewBookPage_2, TVPage, AdminPage;
+@Templated("#root")
+@Dependent
+public class AuthorRequestWidget extends Composite {
+
+	/**
+	 * Constructor
+	 *
+	 */
+	public AuthorRequestWidget() {
+	}
+
 }

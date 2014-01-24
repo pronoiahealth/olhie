@@ -96,6 +96,14 @@ public class Book {
 
 	@Size(max = 75, message = "Maximum of 75 characters.")
 	private String interfaceRecievingSystem;
+	
+	private byte[] backCoverBytes;
+	
+	private byte[] frontCoverBytes;
+	
+	private byte[] logoBytes;
+	
+	private byte[] smallFrontCoverBytes;
 
 	private List<Bookassetdescription> bookDescriptions;
 
@@ -301,5 +309,37 @@ public class Book {
 
 	public void setBase64SmallFrontCover(String base64SmallFrontCover) {
 		this.base64SmallFrontCover = base64SmallFrontCover;
+	}
+
+	public byte[] getBackCoverBytes() {
+		return backCoverBytes;
+	}
+
+	public void setBackCoverBytes(byte[] backCoverBytes) {
+		this.backCoverBytes = backCoverBytes;
+	}
+
+	public byte[] getFrontCoverBytes() {
+		return frontCoverBytes;
+	}
+
+	public void setFrontCoverBytes(byte[] frontCoverBytes) {
+		this.frontCoverBytes = frontCoverBytes;
+	}
+
+	public byte[] getLogoBytes() {
+		return logoBytes;
+	}
+
+	public void setLogoBytes(byte[] logoBytes) {
+		this.logoBytes = logoBytes;
+	}
+
+	public byte[] getSmallFrontCoverBytes() {
+		return smallFrontCoverBytes;
+	}
+
+	public void setSmallFrontCoverBytes(byte[] smallFrontCoverBytes) {
+		this.smallFrontCoverBytes = smallFrontCoverBytes;
 	}
 }
