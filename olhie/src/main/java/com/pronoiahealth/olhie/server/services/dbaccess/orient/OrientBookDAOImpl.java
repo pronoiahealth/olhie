@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
-import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
@@ -92,7 +91,14 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		// for return. Here we will load just the book info. Don't go into the
 		// Linked lists yet because that will retreive all the image data
 		if (returnNonProxyed == true) {
-			// book = ooDbTx.detachAll(book, true);
+			/*
+			book = ooDbTx.detachAll(book, true);
+			book.setFrontCoverBytes(null);
+			book.setBackCoverBytes(null);
+			book.setSmallFrontCoverBytes(null);
+			book.setLogoBytes(null);
+			*/
+			
 			book.getActDate();
 			book.getActive();
 			book.getAuthorId();
@@ -176,12 +182,32 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		BookCategory cat = holder.getCategoryByName(book.getCategory());
 
 		// Get a list of Bookassetdescriptions
+		int bookHoursOfWork = 0;
+		int totalCost = 0;
 		List<Bookassetdescription> baResult = getBookassetdescriptionByBookId(
-				bookId, true);
+				bookId, true, true);
+		if (baResult != null && baResult.size() > 0) {
+			for (Bookassetdescription b : baResult) {
+				b.setRemoved(null);
+				b.setRemovedBy(null);
+				b.setRemovedDate(null);
+				List<Bookasset> baLst = b.getBookAssets();
+				if (baLst != null && baLst.size() > 0) {
+					for (Bookasset ba : baLst) {
+						ba.setBase64Data(null);
+						ba.setBookassetdescriptionId(null);
+						ba.setSize(null);
+						bookHoursOfWork = bookHoursOfWork + ba.getHoursOfWork();
+						totalCost = totalCost + ba.getCost();
+					}
+				}
+			}
+		}
 
-		List<Bookassetdescription> retBaResults = new ArrayList<Bookassetdescription>();
+		//List<Bookassetdescription> retBaResults = new ArrayList<Bookassetdescription>();
 		// Need to detach them. We don't want to pull back the entire object
 		// tree
+		/*
 		int bookHoursOfWork = 0;
 		int totalCost = 0;
 		if (baResult != null) {
@@ -231,6 +257,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 				}
 			}
 		}
+		*/
 
 		// Get book rating and user book rating
 		int bookRating = getAvgBookRating(bookId);
@@ -244,8 +271,11 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		}
 
 		// Create BookDisplay
+		//BookDisplay bookDisplay = new BookDisplay(book, cover, cat, authorName,
+		//		retBaResults, bookRating, userBookRating, bookHoursOfWork,
+		//		totalCost, isUserAuthorOrCoAuthor);
 		BookDisplay bookDisplay = new BookDisplay(book, cover, cat, authorName,
-				retBaResults, bookRating, userBookRating, bookHoursOfWork,
+				baResult, bookRating, userBookRating, bookHoursOfWork,
 				totalCost, isUserAuthorOrCoAuthor);
 
 		// Logo?
@@ -360,7 +390,8 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public List<Bookassetdescription> getBookassetdescriptionByBookId(
-			String bookId, boolean activeOnly) throws Exception {
+			String bookId, boolean activeOnly, boolean returnDetached)
+			throws Exception {
 
 		OSQLSynchQuery<Bookassetdescription> baQuery = null;
 
@@ -378,6 +409,16 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		}
 		List<Bookassetdescription> baResult = ooDbTx.command(baQuery).execute(
 				baparams);
+
+		if (returnDetached == true) {
+			if (baResult != null && baResult.size() > 0) {
+				List<Bookassetdescription> retLst = new ArrayList<Bookassetdescription>();
+				for (Bookassetdescription d : baResult) {
+					retLst.add((Bookassetdescription) ooDbTx.detachAll(d, true));
+				}
+				return retLst;
+			}
+		}
 		return baResult;
 	}
 
@@ -389,7 +430,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	public int getBookdescriptionCnt(String bookId, boolean activeOnly)
 			throws Exception {
 		List<Bookassetdescription> lst = getBookassetdescriptionByBookId(
-				bookId, activeOnly);
+				bookId, activeOnly, false);
 		if (lst != null) {
 			return lst.size();
 		} else {
@@ -1363,7 +1404,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 			}
 		}
 	}
-	
+
 	/**
 	 * @see com.pronoiahealth.olhie.server.services.dbaccess.BookDAO#getBookassetdataByBookassetId(java.lang.String)
 	 */
@@ -1383,8 +1424,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		}
 		return bookassetdata;
 	}
-	
-	
+
 	// ////////////////////////////////////////////////////////////////////////////////////////////
 	// Comments
 	// ////////////////////////////////////////////////////////////////////////////////////////////

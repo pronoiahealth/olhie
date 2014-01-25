@@ -104,7 +104,7 @@ public interface BookDAO extends BaseDAO {
 	 * @throws Exception
 	 */
 	public List<Bookassetdescription> getBookassetdescriptionByBookId(
-			String bookId, boolean activeOnly) throws Exception;
+			String bookId, boolean activeOnly, boolean returnDetached) throws Exception;
 
 	/**
 	 * Return the number of Bookassetdescriptions for a book. May return 0 if

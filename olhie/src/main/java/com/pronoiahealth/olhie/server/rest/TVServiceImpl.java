@@ -72,7 +72,8 @@ public class TVServiceImpl implements TVService {
 	@Path("/tv/{uniqueNumb}/{programRef}")
 	// @Produces({"application/pdf", "application/octet-stream", "text/html"})
 	@Produces({ "application/octet-stream" })
-	@SecureAccess({ SecurityRoleEnum.ANONYMOUS })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+		SecurityRoleEnum.REGISTERED, SecurityRoleEnum.ANONYMOUS })
 	public InputStream getVideo(@Context HttpServletRequest request,
 			@Context HttpServletResponse response,
 			@PathParam("programRef") String programRef,

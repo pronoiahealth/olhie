@@ -658,11 +658,11 @@
 		</dependency>
 
 		<!-- Need this version for OrientDb -->
-		<dependency>
+		<!-- dependency>
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
 			<version>3.16.1-GA</version>
-		</dependency>
+		</dependency -->
 
 		<!-- OrientDb -->
 		<dependency>
@@ -684,6 +684,12 @@
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-object</artifactId>
 			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>javassist</artifactId>
+					<groupId>org.javassist</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.orientechnologies</groupId>
@@ -777,6 +783,10 @@
 					<groupId>javax.annotation</groupId>
 					<artifactId>jsr250-api</artifactId>
 				</exclusion>
+				<exclusion>
+					<artifactId>javassist</artifactId>
+					<groupId>org.javassist</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -829,6 +839,10 @@
 					<groupId>org.jboss.weld.servlet</groupId>
 					<artifactId>weld-servlet</artifactId>
 				</exclusion>
+				<exclusion>
+					<artifactId>javassist</artifactId>
+					<groupId>org.javassist</groupId>
+				</exclusion>
 			</exclusions>
 
 		</dependency>
@@ -854,6 +868,12 @@
 		<dependency>
 			<groupId>org.jboss.errai</groupId>
 			<artifactId>errai-jpa-client</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>javassist</artifactId>
+					<groupId>org.javassist</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- reCaptua -->
@@ -877,6 +897,12 @@
 		<dependency>
 			<groupId>org.jboss.errai</groupId>
 			<artifactId>errai-common</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>javassist</artifactId>
+					<groupId>org.javassist</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.deltaspike.modules</groupId>

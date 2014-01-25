@@ -410,6 +410,9 @@ public class NewBookDialog extends Composite {
 		// Set up interface entry
 		clearInterfaceData();
 		allowInterfaceDataEntry(false);
+
+		// Make sure submit button shows
+		submitButton.setVisible(true);
 	}
 
 	private void setFormForEdit(Book theBook) {
@@ -429,6 +432,9 @@ public class NewBookDialog extends Composite {
 		// Check to see if the category is interface
 		String cat = catagoryDropDown.getText().trim();
 		configureInterfaceDataEntry(cat);
+
+		// Make sure submit button shows
+		submitButton.setVisible(true);
 	}
 
 	/**
@@ -445,6 +451,9 @@ public class NewBookDialog extends Composite {
 
 			// Add creator id
 			book.setAuthorId(clientToken.getUserId());
+			
+			// hide submit button shows
+			submitButton.setVisible(false);
 
 			// Fire event and wait for BookUpdateCommittedEvent
 			if (mode.equals(ModeEnum.NEW)) {

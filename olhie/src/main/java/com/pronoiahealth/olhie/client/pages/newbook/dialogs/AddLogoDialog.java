@@ -93,6 +93,8 @@ public class AddLogoDialog extends Composite {
 	private Image cancelButton;
 
 	private String currentBookId;
+	
+	private static final String uploadingTitle = "Processing your request. Please wait.";
 
 	@Inject
 	private Event<BookListBookSelectedEvent> bookListBookSelectedEvent;
@@ -152,16 +154,20 @@ public class AddLogoDialog extends Composite {
 								uploader.cancelUpload(fileQueuedEvent.getFile()
 										.getId(), false);
 								uploadLogoLbl.getElement()
-								.setInnerText(
-										NewBookConstants.INSTANCE
-												.uploadAFile());
+										.setInnerText(
+												NewBookConstants.INSTANCE
+														.uploadAFile());
 								progressBar.setProgress(-1.0d);
+								uploader.setButtonDisabled(false);
 								cancelButton.removeFromParent();
 							}
 						});
 
 						uploadContainer.add(progressBar);
 						uploadContainer.add(cancelButton);
+						
+						// Only allow one file to be uploaded
+						uploader.setButtonDisabled(true);
 
 						return true;
 					}
@@ -272,6 +278,9 @@ public class AddLogoDialog extends Composite {
 
 		// Set the book Id
 		this.currentBookId = bookId;
+		
+		// Make sure button visible
+		uploadButton.setVisible(true);
 	}
 
 	/**
@@ -282,22 +291,26 @@ public class AddLogoDialog extends Composite {
 	 */
 	@UiHandler("uploadButton")
 	public void uploadButtonClicked(ClickEvent clickEvt) {
-		boolean hasErrors = false;
-		clearErrors();
+		if (uploader != null && uploader.getStats().getUploadsInProgress() <= 0) {
+			boolean hasErrors = false;
+			clearErrors();
 
-		// Check upload
-		int filesQueued = uploader.getStats().getFilesQueued();
-		if (filesQueued != 1) {
-			hasErrors = true;
-			noFileToUploadErr.setText(NewBookConstants.INSTANCE
-					.uploadFileError());
-		}
+			// Check upload
+			int filesQueued = uploader.getStats().getFilesQueued();
+			if (filesQueued != 1) {
+				hasErrors = true;
+				noFileToUploadErr.setText(NewBookConstants.INSTANCE
+						.uploadFileError());
+			}
 
-		if (hasErrors == false) {
-			JSONObject params = new JSONObject();
-			params.put("bookId", new JSONString(this.currentBookId));
-			uploader.setPostParams(params);
-			uploader.startUpload();
+			if (hasErrors == false) {
+				JSONObject params = new JSONObject();
+				params.put("bookId", new JSONString(this.currentBookId));
+				uploader.setPostParams(params);
+				uploader.startUpload();
+				uploadButton.setVisible(false);
+				noFileToUploadErr.setText(uploadingTitle);
+			}
 		}
 	}
 

@@ -120,6 +120,8 @@ public class AddFileVideoDialog extends Composite {
 	private static final String fileTitle = "What file do you want to add?";
 
 	private static final String videoTitle = "What video do you want to add?";
+	
+	private static final String uploadingTitle = "Processing your request. Please wait.";
 
 	private String dataType;
 
@@ -277,6 +279,8 @@ public class AddFileVideoDialog extends Composite {
 							UploadErrorEvent uploadErrorEvent) {
 						progressBar.setProgress(0.0);
 						cancelButton.removeFromParent();
+						uploadButton.setVisible(true);
+						noFileToUploadErr.setText("");
 						Window.alert("Upload of file "
 								+ uploadErrorEvent.getFile().getName()
 								+ " failed due to ["
@@ -327,6 +331,9 @@ public class AddFileVideoDialog extends Composite {
 
 		// Show the dialog
 		addFileModal.show();
+		
+		// Make sure uploadButton showing
+		uploadButton.setVisible(true);
 	}
 
 	/**
@@ -417,6 +424,8 @@ public class AddFileVideoDialog extends Composite {
 				params.put("dataType", new JSONString(dataType));
 				uploader.setPostParams(params);
 				uploader.startUpload();
+				uploadButton.setVisible(false);
+				noFileToUploadErr.setText(this.uploadingTitle);
 			}
 		}
 	}

@@ -23,11 +23,13 @@ import javax.inject.Inject;
 
 import org.apache.deltaspike.core.api.config.ConfigProperty;
 
+import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.tv.TVChannelProgrammingRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.tv.TVChannelProgrammingResponseEvent;
 import com.pronoiahealth.olhie.client.shared.vo.ChannelProgram;
 import com.pronoiahealth.olhie.client.shared.vo.ChannelProgramList;
+import com.pronoiahealth.olhie.server.security.SecureAccess;
 
 /**
  * TVChannelService.java<br/>
@@ -69,7 +71,8 @@ public class TVChannelService {
 	 * 
 	 * @param tVChannelProgrammingRequestEvent
 	 */
-	@SuppressWarnings("unchecked")
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+		SecurityRoleEnum.REGISTERED, SecurityRoleEnum.ANONYMOUS })
 	protected void observersTVChannelProgrammingRequestEvent(
 			@Observes TVChannelProgrammingRequestEvent tVChannelProgrammingRequestEvent) {
 		try {
@@ -87,7 +90,11 @@ public class TVChannelService {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	/**
+	 * Gets the channel list
+	 * 
+	 * @return
+	 */
 	private List<ChannelProgramList> getList() {
 		// Get list of directories under base directory
 		List<ChannelProgramList> channelProgramCatelog = new ArrayList<ChannelProgramList>();
