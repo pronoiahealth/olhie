@@ -92,6 +92,8 @@ public class RegistrationForm {
 	@NotNull
 	@Size(min = 1, max = 25)
 	private String type;
+	
+	private String authorStatus;
 
 	/**
 	 * Constructor
@@ -219,4 +221,13 @@ public class RegistrationForm {
 	public void setType(String type) {
 		this.type = type;
 	}
+
+	public String getAuthorStatus() {
+		return authorStatus;
+	}
+
+	public void setAuthorStatus(String authorStatus) {
+		this.authorStatus = authorStatus;
+	}
+	
 }

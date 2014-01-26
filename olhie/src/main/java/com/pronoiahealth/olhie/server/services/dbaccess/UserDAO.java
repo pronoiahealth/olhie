@@ -98,4 +98,12 @@ public interface UserDAO extends BaseDAO {
 	 */
 	public void updateUserRole(String userId, SecurityRoleEnum role)
 			throws Exception;
+	
+	/**
+	 * @param userId
+	 * @param reset
+	 * @throws Exception
+	 */
+	public void updateUserResetPw(String userId, boolean reset)
+			throws Exception;
 }

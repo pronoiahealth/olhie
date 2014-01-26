@@ -46,7 +46,8 @@ public interface RegistrationFormDAO extends BaseDAO {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<RegistrationForm> findAuthorPendingForms() throws Exception;
+	public List<RegistrationForm> findAuthorPendingForms(boolean detach)
+			throws Exception;
 
 	/**
 	 * @param form
@@ -62,7 +63,8 @@ public interface RegistrationFormDAO extends BaseDAO {
 	 * @throws Exception
 	 */
 	public void acceptRejectAuthorApplication(String registrationFormId,
-			String adminUserId, boolean acceptReject) throws Exception;
+			String adminUserId, boolean acceptReject, String authorStatus,
+			boolean updateUserRole) throws Exception;
 
 	/**
 	 * @param registrationFormId

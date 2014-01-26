@@ -195,7 +195,28 @@ public class OrientUserDAOImpl extends OrientBaseTxDAO implements UserDAO {
 		// Save the new data
 		ooDbTx.begin(TXTYPE.OPTIMISTIC);
 		try {
-			user.setRole(role.getName());
+			user.setRole(role.toString());
+			ooDbTx.save(user);
+			ooDbTx.commit();
+		} catch (Exception e) {
+			ooDbTx.rollback();
+			throw e;
+		}
+	}
+	
+	@Override
+	public void updateUserResetPw(String userId, boolean reset)
+			throws Exception {
+		// Look up user
+		User user = getUserByUserId(userId);
+		if (user == null) {
+			throw new Exception("Unknown user with id " + userId);
+		}
+
+		// Save the new data
+		ooDbTx.begin(TXTYPE.OPTIMISTIC);
+		try {
+			user.setResetPwd(reset);
 			ooDbTx.save(user);
 			ooDbTx.commit();
 		} catch (Exception e) {

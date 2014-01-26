@@ -25,6 +25,7 @@ import com.pronoiahealth.olhie.client.shared.annotations.Load;
 import com.pronoiahealth.olhie.client.shared.annotations.New;
 import com.pronoiahealth.olhie.client.shared.annotations.Update;
 import com.pronoiahealth.olhie.client.shared.constants.RegistrationEventEnum;
+import com.pronoiahealth.olhie.client.shared.constants.RequestFormAuthorApproval;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.registration.LoadProfileResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.registration.RegistrationErrorEvent;
@@ -124,10 +125,13 @@ public class RegistrationService {
 				return;
 			}
 
+			// Do they want to be an author
+			boolean authYes = form.isAuthor();
+
 			// Add user
 			userDAO.addUser(userId, form.getLastName(), form.getFirstName(),
 					SecurityRoleEnum.REGISTERED, form.getEmail(),
-					form.getPwd(), form.getOrganization(), form.isAuthor());
+					form.getPwd(), form.getOrganization(), authYes);
 
 			// Add the registration
 			form.setPwd("X");
@@ -135,6 +139,13 @@ public class RegistrationService {
 			form.setRegDate(new Date());
 			form.setUserId(userId);
 			form.setType(RegistrationEventEnum.NEW.toString());
+			if (authYes == true) {
+				form.setAuthorStatus(RequestFormAuthorApproval.PENDING
+						.toString());
+			} else {
+				form.setAuthorStatus(RequestFormAuthorApproval.NOT_REQUESTED
+						.toString());
+			}
 			RegistrationForm savedForm = registrationFormDAO
 					.addRegistrationForm(form);
 
@@ -159,7 +170,7 @@ public class RegistrationService {
 	 * @param commentEvent
 	 */
 	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
-		SecurityRoleEnum.REGISTERED })
+			SecurityRoleEnum.REGISTERED })
 	protected void observesLoadRegistrationRequestEvent(
 			@Observes @Load RegistrationRequestEvent registrationRequestEvent) {
 
@@ -194,7 +205,7 @@ public class RegistrationService {
 	 * @param commentEvent
 	 */
 	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
-		SecurityRoleEnum.REGISTERED })
+			SecurityRoleEnum.REGISTERED })
 	protected void observesUpdateRegistrationRequestEvent(
 			@Observes @Update RegistrationRequestEvent registrationRequestEvent) {
 
@@ -208,6 +219,13 @@ public class RegistrationService {
 			SecurityRoleEnum currentUserRole = SecurityRoleEnum.valueOf(user
 					.getRole());
 
+			// Do they want to be an author
+			boolean authYes = form.isAuthor();
+			boolean alreadyAuthor = false;
+			if (user.getRole().equals(SecurityRoleEnum.AUTHOR.toString()) == true) {
+				alreadyAuthor = true;
+			}
+
 			// Update User
 			userDAO.updateUser(userId, form.getLastName(), form.getFirstName(),
 					currentUserRole, form.getEmail(), form.getOrganization(),
@@ -220,6 +238,10 @@ public class RegistrationService {
 			form.setRegDate(new Date());
 			form.setUserId(userId);
 			form.setType(RegistrationEventEnum.UPDATE.toString());
+			if (!alreadyAuthor && authYes) {
+				form.setAuthorStatus(RequestFormAuthorApproval.PENDING
+						.toString());
+			}
 			RegistrationForm savedForm = registrationFormDAO
 					.addRegistrationForm(form);
 

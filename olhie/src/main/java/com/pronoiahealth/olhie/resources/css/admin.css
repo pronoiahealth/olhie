@@ -39,6 +39,10 @@
 	text-align: center;
 }
 
+.ph-Admin-tbl-cell select {
+	width: 120px !important;
+}
+
 .ph-Admin-tbl-header {
 	display: table-header-group;
 }
@@ -50,4 +54,8 @@
 .ph-Admin-tbl-center {
 	margin: auto 0px;
 	overflow: auto;
+}
+
+.ph-Admin-tbl-cell-text-align-left {
+	text-align: left;
 }
