@@ -36,6 +36,7 @@ public class BookdescriptionDetailResponseEvent {
 	private String creationDate;
 	private String creationHrs;
 	private String itemType;
+	private String itemName;
 
 	/**
 	 * Constructor
@@ -53,15 +54,14 @@ public class BookdescriptionDetailResponseEvent {
 	 * @param itemType
 	 */
 	public BookdescriptionDetailResponseEvent(String bookDescription,
-			String creationDate, String creationHrs, String itemType) {
+			String creationDate, String creationHrs, String itemType, String itemName) {
 		super();
 		this.bookDescription = bookDescription;
 		this.creationDate = creationDate;
 		this.creationHrs = creationHrs;
 		this.itemType = itemType;
+		this.itemName = itemName;
 	}
-
-
 
 	public String getBookDescription() {
 		return bookDescription;
@@ -95,4 +95,11 @@ public class BookdescriptionDetailResponseEvent {
 		this.itemType = itemType;
 	}
 
+	public String getItemName() {
+		return itemName;
+	}
+
+	public void setItemName(String itemName) {
+		this.itemName = itemName;
+	}
 }

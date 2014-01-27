@@ -101,6 +101,7 @@ public class BookdescriptionDetailService {
 			response.setCreationDate(dtFormat.get().format(ba.getCreatedDate()));
 			response.setCreationHrs("" + ba.getHoursOfWork());
 			response.setItemType(ba.getItemType());
+			response.setItemName(ba.getItemName());
 
 			// Fire the resoonse event
 			bookdescriptionDetailResponseEvent

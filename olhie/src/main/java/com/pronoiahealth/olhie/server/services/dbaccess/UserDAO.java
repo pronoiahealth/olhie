@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services.dbaccess;
 
+import java.util.List;
+
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.server.dataaccess.vo.Password;
@@ -98,7 +100,7 @@ public interface UserDAO extends BaseDAO {
 	 */
 	public void updateUserRole(String userId, SecurityRoleEnum role)
 			throws Exception;
-	
+
 	/**
 	 * @param userId
 	 * @param reset
@@ -106,4 +108,10 @@ public interface UserDAO extends BaseDAO {
 	 */
 	public void updateUserResetPw(String userId, boolean reset)
 			throws Exception;
+
+	/**
+	 * @param lastName
+	 * @throws Exception
+	 */
+	public List<User> findUserByLastName(String lastName, boolean detach) throws Exception;
 }

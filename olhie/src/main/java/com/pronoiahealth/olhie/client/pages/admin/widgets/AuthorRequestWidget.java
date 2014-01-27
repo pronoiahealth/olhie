@@ -253,7 +253,7 @@ public class AuthorRequestWidget extends Composite {
 		pager = new SimplePager(TextLocation.CENTER, pagerResources, false, 0,
 				true);
 		pager.setDisplay(authorReqGrid);
-		pager.setPageSize(5);
+		pager.setPageSize(10);
 		pager.getElement().setAttribute("style", "margin: auto;");
 
 		// Redraw the grid

@@ -24,10 +24,13 @@ import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.admin.AuthorPendingRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.AuthorPendingResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.AuthorRequestStatusChangeEvent;
+import com.pronoiahealth.olhie.client.shared.events.admin.FindUserByLastNameRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.admin.FindUserByLastNameResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.UserChangeRoleEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.UserResetPWEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.RegistrationForm;
+import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
@@ -57,6 +60,9 @@ public class AdminService {
 
 	@Inject
 	private Event<AuthorPendingResponseEvent> authorPendingResponseEvent;
+
+	@Inject
+	private Event<FindUserByLastNameResponseEvent> findUserByLastNameResponseEvent;
 
 	@Inject
 	@DAO
@@ -158,7 +164,29 @@ public class AdminService {
 	protected void observersUserResetPWEvent(
 			@Observes UserResetPWEvent userResetPWEvent) {
 		try {
+			String userId = userResetPWEvent.getUserId();
+			boolean newResetPw = userResetPWEvent.isReset();
+			userDao.updateUserResetPw(userId, newResetPw);
+		} catch (Exception e) {
+			String errMsg = e.getMessage();
+			log.log(Level.SEVERE, errMsg, e);
+			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
+		}
+	}
 
+	/**
+	 * 
+	 * 
+	 * @param findUserByLastNameRequestEvent
+	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN })
+	protected void observersFindUserByLastNameRequestEvent(
+			@Observes FindUserByLastNameRequestEvent findUserByLastNameRequestEvent) {
+		try {
+			String lastName = findUserByLastNameRequestEvent.getLastNameQry();
+			List<User> users = userDao.findUserByLastName(lastName, true);
+			findUserByLastNameResponseEvent
+					.fire(new FindUserByLastNameResponseEvent(users));
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);

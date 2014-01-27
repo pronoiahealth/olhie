@@ -64,6 +64,9 @@ public class BookDescriptionDetailDialog extends Composite {
 
 	@UiField
 	public TextBox assetType;
+	
+	@UiField
+	public TextBox itemName;
 
 	@UiField
 	public Button closeButton;
@@ -131,6 +134,12 @@ public class BookDescriptionDetailDialog extends Composite {
 		String itemType = bookdescriptionDetailResponseEvent.getItemType();
 		if (itemType != null) {
 			assetType.setText(itemType);
+		}
+
+		// Type
+		String name = bookdescriptionDetailResponseEvent.getItemName();
+		if (name != null) {
+			itemName.setText(name);
 		}
 
 		// Show dialog

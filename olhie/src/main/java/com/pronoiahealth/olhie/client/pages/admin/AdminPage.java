@@ -21,6 +21,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import com.pronoiahealth.olhie.client.navigation.AdminRole;
 import com.pronoiahealth.olhie.client.pages.AbstractPage;
 import com.pronoiahealth.olhie.client.pages.admin.widgets.AuthorRequestWidget;
+import com.pronoiahealth.olhie.client.pages.admin.widgets.UserManagementWidget;
 
 /**
  * AdminPage.java<br/>
@@ -40,6 +41,10 @@ public class AdminPage extends AbstractPage {
 	@Inject
 	@DataField
 	private AuthorRequestWidget authorRequestTab;
+	
+	@Inject
+	@DataField
+	private UserManagementWidget userMgmtTab;
 
 	/**
 	 * Constructor

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.server.services.dbaccess.orient;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -203,7 +204,7 @@ public class OrientUserDAOImpl extends OrientBaseTxDAO implements UserDAO {
 			throw e;
 		}
 	}
-	
+
 	@Override
 	public void updateUserResetPw(String userId, boolean reset)
 			throws Exception {
@@ -222,6 +223,39 @@ public class OrientUserDAOImpl extends OrientBaseTxDAO implements UserDAO {
 		} catch (Exception e) {
 			ooDbTx.rollback();
 			throw e;
+		}
+	}
+
+	/**
+	 * 
+	 * 
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.UserDAO#findUserByLastName(java.lang.String)
+	 */
+	@Override
+	public List<User> findUserByLastName(String lastName, boolean detach)
+			throws Exception {
+		if (lastName != null) {
+			String srchStr = lastName.toLowerCase();
+			OSQLSynchQuery<User> query = new OSQLSynchQuery<User>(
+					"select from User where lastName.toLowerCase() like :ln");
+			HashMap<String, String> params = new HashMap<String, String>();
+			params.put("ln", srchStr + "%");
+			List<User> pResult = ooDbTx.command(query).execute(params);
+
+			if (pResult == null) {
+				pResult = new ArrayList<User>();
+			}
+
+			if (detach == true && pResult != null && pResult.size() > 0) {
+				List<User> retLst = new ArrayList<User>();
+				for (User u : pResult) {
+					retLst.add((User) ooDbTx.detach(u, true));
+				}
+				return retLst;
+			}
+			return pResult;
+		} else {
+			return new ArrayList<User>();
 		}
 	}
 }

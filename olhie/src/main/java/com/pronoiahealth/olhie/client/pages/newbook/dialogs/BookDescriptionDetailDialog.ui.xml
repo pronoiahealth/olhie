@@ -29,6 +29,12 @@
 						<b:TextBox ui:field="assetType" controlGroup="{assetTypeGroup}" enabled="false"/>
 					</b:Controls>
 				</b:ControlGroup>
+				<b:ControlGroup ui:field="itemNameGroup">
+					<b:ControlLabel for="itemName">Name:</b:ControlLabel>
+					<b:Controls>
+						<b:TextBox ui:field="itemName" controlGroup="{itemNameGroup}" enabled="false"/>
+					</b:Controls>
+				</b:ControlGroup>
 			</b:Fieldset>
 		</b:WellForm>
 

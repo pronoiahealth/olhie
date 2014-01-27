@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
+import com.google.gwt.query.client.GQuery;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Anchor;
@@ -69,6 +70,8 @@ public class BaseBookassetActionButtonWidget extends Composite {
 
 	protected boolean noToolTip = false;
 
+	private GQuery toolTip;
+
 	/**
 	 * Constructor
 	 * 
@@ -84,6 +87,15 @@ public class BaseBookassetActionButtonWidget extends Composite {
 	protected final void postConstruct() {
 		createButton(buttonStyle, title, iconName, hRef, additionalClasses,
 				noToolTip);
+	}
+
+	@Override
+	protected void onUnload() {
+		super.onUnload();
+		
+		if (toolTip != null) {
+			toolTip.as(Tooltip).destroy();
+		}
 	}
 
 	/**
@@ -128,7 +140,8 @@ public class BaseBookassetActionButtonWidget extends Composite {
 
 		// Add Tooltips
 		if (noToolTip == false) {
-			$(button.getElement()).as(Tooltip).tooltip();
+			toolTip = $(button.getElement());
+			toolTip.as(Tooltip).tooltip();
 		} else {
 			noToolTip = true;
 		}
