@@ -242,7 +242,7 @@ public class AuthorRequestWidget extends Composite {
 										.getId(), value));
 					}
 				});
-		authorReqGrid.setColumnWidth(statusColumn, 40, Unit.PX);
+		authorReqGrid.setColumnWidth(statusColumn, 19, Unit.PCT);
 
 		// Set the dataprovider
 		dataProvider.addDataDisplay(authorReqGrid);

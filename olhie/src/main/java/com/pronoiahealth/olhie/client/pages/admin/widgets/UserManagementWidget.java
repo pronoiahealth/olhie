@@ -239,7 +239,7 @@ public class UserManagementWidget extends Composite {
 
 			}
 		});
-		userMgmtGrid.setColumnWidth(roleColumn, 40, Unit.PX);
+		userMgmtGrid.setColumnWidth(roleColumn, 18, Unit.PCT);
 
 		// Reset password
 		List<String> resetNames = Arrays.asList(reset);
@@ -277,7 +277,7 @@ public class UserManagementWidget extends Composite {
 
 			}
 		});
-		userMgmtGrid.setColumnWidth(resetColumn, 40, Unit.PX);
+		userMgmtGrid.setColumnWidth(resetColumn, 18, Unit.PCT);
 
 		// Set the dataprovider
 		dataProvider.addDataDisplay(userMgmtGrid);
