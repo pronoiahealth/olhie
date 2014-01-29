@@ -202,7 +202,7 @@ public class PageNavigator {
 	protected void observesNavigationEvent(
 			@Observes NavigationEvent navigationEvent) {
 		String pageName = navigationEvent.getHistoryToken().getPageName();
-		//String pageName = navigationEvent.getPageRequest().getPageName();
+		// String pageName = navigationEvent.getPageRequest().getPageName();
 		if (pageName.length() > 0) {
 			// Check Can navigate to the page security
 			boolean canNavTo = false;

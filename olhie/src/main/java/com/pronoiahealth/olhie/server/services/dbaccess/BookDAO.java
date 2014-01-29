@@ -57,7 +57,7 @@ public interface BookDAO extends BaseDAO {
 	 * @throws Exception
 	 */
 	public BookDisplay getBookDisplayByBook(Book book, String userId,
-			TempThemeHolder holder, boolean returnNonProxyed) throws Exception;
+			TempThemeHolder holder) throws Exception;
 
 	/**
 	 * Eventually calls getBookDisplayByBook().

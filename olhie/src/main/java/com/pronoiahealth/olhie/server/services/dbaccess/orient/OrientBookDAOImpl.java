@@ -82,7 +82,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 */
 	@Override
 	public BookDisplay getBookDisplayByBook(Book book, String userId,
-			TempThemeHolder holder, boolean returnNonProxyed) throws Exception {
+			TempThemeHolder holder) throws Exception {
 
 		// Proxied or un-Proxied instance
 		// Remember if proxyed then you must call the get method to access the
@@ -90,38 +90,38 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		// If Errai marshalling is involved it will eventually access all data
 		// for return. Here we will load just the book info. Don't go into the
 		// Linked lists yet because that will retreive all the image data
-		if (returnNonProxyed == true) {
-			/*
-			book = ooDbTx.detachAll(book, true);
-			book.setFrontCoverBytes(null);
-			book.setBackCoverBytes(null);
-			book.setSmallFrontCoverBytes(null);
-			book.setLogoBytes(null);
-			*/
-			
-			book.getActDate();
-			book.getActive();
-			book.getAuthorId();
-			book.getBookTitle();
-			book.getCategory();
-			book.getCoverName();
-			book.getCreatedDate();
-			book.getId();
-			book.getInterfacePlatform();
-			book.getInterfaceRecievingSystem();
-			book.getInterfaceSendingSystem();
-			book.getIntroduction();
-			book.getKeywords();
-			book.getLastUpdated();
-			book.getLogoFileName();
-			book.getSolrUpdate();
-		}
+		// if (returnNonProxyed == true) {
+		/*
+		 * book = ooDbTx.detachAll(book, true); book.setFrontCoverBytes(null);
+		 * book.setBackCoverBytes(null); book.setSmallFrontCoverBytes(null);
+		 * book.setLogoBytes(null);
+		 */
+		// Always assume first level proxied
+		Book retBook = ooDbTx.detach(book, true);
+		
+		//book.getActDate();
+		//book.getActive();
+		//book.getAuthorId();
+		//book.getBookTitle();
+		//book.getCategory();
+		//book.getCoverName();
+		//book.getCreatedDate();
+		//book.getId();
+		//book.getInterfacePlatform();
+		//book.getInterfaceRecievingSystem();
+		//book.getInterfaceSendingSystem();
+		//book.getIntroduction();
+		//book.getKeywords();
+		//book.getLastUpdated();
+		//book.getLogoFileName();
+		//book.getSolrUpdate();
+		// }
 
 		// Get rid of unwanted return data
-		book = clearUnNeeded(book);
+		retBook = clearUnNeeded(retBook);
 
 		// Used for querying
-		String bookId = book.getId();
+		String bookId = retBook.getId();
 
 		// Find author
 		User authorUser = getUserByUserId(book.getAuthorId());
@@ -182,34 +182,31 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		BookCategory cat = holder.getCategoryByName(book.getCategory());
 
 		// Get a list of Bookassetdescriptions
-		int bookHoursOfWork = 0;
-		int totalCost = 0;
+		// int bookHoursOfWork = 0;
+		// int totalCost = 0;
 		List<Bookassetdescription> baResult = getBookassetdescriptionByBookId(
 				bookId, true, true);
-		if (baResult != null && baResult.size() > 0) {
-			for (Bookassetdescription b : baResult) {
-				b.setRemoved(null);
-				b.setRemovedBy(null);
-				b.setRemovedDate(null);
-				List<Bookasset> baLst = b.getBookAssets();
-				if (baLst != null && baLst.size() > 0) {
-					for (Bookasset ba : baLst) {
-						ba.setBase64Data(null);
-						ba.setBookassetdescriptionId(null);
-						ba.setSize(null);
-						bookHoursOfWork = bookHoursOfWork + ba.getHoursOfWork();
-						totalCost = totalCost + ba.getCost();
-					}
-				}
-			}
-		}
 
-		//List<Bookassetdescription> retBaResults = new ArrayList<Bookassetdescription>();
+		/*
+		 * if (baResult != null && baResult.size() > 0) { for
+		 * (Bookassetdescription b : baResult) { b.setRemoved(null);
+		 * b.setRemovedBy(null); b.setRemovedDate(null); List<Bookasset> baLst =
+		 * b.getBookAssets(); if (baLst != null && baLst.size() > 0) { for
+		 * (Bookasset ba : baLst) { ba.setBase64Data(null);
+		 * ba.setBookassetdescriptionId(null); ba.setSize(null); bookHoursOfWork
+		 * = bookHoursOfWork + ba.getHoursOfWork(); totalCost = totalCost +
+		 * ba.getCost(); } } } }
+		 */
+
+		List<Bookassetdescription> retBaResults = new ArrayList<Bookassetdescription>();
 		// Need to detach them. We don't want to pull back the entire object
 		// tree
-		/*
 		int bookHoursOfWork = 0;
 		int totalCost = 0;
+
+		// Testing
+		// baResult = null;
+
 		if (baResult != null) {
 			for (Bookassetdescription bad : baResult) {
 				if (bad.getRemoved().booleanValue() == false) {
@@ -222,33 +219,33 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 					Bookasset ba = bad.getBookAssets().get(0);
 					// load data once from db
 					String id = ba.getId();
-					ODocument sBa = this.getSlimBookassetById(id);
+					// ODocument sBa = this.getSlimBookassetById(id);
 					Bookasset retBa = new Bookasset();
-					// retBa.setCreatedDate(ba.getCreatedDate());
-					retBa.setCreatedDate((Date) sBa.field("createdDate",
-							OType.DATETIME));
-					// retBa.setId(ba.getId());
-					retBa.setId(id);
-					// retBa.setContentType(ba.getContentType());
-					retBa.setContentType((String) sBa.field("contentType"));
-					// retBa.setItemType(ba.getItemType());
-					retBa.setItemType((String) sBa.field("itemType"));
-					// retBa.setLinkRef(ba.getLinkRef());
-					retBa.setLinkRef((String) sBa.field("linkRef"));
-					// retBa.setEmbededLinkRef(ba.getEmbededLinkRef());
-					retBa.setEmbededLinkRef((String) sBa
-							.field("embededLinkRef"));
-					// int hoursOfWork = ba.getHoursOfWork();
-					int hoursOfWork = (Integer) sBa.field("hoursOfWork",
-							OType.INTEGER);
-					// retBa.setHoursOfWork(hoursOfWork);
+					retBa.setCreatedDate(ba.getCreatedDate());
+					// retBa.setCreatedDate((Date) sBa.field("createdDate",
+					// OType.DATETIME));
+					retBa.setId(ba.getId());
+					// retBa.setId(id);
+					retBa.setContentType(ba.getContentType());
+					// retBa.setContentType((String) sBa.field("contentType"));
+					retBa.setItemType(ba.getItemType());
+					// retBa.setItemType((String) sBa.field("itemType"));
+					retBa.setLinkRef(ba.getLinkRef());
+					// retBa.setLinkRef((String) sBa.field("linkRef"));
+					retBa.setEmbededLinkRef(ba.getEmbededLinkRef());
+					// retBa.setEmbededLinkRef((String) sBa
+					// .field("embededLinkRef"));
+					int hoursOfWork = ba.getHoursOfWork();
+					// int hoursOfWork = (Integer) sBa.field("hoursOfWork",
+					// OType.INTEGER);
 					retBa.setHoursOfWork(hoursOfWork);
-					// int cost = ba.getCost();
-					int cost = (Integer) sBa.field("cost", OType.INTEGER);
-					// retBa.setCost(cost);
+					// retBa.setHoursOfWork(hoursOfWork);
+					int cost = ba.getCost();
+					// int cost = (Integer) sBa.field("cost", OType.INTEGER);
 					retBa.setCost(cost);
-					// bookHoursOfWork = bookHoursOfWork + hoursOfWork;
+					// retBa.setCost(cost);
 					bookHoursOfWork = bookHoursOfWork + hoursOfWork;
+					// bookHoursOfWork = bookHoursOfWork + hoursOfWork;
 					totalCost = totalCost + cost;
 					ArrayList<Bookasset> retbookAssets = new ArrayList<Bookasset>();
 					retbookAssets.add(retBa);
@@ -257,7 +254,6 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 				}
 			}
 		}
-		*/
 
 		// Get book rating and user book rating
 		int bookRating = getAvgBookRating(bookId);
@@ -271,10 +267,11 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		}
 
 		// Create BookDisplay
-		//BookDisplay bookDisplay = new BookDisplay(book, cover, cat, authorName,
-		//		retBaResults, bookRating, userBookRating, bookHoursOfWork,
-		//		totalCost, isUserAuthorOrCoAuthor);
-		BookDisplay bookDisplay = new BookDisplay(book, cover, cat, authorName,
+		// BookDisplay bookDisplay = new BookDisplay(book, cover, cat,
+		// authorName,
+		// retBaResults, bookRating, userBookRating, bookHoursOfWork,
+		// totalCost, isUserAuthorOrCoAuthor);
+		BookDisplay bookDisplay = new BookDisplay(retBook, cover, cat, authorName,
 				baResult, bookRating, userBookRating, bookHoursOfWork,
 				totalCost, isUserAuthorOrCoAuthor);
 
@@ -330,7 +327,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 		Book book = getBookById(bookId);
 
 		// Return the Display object
-		return getBookDisplayByBook(book, userId, holder, returnNonProxyed);
+		return getBookDisplayByBook(book, userId, holder);
 	}
 
 	/**
@@ -1638,6 +1635,13 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	private Book clearUnNeeded(Book book) throws Exception {
 		book.setBase64LogoData(null);
 		book.setSolrUpdate(null);
+		book.setBase64BackCover(null);
+		book.setBase64FrontCover(null);
+		book.setBase64SmallFrontCover(null);
+		book.setLogoBytes(null);
+		book.setFrontCoverBytes(null);
+		book.setBackCoverBytes(null);
+		book.setSmallFrontCoverBytes(null);
 		return book;
 	}
 

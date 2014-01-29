@@ -46,7 +46,8 @@ import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.BookcaseDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.widgets.GlassPanelSpinner;
-import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3D_3;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D;
+
 
 /**
  * BookCasePage<br/>
@@ -262,7 +263,7 @@ public class BookCasePage extends AbstractPage {
 		currentBookCaseContainerWidget.disposeBookList();
 	}
 
-	protected BookList3D_3 addBookListToCurrentBookcaseContainer(
+	protected BookList3D addBookListToCurrentBookcaseContainer(
 			List<BookDisplay> bookDisplayList) {
 		return currentBookCaseContainerWidget
 				.attachNewBookList(bookDisplayList);

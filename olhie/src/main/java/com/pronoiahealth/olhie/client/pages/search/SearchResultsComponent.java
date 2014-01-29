@@ -27,13 +27,14 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.pronoiahealth.olhie.client.navigation.PageNavigator;
 import com.pronoiahealth.olhie.client.pages.AbstractComposite;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.widgets.GlassPanelSpinner;
-import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3DEventObserver;
-import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3D_3;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.BookListDiv3DEventObserver;
 
 /**
  * SearchResultsComponent.java<br/>
@@ -65,7 +66,7 @@ public class SearchResultsComponent extends AbstractComposite {
 	public Column pagerContainerCol;
 
 	@UiField
-	public HTMLPanel pagerContainer;
+	public SimplePanel pagerContainer;
 
 	@UiField
 	public ScrollPanel searchResultsContainerList;
@@ -76,12 +77,12 @@ public class SearchResultsComponent extends AbstractComposite {
 	private GlassPanelSpinner gSpinner;
 
 	@Inject
-	private Instance<BookList3D_3> bookList3DFac;
+	private Instance<BookList3D> bookList3DFac;
 
-	private BookList3D_3 currentInstanceBookList3D_3;
+	private BookList3D currentInstanceBookList3D;
 
 	@Inject
-	private Disposer<BookList3D_3> bookList3DDisposer;
+	private Disposer<BookList3D> bookList3DDisposer;
 
 	@Inject
 	private Instance<SearchResultsComponentEventHandler> searchResultsComponentEventHandlerFac;
@@ -132,7 +133,7 @@ public class SearchResultsComponent extends AbstractComposite {
 				"text-align: center;");
 
 		// Attach the pager widget
-		pagerContainer.getElement().appendChild(pagerWidget.configure());
+		pagerContainer.getElement().appendChild(pagerWidget.getPagerElement());
 	}
 
 	/**
@@ -169,18 +170,18 @@ public class SearchResultsComponent extends AbstractComposite {
 	}
 
 	protected void setNewCurrentBookList3D(List<BookDisplay> lst,
-			BookList3DEventObserver bookListObserver) {
-		currentInstanceBookList3D_3 = bookList3DFac.get();
-		currentInstanceBookList3D_3.build(lst, false);
-		bookListObserver.attachBookList(currentInstanceBookList3D_3);
-		searchResultsContainerList.add(currentInstanceBookList3D_3);
+			BookListDiv3DEventObserver bookListObserver) {
+		currentInstanceBookList3D = bookList3DFac.get();
+		currentInstanceBookList3D.build(lst, false);
+		bookListObserver.attachBookList(currentInstanceBookList3D);
+		searchResultsContainerList.add(currentInstanceBookList3D);
 	}
 
 	protected void clearResultsContainer() {
 		if (searchResultsContainerList.getWidget() != null) {
-			if (currentInstanceBookList3D_3 != null) {
-				bookList3DDisposer.dispose(currentInstanceBookList3D_3);
-				currentInstanceBookList3D_3 = null;
+			if (currentInstanceBookList3D != null) {
+				bookList3DDisposer.dispose(currentInstanceBookList3D);
+				currentInstanceBookList3D = null;
 			}
 			searchResultsContainerList.clear();
 		}

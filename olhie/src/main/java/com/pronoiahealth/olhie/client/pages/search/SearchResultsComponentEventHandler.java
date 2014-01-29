@@ -31,7 +31,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.ClientLogoutRequestEve
 import com.pronoiahealth.olhie.client.shared.events.local.SearchPageLoadedEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.WindowResizeEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
-import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3DEventObserver;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.BookListDiv3DEventObserver;
 
 @Dependent
 public class SearchResultsComponentEventHandler {
@@ -39,16 +39,16 @@ public class SearchResultsComponentEventHandler {
 	private SearchResultsComponent searchResultsComponent;
 
 	@Inject
-	private Instance<BookList3DEventObserver> bookListObserverFac;
+	private Instance<BookListDiv3DEventObserver> bookListObserverFac;
 
 	@Inject
-	private Disposer<BookList3DEventObserver> bookListObserverDisposer;
+	private Disposer<BookListDiv3DEventObserver> bookListObserverDisposer;
 
-	private BookList3DEventObserver bookListObserver;
+	private BookListDiv3DEventObserver bookListObserver;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 */
 	public SearchResultsComponentEventHandler() {
 	}

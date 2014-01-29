@@ -43,7 +43,7 @@ import com.pronoiahealth.olhie.client.shared.events.bookcase.BookcaseBookWidgetR
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.BookcaseDisplay;
 import com.pronoiahealth.olhie.client.utils.Utils;
-import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3D_3;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D;
 
 /**
  * BookCaseContainerWidget.java<br/>
@@ -82,12 +82,12 @@ public class BookCaseContainerWidget extends Composite {
 	private javax.enterprise.event.Event<BookcaseBookWidgetReorderEvent> bookcaseBookWidgetReorderEvent;
 
 	@Inject
-	private Instance<BookList3D_3> bookList3DFac;
+	private Instance<BookList3D> bookList3DFac;
 
 	@Inject
-	private Disposer<BookList3D_3> bookList3DDisposer;
+	private Disposer<BookList3D> bookList3DDisposer;
 
-	private BookList3D_3 currentInstanceBookList3D_3;
+	private BookList3D currentInstanceBookList3D;
 
 	@Inject
 	private Instance<BookCaseDraggableBookWidget> bookCaseDraggableBookWidgetFac;
@@ -221,7 +221,7 @@ public class BookCaseContainerWidget extends Composite {
 	 */
 	public void disposeBookList() {
 		if (bookDetailContainer.getWidgetCount() > 0) {
-			destroyCurrentInstanceBookList3D_3();
+			destroyCurrentInstanceBookList3D();
 			bookDetailContainer.clear();
 		}
 	}
@@ -231,22 +231,22 @@ public class BookCaseContainerWidget extends Composite {
 	 * 
 	 * @param bookDisplayList
 	 */
-	public BookList3D_3 attachNewBookList(List<BookDisplay> bookDisplayList) {
-		currentInstanceBookList3D_3 = bookList3DFac.get();
-		currentInstanceBookList3D_3.build(bookDisplayList, false);
-		currentInstanceBookList3D_3.getElement().addClassName(
+	public BookList3D attachNewBookList(List<BookDisplay> bookDisplayList) {
+		currentInstanceBookList3D = bookList3DFac.get();
+		currentInstanceBookList3D.build(bookDisplayList, false);
+		currentInstanceBookList3D.getElement().addClassName(
 				"ph-Bookcase-BookDetail-Panel");
-		bookDetailContainer.add(currentInstanceBookList3D_3);
-		return currentInstanceBookList3D_3;
+		bookDetailContainer.add(currentInstanceBookList3D);
+		return currentInstanceBookList3D;
 	}
 
 	/**
 	 * Destroy the current list
 	 */
-	public void destroyCurrentInstanceBookList3D_3() {
-		if (currentInstanceBookList3D_3 != null) {
-			bookList3DDisposer.dispose(currentInstanceBookList3D_3);
-			currentInstanceBookList3D_3 = null;
+	public void destroyCurrentInstanceBookList3D() {
+		if (currentInstanceBookList3D != null) {
+			bookList3DDisposer.dispose(currentInstanceBookList3D);
+			currentInstanceBookList3D = null;
 		}
 	}
 

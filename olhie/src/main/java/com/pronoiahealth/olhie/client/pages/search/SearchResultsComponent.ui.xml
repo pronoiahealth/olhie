@@ -4,7 +4,6 @@
 	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base' xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'
 	xmlns:chzn='urn:import:com.watopi.chosen.client.gwt'>
 	<g:HTMLPanel ui:field="searchContainer" width="100%">
-		<g:HTMLPanel></g:HTMLPanel>
 		<b:FluidContainer>
 			<b:FluidRow ui:field="searchResultsHeader">
 				<b:Label ui:field="resultsLbl" styleName="ph-SearchResults-Header-Text">Search Results</b:Label>
@@ -12,7 +11,7 @@
 			</b:FluidRow>
 			<b:FluidRow>
 				<b:Column ui:field="pagerContainerCol" size="12">
-					<g:HTMLPanel ui:field="pagerContainer"></g:HTMLPanel>
+					<g:SimplePanel ui:field="pagerContainer"></g:SimplePanel>
 				</b:Column>
 			</b:FluidRow>
 		</b:FluidContainer>

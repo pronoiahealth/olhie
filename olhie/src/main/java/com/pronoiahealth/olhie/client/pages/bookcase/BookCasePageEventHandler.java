@@ -29,8 +29,8 @@ import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.BookcaseDisplay;
-import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3DEventObserver;
-import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookList3D_3;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.BookList3D;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.BookListDiv3DEventObserver;
 
 /**
  * BookcasePageEventHandler.java<br/>
@@ -50,12 +50,12 @@ public class BookCasePageEventHandler {
 	private BookCasePage bookCasePage;
 
 	@Inject
-	private Instance<BookList3DEventObserver> bookListEventObserverFac;
+	private Instance<BookListDiv3DEventObserver> bookListEventObserverFac;
 
 	@Inject
-	private Disposer<BookList3DEventObserver> bookListEventObserverDisposer;
+	private Disposer<BookListDiv3DEventObserver> bookListEventObserverDisposer;
 
-	private BookList3DEventObserver currentBookList3DEventObserver;
+	private BookListDiv3DEventObserver currentBookList3DEventObserver;
 
 	/**
 	 * Constructor
@@ -121,10 +121,10 @@ public class BookCasePageEventHandler {
 			// Add a book list3D to the container
 			List<BookDisplay> bookDisplayList = new ArrayList<BookDisplay>();
 			bookDisplayList.add(bookDisplay);
-			BookList3D_3 currentBookList3D_3 = bookCasePage
+			BookList3D currentBookList3D = bookCasePage
 					.addBookListToCurrentBookcaseContainer(bookDisplayList);
 			getCurrentBookList3DEventObserver().attachBookList(
-					currentBookList3D_3);
+					currentBookList3D);
 		}
 	}
 
@@ -156,7 +156,7 @@ public class BookCasePageEventHandler {
 		bookCasePage.disposeTabs();
 	}
 
-	private BookList3DEventObserver getCurrentBookList3DEventObserver() {
+	private BookListDiv3DEventObserver getCurrentBookList3DEventObserver() {
 		if (currentBookList3DEventObserver == null) {
 			currentBookList3DEventObserver = bookListEventObserverFac.get();
 		}

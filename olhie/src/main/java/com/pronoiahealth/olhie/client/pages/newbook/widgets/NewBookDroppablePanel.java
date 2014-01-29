@@ -32,7 +32,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.DownloadBookAssetEvent
 import com.pronoiahealth.olhie.client.shared.events.local.ShowViewBookassetDialogEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
-import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookListItemWidget;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.BookLIWidget;
 import com.pronoiahealth.olhie.client.widgets.dnd.DroppablePanel;
 import com.pronoiahealth.olhie.client.widgets.dnd.SortableDragAndDropHandler;
 
@@ -276,7 +276,7 @@ public class NewBookDroppablePanel extends DroppablePanel {
 						.getEventListener((com.google.gwt.user.client.Element) e);
 				// No listener attached to the element, so no widget exist for
 				// this element
-				if (listener != null && listener instanceof BookListItemWidget) {
+				if (listener != null && listener instanceof BookLIWidget) {
 					bookItemDisplayDisposer.dispose((BookItemDisplay) listener);
 				}
 			}

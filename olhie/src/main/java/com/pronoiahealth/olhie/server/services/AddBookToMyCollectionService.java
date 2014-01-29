@@ -129,7 +129,7 @@ public class AddBookToMyCollectionService {
 					// Return a BookFindResponseEvent
 					// Get the book display
 					BookDisplay bookDisplay = bookDAO.getBookDisplayByBook(
-							book, userId, holder, true);
+							book, userId, holder);
 
 					// Get the user relations
 					Set<UserBookRelationshipEnum> rels = bookDAO

@@ -12,8 +12,6 @@ package com.pronoiahealth.olhie.client.shared.vo;
 
 import javax.inject.Singleton;
 
-import org.jboss.errai.bus.client.api.Local;
-
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 
 /**
@@ -26,7 +24,6 @@ import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
  * @since May 26, 2013
  * 
  */
-@Local
 @Singleton
 public class ClientUserToken {
 	private String fullName;

@@ -49,7 +49,7 @@
 		<gwt.bootstrap.version>2.3.2.0-SNAPSHOT</gwt.bootstrap.version>
 		<slf4j.version>1.6.1</slf4j.version>
 		<dnd.version>3.2.0</dnd.version>
-		<version.gwt.recaptcha>1.0.0.Beta2</version.gwt.recaptcha>
+		<!-- version.gwt.recaptcha>1.0.0.Beta2</version.gwt.recaptcha -->
 		<version.gwtquery>1.3.3</version.gwtquery>
 		<version.gwtquery.chosen>1.2.0</version.gwtquery.chosen>
 		<version.gwt.log>3.2.1</version.gwt.log>
@@ -120,10 +120,10 @@
 			</snapshots>
 		</repository>
 
-		<repository>
+		<!-- repository>
 			<id>gwt-recaptcha</id>
 			<url>http://gwt-recaptcha.googlecode.com/svn/repo</url>
-		</repository>
+		</repository -->
 	</repositories>
 
 	<dependencyManagement>
@@ -439,11 +439,11 @@
 			</dependency>
 
 			<!-- recaptcha -->
-			<dependency>
+			<!-- dependency>
 				<groupId>com.claudiushauptmann</groupId>
 				<artifactId>gwt-recaptcha</artifactId>
 				<version>${version.gwt.recaptcha}</version>
-			</dependency>
+			</dependency -->
 
 			<!-- gwtquery plugin chosen -->
 			<!-- dependency> <groupId>com.watopi</groupId> <groupId>com.watopi</groupId> 
@@ -877,10 +877,10 @@
 		</dependency>
 
 		<!-- reCaptua -->
-		<dependency>
+		<!-- dependency>
 			<groupId>com.claudiushauptmann</groupId>
 			<artifactId>gwt-recaptcha</artifactId>
-		</dependency>
+		</dependency -->
 
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>

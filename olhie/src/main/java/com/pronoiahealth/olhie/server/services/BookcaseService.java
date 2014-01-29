@@ -132,7 +132,7 @@ public class BookcaseService {
 
 						// get display
 						BookDisplay retDisplay = bookDAO.getBookDisplayByBook(
-								currentBook, userId, holder, true);
+								currentBook, userId, holder);
 
 						// Add to the list
 						books.add(retDisplay);

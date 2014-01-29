@@ -8,7 +8,7 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.widgets.booklist3d.errai;
+package com.pronoiahealth.olhie.client.widgets.booklist3d;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -28,32 +28,32 @@ import com.pronoiahealth.olhie.client.shared.events.bookcase.RemoveBookFromMyCol
  * BookList3DEventObserver.java<br/>
  * Responsibilities:<br/>
  * 1.
- * 
+ *
  * @author John DeStefano
  * @version 1.0
  * @since Dec 13, 2013
- * 
+ *
  */
 @Dependent
-public class BookList3DEventObserver {
+public class BookListDiv3DEventObserver {
 	@Inject
 	protected PageNavigator nav;
 
-	private BookList3D_3 bookList;
+	private BookList3D bookList;
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 */
-	public BookList3DEventObserver() {
+	public BookListDiv3DEventObserver() {
 	}
-
+	
 	@PostConstruct
 	protected void postConstruct() {
 		nav.hashCode();
 	}
 
-	public void attachBookList(BookList3D_3 bookList) {
+	public void attachBookList(BookList3D bookList) {
 		this.bookList = bookList;
 	}
 
@@ -66,20 +66,12 @@ public class BookList3DEventObserver {
 			@Observes AddBookToMyCollectionResponseEvent addBookToMyCollectionResponseEvent) {
 		try {
 			String bookId = addBookToMyCollectionResponseEvent.getBookId();
-			BookListItemWidget bookListItemWidget = bookList.getBliwMap().get(
+			BookLIWidget bookListItemWidget = bookList.getBliwMap().get(
 					bookId);
 
 			// Toggle the button so the user can now remove the book from his
 			// collection
-			bookListItemWidget.getTocWidget()
-					.setMyCollectionBtnRemoveFromCollection(false);
-
-			// Set the icon on the front of the book indicating that the book is
-			// in
-			// the users collection
-			bookListItemWidget.getMyCollectionIndicator()
-					.setAddToMyCollectionBtn(true);
-
+			bookListItemWidget.setAfterAddToMyCollection();
 		} catch (Exception e) {
 			GWT.log("BookList3DEventObserver: " + e.getMessage());
 		}
@@ -95,20 +87,12 @@ public class BookList3DEventObserver {
 			@Observes RemoveBookFromMyCollectionResponseEvent removeBookFromMyCollectionResponseEvent) {
 		try {
 			String bookId = removeBookFromMyCollectionResponseEvent.getBookId();
-			BookListItemWidget bookListItemWidget = bookList.getBliwMap().get(
+			BookLIWidget bookListItemWidget = bookList.getBliwMap().get(
 					bookId);
 
 			// Toggle the button so the user can now add the book to his
 			// collection
-			bookListItemWidget.getTocWidget()
-					.setMyCollectionBtnAddToCollection(false);
-
-			// Hide the icon on the front of the book indicating that the book
-			// is
-			// not in
-			// the users collection
-			bookListItemWidget.getMyCollectionIndicator()
-					.setHideMyCollectionBtn();
+			bookListItemWidget.setAfterRemoveFromMyCollection();
 		} catch (Exception e) {
 			GWT.log("BookList3DEventObserver: " + e.getMessage());
 		}

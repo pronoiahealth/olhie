@@ -1,3 +1,5 @@
+package com.pronoiahealth.olhie.client.widgets.booklist3d;
+
 /*******************************************************************************
  * Copyright (c) 2013 Pronoia Health LLC.
  * All rights reserved. This program and the accompanying materials
@@ -8,8 +10,6 @@
  * Contributors:
  *     Pronoia Health LLC - initial API and implementation
  *******************************************************************************/
-package com.pronoiahealth.olhie.client.widgets.booklist3d.errai;
-
 import static com.arcbees.gquery.tooltip.client.Tooltip.Tooltip;
 import static com.google.gwt.query.client.GQuery.$;
 
@@ -20,10 +20,8 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.jboss.errai.ioc.client.api.Disposer;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
@@ -35,9 +33,9 @@ import com.google.gwt.query.client.css.CSS;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.pronoiahealth.olhie.client.clientfactories.FileTypeViewableContent;
 import com.pronoiahealth.olhie.client.shared.events.book.CheckBookIsAuthorRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.AddBookToMyCollectionEvent;
 import com.pronoiahealth.olhie.client.shared.events.bookcase.AddBookToMyCollectionEvent.ADD_RESPONSE_TYPE;
@@ -47,6 +45,7 @@ import com.pronoiahealth.olhie.client.shared.events.local.DownloadBookAssetEvent
 import com.pronoiahealth.olhie.client.shared.events.local.ShowAddBookCommentModalEvent;
 import com.pronoiahealth.olhie.client.shared.events.local.ShowViewBookassetDialogEvent;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
+import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 
 /**
  * BookList3D_3.java<br/>
@@ -60,17 +59,18 @@ import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
  */
 @Dependent
 @Templated("#bookLstRoot")
-public class BookList3D_3 extends Composite {
+public class BookList3D extends Composite {
 	private int currentBookCnt;
+	
+	@Inject
+	private ClientUserToken clientUserToken;
 
 	@DataField("bookList")
 	private Element bookList = DOM.createElement("ul");
-
+	
 	@Inject
-	private Instance<BookListItemWidget> bookListItemInst;
-
-	@Inject
-	private Disposer<BookListItemWidget> bookListItemDisposer;
+	@FileTypeViewableContent
+	private Map<String, String> fileViewableContent;
 
 	@Inject
 	private javax.enterprise.event.Event<DownloadBookAssetEvent> downloadBookAssetEvent;
@@ -92,13 +92,13 @@ public class BookList3D_3 extends Composite {
 
 	private GQuery books;
 
-	private Map<String, BookListItemWidget> bliwMap;
+	private Map<String, BookLIWidget> bliwMap;
 
 	/**
 	 * Constructor
 	 * 
 	 */
-	public BookList3D_3() {
+	public BookList3D() {
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class BookList3D_3 extends Composite {
 	 */
 	@PostConstruct
 	private void postConstruct() {
-		bliwMap = new HashMap<String, BookListItemWidget>();
+		bliwMap = new HashMap<String, BookLIWidget>();
 	}
 
 	/**
@@ -115,7 +115,6 @@ public class BookList3D_3 extends Composite {
 	@PreDestroy
 	private void preDestroy() {
 		removeEventsFromLst();
-		detroyInstanceCreatedObjects();
 		bliwMap.clear();
 		clearPhysicalBookList();
 	}
@@ -132,46 +131,21 @@ public class BookList3D_3 extends Composite {
 	 *            first.
 	 */
 	public void build(List<BookDisplay> books, boolean appendToCurrent) {
-		Duration d = new Duration();
-		consoleLog("************************ Start Book3d");
 		if (books != null && books.size() > 0) {
 			removeEventsFromLst();
 			if (appendToCurrent == false) {
-				detroyInstanceCreatedObjects();
 				bliwMap.clear();
 				clearPhysicalBookList();
 			}
 
 			// Add the list for books
 			for (BookDisplay book : books) {
-				BookListItemWidget bliw = bookListItemInst.get();
-				String bookId = bliw.build(book);
+				BookLIWidget bliw = new BookLIWidget();
+				String bookId = bliw.build(book, clientUserToken.isLoggedIn(), fileViewableContent);
 				bookList.appendChild(bliw.getElement());
 				bliwMap.put(bookId, bliw);
 			}
 			attachEventsToLst();
-		}
-		NumberFormat.getDecimalFormat().format(d.elapsedMillis());
-		consoleLog("************************ Finished Book3d" + (NumberFormat.getDecimalFormat().format(d.elapsedMillis())));
-	}
-
-	/**
-	 * Destroys BookListItemWidget created with instance factory
-	 */
-	private void detroyInstanceCreatedObjects() {
-		// Clear created BookListItemWidget
-		if (bookList != null) {
-			int cnt = DOM.getChildCount(bookList);
-			for (int i = 0; i < cnt; i++) {
-				Element e = DOM.getChild(bookList, i);
-				EventListener listener = DOM
-						.getEventListener((com.google.gwt.user.client.Element) e);
-				// No listener attached to the element, so no widget exist for
-				// this element
-				if (listener != null && listener instanceof BookListItemWidget) {
-					bookListItemDisposer.dispose((BookListItemWidget) listener);
-				}
-			}
 		}
 	}
 
@@ -211,7 +185,7 @@ public class BookList3D_3 extends Composite {
 	 * @param bookId
 	 */
 	private void addUpdateComment(String bookId) {
-		BookListItemWidget bookListItemWidget = bliwMap.get(bookId);
+		BookLIWidget bookListItemWidget = bliwMap.get(bookId);
 		String bookTitle = bookListItemWidget.getBookTitle();
 		showAddBookCommentModalEvent.fire(new ShowAddBookCommentModalEvent(
 				bookId, bookTitle, true));
@@ -588,11 +562,7 @@ public class BookList3D_3 extends Composite {
 	 * 
 	 * @return
 	 */
-	public Map<String, BookListItemWidget> getBliwMap() {
+	public Map<String, BookLIWidget> getBliwMap() {
 		return bliwMap;
 	}
-
-	native void consoleLog(String message) /*-{
-		console.log("me:" + message);
-	}-*/;
 }

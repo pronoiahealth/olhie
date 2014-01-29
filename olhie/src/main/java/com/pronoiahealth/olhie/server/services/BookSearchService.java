@@ -34,6 +34,7 @@ import com.pronoiahealth.olhie.client.shared.events.book.SearchPageNavigationRes
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.Book;
 import com.pronoiahealth.olhie.client.shared.vo.BookDisplay;
+import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
@@ -124,78 +125,89 @@ public class BookSearchService {
 
 			// Query request
 			String searchText = bookSearchEvent.getSearchText();
-			List<BookDisplay> bookDisplayList = new ArrayList<BookDisplay>();
 
-			int rows = bookSearchEvent.getRows();
-			// solrSearchService.searchSolr(searchText);
-			List<String> solrRetIdList = solrSearchService
-					.searchSolr(searchText.split("\\s+"));
-			LinkedHashMap<String, List<String>> lhm = getReturnListMap(solrRetIdList);
-			List<String> solrBookIdList = this.getSearchLst(lhm);
+			if (searchText != null && searchText.length() > 0) {
+				List<BookDisplay> bookDisplayList = new ArrayList<BookDisplay>();
 
-			// Find Book
-			// OSQLSynchQuery<Book> bQuery = new
-			// OSQLSynchQuery<Book>( //
-			// "select from Book where @rid in :idlist and active = true");
-			// "select from Book where @rid in " + bookIdList +
-			// " and active = true"); HashMap<String, Object> bparams = new
-			// HashMap<String, Object>(); // bparams.put("idlist", bookIdList);
-			// List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
+				int rows = bookSearchEvent.getRows();
+				// solrSearchService.searchSolr(searchText);
+				List<String> solrRetIdList = solrSearchService
+						.searchSolr(searchText.split("\\s+"));
+				LinkedHashMap<String, List<String>> lhm = getReturnListMap(solrRetIdList);
+				List<String> solrBookIdList = this.getSearchLst(lhm);
 
-			/*
-			 * OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
-			 * "select from Book where bookTitle.toLowerCase() like :title and active = true"
-			 * ); HashMap<String, String> bparams = new HashMap<String,
-			 * String>(); bparams.put("title", "%" + searchText.toLowerCase() +
-			 * "%"); List<Book> bResult =
-			 * ooDbTx.command(bQuery).execute(bparams);
-			 */
+				// Find Book
+				// OSQLSynchQuery<Book> bQuery = new
+				// OSQLSynchQuery<Book>( //
+				// "select from Book where @rid in :idlist and active = true");
+				// "select from Book where @rid in " + bookIdList +
+				// " and active = true"); HashMap<String, Object> bparams = new
+				// HashMap<String, Object>(); // bparams.put("idlist",
+				// bookIdList);
+				// List<Book> bResult = ooDbTx.command(bQuery).execute(bparams);
 
-			List<String> bookIdxLst = new ArrayList<String>();
-			Map<String, List<String>> bookIdxLstBookassetdescMap = new HashMap<String, List<String>>();
-			List<Book> bResult = bookDAO.getBooksByIdLst(solrBookIdList, true);
-			// List<Book> bResult = bookDAO.getActiveBooksByTitle(searchText, 0,
-			// rows);
-			String userId = userToken.getUserId();
-			int cnt = 0;
-			for (Book book : bResult) {
-				BookDisplay bookDisplay = bookDAO.getBookDisplayByBook(book,
-						userId, holder, true);
+				/*
+				 * OSQLSynchQuery<Book> bQuery = new OSQLSynchQuery<Book>(
+				 * "select from Book where bookTitle.toLowerCase() like :title and active = true"
+				 * ); HashMap<String, String> bparams = new HashMap<String,
+				 * String>(); bparams.put("title", "%" +
+				 * searchText.toLowerCase() + "%"); List<Book> bResult =
+				 * ooDbTx.command(bQuery).execute(bparams);
+				 */
 
-				// Only return the first page on the initial query but load all
-				// results into the book id's list for use by the srchRsltHolder
-				String bookId = null;
-				if (bookDisplay != null && cnt < searchPageSize) {
-					bookDisplayList.add(bookDisplay);
-					bookId = bookDisplay.getBook().getId();
-					bookIdxLst.add(bookId);
+				List<String> bookIdxLst = new ArrayList<String>();
+				Map<String, List<String>> bookIdxLstBookassetdescMap = new HashMap<String, List<String>>();
+				List<Book> bResult = bookDAO.getBooksByIdLst(solrBookIdList,
+						true);
+				// List<Book> bResult =
+				// bookDAO.getActiveBooksByTitle(searchText, 0,
+				// rows);
+				String userId = userToken.getUserId();
+				int cnt = 0;
+				for (Book book : bResult) {
+					BookDisplay bookDisplay = bookDAO.getBookDisplayByBook(
+							book, userId, holder);
 
-					// Return the list of matching bookassetdescription id's
-					// from the search
-					List<String> bookassetdescriptionMatchLst = lhm.get(bookId);
-					bookDisplay
-							.setBookassetdescriptionsContainteInSearchLst(bookassetdescriptionMatchLst);
-					bookIdxLstBookassetdescMap.put(bookId,
-							bookassetdescriptionMatchLst);
-					cnt++;
-				} else {
-					bookId = bookDisplay.getBook().getId();
-					bookIdxLst.add(bookId);
-					bookIdxLstBookassetdescMap.put(bookId, lhm.get(bookId));
+					// Only return the first page on the initial query but load
+					// all
+					// results into the book id's list for use by the
+					// srchRsltHolder
+					String bookId = null;
+					if (bookDisplay != null && cnt < searchPageSize) {
+						bookDisplayList.add(bookDisplay);
+						bookId = bookDisplay.getBook().getId();
+						bookIdxLst.add(bookId);
+
+						// Return the list of matching bookassetdescription id's
+						// from the search
+						List<String> bookassetdescriptionMatchLst = lhm
+								.get(bookId);
+						bookDisplay
+								.setBookassetdescriptionsContainteInSearchLst(bookassetdescriptionMatchLst);
+						bookIdxLstBookassetdescMap.put(bookId,
+								bookassetdescriptionMatchLst);
+						cnt++;
+					} else {
+						bookId = bookDisplay.getBook().getId();
+						bookIdxLst.add(bookId);
+						bookIdxLstBookassetdescMap.put(bookId, lhm.get(bookId));
+					}
 				}
-			}
 
-			if (bResult.size() > 0) {
-				// Set initial state of session token
-				srchRsltHolder.setSearchResultHolder(bookIdxLst,
-						bookIdxLstBookassetdescMap, searchText, searchPageSize);
-			} else {
-				srchRsltHolder.clear();
-			}
+				if (bResult.size() > 0) {
+					// Set initial state of session token
+					srchRsltHolder.setSearchResultHolder(bookIdxLst,
+							bookIdxLstBookassetdescMap, searchText,
+							searchPageSize);
+				} else {
+					srchRsltHolder.clear();
+				}
 
-			// Fire search response the event
-			bookSearchResponseEvent.fire(new BookSearchResponseEvent(
-					bookDisplayList, bookDisplayList.size(), searchPageSize));
+				// Fire search response the event
+				bookSearchResponseEvent
+						.fire(new BookSearchResponseEvent(bookDisplayList,
+								bookDisplayList.size(), searchPageSize));
+			}
 		} catch (Exception e) {
 			String errMsg = e.getMessage();
 			log.log(Level.SEVERE, errMsg, e);
@@ -214,8 +226,8 @@ public class BookSearchService {
 	 * 
 	 * @param searchPageNavigationRequestEvent
 	 */
-	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR, SecurityRoleEnum.REGISTERED,
-			SecurityRoleEnum.ANONYMOUS })
+	@SecureAccess({ SecurityRoleEnum.ADMIN, SecurityRoleEnum.AUTHOR,
+			SecurityRoleEnum.REGISTERED, SecurityRoleEnum.ANONYMOUS })
 	protected void observesSearchPageNavigationRequestEvent(
 			@Observes SearchPageNavigationRequestEvent searchPageNavigationRequestEvent) {
 		try {
@@ -304,7 +316,7 @@ public class BookSearchService {
 		List<BookDisplay> bookDisplayList = new ArrayList<BookDisplay>();
 		for (Book book : bResult) {
 			BookDisplay bookDisplay = bookDAO.getBookDisplayByBook(book,
-					userId, holder, true);
+					userId, holder);
 
 			// Only return the first page on the initial query
 			if (bookDisplay != null) {

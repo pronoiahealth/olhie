@@ -37,6 +37,9 @@ import com.pronoiahealth.olhie.client.shared.vo.Bookasset;
 import com.pronoiahealth.olhie.client.shared.vo.Bookassetdescription;
 import com.pronoiahealth.olhie.client.shared.vo.ClientUserToken;
 import com.pronoiahealth.olhie.client.utils.Utils;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.BookContentWidget;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.MyCollectionButtonWidget;
+import com.pronoiahealth.olhie.client.widgets.booklist3d.errai.TOCWidget;
 import com.pronoiahealth.olhie.client.widgets.rating.StarRating;
 
 /**
