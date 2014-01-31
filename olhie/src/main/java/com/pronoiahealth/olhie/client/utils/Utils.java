@@ -134,4 +134,26 @@ public class Utils {
 	public static String getRandom() {
 		return "" + Random.nextInt(100000);
 	}
+
+	/**
+	 * Validate an email
+	 * 
+	 * 
+	 * @param value
+	 * @return
+	 */
+	public static boolean isValidEmail(String value) {
+		if (value == null) {
+			return true;
+		}
+
+		String emailPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.(?:[a-zA-Z]{2,6})$";
+		boolean valid = false;
+		if (value.getClass().toString().equals(String.class.toString())) {
+			valid = ((String) value).matches(emailPattern);
+		} else {
+			valid = ((Object) value).toString().matches(emailPattern);
+		}
+		return valid;
+	}
 }

@@ -100,6 +100,22 @@ public interface UserDAO extends BaseDAO {
 	 */
 	public void updateUserRole(String userId, SecurityRoleEnum role)
 			throws Exception;
+	
+	/**
+	 * @param userId
+	 * @param role
+	 * @throws Exception
+	 */
+	public void updateUserEmail(String userId, String eMail)
+			throws Exception;
+	
+	/**
+	 * @param userId
+	 * @param role
+	 * @throws Exception
+	 */
+	public void updateOrganization(String userId, String organization)
+			throws Exception;
 
 	/**
 	 * @param userId

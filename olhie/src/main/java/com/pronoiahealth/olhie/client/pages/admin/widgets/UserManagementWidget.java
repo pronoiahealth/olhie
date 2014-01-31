@@ -24,6 +24,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.google.gwt.cell.client.EditTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.SelectionCell;
 import com.google.gwt.core.client.GWT;
@@ -39,17 +40,17 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
-import com.google.gwt.view.client.SelectionModel;
-import com.google.gwt.view.client.SingleSelectionModel;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.events.admin.FindUserByLastNameRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.FindUserByLastNameResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.UserChangeRoleEvent;
+import com.pronoiahealth.olhie.client.shared.events.admin.UserEmailChangeRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.admin.UserOrganizationChangeRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.UserResetPWEvent;
 import com.pronoiahealth.olhie.client.shared.vo.User;
+import com.pronoiahealth.olhie.client.utils.Utils;
 
 /**
  * UserManagementWidget.java<br/>
@@ -111,6 +112,12 @@ public class UserManagementWidget extends Composite {
 	private Event<UserResetPWEvent> userResetPWEvent;
 
 	@Inject
+	private Event<UserEmailChangeRequestEvent> userEmailChangeRequestEvent;
+
+	@Inject
+	private Event<UserOrganizationChangeRequestEvent> userOrganizationChangeRequestEvent;
+
+	@Inject
 	private Event<FindUserByLastNameRequestEvent> findUserByLastNameRequestEvent;
 
 	/**
@@ -142,10 +149,11 @@ public class UserManagementWidget extends Composite {
 		userMgmtGrid.setWidth("100%", true);
 
 		// Selection Model
-		//final SelectionModel<User> selectionModel = new SingleSelectionModel<User>(
-		//		KEY_PROVIDER);
-		//userMgmtGrid.setSelectionModel(selectionModel,
-		//		DefaultSelectionEventManager.<User> createCheckboxManager());
+		// final SelectionModel<User> selectionModel = new
+		// SingleSelectionModel<User>(
+		// KEY_PROVIDER);
+		// userMgmtGrid.setSelectionModel(selectionModel,
+		// DefaultSelectionEventManager.<User> createCheckboxManager());
 
 		// Init columns
 		// Id
@@ -193,7 +201,9 @@ public class UserManagementWidget extends Composite {
 		userMgmtGrid.setColumnWidth(userIdColumn, 10, Unit.PCT);
 
 		// eMail
-		TextColumn<User> eMailColumn = new TextColumn<User>() {
+		final EditTextCell eMailEditCell = new EditTextCell();
+		final Column<User, String> eMailColumn = new Column<User, String>(
+				eMailEditCell) {
 			@Override
 			public String getValue(User object) {
 				return object.getEmail();
@@ -201,10 +211,37 @@ public class UserManagementWidget extends Composite {
 		};
 		eMailColumn.setCellStyleNames("ph-Admin-tbl-cell-text-align-left");
 		userMgmtGrid.addColumn(eMailColumn, "eMail");
+		eMailColumn.setFieldUpdater(new FieldUpdater<User, String>() {
+			@Override
+			public void update(int index, User object, String value) {
+				// Validate
+				if (Utils.isValidEmail(value) && value != null
+						&& value.length() > 0) {
+					// Set data
+					object.setEmail(value);
+					dataProvider.refresh();
+
+					// Tell the database
+					userEmailChangeRequestEvent
+							.fire(new UserEmailChangeRequestEvent(value, object
+									.getUserId()));
+
+					// Reset style
+					eMailColumn
+							.setCellStyleNames("ph-Admin-tbl-cell-text-align-left");
+				} else {
+					eMailEditCell.clearViewData(KEY_PROVIDER.getKey(object));
+					eMailColumn
+							.setCellStyleNames("ph-Admin-tbl-cell-text-align-left ph-Admin-tbl-cell-error");
+					userMgmtGrid.redraw();
+				}
+			}
+		});
 		userMgmtGrid.setColumnWidth(eMailColumn, 15, Unit.PCT);
 
 		// Organization
-		TextColumn<User> orgColumn = new TextColumn<User>() {
+		final EditTextCell orgCell = new EditTextCell();
+		Column<User, String> orgColumn = new Column<User, String>(orgCell) {
 			@Override
 			public String getValue(User object) {
 				return object.getOrganization();
@@ -212,6 +249,18 @@ public class UserManagementWidget extends Composite {
 		};
 		orgColumn.setCellStyleNames("ph-Admin-tbl-cell-text-align-left");
 		userMgmtGrid.addColumn(orgColumn, "Organization");
+		orgColumn.setFieldUpdater(new FieldUpdater<User, String>() {
+			@Override
+			public void update(int index, User object, String value) {
+				object.setOrganization(value);
+				dataProvider.refresh();
+
+				// Tell the database
+				userOrganizationChangeRequestEvent
+						.fire(new UserOrganizationChangeRequestEvent(value,
+								object.getUserId()));
+			}
+		});
 		userMgmtGrid.setColumnWidth(orgColumn, 15, Unit.PCT);
 
 		// Role
@@ -274,7 +323,6 @@ public class UserManagementWidget extends Composite {
 				// Tell the AdminService about the change
 				userResetPWEvent.fire(new UserResetPWEvent(object.getUserId(),
 						retVal));
-
 			}
 		});
 		userMgmtGrid.setColumnWidth(resetColumn, 18, Unit.PCT);
@@ -326,4 +374,5 @@ public class UserManagementWidget extends Composite {
 		dataProvider.setList(users);
 		dataProvider.refresh();
 	}
+
 }

@@ -27,6 +27,8 @@ import com.pronoiahealth.olhie.client.shared.events.admin.AuthorRequestStatusCha
 import com.pronoiahealth.olhie.client.shared.events.admin.FindUserByLastNameRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.FindUserByLastNameResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.UserChangeRoleEvent;
+import com.pronoiahealth.olhie.client.shared.events.admin.UserEmailChangeRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.admin.UserOrganizationChangeRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.UserResetPWEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.RegistrationForm;
@@ -193,5 +195,40 @@ public class AdminService {
 			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
 		}
 	}
+	
+	/**
+	 * @param userEmailChangeRequestEvent
+	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN })
+	protected void observersUserEmailChangeRequestEvent(
+			@Observes UserEmailChangeRequestEvent userEmailChangeRequestEvent) {
+		try {
+			String eMail = userEmailChangeRequestEvent.getEmail();
+			String userId = userEmailChangeRequestEvent.getUserId();
+			userDao.updateUserEmail(userId, eMail);
+		} catch (Exception e) {
+			String errMsg = e.getMessage();
+			log.log(Level.SEVERE, errMsg, e);
+			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
+		}
+	}
+	
+	/**
+	 * @param userOrganizationChangeRequestEvent
+	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN })
+	protected void observersUserOrganizationChangeRequestEvent(
+			@Observes UserOrganizationChangeRequestEvent userOrganizationChangeRequestEvent) {
+		try {
+			String org = userOrganizationChangeRequestEvent.getOrganization();
+			String userId = userOrganizationChangeRequestEvent.getUserId();
+			userDao.updateOrganization(userId, org);
+		} catch (Exception e) {
+			String errMsg = e.getMessage();
+			log.log(Level.SEVERE, errMsg, e);
+			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
+		}
+	}
+	
 
 }

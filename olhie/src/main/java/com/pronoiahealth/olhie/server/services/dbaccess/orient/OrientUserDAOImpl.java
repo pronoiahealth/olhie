@@ -227,6 +227,56 @@ public class OrientUserDAOImpl extends OrientBaseTxDAO implements UserDAO {
 	}
 
 	/**
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.UserDAO#updateUserEmail(java.lang.String,
+	 *      java.lang.String)
+	 */
+	@Override
+	public void updateUserEmail(String userId, String eMail) throws Exception {
+		// Look up user
+		User user = getUserByUserId(userId);
+		if (user == null) {
+			throw new Exception("Unknown user with id " + userId);
+		}
+
+		// Save the new data
+		ooDbTx.begin(TXTYPE.OPTIMISTIC);
+		try {
+			user.setEmail(eMail);
+			ooDbTx.save(user);
+			ooDbTx.commit();
+		} catch (Exception e) {
+			ooDbTx.rollback();
+			throw e;
+		}
+
+	}
+
+	/**
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.UserDAO#updateOrganization(java.lang.String,
+	 *      java.lang.String)
+	 */
+	@Override
+	public void updateOrganization(String userId, String organization)
+			throws Exception {
+		// Look up user
+		User user = getUserByUserId(userId);
+		if (user == null) {
+			throw new Exception("Unknown user with id " + userId);
+		}
+
+		// Save the new data
+		ooDbTx.begin(TXTYPE.OPTIMISTIC);
+		try {
+			user.setOrganization(organization);
+			ooDbTx.save(user);
+			ooDbTx.commit();
+		} catch (Exception e) {
+			ooDbTx.rollback();
+			throw e;
+		}
+	}
+
+	/**
 	 * 
 	 * 
 	 * @see com.pronoiahealth.olhie.server.services.dbaccess.UserDAO#findUserByLastName(java.lang.String)
