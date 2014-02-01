@@ -1,0 +1,43 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
+	xmlns:bb='urn:import:com.github.gwtbootstrap.client.ui.base' xmlns:my='urn:import:com.pronoiahealth.olhie.client.widgets'>
+
+	<b:Modal ui:field="newsItemModal" title="News Item" backdrop="STATIC"
+		keyboard="true" animation="true">
+		<b:Form ui:field="newsItemForm" type="HORIZONTAL">
+			<b:Fieldset ui:field="controlFieldset">
+				<b:Legend>Add a new News Item</b:Legend>
+				<b:ControlGroup ui:field="titleGroup">
+					<b:ControlLabel for="title">Title: </b:ControlLabel>
+					<b:Controls>
+						<b:TextArea ui:field="title" placeholder="Title"
+							controlGroup="{titleGroup}" errorLabel="{titleErrors}" />
+						<b:HelpInline ui:field="titleErrors"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup ui:field="hrefGroup">
+					<b:ControlLabel for="href">Link Ref: </b:ControlLabel>
+					<b:Controls>
+						<b:TextArea ui:field="href" placeholder="Link to article"
+							controlGroup="{hrefGroup}" errorLabel="{hrefErrors}" />
+						<b:HelpInline ui:field="hrefErrors"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup ui:field="storyGroup">
+					<b:ControlLabel for="story">Story: </b:ControlLabel>
+					<b:Controls>
+						<b:TextArea ui:field="story" placeholder="Description of article"
+							controlGroup="{storyGroup}" errorLabel="{storyErrors}" />
+						<b:HelpInline ui:field="storyErrors"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+			</b:Fieldset>
+		</b:Form>
+
+		<b:ModalFooter>
+			<b:Button ui:field="saveButton" icon="ENVELOPE" type="PRIMARY">Save</b:Button>
+		</b:ModalFooter>
+	</b:Modal>
+
+</ui:UiBinder>

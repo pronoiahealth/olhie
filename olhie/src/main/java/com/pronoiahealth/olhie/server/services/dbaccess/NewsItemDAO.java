@@ -18,14 +18,14 @@ import com.pronoiahealth.olhie.client.shared.vo.NewsItem;
  * NewsItemDAO.java<br/>
  * Responsibilities:<br/>
  * 1.
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since Sep 15, 2013
- *
+ * 
  */
 public interface NewsItemDAO extends BaseDAO {
-	
+
 	/**
 	 * Gets a list of active news items.
 	 * 
@@ -34,4 +34,36 @@ public interface NewsItemDAO extends BaseDAO {
 	 */
 	public List<NewsItem> getActiveNewsItems() throws Exception;
 
+	/**
+	 * @return
+	 * @throws Exception
+	 */
+	public List<NewsItem> getAllNewsItems() throws Exception;
+
+	/**
+	 * @param newsItemId
+	 * @param adminId
+	 * @throws Exception
+	 */
+	public void removeNewsItems(String newsItemId) throws Exception;
+
+	/**
+	 * @param newsItem
+	 * @throws Exception
+	 */
+	public void addNewsItems(NewsItem newsItem) throws Exception;
+
+	/**
+	 * @param newsItem
+	 * @throws Exception
+	 */
+	public void updateNewsItemsActiveStatus(String itemId, boolean activeStatus)
+			throws Exception;
+	
+	/**
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public NewsItem getNewsItemById(String id) throws Exception;
 }

@@ -21,21 +21,28 @@ import javax.inject.Inject;
 
 import com.pronoiahealth.olhie.client.shared.constants.RequestFormAuthorApproval;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
+import com.pronoiahealth.olhie.client.shared.events.admin.AddNewsItemEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.AuthorPendingRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.AuthorPendingResponseEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.AuthorRequestStatusChangeEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.FindUserByLastNameRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.FindUserByLastNameResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.admin.NewsItemsRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.admin.NewsItemsResponseEvent;
+import com.pronoiahealth.olhie.client.shared.events.admin.RemoveNewsItemRequestEvent;
+import com.pronoiahealth.olhie.client.shared.events.admin.UpdateNewsItemActiveRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.UserChangeRoleEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.UserEmailChangeRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.UserOrganizationChangeRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.UserResetPWEvent;
 import com.pronoiahealth.olhie.client.shared.events.errors.ServiceErrorEvent;
+import com.pronoiahealth.olhie.client.shared.vo.NewsItem;
 import com.pronoiahealth.olhie.client.shared.vo.RegistrationForm;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.server.dataaccess.DAO;
 import com.pronoiahealth.olhie.server.security.SecureAccess;
 import com.pronoiahealth.olhie.server.security.ServerUserToken;
+import com.pronoiahealth.olhie.server.services.dbaccess.NewsItemDAO;
 import com.pronoiahealth.olhie.server.services.dbaccess.RegistrationFormDAO;
 import com.pronoiahealth.olhie.server.services.dbaccess.UserDAO;
 
@@ -67,12 +74,19 @@ public class AdminService {
 	private Event<FindUserByLastNameResponseEvent> findUserByLastNameResponseEvent;
 
 	@Inject
+	private Event<NewsItemsResponseEvent> newsItemsResponseEvent;
+
+	@Inject
 	@DAO
 	private RegistrationFormDAO regDao;
 
 	@Inject
 	@DAO
 	private UserDAO userDao;
+
+	@Inject
+	@DAO
+	private NewsItemDAO newsDao;
 
 	/**
 	 * Constructor
@@ -195,7 +209,7 @@ public class AdminService {
 			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
 		}
 	}
-	
+
 	/**
 	 * @param userEmailChangeRequestEvent
 	 */
@@ -212,7 +226,7 @@ public class AdminService {
 			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
 		}
 	}
-	
+
 	/**
 	 * @param userOrganizationChangeRequestEvent
 	 */
@@ -229,6 +243,70 @@ public class AdminService {
 			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
 		}
 	}
-	
 
+	/**
+	 * @param addNewsItemEvent
+	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN })
+	protected void observersAddNewsItemEvent(
+			@Observes AddNewsItemEvent addNewsItemEvent) {
+		try {
+			NewsItem item = addNewsItemEvent.getNewsItem();
+			newsDao.addNewsItems(item);
+		} catch (Exception e) {
+			String errMsg = e.getMessage();
+			log.log(Level.SEVERE, errMsg, e);
+			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
+		}
+	}
+
+	/**
+	 * @param addNewsItemEvent
+	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN })
+	protected void observersRemoveNewsItemEvent(
+			@Observes RemoveNewsItemRequestEvent removeNewsItemEvent) {
+		try {
+			String removeId = removeNewsItemEvent.getNewsItemId();
+			newsDao.removeNewsItems(removeId);
+		} catch (Exception e) {
+			String errMsg = e.getMessage();
+			log.log(Level.SEVERE, errMsg, e);
+			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
+		}
+	}
+
+	/**
+	 * @param newsItemsRequestEvent
+	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN })
+	protected void observersNewsItemsRequestEvent(
+			@Observes NewsItemsRequestEvent newsItemsRequestEvent) {
+		try {
+			List<NewsItem> items = newsDao.getAllNewsItems();
+			newsItemsResponseEvent.fire(new NewsItemsResponseEvent(items));
+		} catch (Exception e) {
+			String errMsg = e.getMessage();
+			log.log(Level.SEVERE, errMsg, e);
+			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
+		}
+	}
+
+	/**
+	 * @param updateNewsItemActiveRequestEvent
+	 */
+	@SecureAccess({ SecurityRoleEnum.ADMIN })
+	protected void observersUpdateNewsItemActiveRequestEvent(
+			@Observes UpdateNewsItemActiveRequestEvent updateNewsItemActiveRequestEvent) {
+		try {
+			String newsItemId = updateNewsItemActiveRequestEvent
+					.getNewsItemId();
+			boolean activeStatus = updateNewsItemActiveRequestEvent.isActive();
+			newsDao.updateNewsItemsActiveStatus(newsItemId, activeStatus);
+		} catch (Exception e) {
+			String errMsg = e.getMessage();
+			log.log(Level.SEVERE, errMsg, e);
+			serviceErrorEvent.fire(new ServiceErrorEvent(errMsg));
+		}
+	}
 }

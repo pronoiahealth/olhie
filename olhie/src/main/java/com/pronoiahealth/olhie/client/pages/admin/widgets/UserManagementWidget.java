@@ -24,13 +24,14 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.CellTable;
+import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.EditTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.SelectionCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
@@ -49,6 +50,7 @@ import com.pronoiahealth.olhie.client.shared.events.admin.UserChangeRoleEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.UserEmailChangeRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.UserOrganizationChangeRequestEvent;
 import com.pronoiahealth.olhie.client.shared.events.admin.UserResetPWEvent;
+import com.pronoiahealth.olhie.client.shared.events.errors.ClientErrorEvent;
 import com.pronoiahealth.olhie.client.shared.vo.User;
 import com.pronoiahealth.olhie.client.utils.Utils;
 
@@ -119,6 +121,9 @@ public class UserManagementWidget extends Composite {
 
 	@Inject
 	private Event<FindUserByLastNameRequestEvent> findUserByLastNameRequestEvent;
+
+	@Inject
+	private Event<ClientErrorEvent> clientErrorEvent;
 
 	/**
 	 * Constructor
@@ -204,6 +209,7 @@ public class UserManagementWidget extends Composite {
 		final EditTextCell eMailEditCell = new EditTextCell();
 		final Column<User, String> eMailColumn = new Column<User, String>(
 				eMailEditCell) {
+
 			@Override
 			public String getValue(User object) {
 				return object.getEmail();
@@ -231,8 +237,8 @@ public class UserManagementWidget extends Composite {
 							.setCellStyleNames("ph-Admin-tbl-cell-text-align-left");
 				} else {
 					eMailEditCell.clearViewData(KEY_PROVIDER.getKey(object));
-					eMailColumn
-							.setCellStyleNames("ph-Admin-tbl-cell-text-align-left ph-Admin-tbl-cell-error");
+					clientErrorEvent.fire(new ClientErrorEvent(value
+							+ " is not a valid email address."));
 					userMgmtGrid.redraw();
 				}
 			}
