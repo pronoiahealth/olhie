@@ -24,6 +24,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.ButtonCell;
 import com.github.gwtbootstrap.client.ui.CellTable;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.google.gwt.cell.client.FieldUpdater;
@@ -152,7 +153,7 @@ public class NewsItemWidget extends Composite {
 		idColumn.setCellStyleNames("ph-Admin-tbl-cell-text-align-left");
 		newsItemGrid.addColumn(idColumn, "ID");
 		newsItemGrid.setColumnWidth(idColumn, 5, Unit.PCT);
-		
+
 		// Author id
 		TextColumn<NewsItem> authorColumn = new TextColumn<NewsItem>() {
 			@Override
@@ -163,7 +164,7 @@ public class NewsItemWidget extends Composite {
 		authorColumn.setCellStyleNames("ph-Admin-tbl-cell-text-align-left");
 		newsItemGrid.addColumn(authorColumn, "Author");
 		newsItemGrid.setColumnWidth(authorColumn, 10, Unit.PCT);
-		
+
 		// href
 		TextColumn<NewsItem> hrefColumn = new TextColumn<NewsItem>() {
 			@Override
@@ -174,7 +175,7 @@ public class NewsItemWidget extends Composite {
 		hrefColumn.setCellStyleNames("ph-Admin-tbl-cell-text-align-left");
 		newsItemGrid.addColumn(hrefColumn, "Link");
 		newsItemGrid.setColumnWidth(hrefColumn, 25, Unit.PCT);
-		
+
 		// Story
 		TextColumn<NewsItem> storyColumn = new TextColumn<NewsItem>() {
 			@Override
@@ -184,8 +185,7 @@ public class NewsItemWidget extends Composite {
 		};
 		storyColumn.setCellStyleNames("ph-Admin-tbl-cell-text-align-left");
 		newsItemGrid.addColumn(storyColumn, "Story");
-		newsItemGrid.setColumnWidth(storyColumn, 40, Unit.PCT);
-		
+		newsItemGrid.setColumnWidth(storyColumn, 35, Unit.PCT);
 
 		// Active
 		List<String> activeNames = Arrays.asList(reset);
@@ -225,6 +225,34 @@ public class NewsItemWidget extends Composite {
 			}
 		});
 		newsItemGrid.setColumnWidth(activeColumn, 18, Unit.PCT);
+
+		// Delete button
+		Column<NewsItem, String> deleteBtn = new Column<NewsItem, String>(
+				new ButtonCell()) {
+			@Override
+			public String getValue(NewsItem c) {
+				return "x";
+			}
+		};
+		newsItemGrid.setColumnWidth(deleteBtn, 5, Unit.PCT);
+		newsItemGrid.addColumn(deleteBtn, "");
+
+		// Set the field updater, whenever user clicks on button
+		// row will be removed.
+		deleteBtn.setFieldUpdater(new FieldUpdater<NewsItem, String>() {
+
+			@Override
+			public void update(int index, NewsItem object, String value) {
+				// Tell the database
+				removeNewsItemRequestEvent.fire(new RemoveNewsItemRequestEvent(
+						object.getId()));
+
+				// Remove from the data provider and redraw the table
+				dataProvider.getList().remove(object);
+				dataProvider.refresh();
+				newsItemGrid.redraw();
+			}
+		});
 
 		// Set the dataprovider
 		dataProvider.addDataDisplay(newsItemGrid);

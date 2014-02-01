@@ -87,7 +87,8 @@ public class OrientNewsItemDAOImpl extends OrientBaseTxDAO implements
 	public void removeNewsItems(String newsItemId) throws Exception {
 		try {
 			ooDbTx.begin(TXTYPE.OPTIMISTIC);
-			ooDbTx.delete(newsItemId);
+			NewsItem item = this.getNewsItemById(newsItemId);
+			ooDbTx.delete(item);
 			ooDbTx.commit();
 		} catch (Exception e) {
 			ooDbTx.rollback();
@@ -110,6 +111,10 @@ public class OrientNewsItemDAOImpl extends OrientBaseTxDAO implements
 		}
 	}
 
+	/**
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.NewsItemDAO#updateNewsItemsActiveStatus(java.lang.String,
+	 *      boolean)
+	 */
 	@Override
 	public void updateNewsItemsActiveStatus(String itemId, boolean activeStatus)
 			throws Exception {
@@ -125,6 +130,9 @@ public class OrientNewsItemDAOImpl extends OrientBaseTxDAO implements
 		}
 	}
 
+	/**
+	 * @see com.pronoiahealth.olhie.server.services.dbaccess.NewsItemDAO#getNewsItemById(java.lang.String)
+	 */
 	@Override
 	public NewsItem getNewsItemById(String id) throws Exception {
 		OSQLSynchQuery<NewsItem> bQuery = new OSQLSynchQuery<NewsItem>(
