@@ -10,6 +10,9 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.pages.newbook.widgets;
 
+import static com.arcbees.gquery.tooltip.client.Tooltip.Tooltip;
+import static com.google.gwt.query.client.GQuery.$;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +24,7 @@ import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.Disposer;
 
+import com.google.gwt.query.client.GQuery;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.EventListener;
@@ -142,8 +146,8 @@ public class NewBookDroppablePanel extends DroppablePanel {
 					if (bidW instanceof BookItemDisplay) {
 						BookItemDisplay item = (BookItemDisplay) bidW;
 						if (item.getBadId().equals(baDescId)) {
-							fp.remove(item);
 							bookItemDisplayDisposer.dispose(item);
+							fp.remove(item);
 							break;
 						}
 					}

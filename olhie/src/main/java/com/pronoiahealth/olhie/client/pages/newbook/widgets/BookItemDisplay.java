@@ -19,6 +19,7 @@ import gwtquery.plugins.draggable.client.gwt.DraggableWidget;
 
 import java.util.Map;
 
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -136,6 +137,18 @@ public class BookItemDisplay extends DraggableWidget<Widget> {
 	 */
 	public BookItemDisplay() {
 		setup();
+	}
+
+	/**
+	 * Clean up buttons
+	 */
+	@PreDestroy
+	protected void preDestroy() {
+		downloadAssetBtn.removeTooltip();
+		viewAssetBtn.removeTooltip();
+		removeAssetBtn.removeTooltip();
+		assetDetailBtn.removeTooltip();
+		linkToAssetButtonWidget.removeTooltip();
 	}
 
 	/**

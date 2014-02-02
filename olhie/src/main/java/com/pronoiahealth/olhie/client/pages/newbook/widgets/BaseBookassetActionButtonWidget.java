@@ -92,10 +92,9 @@ public class BaseBookassetActionButtonWidget extends Composite {
 	@Override
 	protected void onUnload() {
 		super.onUnload();
-		
-		if (toolTip != null) {
-			toolTip.as(Tooltip).destroy();
-		}
+
+		// Remove the tooltip
+		removeTooltip();
 	}
 
 	/**
@@ -191,5 +190,14 @@ public class BaseBookassetActionButtonWidget extends Composite {
 
 		// Return the element
 		return bindButton();
+	}
+
+	/**
+	 * Removes the tooltip
+	 */
+	public void removeTooltip() {
+		if (toolTip != null) {
+			toolTip.as(Tooltip).destroy();
+		}
 	}
 }
