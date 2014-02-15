@@ -85,6 +85,7 @@ public class BookLinkAssetService {
 			String bookId = addBookLinkAssetEvent.getBookId();
 			String assetDescription = addBookLinkAssetEvent
 					.getAssetDescription();
+			String assetDescriptionDetail = addBookLinkAssetEvent.getAssetDescriptionDetail();
 			String link = addBookLinkAssetEvent.getLink();
 			int hoursOfWork = addBookLinkAssetEvent.getHoursOfWork();
 
@@ -99,7 +100,7 @@ public class BookLinkAssetService {
 
 			// Add a new Bookassetdescriton and associated Bookasset to the
 			// book
-			bookDAO.addUpdateBookasset(assetDescription, bookId,
+			bookDAO.addUpdateBookasset(assetDescription, assetDescriptionDetail, bookId,
 					BookAssetDataType.LINK.toString(),
 					BookAssetDataType.LINK.toString(), null,
 					BookAssetActionType.NEW.name(), null, link, null, 0,

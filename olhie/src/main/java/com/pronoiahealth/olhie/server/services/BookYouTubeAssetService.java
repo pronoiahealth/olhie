@@ -85,6 +85,8 @@ public class BookYouTubeAssetService {
 			String bookId = addBookYouTubeAssetEvent.getBookId();
 			String assetDescription = addBookYouTubeAssetEvent
 					.getAssetDescription();
+			String assetDescriptionDetail = addBookYouTubeAssetEvent
+					.getAssetDescriptionDetail();
 			String youTubeLink = addBookYouTubeAssetEvent.getYouTubeLink();
 			int hoursOfWork = addBookYouTubeAssetEvent.getHoursOfWork();
 
@@ -99,7 +101,8 @@ public class BookYouTubeAssetService {
 
 			// Add a new Bookassetdescriton and associated Bookasset to the
 			// book
-			bookDAO.addUpdateBookasset(assetDescription, bookId,
+			bookDAO.addUpdateBookasset(assetDescription,
+					assetDescriptionDetail, bookId,
 					BookAssetDataType.YOUTUBE.toString(),
 					BookAssetDataType.LINK.toString(), null,
 					BookAssetActionType.NEW.name(), null, youTubeLink, null, 0,

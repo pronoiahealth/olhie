@@ -63,7 +63,13 @@ public class AddYouTubeDialog extends Composite {
 	public TextBox description;
 
 	@UiField
+	public TextArea descriptionDetail;
+
+	@UiField
 	public ControlGroup descriptionCG;
+
+	@UiField
+	public ControlGroup descriptionDetailCG;
 
 	@UiField
 	public TextBox hoursOfWork;
@@ -156,6 +162,16 @@ public class AddYouTubeDialog extends Composite {
 			descriptionCG.setType(ControlGroupType.ERROR);
 		}
 
+		// Check descriptionDetail
+		String descDetail = descriptionDetail.getText();
+		if (descDetail != null) {
+			int descLen = descDetail.length();
+			if (descLen > 2048) {
+				hasErrors = true;
+				descriptionDetailCG.setType(ControlGroupType.ERROR);
+			}
+		}
+
 		// Check youtube link
 		String youTube = youTubeLink.getText();
 		if (youTube != null) {
@@ -189,7 +205,8 @@ public class AddYouTubeDialog extends Composite {
 
 			// Fire away
 			addBookYouTubeAssetEvent.fire(new AddBookYouTubeAssetEvent(
-					currentBookId, desc, youTube, hoursRet));
+					currentBookId, desc, descDetail, youTube,
+					hoursRet));
 		}
 	}
 
@@ -215,6 +232,7 @@ public class AddYouTubeDialog extends Composite {
 	 */
 	private void clearErrors() {
 		descriptionCG.setType(ControlGroupType.NONE);
+		descriptionDetailCG.setType(ControlGroupType.NONE);
 		hoursOfWorkCG.setType(ControlGroupType.NONE);
 		youTubeLinkCG.setType(ControlGroupType.NONE);
 	}

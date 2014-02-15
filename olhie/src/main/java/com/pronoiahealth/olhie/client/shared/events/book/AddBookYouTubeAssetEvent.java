@@ -33,6 +33,7 @@ import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 public class AddBookYouTubeAssetEvent {
 	private String bookId;
 	private String assetDescription;
+	private String assetDescriptionDetail;
 	private String youTubeLink;
 	private int hoursOfWork;
 
@@ -51,11 +52,12 @@ public class AddBookYouTubeAssetEvent {
 	 * @param youTubeLink
 	 * @param hoursOfWork
 	 */
-	public AddBookYouTubeAssetEvent(String bookId, String assetDescription,
+	public AddBookYouTubeAssetEvent(String bookId, String assetDescription, String assetDescriptionDetail,
 			String youTubeLink, int hoursOfWork) {
 		super();
 		this.bookId = bookId;
 		this.assetDescription = assetDescription;
+		this.assetDescriptionDetail = assetDescriptionDetail;
 		this.youTubeLink = youTubeLink;
 		this.hoursOfWork = hoursOfWork;
 	}
@@ -90,5 +92,13 @@ public class AddBookYouTubeAssetEvent {
 
 	public void setHoursOfWork(int hoursOfWork) {
 		this.hoursOfWork = hoursOfWork;
+	}
+
+	public String getAssetDescriptionDetail() {
+		return assetDescriptionDetail;
+	}
+
+	public void setAssetDescriptionDetail(String assetDescriptionDetail) {
+		this.assetDescriptionDetail = assetDescriptionDetail;
 	}
 }

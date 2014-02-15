@@ -13,6 +13,11 @@
 					<b:TextBox ui:field="description" placeholder="Between 1 and 250 characters"
 						maxLength="250" width="400px"></b:TextBox>
 				</b:ControlGroup>
+				<b:ControlLabel>Detail (no more than 2048 characters):</b:ControlLabel>
+				<b:ControlGroup ui:field="descriptionDetailCG">
+					<b:TextArea ui:field="descriptionDetail" placeholder="Upto 2048 characters"
+						maxLength="2048" width="400px"></b:TextArea>
+				</b:ControlGroup>
 				<b:ControlLabel>Hours of work:</b:ControlLabel>
 				<b:ControlGroup ui:field="hoursOfWorkCG">
 					<b:TextBox ui:field="hoursOfWork" placeholder="10"

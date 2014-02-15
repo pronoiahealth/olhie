@@ -92,6 +92,7 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 
 				// FileItemFactory fileItemFactory = new FileItemFactory();
 				String description = null;
+				String descriptionDetail = null;
 				String hoursOfWorkStr = null;
 				String bookId = null;
 				String action = null;
@@ -112,7 +113,13 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 						if (item.getFieldName().equals("description")) {
 							description = Streams.asString(stream);
 						}
+						
+						// detail
+						if (item.getFieldName().equals("descriptionDetail")) {
+							descriptionDetail = Streams.asString(stream);
+						}
 
+						// Work hours
 						if (item.getFieldName().equals("hoursOfWork")) {
 							hoursOfWorkStr = Streams.asString(stream);
 						}
@@ -140,9 +147,8 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 							InputStream in = item.openStream();
 							ByteArrayOutputStream bos = new ByteArrayOutputStream();
 							IOUtils.copy(in, bos);
-							bytes = bos.toByteArray(); // fileItem.get();
+							bytes = bos.toByteArray();
 							size = bytes.length;
-							//data = Base64.encodeBytes(bytes);
 						}
 					}
 				}
@@ -173,7 +179,7 @@ public class BookAssetUploadServiceImpl implements BookAssetUploadService {
 				}
 
 				// Add to the database
-				bookDAO.addUpdateBookassetBytes(description, bookId, contentType,
+				bookDAO.addUpdateBookassetBytes(description, descriptionDetail, bookId, contentType,
 						BookAssetDataType.valueOf(dataType).toString(), bytes,
 						action, fileName, null, null, size, hoursOfWork, userId);
 

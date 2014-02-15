@@ -423,7 +423,7 @@ public interface BookDAO extends BaseDAO {
 	 * @return
 	 * @throws Exception
 	 */
-	public void addUpdateBookasset(String description, String bookId,
+	public void addUpdateBookasset(String description, String descriptionDetail, String bookId,
 			String contentType, String itemType, String data, String action,
 			String fileName, String linkRef, String embededLinkRef, long size,
 			int hoursOfWork, String userId) throws Exception;
@@ -443,7 +443,7 @@ public interface BookDAO extends BaseDAO {
 	 * @param userId
 	 * @throws Exception
 	 */
-	public void addUpdateBookassetBytes(String description, String bookId,
+	public void addUpdateBookassetBytes(String description, String descriptionDetail, String bookId,
 			String contentType, String itemType, byte[] data, String action,
 			String fileName, String linkRef, String embededLinkRef, long size,
 			int hoursOfWork, String userId) throws Exception;

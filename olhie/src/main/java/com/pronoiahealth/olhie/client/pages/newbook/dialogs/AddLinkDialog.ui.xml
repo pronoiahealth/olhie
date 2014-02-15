@@ -14,6 +14,12 @@
 					<b:TextBox ui:field="description" placeholder="Between 1 and 250 characters"
 						maxLength="250" width="400px"></b:TextBox>
 				</b:ControlGroup>
+				<!-- Description Detail -->
+				<b:ControlLabel>Detail (Upto 2048 characters):</b:ControlLabel>
+				<b:ControlGroup ui:field="descriptionDetailCG">
+					<b:TextArea ui:field="descriptionDetail" placeholder="Upto 2048 characters"
+						maxLength="2048" width="400px"></b:TextArea>
+				</b:ControlGroup>
 				<!-- Link -->
 				<b:ControlLabel>Link:</b:ControlLabel>
 				<b:ControlGroup ui:field="linkCG">

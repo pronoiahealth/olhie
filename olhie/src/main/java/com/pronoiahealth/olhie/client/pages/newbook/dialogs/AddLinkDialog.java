@@ -41,11 +41,11 @@ import com.pronoiahealth.olhie.client.shared.events.local.ShowAddLinkModalEvent;
  * AddLinkDialog.java<br/>
  * Responsibilities:<br/>
  * 1.
- *
+ * 
  * @author John DeStefano
  * @version 1.0
  * @since Nov 25, 2013
- *
+ * 
  */
 @Dependent
 public class AddLinkDialog extends Composite {
@@ -63,7 +63,13 @@ public class AddLinkDialog extends Composite {
 	public TextBox description;
 
 	@UiField
+	public TextArea descriptionDetail;
+
+	@UiField
 	public ControlGroup descriptionCG;
+
+	@UiField
+	public ControlGroup descriptionDetailCG;
 
 	@UiField
 	public TextBox hoursOfWork;
@@ -156,6 +162,16 @@ public class AddLinkDialog extends Composite {
 			descriptionCG.setType(ControlGroupType.ERROR);
 		}
 
+		// Check descriptionDetail
+		String descDetail = descriptionDetail.getText();
+		if (descDetail != null) {
+			int descLen = descDetail.length();
+			if (descLen > 2048) {
+				hasErrors = true;
+				descriptionDetailCG.setType(ControlGroupType.ERROR);
+			}
+		}
+
 		// Check link
 		String linkStr = link.getText();
 		if (linkStr != null) {
@@ -188,8 +204,8 @@ public class AddLinkDialog extends Composite {
 			linkModal.hide();
 
 			// Fire away
-			addBookLinkAssetEvent.fire(new AddBookLinkAssetEvent(
-					currentBookId, desc, linkStr, hoursRet));
+			addBookLinkAssetEvent.fire(new AddBookLinkAssetEvent(currentBookId,
+					desc, descDetail, linkStr, hoursRet));
 		}
 	}
 
@@ -215,6 +231,7 @@ public class AddLinkDialog extends Composite {
 	 */
 	private void clearErrors() {
 		descriptionCG.setType(ControlGroupType.NONE);
+		descriptionDetailCG.setType(ControlGroupType.NONE);
 		hoursOfWorkCG.setType(ControlGroupType.NONE);
 		linkCG.setType(ControlGroupType.NONE);
 	}

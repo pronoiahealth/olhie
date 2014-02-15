@@ -89,6 +89,9 @@ public class AddFileVideoDialog extends Composite {
 	public TextBox description;
 
 	@UiField
+	public TextBox descriptionDetail;
+
+	@UiField
 	public TextBox hoursOfWork;
 
 	@UiField
@@ -96,6 +99,9 @@ public class AddFileVideoDialog extends Composite {
 
 	@UiField
 	public ControlGroup descriptionCG;
+
+	@UiField
+	public ControlGroup descriptionDetailCG;
 
 	@UiField
 	public ControlGroup hoursOfWorkCG;
@@ -120,7 +126,7 @@ public class AddFileVideoDialog extends Composite {
 	private static final String fileTitle = "What file do you want to add?";
 
 	private static final String videoTitle = "What video do you want to add?";
-	
+
 	private static final String uploadingTitle = "Processing your request. Please wait.";
 
 	private String dataType;
@@ -214,7 +220,7 @@ public class AddFileVideoDialog extends Composite {
 
 						uploadContainer.add(progressBar);
 						uploadContainer.add(cancelButton);
-						
+
 						// Only allow one file to be uploaded
 						uploader.setButtonDisabled(true);
 
@@ -331,7 +337,7 @@ public class AddFileVideoDialog extends Composite {
 
 		// Show the dialog
 		addFileModal.show();
-		
+
 		// Make sure uploadButton showing
 		uploadButton.setVisible(true);
 	}
@@ -393,6 +399,16 @@ public class AddFileVideoDialog extends Composite {
 				descriptionCG.setType(ControlGroupType.ERROR);
 			}
 
+			// Check descriptionDetail
+			String descDetail = descriptionDetail.getText();
+			if (descDetail != null) {
+				int descLen = descDetail.length();
+				if (descLen > 2048) {
+					hasErrors = true;
+					descriptionDetailCG.setType(ControlGroupType.ERROR);
+				}
+			}
+
 			// Check hours of work
 			String hours = hoursOfWork.getText();
 			if (hours == null || hours.length() == 0) {
@@ -417,6 +433,7 @@ public class AddFileVideoDialog extends Composite {
 			if (hasErrors == false) {
 				JSONObject params = new JSONObject();
 				params.put("description", new JSONString(desc));
+				params.put("descriptionDetail", new JSONString(descDetail));
 				params.put("hoursOfWork", new JSONString(hours));
 				params.put("bookId", new JSONString(this.currentBookId));
 				params.put("action",
@@ -435,6 +452,7 @@ public class AddFileVideoDialog extends Composite {
 	 */
 	private void clearErrors() {
 		descriptionCG.setType(ControlGroupType.NONE);
+		descriptionDetailCG.setType(ControlGroupType.NONE);
 		hoursOfWorkCG.setType(ControlGroupType.NONE);
 		noFileToUploadErr.setText("");
 	}
@@ -444,6 +462,7 @@ public class AddFileVideoDialog extends Composite {
 	 */
 	private void clearFields() {
 		description.setText(null);
+		descriptionDetail.setText(null);
 		hoursOfWork.setText(null);
 		this.currentBookId = null;
 	}

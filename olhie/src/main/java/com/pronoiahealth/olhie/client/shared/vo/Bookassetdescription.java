@@ -42,6 +42,9 @@ public class Bookassetdescription {
 	@NotNull
 	@Size(min = 1, max = 250, message = "Must be between 1 and 250 characters.")
 	private String description;
+	
+	@Size(max = 2048, message = "Must be between 0 and 2048 characters.")
+	private String descriptionDetail;
 
 	@NotNull
 	private Date createdDate;
@@ -139,4 +142,13 @@ public class Bookassetdescription {
 	public void setPosition(int position) {
 		this.position = position;
 	}
+
+	public String getDescriptionDetail() {
+		return descriptionDetail;
+	}
+
+	public void setDescriptionDetail(String descriptionDetail) {
+		this.descriptionDetail = descriptionDetail;
+	}
+	
 }

@@ -1233,7 +1233,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 *      java.lang.String, java.lang.String, long)
 	 */
 	@Override
-	public void addUpdateBookasset(String description, String bookId,
+	public void addUpdateBookasset(String description, String descriptionDetail, String bookId,
 			String contentType, String itemType, String data, String action,
 			String fileName, String linkRef, String embededLinkRef, long size,
 			int hoursOfWork, String userId) throws Exception {
@@ -1252,6 +1252,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 				bad.setBookId(bookId);
 				bad.setCreatedDate(now);
 				bad.setDescription(description);
+				bad.setDescriptionDetail(descriptionDetail);
 				bad.setRemoved(Boolean.FALSE);
 				bad.setPosition(++activeAssetCnt);
 				bad = ooDbTx.save(bad);
@@ -1315,7 +1316,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 	 *      java.lang.String, java.lang.String, long)
 	 */
 	@Override
-	public void addUpdateBookassetBytes(String description, String bookId,
+	public void addUpdateBookassetBytes(String description, String descriptionDetail, String bookId,
 			String contentType, String itemType, byte[] data, String action,
 			String fileName, String linkRef, String embededLinkRef, long size,
 			int hoursOfWork, String userId) throws Exception {
@@ -1334,6 +1335,7 @@ public class OrientBookDAOImpl extends OrientBaseTxDAO implements BookDAO {
 				bad.setBookId(bookId);
 				bad.setCreatedDate(now);
 				bad.setDescription(description);
+				bad.setDescriptionDetail(descriptionDetail);
 				bad.setRemoved(Boolean.FALSE);
 				bad.setPosition(++activeAssetCnt);
 				bad = ooDbTx.save(bad);

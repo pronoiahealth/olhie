@@ -10,8 +10,8 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.shared.vo;
 
+import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
-import org.jboss.errai.marshalling.client.api.annotations.MapsTo;
 
 /**
  * UserOffer.java<br/>
