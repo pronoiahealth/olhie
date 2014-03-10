@@ -36,6 +36,7 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.ControlLabel;
 import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.github.gwtbootstrap.client.ui.event.ShownEvent;
@@ -89,7 +90,7 @@ public class AddFileVideoDialog extends Composite {
 	public TextBox description;
 
 	@UiField
-	public TextBox descriptionDetail;
+	public TextArea descriptionDetail;
 
 	@UiField
 	public TextBox hoursOfWork;

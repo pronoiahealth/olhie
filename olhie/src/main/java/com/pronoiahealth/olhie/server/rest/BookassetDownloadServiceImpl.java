@@ -100,8 +100,8 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 			response.setHeader("Pragma", "No-cache");
 			response.setDateHeader("Expires", 0);
 			response.setHeader("Cache-Control", "no-cache");
-			response.setHeader("Content-Disposition", "attachment; filename="
-					+ fileName);
+			response.setHeader("Content-Disposition", "attachment; filename=\""
+					+ fileName + "\"");
 
 			// response.setContentLength(fileBytes.length);
 			// response.setHeader("Content-Disposition", "inline; filename="
@@ -160,8 +160,8 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 			response.setDateHeader("Expires", 0);
 			response.setHeader("Cache-Control", "no-cache");
 			response.setContentLength(fileBytes.length);
-			response.setHeader("Content-Disposition", "inline; filename="
-					+ fileName);
+			response.setHeader("Content-Disposition", "inline; filename=\""
+					+ fileName + "\"");
 
 			in = new DataInputStream(new ByteArrayInputStream(fileBytes));
 			return in;
@@ -216,9 +216,8 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 			response.setDateHeader("Expires", 0);
 			response.setHeader("Cache-Control", "no-cache");
 			response.setContentLength(fileBytes.length);
-			response.setHeader("Content-Disposition", "inline; filename="
-					+ fileName);
-
+			response.setHeader("Content-Disposition", "inline; filename=\""
+					+ fileName + "\"");
 			in = new DataInputStream(new ByteArrayInputStream(fileBytes));
 			return in;
 		} catch (Exception e) {
@@ -272,8 +271,8 @@ public class BookassetDownloadServiceImpl implements BookassetDownloadService {
 			response.setDateHeader("Expires", 0);
 			response.setHeader("Cache-Control", "no-cache");
 			response.setContentLength(fileBytes.length);
-			response.setHeader("Content-Disposition", "inline; filename="
-					+ fileName);
+			response.setHeader("Content-Disposition", "inline; filename=\""
+					+ fileName + "\"");
 
 			in = new DataInputStream(new ByteArrayInputStream(fileBytes));
 			return in;

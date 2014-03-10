@@ -28,7 +28,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
-import com.lowagie.text.pdf.codec.Base64;
 import com.pronoiahealth.olhie.client.shared.constants.SecurityRoleEnum;
 import com.pronoiahealth.olhie.client.shared.exceptions.FileDownloadException;
 import com.pronoiahealth.olhie.client.shared.vo.Book;

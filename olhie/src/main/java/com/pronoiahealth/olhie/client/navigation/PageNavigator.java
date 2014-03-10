@@ -19,8 +19,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.nav.client.local.Navigation;
+import org.jboss.errai.ui.nav.client.local.NavigationEvent;
 import org.jboss.errai.ui.nav.client.local.TransitionTo;
-import org.jboss.errai.ui.nav.client.shared.NavigationEvent;
 
 import com.google.common.collect.Multimap;
 import com.google.gwt.user.client.ui.Widget;
@@ -201,8 +201,8 @@ public class PageNavigator {
 
 	protected void observesNavigationEvent(
 			@Observes NavigationEvent navigationEvent) {
-		// String pageName = navigationEvent.getHistoryToken().getPageName();
-		String pageName = navigationEvent.getPageRequest().getPageName();
+		String pageName = navigationEvent.getHistoryToken().getPageName();
+		//String pageName = navigationEvent.getPageRequest().getPageName();
 		if (pageName.length() > 0) {
 			// Check Can navigate to the page security
 			boolean canNavTo = false;

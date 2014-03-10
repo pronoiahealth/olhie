@@ -18,7 +18,7 @@
 				<b:ControlLabel>Detail (Up to 2048 characters):</b:ControlLabel>
 				<b:ControlGroup ui:field="descriptionDetailCG">
 					<b:TextArea ui:field="descriptionDetail" placeholder="Up to 2048 characters"
-						maxLength="250" width="400px"></b:TextArea>
+						width="400px"></b:TextArea>
 				</b:ControlGroup>
 				<!-- Youtube Link -->
 				<b:ControlLabel>Youtube Link:</b:ControlLabel>

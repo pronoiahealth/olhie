@@ -10,9 +10,9 @@
  *******************************************************************************/
 package com.pronoiahealth.olhie.client.shared.events.book;
 
-import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.enterprise.client.cdi.api.Conversational;
+import org.jboss.errai.marshalling.client.api.annotations.MapsTo;
 
 /**
  * QueueBookEvent.java<br/>
